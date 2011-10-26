@@ -5,7 +5,7 @@
 package physicalModule;
 
 /**
- *
+ * 
  * @author neiss
  */
 public class AbstractNetworkInterface {
