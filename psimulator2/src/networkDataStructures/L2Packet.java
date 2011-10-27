@@ -8,6 +8,8 @@ package networkDataStructures;
  *
  * @author neiss
  */
-public class L2Packet {
+public abstract class L2Packet {
+
+    L3Packet data;
 
 }
