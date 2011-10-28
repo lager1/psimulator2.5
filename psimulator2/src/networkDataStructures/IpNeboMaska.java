@@ -8,15 +8,19 @@ package networkDataStructures;
  *
  * @author neiss
  */
-public class IpNeboMaska {
-    private int bytes;
+public abstract class IpNeboMaska {
+
+    /**
+     * Inner representation of ip adress.
+     */
+    protected int bytes;
 
     public IpNeboMaska(int bytes) {
         this.bytes = bytes;
     }
 
     /**
-     * Sezere string ve tvaru 1.2.3.4, procemz hlida pouze tecky a rozsah cisel.
+     * Ze stringu ve tvaru 1.2.3.4 vrati int vnitrni representace.
      * @param ret
      */
     protected int stringToBytes(String adr) throws BadIpException{
@@ -69,7 +73,8 @@ public class IpNeboMaska {
      * Copy construktor.
      * @return
      */
-    public IpNeboMaska copy() {
+    @Override
+    public IpNeboMaska clone() {
         return new IpNeboMaska(bytes);
     }
 
