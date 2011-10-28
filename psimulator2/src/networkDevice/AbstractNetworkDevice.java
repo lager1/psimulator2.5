@@ -4,12 +4,19 @@
 
 package networkDevice;
 
+import networkModule.NetworkModule;
+
 /**
  *
  * @author neiss
  */
 public class AbstractNetworkDevice {
 
+	String name;
+	PhysicalInterfaces physicalInterfaces;
+	NetworkModule networkModule;
+	ApplicationsList applications;
 
+	
 
 }
