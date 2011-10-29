@@ -3,7 +3,7 @@
  */
 package networkModule;
 
-import networkDataStructures.IpAdress;
+import networkDataStructures.ipAdresses.IpAdress;
 import networkDataStructures.L2Packet;
 import networkDataStructures.L3Packet;
 import physicalModule.AbstractNetworkInterface;

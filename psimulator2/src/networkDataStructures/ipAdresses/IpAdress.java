@@ -2,7 +2,7 @@
  * Erstellt am 27.10.2011.
  */
 
-package networkDataStructures;
+package networkDataStructures.ipAdresses;
 
 /**
  * Representation of IPv4 IP adress.
@@ -110,10 +110,6 @@ public class IpAdress {
             pole[i] = tmp >>> ((3 - i) * 8);
         }
         return pole;
-    }
-
-    public class BadIpException extends RuntimeException{
-
     }
 
 

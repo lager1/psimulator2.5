@@ -2,7 +2,7 @@
  * Erstellt am 28.10.2011.
  */
 
-package networkDataStructures;
+package networkDataStructures.ipAdresses;
 
 /**
  *
@@ -40,14 +40,14 @@ public class IPwithNetmask {
             }
         } else {  // je to s lomitkem, musi se to s nim zparsovat
             String adr = adrm.substring(0, lomitko);
-            ip=new IpAdress(adrm); //nastavuje se uz tady, aby prvni vyjimka se hazela na adresu
+            ip=new IpAdress(adr); //nastavuje se uz tady, aby prvni vyjimka se hazela na adresu
             String maska = adrm.substring(lomitko + 1, adrm.length());
             int m;
             //kontrola masky, jestli je to integer:
             try {
                 m = Integer.parseInt(maska);
             } catch (NumberFormatException ex) {
-                throw new IpNetmask.BadNetmaskException();
+                throw new BadNetmaskException();
             }
             if (moduloMaska) { //pripadne prepocitani masky:
                 m = m % 32;

@@ -2,7 +2,9 @@
  * Erstellt am 28.10.2011.
  */
 
-package networkDataStructures;
+package networkDataStructures.ipAdresses;
+
+import networkDataStructures.ipAdresses.IpAdress;
 
 /**
  *
@@ -10,8 +12,8 @@ package networkDataStructures;
  */
 public class IpNetmask extends IpAdress{
 
-    public IpNetmask(String ret) {
-        super(ret);
+    public IpNetmask(String dlouhejFormat) {
+        super(dlouhejFormat);
         if(! jeMaskou(bytes)){
             throw new BadNetmaskException();
         }
@@ -52,11 +54,6 @@ public class IpNetmask extends IpAdress{
         return false;
     }
 
-    
-
-    public class BadNetmaskException extends BadIpException{
-
-    }
 
 
 }
