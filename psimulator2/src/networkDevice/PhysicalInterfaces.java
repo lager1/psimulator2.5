@@ -5,6 +5,7 @@ package networkDevice;
 
 import java.util.ArrayList;
 import java.util.List;
+import networkModule.NetworkModule;
 import physicalModule.AbstractNetworkInterface;
 import psimulator2.WorkerThread;
 
@@ -13,27 +14,37 @@ import psimulator2.WorkerThread;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class PhysicalInterfaces extends WorkerThread {
-	
-	private List<AbstractNetworkInterface> ifaces;
 
-	public PhysicalInterfaces(List<AbstractNetworkInterface> ifaces) {
-		this.ifaces = ifaces;
+	private List<AbstractNetworkInterface> interfaceList;
+	private NetworkModule networkModule;
+
+	public PhysicalInterfaces(NetworkModule networkModule, List<AbstractNetworkInterface> ifaces) {
+		this.networkModule = networkModule;
+		this.interfaceList = ifaces;
 	}
-	
-	public PhysicalInterfaces() {
-		ifaces = new ArrayList<AbstractNetworkInterface>();
+
+	public PhysicalInterfaces(NetworkModule networkModule) {
+		this.networkModule = networkModule;
+		interfaceList = new ArrayList<AbstractNetworkInterface>();
 	}
-	
+
 	public void addInterface(AbstractNetworkInterface iface) {
-		ifaces.add(iface);
+		interfaceList.add(iface);
 	}
-	
+
 	public boolean removeInterface(AbstractNetworkInterface iface) {
-		return ifaces.remove(iface);
+		return interfaceList.remove(iface);
 	}
 
 	@Override
-	protected void doMyWork() { // TODO: dopsat obsluhu prichozich paketu - predavat je sitovemu modulu
-		throw new UnsupportedOperationException("Not supported yet.");
+	protected void doMyWork() { // TODO: dopsat obsluhu prichozich paketu - jen jedno kolecko nebo cyklus?
+
+		for (AbstractNetworkInterface iface : interfaceList) {
+			if (!iface.isBufferEmpty()) {
+				networkModule.acceptPacket(iface.getL2PacketFromBuffer(), iface);
+			}
+		}
+
+		throw new UnsupportedOperationException("Not implemented completaly yet.");
 	}
 }

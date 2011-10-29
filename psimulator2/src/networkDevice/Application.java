@@ -17,7 +17,7 @@ public abstract class Application extends WorkerThread {
 	public abstract boolean stop();
 	
 	/**
-	 * Restarts the application. Calls stop() then start()
+	 * Restarts the application. Calls stop() and then start()
 	 */
 	public boolean restart() {
 		boolean stop = stop();

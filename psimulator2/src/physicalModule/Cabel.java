@@ -15,7 +15,7 @@ public class Cabel {
 	AbstractNetworkInterface second;
 
 	/**
-	 * Delay in millisends
+	 * Delay in milliseconds
 	 */
 	long delay;
 	

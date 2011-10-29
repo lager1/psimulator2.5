@@ -26,8 +26,12 @@ public abstract class NetworkModule {
     public AbstractNetworkDevice getDevice() {
         return device;
     }
-
-    
+	
+	/**
+	 * Implementovat synchronizovane!
+	 * @param packet
+	 * @param iface 
+	 */
     public abstract void acceptPacket(L2Packet packet, AbstractNetworkInterface iface );
 
 }

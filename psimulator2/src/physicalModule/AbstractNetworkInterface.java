@@ -4,8 +4,13 @@
 package physicalModule;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import networkDataStructures.L2Packet;
+
 
 /**
  * 
@@ -16,9 +21,14 @@ public abstract class AbstractNetworkInterface {
 	private String name;
 	private Cabel cabel;
 	/**
+	 * For comparison of two interfaces
+	 * TODO: porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
+	 */
+	private UUID hash = UUID.randomUUID();
+	/**
 	 * buffer for incoming packets
 	 */
-	private final List<L2Packet> buffer;
+	private final Queue<L2Packet> buffer;
 
 	/**
 	 * Adds incoming packet to the buffer.
@@ -34,12 +44,12 @@ public abstract class AbstractNetworkInterface {
 	public AbstractNetworkInterface(String name, Cabel cabel) {
 		this.name = name;
 		this.cabel = cabel;
-		this.buffer = new ArrayList<L2Packet>();
+		this.buffer = new LinkedList<L2Packet>();
 	}
 
 	public AbstractNetworkInterface(String name) {
 		this.name = name;
-		this.buffer = new ArrayList<L2Packet>();
+		this.buffer = new LinkedList<L2Packet>();
 	}
 
 	public String getName() {
@@ -49,8 +59,39 @@ public abstract class AbstractNetworkInterface {
 	public Cabel getCabel() {
 		return cabel;
 	}
+	
+	/**
+	 * Return true if empty.
+	 * synchronized via buffer
+	 * @return 
+	 */
+	public boolean isBufferEmpty() {
+		synchronized (buffer) {
+			if (buffer.isEmpty()) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Return L2Packet or null (when empty)
+	 * synchronized via buffer
+	 * @return 
+	 */
+	public L2Packet getL2PacketFromBuffer() {
+		synchronized(buffer) {
+			return buffer.poll();
+		}
+	}
 
-	public void plugInCable(Cabel cabel) { // TODO: predelat co kam???
+	/**
+	 * Uniq UUID (something like hash, randomly generated)
+	 * @return 
+	 */
+	public UUID getHash() {
+		return hash;
+	}
+
+	public void plugInCable(Cabel cabel) { // TODO: predelat, u kabelu se to musi taky nastavit!
 		this.cabel = cabel;
 	}
 
@@ -63,27 +104,25 @@ public abstract class AbstractNetworkInterface {
 	}
 
 	/**
-	 * Compare using only by names
+	 * Compare ifaces by hash
 	 * @param obj
-	 * @return 
+	 * @return true if both interfaces has the same UUID (= the are the same interfaces on the same netw. device)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractNetworkInterface) {
 			AbstractNetworkInterface iface = (AbstractNetworkInterface) obj;
-			if (iface.name.equals(name)) {
+			if (this.getHash().equals(iface.getHash())) {
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
-
+	
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
-		return hash;
+		int mhash = 3;
+		mhash = 71 * mhash + (this.hash != null ? this.hash.hashCode() : 0);
+		return mhash;
 	}
 }
