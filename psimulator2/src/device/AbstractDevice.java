@@ -4,6 +4,7 @@
 
 package device;
 
+import physicalModule.PhysicalInterfaces;
 import networkModule.NetworkModule;
 
 /**

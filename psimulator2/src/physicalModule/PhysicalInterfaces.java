@@ -1,7 +1,7 @@
 /*
  * created 28.10.2011
  */
-package device;
+package physicalModule;
 
 import java.util.ArrayList;
 import java.util.List;
