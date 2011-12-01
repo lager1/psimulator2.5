@@ -70,7 +70,8 @@ public abstract class AbstractInterface {
 	}
 
 	/**
-	 * Return L2Packet or null (when empty)
+	 * Return L2Packet or null (when empty) - from cabel.
+	 *
 	 * synchronized via buffer
 	 * @return
 	 */

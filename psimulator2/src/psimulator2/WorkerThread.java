@@ -4,7 +4,7 @@
 package psimulator2;
 
 /**
- *
+ * Thread implements wake and run functions. It sleeps itselfs.
  * @author neiss
  */
 public abstract class WorkerThread implements Runnable {
@@ -19,6 +19,9 @@ public abstract class WorkerThread implements Runnable {
 
     protected abstract void doMyWork();
 
+	/**
+	 * Wakes thread.
+	 */
     protected synchronized void wake() {
         if (isRunning) {
             return;
