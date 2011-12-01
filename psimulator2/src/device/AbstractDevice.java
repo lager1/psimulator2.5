@@ -4,7 +4,7 @@
 
 package device;
 
-import physicalModule.PhysicalInterfaces;
+import physicalModule.PhysicalModule;
 import networkModule.NetworkModule;
 
 /**
@@ -14,7 +14,7 @@ import networkModule.NetworkModule;
 public class AbstractDevice {
 
 	String name;
-	PhysicalInterfaces physicalInterfaces;
+	PhysicalModule physicalModule;
 	NetworkModule networkModule;
 	ApplicationsList applications;
 

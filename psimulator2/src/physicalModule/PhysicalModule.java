@@ -13,17 +13,17 @@ import psimulator2.WorkerThread;
  * Seznam sitovych rozhrani reprezentujici fyzicke rozhrani
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class PhysicalInterfaces extends WorkerThread {
+public class PhysicalModule extends WorkerThread {
 
 	private List<AbstractInterface> interfaceList;
 	private NetworkModule networkModule;
 
-	public PhysicalInterfaces(NetworkModule networkModule, List<AbstractInterface> ifaces) {
+	public PhysicalModule(NetworkModule networkModule, List<AbstractInterface> ifaces) {
 		this.networkModule = networkModule;
 		this.interfaceList = ifaces;
 	}
 
-	public PhysicalInterfaces(NetworkModule networkModule) {
+	public PhysicalModule(NetworkModule networkModule) {
 		this.networkModule = networkModule;
 		interfaceList = new ArrayList<AbstractInterface>();
 	}
