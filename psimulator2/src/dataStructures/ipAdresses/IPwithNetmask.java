@@ -4,6 +4,7 @@
 
 package dataStructures.ipAdresses;
 
+
 /**
  *
  * @author neiss
@@ -12,6 +13,21 @@ public class IPwithNetmask {
 
     private IpAdress ip;
     private IpNetmask mask;
+
+	public IPwithNetmask(String adr) {
+        ip=new IpAdress(adr);
+        dopocitejMasku();
+    }
+
+    public IPwithNetmask(String adr, String maska) {
+        ip=new IpAdress(adr);
+        mask=new IpNetmask(maska);
+    }
+
+    public IPwithNetmask(String adr, int maska) {
+        ip=new IpAdress(adr);
+        mask=new IpNetmask(maska);
+    }
 
     /**
      * Vytvori adresu smaskou ze zadaneho Stringu, kde muze nebo nemusi byt zadana adresa za lomitkem. <br />
@@ -54,6 +70,29 @@ public class IPwithNetmask {
             }
             mask=new IpNetmask(m);  // nastaveni masky
         }
+    }
+
+	/**
+     * Dopocita masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
+     */
+    private void dopocitejMasku(){
+        mask=ip.dopocitejMasku();
+    }
+
+	public String getBroadcastAsString() {
+        return IpAdress.bytesToString(broadcast());
+    }
+
+	/**
+     * vraci 32 bitu adresy broadcastu site
+     * @return
+     */
+    private int broadcast() {
+        return (cisloSite() | (~(mask.getBytes())));
+    }
+
+	private int cisloSite() { //vraci 32bit integer
+        return mask.getBytes() & ip.getBytes();
     }
 
 

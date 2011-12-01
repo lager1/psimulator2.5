@@ -4,6 +4,7 @@
 
 package dataStructures.ipAdresses;
 
+
 /**
  * Representation of IPv4 IP adress.
  * @author neiss
@@ -26,8 +27,7 @@ public class IpAdress {
     /**
      * Only for construktor in IpNetmask
      */
-    protected IpAdress() {
-    }
+    protected IpAdress(){}
 
     /**
      * Returns a copy of this IP.
@@ -49,16 +49,14 @@ public class IpAdress {
      */
     @Override
     public String toString() {
-        int[]pole=jakoPole();
-        String ret = pole[0] + "." + pole[1] + "." + pole[2] + "." + pole[3];
-        return ret;
+        return bytesToString(bytes);
     }
 
     /**
      * Vrati dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
      */
     public IpNetmask dopocitejMasku(){
-        int bajt = jakoPole()[0]; //tady je ulozenej prvni bajt adresy
+        int bajt = bytesToArray(bytes)[0]; //tady je ulozenej prvni bajt adresy
         /*
             A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
             B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
@@ -102,7 +100,7 @@ public class IpAdress {
      * @param cislo
      * @return
      */
-    protected int[] jakoPole() { //prevadi adresu do citelny podoby
+    protected static int[] bytesToArray(int bytes) { //prevadi adresu do citelny podoby
         int[] pole = new int[4];
         int tmp;
         for (int i = 0; i < 4; i++) {
@@ -111,6 +109,15 @@ public class IpAdress {
         }
         return pole;
     }
+
+	protected static String arrayToString(int [] array){
+        String ret = array[0] + "." + array[1] + "." + array[2] + "." + array[3];
+        return ret;
+	}
+
+	protected static String bytesToString(int bytes){
+		return arrayToString(bytesToArray(bytes));
+	}
 
 
 

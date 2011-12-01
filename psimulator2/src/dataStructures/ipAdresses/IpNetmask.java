@@ -4,7 +4,6 @@
 
 package dataStructures.ipAdresses;
 
-import dataStructures.ipAdresses.IpAdress;
 
 /**
  *
