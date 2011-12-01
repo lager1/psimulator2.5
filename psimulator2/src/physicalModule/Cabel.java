@@ -14,6 +14,8 @@ public class Cabel {
 	AbstractInterface first;
 	AbstractInterface second;
 
+
+
 	/**
 	 * Delay in milliseconds
 	 */

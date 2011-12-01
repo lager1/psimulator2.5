@@ -22,31 +22,14 @@ public abstract class AbstractInterface {
 	 * TODO: porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
 	 */
 	private UUID hash = UUID.randomUUID();
-	/**
-	 * buffer for incoming packets
-	 */
-	private final Queue<L2Packet> buffer;
-
-	/**
-	 * Adds incoming packet to the buffer.
-	 * Sychronized via buffer.
-	 * @param packet
-	 */
-	public void addIncomingPacketToBuffer(L2Packet packet) {
-		synchronized (buffer) {
-			buffer.add(packet);
-		}
-	}
 
 	public AbstractInterface(String name, Cabel cabel) {
 		this.name = name;
 		this.cabel = cabel;
-		this.buffer = new LinkedList<L2Packet>();
 	}
 
 	public AbstractInterface(String name) {
 		this.name = name;
-		this.buffer = new LinkedList<L2Packet>();
 	}
 
 	public String getName() {
@@ -55,30 +38,6 @@ public abstract class AbstractInterface {
 
 	public Cabel getCabel() {
 		return cabel;
-	}
-
-	/**
-	 * Return true if empty.
-	 * synchronized via buffer
-	 * @return
-	 */
-	public boolean isBufferEmpty() {
-		synchronized (buffer) {
-			if (buffer.isEmpty()) return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Return L2Packet or null (when empty) - from cabel.
-	 *
-	 * synchronized via buffer
-	 * @return
-	 */
-	public L2Packet getL2PacketFromBuffer() {
-		synchronized(buffer) {
-			return buffer.poll();
-		}
 	}
 
 	/**
