@@ -5,9 +5,9 @@
 
 package networkModule;
 
-import networkDataStructures.L2Packet;
-import networkDevice.AbstractNetworkDevice;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.L2Packet;
+import device.AbstractDevice;
+import physicalModule.AbstractInterface;
 
 /**
  * Implementation of network module of generic simple switch.
@@ -15,12 +15,12 @@ import physicalModule.AbstractNetworkInterface;
  */
 public class GenericSwitchNetworkModule extends SwitchNetworkModule  {
 
-    public GenericSwitchNetworkModule(AbstractNetworkDevice device) {
+    public GenericSwitchNetworkModule(AbstractDevice device) {
         super(device);
     }
 
     @Override
-    public void acceptPacket(L2Packet packet, AbstractNetworkInterface iface) {
+    public void acceptPacket(L2Packet packet, AbstractInterface iface) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

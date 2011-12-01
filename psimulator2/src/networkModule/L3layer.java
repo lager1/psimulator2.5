@@ -5,8 +5,8 @@
 package networkModule;
 
 import java.util.List;
-import networkDataStructures.L2Packet;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.L2Packet;
+import physicalModule.AbstractInterface;
 
 /**
  *

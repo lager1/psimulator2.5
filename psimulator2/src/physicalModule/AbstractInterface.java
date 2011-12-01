@@ -3,20 +3,17 @@
  */
 package physicalModule;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import networkDataStructures.L2Packet;
+import dataStructures.L2Packet;
 
 
 /**
- * 
+ *
  * @author neiss
  */
-public abstract class AbstractNetworkInterface {
+public abstract class AbstractInterface {
 
 	private String name;
 	private Cabel cabel;
@@ -33,7 +30,7 @@ public abstract class AbstractNetworkInterface {
 	/**
 	 * Adds incoming packet to the buffer.
 	 * Sychronized via buffer.
-	 * @param packet 
+	 * @param packet
 	 */
 	public void addIncomingPacketToBuffer(L2Packet packet) {
 		synchronized (buffer) {
@@ -41,13 +38,13 @@ public abstract class AbstractNetworkInterface {
 		}
 	}
 
-	public AbstractNetworkInterface(String name, Cabel cabel) {
+	public AbstractInterface(String name, Cabel cabel) {
 		this.name = name;
 		this.cabel = cabel;
 		this.buffer = new LinkedList<L2Packet>();
 	}
 
-	public AbstractNetworkInterface(String name) {
+	public AbstractInterface(String name) {
 		this.name = name;
 		this.buffer = new LinkedList<L2Packet>();
 	}
@@ -59,11 +56,11 @@ public abstract class AbstractNetworkInterface {
 	public Cabel getCabel() {
 		return cabel;
 	}
-	
+
 	/**
 	 * Return true if empty.
 	 * synchronized via buffer
-	 * @return 
+	 * @return
 	 */
 	public boolean isBufferEmpty() {
 		synchronized (buffer) {
@@ -71,11 +68,11 @@ public abstract class AbstractNetworkInterface {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return L2Packet or null (when empty)
 	 * synchronized via buffer
-	 * @return 
+	 * @return
 	 */
 	public L2Packet getL2PacketFromBuffer() {
 		synchronized(buffer) {
@@ -85,7 +82,7 @@ public abstract class AbstractNetworkInterface {
 
 	/**
 	 * Uniq UUID (something like hash, randomly generated)
-	 * @return 
+	 * @return
 	 */
 	public UUID getHash() {
 		return hash;
@@ -110,15 +107,15 @@ public abstract class AbstractNetworkInterface {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof AbstractNetworkInterface) {
-			AbstractNetworkInterface iface = (AbstractNetworkInterface) obj;
+		if (obj instanceof AbstractInterface) {
+			AbstractInterface iface = (AbstractInterface) obj;
 			if (this.getHash().equals(iface.getHash())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int mhash = 3;

@@ -4,9 +4,9 @@
 
 package networkModule;
 
-import networkDataStructures.L2Packet;
-import networkDevice.AbstractNetworkDevice;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.L2Packet;
+import device.AbstractDevice;
+import physicalModule.AbstractInterface;
 
 //TODO: napsat javadoc
 /**
@@ -17,21 +17,21 @@ import physicalModule.AbstractNetworkInterface;
  */
 public abstract class NetworkModule {
 
-    protected AbstractNetworkDevice device;
+    protected AbstractDevice device;
 
-    public NetworkModule(AbstractNetworkDevice device) {
+    public NetworkModule(AbstractDevice device) {
         this.device = device;
     }
 
-    public AbstractNetworkDevice getDevice() {
+    public AbstractDevice getDevice() {
         return device;
     }
-	
+
 	/**
 	 * Implementovat synchronizovane!
 	 * @param packet
-	 * @param iface 
+	 * @param iface
 	 */
-    public abstract void acceptPacket(L2Packet packet, AbstractNetworkInterface iface );
+    public abstract void acceptPacket(L2Packet packet, AbstractInterface iface );
 
 }

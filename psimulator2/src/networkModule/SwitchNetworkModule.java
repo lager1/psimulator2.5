@@ -4,9 +4,9 @@
 
 package networkModule;
 
-import networkDataStructures.L2Packet;
-import networkDevice.AbstractNetworkDevice;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.L2Packet;
+import device.AbstractDevice;
+import physicalModule.AbstractInterface;
 
 /**
  *
@@ -14,12 +14,12 @@ import physicalModule.AbstractNetworkInterface;
  */
 public abstract class SwitchNetworkModule extends NetworkModule{
 
-    public SwitchNetworkModule(AbstractNetworkDevice device) {
+    public SwitchNetworkModule(AbstractDevice device) {
         super(device);
     }
 
-    
 
-    public abstract void acceptPacket(L2Packet packet, AbstractNetworkInterface iface);
+
+    public abstract void acceptPacket(L2Packet packet, AbstractInterface iface);
 
 }

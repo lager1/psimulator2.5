@@ -5,7 +5,7 @@
 package networkModule;
 //TODO: prejmenovat, ud2lat javadoc
 
-import networkDevice.AbstractNetworkDevice;
+import device.AbstractDevice;
 
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
@@ -13,11 +13,11 @@ import networkDevice.AbstractNetworkDevice;
  */
 public abstract class NetworkModuleForAplications extends NetworkModule {
 
-    public NetworkModuleForAplications(AbstractNetworkDevice device) {
+    public NetworkModuleForAplications(AbstractDevice device) {
         super(device);
     }
 
-    
+
 
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema

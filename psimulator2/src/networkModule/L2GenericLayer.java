@@ -3,10 +3,10 @@
  */
 package networkModule;
 
-import networkDataStructures.ipAdresses.IpAdress;
-import networkDataStructures.L2Packet;
-import networkDataStructures.L3Packet;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.ipAdresses.IpAdress;
+import dataStructures.L2Packet;
+import dataStructures.L3Packet;
+import physicalModule.AbstractInterface;
 
 /**
  *
@@ -24,12 +24,12 @@ public class L2GenericLayer extends L2layer {
     }
 
 	@Override
-	public void receivePacket(L2Packet packet, AbstractNetworkInterface iface) {
+	public void receivePacket(L2Packet packet, AbstractInterface iface) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void vyridPacket(L3Packet packet, AbstractNetworkInterface iface, IpAdress nextHop) {
+	public void vyridPacket(L3Packet packet, AbstractInterface iface, IpAdress nextHop) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

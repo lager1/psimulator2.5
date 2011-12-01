@@ -4,10 +4,10 @@
 
 package networkModule;
 
-import networkDataStructures.ipAdresses.IpAdress;
-import networkDataStructures.L2Packet;
-import networkDataStructures.L3Packet;
-import physicalModule.AbstractNetworkInterface;
+import dataStructures.ipAdresses.IpAdress;
+import dataStructures.L2Packet;
+import dataStructures.L3Packet;
+import physicalModule.AbstractInterface;
 
 /**
  *
@@ -22,13 +22,13 @@ public abstract class L2layer extends Layer {
     /**
      * Prijima pakety od nizsi vrstvy.
      */
-    public abstract void receivePacket(L2Packet packet, AbstractNetworkInterface iface);
+    public abstract void receivePacket(L2Packet packet, AbstractInterface iface);
 
     /**
      * Prijima pakety od vyssi vrstvy.
      */
-    public abstract void vyridPacket(L3Packet packet, AbstractNetworkInterface iface,IpAdress nextHop);
-    
+    public abstract void vyridPacket(L3Packet packet, AbstractInterface iface,IpAdress nextHop);
+
 
 
 

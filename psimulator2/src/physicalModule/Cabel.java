@@ -3,56 +3,56 @@
  */
 package physicalModule;
 
-import networkDataStructures.L2Packet;
+import dataStructures.L2Packet;
 
 /**
  * Represents cabel
- * 
+ *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Cabel {
-	AbstractNetworkInterface first;
-	AbstractNetworkInterface second;
+	AbstractInterface first;
+	AbstractInterface second;
 
 	/**
 	 * Delay in milliseconds
 	 */
 	long delay;
-	
+
 	public Cabel() {
 		this.delay = (long) Math.random() * 10;
 	}
-	
-	public void setFirstInterface(AbstractNetworkInterface iface) {
+
+	public void setFirstInterface(AbstractInterface iface) {
 		this.first = iface;
 	}
-	
-	public void setSecondInterface(AbstractNetworkInterface iface) {
+
+	public void setSecondInterface(AbstractInterface iface) {
 		this.second = iface;
 	}
-	
+
 	/**
 	 * Transport packet to the interface at the end of the cabel.
 	 * @param packet for transport
 	 * @param iface source inteface (sending interface)
-	 * @return 
+	 * @return
 	 */
-	public boolean transportPacket(L2Packet packet, AbstractNetworkInterface iface) {
-		AbstractNetworkInterface target = getTarget(iface);
+	public boolean transportPacket(L2Packet packet, AbstractInterface iface) {
+		AbstractInterface target = getTarget(iface);
 		if (target == null) return false;
-		
+
 		makeDelay();
-		
+
 		target.addIncomingPacketToBuffer(packet);
 		return true;
 	}
-	
+
 	/**
 	 * Returns the other interface (interface at the end of the cabel).
 	 * @param iface sending interface
-	 * @return 
+	 * @return
 	 */
-	private AbstractNetworkInterface getTarget(AbstractNetworkInterface iface) {
+	private AbstractInterface getTarget(AbstractInterface iface) {
 		if (first.equals(iface)) {
 			return second;
 		} else {
