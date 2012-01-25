@@ -10,18 +10,22 @@ import dataStructures.L2Packet;
 
 
 /**
+ * Represents physical network interface.
+ * Sends and receives packet through cabel.
+ *
+ * It is not running in its own thread, thread of PhysicMod handles it.
  *
  * @author neiss
  */
 public abstract class AbstractInterface {
 
-	private String name;
-	private Cabel cabel;
+	protected String name;
+	protected Cabel cabel;
 	/**
 	 * For comparison of two interfaces
 	 * TODO: porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
 	 */
-	private UUID hash = UUID.randomUUID();
+	protected UUID hash = UUID.randomUUID();
 
 	public AbstractInterface(String name, Cabel cabel) {
 		this.name = name;
@@ -49,6 +53,7 @@ public abstract class AbstractInterface {
 	}
 
 	public void plugInCable(Cabel cabel) { // TODO: predelat, u kabelu se to musi taky nastavit!
+		assert cabel != null;
 		this.cabel = cabel;
 	}
 
@@ -56,9 +61,7 @@ public abstract class AbstractInterface {
 	 * Try to send packet thgroug this interfaces
 	 * @return true if packet was delivered to the interface at the end of cable
 	 */
-	public boolean sendPacket(L2Packet packet) {
-		return cabel.transportPacket(packet, this);
-	}
+	public abstract boolean sendPacket(L2Packet packet);
 
 	/**
 	 * Compare ifaces by hash

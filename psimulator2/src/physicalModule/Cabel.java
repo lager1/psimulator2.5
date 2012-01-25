@@ -14,8 +14,6 @@ public class Cabel {
 	AbstractInterface first;
 	AbstractInterface second;
 
-
-
 	/**
 	 * Delay in milliseconds
 	 */
@@ -35,7 +33,7 @@ public class Cabel {
 
 	/**
 	 * Transport packet to the interface at the end of the cabel.
-	 * @param packet for transport
+	 * @param packet for transportation
 	 * @param iface source inteface (sending interface)
 	 * @return
 	 */

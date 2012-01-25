@@ -3,15 +3,17 @@
  */
 package device;
 
+import psimulator2.SmartRunnable;
 import psimulator2.WorkerThread;
 
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public abstract class Application extends WorkerThread {
+public abstract class Application implements SmartRunnable {
 	private int PID;
 	private String name;
+	private WorkerThread worker = new WorkerThread(this);
 
 	public abstract boolean start();
 	public abstract boolean stop();

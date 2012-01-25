@@ -10,16 +10,17 @@ import physicalModule.AbstractInterface;
 
 //TODO: napsat javadoc
 /**
+ * Nejabstraknejsi ze sitovejch modulu.
  * Interface representující síťový modul počítače bez rozhraní pro aplikační vrstvu, prakticky
  * tedy použitelnej jen pro switch.
  * Síťový modul zajišťuje síťovou komunikaci na 2.,3. a 4. vrstvě ISO/OSI modelu.
  * @author neiss
  */
-public abstract class NetworkModule {
+public abstract class NetMod {
 
     protected AbstractDevice device;
 
-    public NetworkModule(AbstractDevice device) {
+    public NetMod(AbstractDevice device) {
         this.device = device;
     }
 
@@ -32,6 +33,5 @@ public abstract class NetworkModule {
 	 * @param packet
 	 * @param iface
 	 */
-    public abstract void acceptPacket(L2Packet packet, AbstractInterface iface );
-
+    public abstract void acceptPacket(L2Packet packet, AbstractInterface iface);
 }

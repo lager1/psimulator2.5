@@ -13,9 +13,9 @@ import physicalModule.AbstractInterface;
  * Implementation of network module of generic simple switch.
  * @author neiss
  */
-public class GenericSwitchNetworkModule extends SwitchNetworkModule  {
+public class SimpleSwitchNetMod extends NetMod  {
 
-    public GenericSwitchNetworkModule(AbstractDevice device) {
+    public SimpleSwitchNetMod(AbstractDevice device) {
         super(device);
     }
 
@@ -23,5 +23,4 @@ public class GenericSwitchNetworkModule extends SwitchNetworkModule  {
     public void acceptPacket(L2Packet packet, AbstractInterface iface) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

@@ -10,4 +10,10 @@ package dataStructures;
  */
 class L4Packet {
 
+	int getSize() {
+		int sum = 0;
+		// TODO: pridat velikost tohoto paketu
+		return sum;
+	}
+
 }

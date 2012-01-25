@@ -4,8 +4,8 @@
 
 package device;
 
-import physicalModule.PhysicalModule;
-import networkModule.NetworkModule;
+import physicalModule.PhysicMod;
+import networkModule.NetMod;
 
 /**
  *
@@ -14,8 +14,8 @@ import networkModule.NetworkModule;
 public class AbstractDevice {
 
 	String name;
-	PhysicalModule physicalModule;
-	NetworkModule networkModule;
+	PhysicMod physicalModule;
+	NetMod networkModule;
 	ApplicationsList applications;
 
 

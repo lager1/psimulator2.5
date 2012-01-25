@@ -10,15 +10,15 @@ import psimulator2.WorkerThread;
  *
  * @author neiss
  */
-public abstract class Layer extends WorkerThread {
+public abstract class Layer {
 
-    protected NetworkModule networkModule;
+    protected NetMod netMod;
 
-    public Layer(NetworkModule networkModule) {
-        this.networkModule = networkModule;
+    public Layer(NetMod netMod) {
+        this.netMod = netMod;
     }
 
-    public NetworkModule getNetworkModule() {
-        return networkModule;
+    public NetMod getNetMod() {
+        return netMod;
     }
 }

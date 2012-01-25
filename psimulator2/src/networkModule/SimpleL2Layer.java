@@ -12,14 +12,13 @@ import physicalModule.AbstractInterface;
  *
  * @author neiss
  */
-public class L2GenericLayer extends L2layer {
+public class SimpleL2Layer extends L2layer {
 
-    public L2GenericLayer(NetworkModule networkModule) {
+    public SimpleL2Layer(NetMod networkModule) {
         super(networkModule);
     }
 
-    @Override
-    protected void doMyWork() {
+    public void doMyWork() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -29,7 +28,7 @@ public class L2GenericLayer extends L2layer {
 	}
 
 	@Override
-	public void vyridPacket(L3Packet packet, AbstractInterface iface, IpAdress nextHop) {
+	public void acceptPacket(L3Packet packet, AbstractInterface iface, IpAdress nextHop) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

@@ -7,22 +7,25 @@ package psimulator2;
  * Thread implements wake and run functions. It sleeps itselfs.
  * @author neiss
  */
-public abstract class WorkerThread implements Runnable {
+public final class WorkerThread implements Runnable {
 
     private Thread myThread;
     private volatile boolean isRunning = false;
+	private SmartRunnable worker;
 
-    public WorkerThread() {
+    public WorkerThread(SmartRunnable worker) {
+		assert worker != null;
+		this.worker = worker;
         myThread = new Thread(this);
         myThread.start();
     }
 
-    protected abstract void doMyWork();
+
 
 	/**
 	 * Wakes thread.
 	 */
-    protected synchronized void wake() {
+    public synchronized void wake() {
         if (isRunning) {
             return;
         } else {
@@ -31,9 +34,13 @@ public abstract class WorkerThread implements Runnable {
         }
     }
 
+	/**
+	 * This function should be never called!
+	 * It is called automaticaly thread management.
+	 */
     public void run() {
         while (true) {
-            doMyWork();
+            worker.doMyWork();
             synchronized (this) {
                 isRunning = false;
                 while (!isRunning) {

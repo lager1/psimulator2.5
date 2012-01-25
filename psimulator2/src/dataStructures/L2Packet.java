@@ -12,4 +12,11 @@ public abstract class L2Packet {
 
     L3Packet data;
 
+	public int getSize() {
+		int sum = 0;
+		// TODO: pridat velikost tohoto paketu
+
+		return sum + (data != null ? data.getSize() : 0);
+	}
+
 }

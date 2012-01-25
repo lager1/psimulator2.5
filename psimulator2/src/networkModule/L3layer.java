@@ -7,15 +7,19 @@ package networkModule;
 import java.util.List;
 import dataStructures.L2Packet;
 import physicalModule.AbstractInterface;
+import psimulator2.SmartRunnable;
+import psimulator2.WorkerThread;
 
 /**
  *
  * @author neiss
  */
-public abstract class L3layer extends Layer {
+public abstract class L3layer extends Layer implements SmartRunnable {
 
-    public L3layer(NetworkModule networkModule) {
-        super(networkModule);
+	private WorkerThread worker = new WorkerThread(this);
+
+    public L3layer(NetMod netMod) {
+        super(netMod);
     }
 
     /**

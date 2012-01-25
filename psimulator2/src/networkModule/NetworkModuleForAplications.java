@@ -11,7 +11,7 @@ import device.AbstractDevice;
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
  * @author neiss
  */
-public abstract class NetworkModuleForAplications extends NetworkModule {
+public abstract class NetworkModuleForAplications extends NetMod {
 
     public NetworkModuleForAplications(AbstractDevice device) {
         super(device);
