@@ -3,7 +3,7 @@
  */
 package networkModule;
 
-import dataStructures.ipAdresses.IpAdress;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
 import physicalModule.AbstractInterface;
@@ -30,5 +30,5 @@ public abstract class L2layer extends Layer implements SmartRunnable {
 	/**
 	 * Prijima pakety od vyssi vrstvy.
 	 */
-	public abstract void acceptPacket(L3Packet packet, AbstractInterface iface, IpAdress nextHop);
+	public abstract void acceptPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop);
 }

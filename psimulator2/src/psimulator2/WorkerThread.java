@@ -22,9 +22,9 @@ public final class WorkerThread implements Runnable {
 
 
 
-	/**
-	 * Wakes thread.
-	 */
+    /**
+     * Wakes thread.
+     */
     public synchronized void wake() {
         if (isRunning) {
             return;

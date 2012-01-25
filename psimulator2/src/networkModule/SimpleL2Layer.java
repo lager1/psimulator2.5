@@ -3,7 +3,7 @@
  */
 package networkModule;
 
-import dataStructures.ipAdresses.IpAdress;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
 import physicalModule.AbstractInterface;
@@ -28,7 +28,7 @@ public class SimpleL2Layer extends L2layer {
 	}
 
 	@Override
-	public void acceptPacket(L3Packet packet, AbstractInterface iface, IpAdress nextHop) {
+	public void acceptPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
