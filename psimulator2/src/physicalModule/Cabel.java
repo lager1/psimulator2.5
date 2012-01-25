@@ -43,7 +43,8 @@ public class Cabel {
 
 		makeDelay();
 
-		target.addIncomingPacketToBuffer(packet);
+		// TODO dodelat cabelaz
+//		target.addIncomingPacketToBuffer(packet);
 		return true;
 	}
 
