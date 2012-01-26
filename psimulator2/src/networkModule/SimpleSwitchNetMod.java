@@ -20,7 +20,7 @@ public class SimpleSwitchNetMod extends NetMod  {
     }
 
     @Override
-    public void acceptPacket(L2Packet packet, AbstractInterface iface) {
+    public void receivePacket(L2Packet packet, AbstractInterface iface) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

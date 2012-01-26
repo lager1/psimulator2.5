@@ -20,11 +20,9 @@ public final class WorkerThread implements Runnable {
         myThread.start();
     }
 
-
-
-    /**
-     * Wakes thread.
-     */
+	/**
+	 * Wakes thread so it can work.
+	 */
     public synchronized void wake() {
         if (isRunning) {
             return;
@@ -36,7 +34,7 @@ public final class WorkerThread implements Runnable {
 
 	/**
 	 * This function should be never called!
-	 * It is called automaticaly thread management.
+	 * It is called automaticaly by thread management.
 	 */
     public void run() {
         while (true) {

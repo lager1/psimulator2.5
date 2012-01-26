@@ -15,6 +15,8 @@ import psimulator2.WorkerThread;
 /**
  * Seznam sitovych rozhrani reprezentujici fyzicke rozhrani
  *
+ * TODO: PhysicMod: pak nejak poresit velikosti bufferu
+ *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class PhysicMod implements SmartRunnable {
@@ -29,54 +31,89 @@ public class PhysicMod implements SmartRunnable {
 			this.iface = iface;
 		}
 	}
+	/**
+	 * List of interfaces.
+	 */
 	private List<AbstractInterface> interfaceList;
+	/**
+	 * Network module.
+	 */
 	private NetMod netMod;
+	/**
+	 * Queue for incomming packets from cabels.
+	 */
 	private final Queue<Item> fromCabels = new LinkedList<Item>();
+	/**
+	 * Queue for incomming packets from network module.
+	 */
 	private final Queue<Item> fromNetMod = new LinkedList<Item>();
+	/**
+	 * Working thread.
+	 */
 	private WorkerThread worker = new WorkerThread(this);
 
-	public PhysicMod(NetMod networkModule, List<AbstractInterface> ifaces) {
-		this.netMod = networkModule;
+	public PhysicMod(NetMod netMod, List<AbstractInterface> ifaces) {
+		this.netMod = netMod;
 		this.interfaceList = ifaces;
 	}
 
-	public PhysicMod(NetMod networkModule) {
-		this.netMod = networkModule;
+	public PhysicMod(NetMod netMod) {
+		this.netMod = netMod;
 		this.interfaceList = new ArrayList<AbstractInterface>();
 	}
 
 	/**
-	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer.
+	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
 	 *
 	 * @param packet to receive
 	 * @param iface which receives packet
 	 */
 	public void receivePacket(L2Packet packet, AbstractInterface iface) {
-		// TODO: wake
 		synchronized (fromCabels) {
 			fromCabels.add(new Item(packet, iface));
 		}
+		worker.wake();
 	}
 
 	/**
 	 * Adds incoming packet from network module to the buffer and then try to send it via cabel. Sychronized via buffer.
+	 * Wakes worker.
 	 *
 	 * @param packet to send via physical module
 	 * @param iface through it will be send
 	 */
 	public void sendPacket(L2Packet packet, AbstractInterface iface) {
-		// TODO: wake
 		synchronized (fromNetMod) {
 			fromNetMod.add(new Item(packet, iface));
+		}
+		worker.wake();
+	}
+
+	public void doMyWork() {
+
+		while (!isEmptyFromCabel() || !isEmptyFromNetMod()) {
+			if (!isEmptyFromCabel()) {
+				synchronized (fromCabels) {
+					Item m = fromCabels.remove();
+					netMod.receivePacket(m.packet, m.iface);
+				}
+			}
+
+			if (!isEmptyFromNetMod()) {
+				synchronized (fromNetMod) {
+					Item m = fromNetMod.remove();
+					m.iface.sendPacket(m.packet);
+				}
+			}
 		}
 	}
 
 	/**
-	 * Return true if empty. synchronized via buffer
+	 * Return true if empty. synchronized via buffer TODO: ma byt synchronizovane?
 	 *
 	 * @return
 	 */
-	private boolean isBufferFromCabelEmpty() {
+	private boolean isEmptyFromCabel() {
 		synchronized (fromCabels) {
 			if (fromCabels.isEmpty()) {
 				return true;
@@ -86,11 +123,11 @@ public class PhysicMod implements SmartRunnable {
 	}
 
 	/**
-	 * Return true if empty. synchronized via buffer
+	 * Return true if empty. synchronized via buffer TODO: ma byt synchronizovane?
 	 *
 	 * @return
 	 */
-	private boolean isBufferFromNetworkModuleEmpty() {
+	private boolean isEmptyFromNetMod() {
 		synchronized (fromNetMod) {
 			if (fromNetMod.isEmpty()) {
 				return true;
@@ -105,34 +142,5 @@ public class PhysicMod implements SmartRunnable {
 
 	public boolean removeInterface(AbstractInterface iface) {
 		return interfaceList.remove(iface);
-	}
-
-	public void doMyWork() { // TODO: dopsat obsluhu prichozich paketu - jen jedno kolecko nebo cyklus?
-
-
-		// dokud neco bude tak makam
-		// osetrit null
-		// nez skoncim, tak kontroluju, zda tam neco je
-
-		synchronized (fromCabels) {
-			Item m = fromCabels.poll(); // TODO null
-			netMod.acceptPacket(m.packet, m.iface);
-		}
-
-		synchronized (fromNetMod) {
-			Item m = fromNetMod.poll();
-			m.iface.sendPacket(m.packet);
-		}
-
-
-
-//		while(!isBufferFromCabelEmpty()) {
-//			synchronized(fromCabels) {
-//				Item m = fromCabels.poll();
-//				netMod.acceptPacket(m.packet, m.iface);
-//			}
-//		}
-//
-		throw new UnsupportedOperationException("Not implemented completaly yet.");
 	}
 }

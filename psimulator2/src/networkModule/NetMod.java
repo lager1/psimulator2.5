@@ -33,5 +33,5 @@ public abstract class NetMod {
 	 * @param packet
 	 * @param iface
 	 */
-    public abstract void acceptPacket(L2Packet packet, AbstractInterface iface);
+    public abstract void receivePacket(L2Packet packet, AbstractInterface iface);
 }
