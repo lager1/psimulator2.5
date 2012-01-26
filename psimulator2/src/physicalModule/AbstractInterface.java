@@ -9,7 +9,7 @@ import dataStructures.L2Packet;
 
 /**
  * Represents physical network interface.
- * Sends and receives packet through cabel.
+ * Sends and receives packet through cable.
  *
  * It is not running in its own thread, thread of PhysicMod handles it.
  *
@@ -18,13 +18,16 @@ import dataStructures.L2Packet;
 public abstract class AbstractInterface {
 
 	protected String name;
-	protected Cabel cabel;
 	protected PhysicMod physicMod;
+	/**
+	 * Link to cable's connector.
+	 * Until cable is not connected ti is null.
+	 */
+	protected Connector connector;
 
-
-	public AbstractInterface(String name, Cabel cabel, PhysicMod physicMod) {
+	public AbstractInterface(String name, Connector connector, PhysicMod physicMod) {
 		this.name = name;
-		this.cabel = cabel; // tady
+		this.connector = connector;
 		this.physicMod = physicMod;
 	}
 
@@ -37,23 +40,14 @@ public abstract class AbstractInterface {
 		return name;
 	}
 
-	public Cabel getCabel() {
-		return cabel;
-	}
-
-	public void setCabel(Cabel cabel) { // TODO: predelat, u kabelu se to musi taky nastavit!
-		assert cabel != null;
-		this.cabel = cabel; // tady
-	}
-
 	/**
 	 * Try to send packet through this interface.
-	 * It just adds packet to buffer (if capacity allows) and notifies connected cabel that it has work to do.
+	 * It just adds packet to buffer (if capacity allows) and notifies connected cable that it has work to do.
 	 */
 	public abstract void sendPacket(L2Packet packet);
 
 	/**
-	 * Receives packet from cabel and pass it to physical module.
+	 * Receives packet from cable and pass it to physical module.
 	 */
 	public abstract void receivePacket(L2Packet packet);
 

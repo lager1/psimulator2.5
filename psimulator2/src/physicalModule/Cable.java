@@ -8,74 +8,65 @@ import psimulator2.SmartRunnable;
 import psimulator2.WorkerThread;
 
 /**
- * Represents cabel
+ * Represents cable
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class Cabel implements SmartRunnable {
-	AbstractInterface first;
-	AbstractInterface second;
+public class Cable implements SmartRunnable {
+
+	Connector firstCon = new Connector(this);
+	Connector SecondCon = new Connector(this);
 
 	WorkerThread worker = new WorkerThread(this);
 
 	/**
 	 * Delay in milliseconds
 	 */
-	long delay;
+	private long delay;
 
 	/**
-	 * Creates cabel with random delay time.
+	 * Creates cable with random delay time.
 	 */
-	public Cabel() {
+	public Cable() {
 		this.delay = (long) Math.random() * 10;
 	}
 
 	/**
-	 * Creates cabel with given delay time.
+	 * Creates cable with given delay time.
 	 * @param delay
 	 */
-	public Cabel(long delay) {
-		this.delay = delay;
-	}
-
-	/**
-	 * Creates cabel with 2 connected interfaces and with delay time.
-	 * @param first cannot be null
-	 * @param second cannot be null
- 	 * @param delay
-	 */
-	public Cabel(AbstractInterface first, AbstractInterface second, long delay) {
-		assert first != null;
-		assert second != null;
-
-		this.first = first;
-		this.first.cabel = this;
-		this.second = second;
-		this.second.cabel = this;
-
+	public Cable(long delay) {
 		this.delay = delay;
 	}
 
 	/*
-	 * Sets first interface with given iface.
-	 * Also sets given interface to this cabel.
+	 * Sets first connector with given interface.
+	 * Also sets interface's connector to correct connector.
 	 * @param iface cannot be null
+	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public void setFirstInterface(AbstractInterface iface) {
+	public boolean setFirstInterface(AbstractInterface iface) {
 		assert iface != null;
-		this.first = iface;
-		iface.cabel = this;
+		boolean res = firstCon.connectInterface(iface);
+		if (res) {
+			iface.connector = firstCon;
+		}
+		return res;
 	}
 
 	/*
-	 * Sets second interface with given iface.
-	 * Also sets given interface to this cabel.
+	 * Sets second connector with given interface.
+	 * Also sets interface's connector to correct connector.
 	 * @param iface cannot be null
+	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public void setSecondInterface(AbstractInterface iface) {
+	public boolean setSecondInterface(AbstractInterface iface) {
 		assert iface != null;
-		this.second = iface;
-		iface.cabel = this;
+		boolean res = SecondCon.connectInterface(iface);
+		if (res) {
+			iface.connector = SecondCon;
+		}
+		return res;
 	}
 
 	public void doMyWork() {
@@ -84,6 +75,9 @@ public class Cabel implements SmartRunnable {
 		boolean secondIsEmpty = true;
 
 		do {
+			AbstractInterface first = firstCon.getInterface(); // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
+			AbstractInterface second = SecondCon.getInterface();
+
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();
 				if (second != null) {

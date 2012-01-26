@@ -6,16 +6,17 @@ package physicalModule;
 import dataStructures.L2Packet;
 import java.util.LinkedList;
 import java.util.Queue;
-import networkModule.NetMod;
 
 /**
+ * Represents commnon interface of this simulator.
+ * For interface connected to real network implement your own class.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Interface extends AbstractInterface {
 
-	public Interface(String name, Cabel cabel, PhysicMod physicMod) {
-		super(name, cabel, physicMod);
+	public Interface(String name, Connector connector, PhysicMod physicMod) {
+		super(name, connector, physicMod);
 	}
 
 	public Interface(String name, PhysicMod physicMod) {
@@ -44,19 +45,19 @@ public class Interface extends AbstractInterface {
 	@Override
 	public void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
-		if (size + packetSize > capacity) { // drop packet, run out of capacity
+		if ((size + packetSize > capacity) || connector == null) { // (drop packet, run out of capacity) || (no cable is connected)
 			dropped++;
 		} else {
 			size += packetSize;
 			synchronized (buffer) {
 				buffer.add(packet);
 			}
-			cabel.worker.wake();
+			connector.getCable().worker.wake();
 		}
 	}
 
 	/**
-	 * Receives packet from cabel and pass it to physical module.
+	 * Receives packet from cable and pass it to physical module.
 	 */
 	@Override
 	public void receivePacket(L2Packet packet) {
