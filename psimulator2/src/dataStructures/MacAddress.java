@@ -74,11 +74,20 @@ public class MacAddress {
         return true;
     }
     
-//    public boolean isLessThan(MacAddress other){
-//        
-//    }
-//    
-//    private boolean isByteLessThan
+    /**
+     * Porovnavani.
+     * @param other
+     * @return 
+     */
+    public boolean isLessOrEqualThan(MacAddress other){
+        return isByteLessThan(other, 0);
+    }
+    private boolean isByteLessThan(MacAddress other, int cisloBytu){
+        if(representation[cisloBytu]<other.representation[cisloBytu]) return true;
+        else if (representation[cisloBytu]>other.representation[cisloBytu]) return false;
+        else if (cisloBytu<5) return isByteLessThan(other, cisloBytu+1);
+        else return true;
+    }
 
 // staticky metody ----------------------------------------------------------------------------------------
     

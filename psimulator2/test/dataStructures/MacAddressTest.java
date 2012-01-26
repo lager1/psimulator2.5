@@ -68,4 +68,22 @@ public class MacAddressTest {
          mac = new MacAddress(sm);
          assertFalse(MacAddress.isBroadcast(mac));
      }
+     
+     @Test
+     public void testPorovnavani(){
+         String prvni, druha;
+         
+         prvni = "1a:4c:05:49:ad:f9";
+         druha = "1A:4C:05:49:AD:F9";
+         assertTrue(new MacAddress(prvni).isLessOrEqualThan(new MacAddress(druha)));
+         assertTrue(new MacAddress(prvni).equals(new MacAddress(druha)));
+         
+         prvni = "1a:4c:05:49:ad:f8";
+         druha = "1A:4C:05:49:AD:F9";
+         assertTrue(new MacAddress(prvni).isLessOrEqualThan(new MacAddress(druha)));
+         
+         prvni = "1a:4c:05:49:ad:fa";
+         druha = "1A:4C:05:49:AD:F9";
+         assertFalse(new MacAddress(prvni).isLessOrEqualThan(new MacAddress(druha)));
+     }
 }
