@@ -6,6 +6,7 @@ package networkModule;
 
 import dataStructures.L2Packet;
 import device.AbstractDevice;
+import networkModule.L2.L2layer;
 import physicalModule.AbstractInterface;
 
 //TODO: napsat javadoc
@@ -19,6 +20,7 @@ import physicalModule.AbstractInterface;
 public abstract class NetMod {
 
     protected AbstractDevice device;
+    protected L2layer linkLayer;
 
     public NetMod(AbstractDevice device) {
         this.device = device;

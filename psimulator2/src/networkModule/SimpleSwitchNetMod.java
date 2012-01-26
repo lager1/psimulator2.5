@@ -7,6 +7,7 @@ package networkModule;
 
 import dataStructures.L2Packet;
 import device.AbstractDevice;
+import networkModule.L2.EthernetLayer;
 import physicalModule.AbstractInterface;
 
 /**
@@ -17,10 +18,16 @@ public class SimpleSwitchNetMod extends NetMod  {
 
     public SimpleSwitchNetMod(AbstractDevice device) {
         super(device);
+        linkLayer = new EthernetLayer(this);
     }
 
+    /**
+     * Prijimani od fysickyho modulu.
+     * @param packet
+     * @param iface 
+     */
     @Override
     public void receivePacket(L2Packet packet, AbstractInterface iface) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        linkLayer.receivePacket(packet, iface);
     }
 }

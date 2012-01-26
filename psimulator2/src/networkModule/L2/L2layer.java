@@ -1,11 +1,13 @@
 /*
  * Erstellt am 27.10.2011.
  */
-package networkModule;
+package networkModule.L2;
 
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
+import networkModule.Layer;
+import networkModule.NetMod;
 import physicalModule.AbstractInterface;
 import psimulator2.SmartRunnable;
 import psimulator2.WorkerThread;
@@ -30,5 +32,5 @@ public abstract class L2layer extends Layer implements SmartRunnable {
 	/**
 	 * Prijima pakety od vyssi vrstvy.
 	 */
-	public abstract void acceptPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop);
+	public abstract void sendPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop);
 }

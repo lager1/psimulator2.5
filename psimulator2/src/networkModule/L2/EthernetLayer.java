@@ -1,20 +1,21 @@
 /*
  * Erstellt am 27.10.2011.
  */
-package networkModule;
+package networkModule.L2;
 
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
+import networkModule.NetMod;
 import physicalModule.AbstractInterface;
 
 /**
- *
+ * Tady bude veskera implementace ethernetu a to jak pro switch, tak i router.
  * @author neiss
  */
-public class SimpleL2Layer extends L2layer {
+public class EthernetLayer extends L2layer {
 
-    public SimpleL2Layer(NetMod networkModule) {
+    public EthernetLayer(NetMod networkModule) {
         super(networkModule);
     }
 
@@ -28,7 +29,7 @@ public class SimpleL2Layer extends L2layer {
 	}
 
 	@Override
-	public void acceptPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop) {
+	public void sendPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

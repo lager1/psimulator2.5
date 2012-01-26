@@ -16,6 +16,7 @@ public abstract class Layer {
 
     public Layer(NetMod netMod) {
         this.netMod = netMod;
+        
     }
 
     public NetMod getNetMod() {

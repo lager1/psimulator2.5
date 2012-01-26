@@ -1,7 +1,6 @@
 /*
  * Erstellt am 26.10.2011.
  */
-
 package dataStructures;
 
 /**
@@ -12,6 +11,6 @@ public abstract class L2Packet {
 
     L3Packet data;
 
-	// TODO: getSize() cachovat, jinak bude pekne narocnej
-	public abstract int getSize();
+    // TODO: getSize() cachovat, jinak bude pekne narocnej
+    public abstract int getSize();
 }
