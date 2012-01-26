@@ -12,6 +12,6 @@ public abstract class L2Packet {
 
     L3Packet data;
 
-	// TODO: cachovat, jinak bude pekne narocnej
+	// TODO: getSize() cachovat, jinak bude pekne narocnej
 	public abstract int getSize();
 }

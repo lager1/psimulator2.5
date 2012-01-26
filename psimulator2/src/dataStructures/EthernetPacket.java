@@ -5,10 +5,15 @@
 package dataStructures;
 
 /**
+ * Represents Ethernet II frames.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class EthernetPacket extends L2Packet {
+
+	MacAddress src;
+	MacAddress dst;
+	Ethertype ethertype;
 
 	@Override
 	public int getSize() {
