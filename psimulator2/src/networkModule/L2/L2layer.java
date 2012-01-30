@@ -8,7 +8,7 @@ import dataStructures.L2Packet;
 import dataStructures.L3Packet;
 import networkModule.Layer;
 import networkModule.NetMod;
-import physicalModule.AbstractInterface;
+import physicalModule.AbstractSwitchport;
 import psimulator2.SmartRunnable;
 import psimulator2.WorkerThread;
 
@@ -27,10 +27,10 @@ public abstract class L2layer extends Layer implements SmartRunnable {
 	/**
 	 * Prijima pakety od nizsi vrstvy.
 	 */
-	public abstract void receivePacket(L2Packet packet, AbstractInterface iface);
+	public abstract void receivePacket(L2Packet packet, AbstractSwitchport iface);
 
 	/**
 	 * Prijima pakety od vyssi vrstvy.
 	 */
-	public abstract void sendPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop);
+	public abstract void sendPacket(L3Packet packet, AbstractSwitchport iface, IpAddress nextHop);
 }

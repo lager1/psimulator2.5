@@ -8,7 +8,7 @@ package networkModule;
 import dataStructures.L2Packet;
 import device.AbstractDevice;
 import networkModule.L2.EthernetLayer;
-import physicalModule.AbstractInterface;
+import physicalModule.AbstractSwitchport;
 
 /**
  * Implementation of network module of generic simple switch.
@@ -24,10 +24,10 @@ public class SimpleSwitchNetMod extends NetMod  {
     /**
      * Prijimani od fysickyho modulu.
      * @param packet
-     * @param iface 
+     * @param iface
      */
     @Override
-    public void receivePacket(L2Packet packet, AbstractInterface iface) {
+    public void receivePacket(L2Packet packet, AbstractSwitchport iface) {
         linkLayer.receivePacket(packet, iface);
     }
 }

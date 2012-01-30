@@ -15,7 +15,7 @@ import dataStructures.L2Packet;
  *
  * @author neiss
  */
-public abstract class AbstractInterface {
+public abstract class AbstractSwitchport {
 
 	protected String name;
 	protected PhysicMod physicMod;
@@ -25,13 +25,13 @@ public abstract class AbstractInterface {
 	 */
 	protected Connector connector;
 
-	public AbstractInterface(String name, Connector connector, PhysicMod physicMod) {
+	public AbstractSwitchport(String name, Connector connector, PhysicMod physicMod) {
 		this.name = name;
 		this.connector = connector;
 		this.physicMod = physicMod;
 	}
 
-	public AbstractInterface(String name, PhysicMod physicMod) {
+	public AbstractSwitchport(String name, PhysicMod physicMod) {
 		this.name = name;
 		this.physicMod = physicMod;
 	}
@@ -86,8 +86,8 @@ public abstract class AbstractInterface {
 //	 */
 //	@Override
 //	public boolean equals(Object obj) {
-//		if (obj instanceof AbstractInterface) {
-//			AbstractInterface iface = (AbstractInterface) obj;
+//		if (obj instanceof AbstractSwitchport) {
+//			AbstractSwitchport iface = (AbstractSwitchport) obj;
 //			if (this.getHash().equals(iface.getHash())) {
 //				return true;
 //			}

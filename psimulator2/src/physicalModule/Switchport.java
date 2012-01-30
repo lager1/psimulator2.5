@@ -8,18 +8,18 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Represents commnon interface of this simulator.
- * For interface connected to real network implement your own class.
+ * Represents "interface" on L2.
+ * For switchport connected to real network implement your own class.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class Interface extends AbstractInterface {
+public class Switchport extends AbstractSwitchport {
 
-	public Interface(String name, Connector connector, PhysicMod physicMod) {
+	public Switchport(String name, Connector connector, PhysicMod physicMod) {
 		super(name, connector, physicMod);
 	}
 
-	public Interface(String name, PhysicMod physicMod) {
+	public Switchport(String name, PhysicMod physicMod) {
 		super(name, physicMod);
 	}
 	/**

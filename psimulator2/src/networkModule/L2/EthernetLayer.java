@@ -7,7 +7,7 @@ import dataStructures.ipAddresses.IpAddress;
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
 import networkModule.NetMod;
-import physicalModule.AbstractInterface;
+import physicalModule.AbstractSwitchport;
 
 /**
  * Tady bude veskera implementace ethernetu a to jak pro switch, tak i router.
@@ -24,12 +24,12 @@ public class EthernetLayer extends L2layer {
     }
 
 	@Override
-	public void receivePacket(L2Packet packet, AbstractInterface iface) {
+	public void receivePacket(L2Packet packet, AbstractSwitchport iface) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public void sendPacket(L3Packet packet, AbstractInterface iface, IpAddress nextHop) {
+	public void sendPacket(L3Packet packet, AbstractSwitchport iface, IpAddress nextHop) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

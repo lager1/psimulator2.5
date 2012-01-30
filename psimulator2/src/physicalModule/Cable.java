@@ -45,7 +45,7 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setFirstInterface(AbstractInterface iface) {
+	public boolean setFirstInterface(AbstractSwitchport iface) {
 		assert iface != null;
 		boolean res = firstCon.connectInterface(iface);
 		if (res) {
@@ -60,7 +60,7 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setSecondInterface(AbstractInterface iface) {
+	public boolean setSecondInterface(AbstractSwitchport iface) {
 		assert iface != null;
 		boolean res = SecondCon.connectInterface(iface);
 		if (res) {
@@ -75,8 +75,8 @@ public class Cable implements SmartRunnable {
 		boolean secondIsEmpty = true;
 
 		do {
-			AbstractInterface first = firstCon.getInterface(); // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
-			AbstractInterface second = SecondCon.getInterface();
+			AbstractSwitchport first = firstCon.getInterface(); // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
+			AbstractSwitchport second = SecondCon.getInterface();
 
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();

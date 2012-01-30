@@ -6,7 +6,7 @@ package networkModule;
 
 import java.util.List;
 import dataStructures.L2Packet;
-import physicalModule.AbstractInterface;
+import physicalModule.AbstractSwitchport;
 import psimulator2.SmartRunnable;
 import psimulator2.WorkerThread;
 

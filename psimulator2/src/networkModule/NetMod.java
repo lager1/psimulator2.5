@@ -7,7 +7,7 @@ package networkModule;
 import dataStructures.L2Packet;
 import device.AbstractDevice;
 import networkModule.L2.L2layer;
-import physicalModule.AbstractInterface;
+import physicalModule.AbstractSwitchport;
 
 //TODO: napsat javadoc
 /**
@@ -35,5 +35,5 @@ public abstract class NetMod {
 	 * @param packet
 	 * @param iface
 	 */
-    public abstract void receivePacket(L2Packet packet, AbstractInterface iface);
+    public abstract void receivePacket(L2Packet packet, AbstractSwitchport iface);
 }
