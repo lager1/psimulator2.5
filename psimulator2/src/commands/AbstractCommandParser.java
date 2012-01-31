@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class AbstractCommandParser {
 
 	protected List<String> words;
-	private int ref; //refazatel do seznamu slov
+	private int ref; // ukazatel do seznamu slov
 
 	/**
 	 * Zpracuje radek.
