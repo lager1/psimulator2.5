@@ -1,7 +1,9 @@
 /*
  * Erstellt am 27.10.2011.
  */
-package psimulator2;
+package utils;
+
+import utils.SmartRunnable;
 
 /**
  * Thread implements wake and run functions. It sleeps itselfs.

@@ -18,6 +18,20 @@ public class AbstractDevice {
 	NetMod networkModule;
 	ApplicationsList applications;
 
+	public ApplicationsList getApplications() {
+		return applications;
+	}
 
+	public String getName() {
+		return name;
+	}
 
+	public NetMod getNetworkModule() {
+		return networkModule;
+	}
+
+	public PhysicMod getPhysicalModule() {
+		return physicalModule;
+	}
+	
 }

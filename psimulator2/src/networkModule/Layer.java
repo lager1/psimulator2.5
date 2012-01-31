@@ -4,7 +4,7 @@
 
 package networkModule;
 
-import psimulator2.WorkerThread;
+import utils.WorkerThread;
 
 /**
  *

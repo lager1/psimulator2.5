@@ -9,8 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import networkModule.NetMod;
-import psimulator2.SmartRunnable;
-import psimulator2.WorkerThread;
+import utils.SmartRunnable;
+import utils.WorkerThread;
 
 /**
  * Seznam sitovych rozhrani reprezentujici fyzicke rozhrani

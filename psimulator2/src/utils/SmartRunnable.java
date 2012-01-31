@@ -1,7 +1,7 @@
 /*
  * created 24.1.2012
  */
-package psimulator2;
+package utils;
 
 /**
  *

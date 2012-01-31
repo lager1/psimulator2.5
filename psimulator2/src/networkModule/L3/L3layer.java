@@ -7,8 +7,8 @@ import dataStructures.L2Packet;
 import dataStructures.L4Packet;
 import networkModule.Layer;
 import networkModule.NetMod;
-import psimulator2.SmartRunnable;
-import psimulator2.WorkerThread;
+import utils.SmartRunnable;
+import utils.WorkerThread;
 
 /**
  *

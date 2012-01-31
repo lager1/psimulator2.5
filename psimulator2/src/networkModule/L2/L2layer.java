@@ -10,8 +10,8 @@ import dataStructures.MacAddress;
 import networkModule.Layer;
 import networkModule.NetMod;
 import physicalModule.Switchport;
-import psimulator2.SmartRunnable;
-import psimulator2.WorkerThread;
+import utils.SmartRunnable;
+import utils.WorkerThread;
 
 /**
  *
@@ -19,7 +19,7 @@ import psimulator2.WorkerThread;
  */
 public abstract class L2layer extends Layer implements SmartRunnable {
 
-	private WorkerThread worker = new WorkerThread(this);
+	protected WorkerThread worker = new WorkerThread(this);
 
 	public L2layer(NetMod netMod) {
 		super(netMod);

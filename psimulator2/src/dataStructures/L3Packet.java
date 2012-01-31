@@ -12,11 +12,18 @@ public abstract class L3Packet {
 
     L2Packet l2packet;
     L4Packet data;
+	
+	public enum L3PacketType{
+		ipv4,
+		arp;
+	}
 
 	int getSize() {
 		int sum = 0;
 		// TODO: pridat velikost tohoto paketu
 		return sum + (data != null ? data.getSize() : 0);
 	}
+	
+	public abstract L3PacketType getType();
 
 }

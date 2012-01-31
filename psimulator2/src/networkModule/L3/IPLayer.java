@@ -5,7 +5,6 @@
 package networkModule.L3;
 
 import dataStructures.EthernetPacket;
-import static dataStructures.Ethertype.*;
 import dataStructures.L2Packet;
 import dataStructures.L4Packet;
 import networkModule.NetMod;

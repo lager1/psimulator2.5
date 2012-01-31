@@ -4,8 +4,8 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
-import psimulator2.SmartRunnable;
-import psimulator2.WorkerThread;
+import utils.SmartRunnable;
+import utils.WorkerThread;
 
 /**
  * Represents cable
