@@ -102,6 +102,10 @@ public class MacAddress {
         } 
         return true;
     }
+	
+	public static MacAddress broadcast(){
+		return new MacAddress("ff:ff:ff:ff:ff:ff");
+	}
     
 // privatni staticky metody -------------------------------------------------------------------------------
 

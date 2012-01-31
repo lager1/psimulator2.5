@@ -11,7 +11,7 @@ package physicalModule;
  */
 public class Connector {
 
-	private AbstractSwitchport iface;
+	private Switchport iface;
 	private Cable cable;
 
 	public Connector(Cable cable) {
@@ -22,7 +22,7 @@ public class Connector {
 		return cable;
 	}
 
-	public AbstractSwitchport getInterface() {
+	public Switchport getInterface() {
 		return iface;
 	}
 
@@ -32,7 +32,7 @@ public class Connector {
 	 * @param iface
 	 * @return true if successfully connected, false when there is already connected interface.
 	 */
-	public boolean connectInterface(AbstractSwitchport iface) {
+	public boolean connectInterface(Switchport iface) {
 		if (iface != null) {
 			return false;
 		}

@@ -24,9 +24,9 @@ public class PhysicMod implements SmartRunnable {
 	private static class Item {
 
 		L2Packet packet;
-		AbstractSwitchport iface;
+		Switchport iface;
 
-		public Item(L2Packet packet, AbstractSwitchport iface) {
+		public Item(L2Packet packet, Switchport iface) {
 			this.packet = packet;
 			this.iface = iface;
 		}
@@ -34,7 +34,7 @@ public class PhysicMod implements SmartRunnable {
 	/**
 	 * List of interfaces.
 	 */
-	private List<AbstractSwitchport> interfaceList;
+	private List<Switchport> interfaceList;
 	/**
 	 * Network module.
 	 */
@@ -52,14 +52,14 @@ public class PhysicMod implements SmartRunnable {
 	 */
 	private WorkerThread worker = new WorkerThread(this);
 
-	public PhysicMod(NetMod netMod, List<AbstractSwitchport> ifaces) {
+	public PhysicMod(NetMod netMod, List<Switchport> ifaces) {
 		this.netMod = netMod;
 		this.interfaceList = ifaces;
 	}
 
 	public PhysicMod(NetMod netMod) {
 		this.netMod = netMod;
-		this.interfaceList = new ArrayList<AbstractSwitchport>();
+		this.interfaceList = new ArrayList<Switchport>();
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class PhysicMod implements SmartRunnable {
 	 * @param packet to receive
 	 * @param iface which receives packet
 	 */
-	public void receivePacket(L2Packet packet, AbstractSwitchport iface) {
+	public void receivePacket(L2Packet packet, Switchport iface) {
 		synchronized (fromCabels) {
 			fromCabels.add(new Item(packet, iface));
 		}
@@ -82,7 +82,7 @@ public class PhysicMod implements SmartRunnable {
 	 * @param packet to send via physical module
 	 * @param iface through it will be send
 	 */
-	public void sendPacket(L2Packet packet, AbstractSwitchport iface) {
+	public void sendPacket(L2Packet packet, Switchport iface) {
 		synchronized (fromNetMod) {
 			fromNetMod.add(new Item(packet, iface));
 		}
@@ -136,11 +136,11 @@ public class PhysicMod implements SmartRunnable {
 		return false;
 	}
 
-	public void addInterface(AbstractSwitchport iface) {
+	public void addInterface(Switchport iface) {
 		interfaceList.add(iface);
 	}
 
-	public boolean removeInterface(AbstractSwitchport iface) {
+	public boolean removeInterface(Switchport iface) {
 		return interfaceList.remove(iface);
 	}
 }
