@@ -10,14 +10,14 @@ package dataStructures;
 public abstract class L2Packet {
 
     protected L3Packet data;
-	
+
 	public enum L2PacketType{
-		ethernet2;
+		ethernetII;
 	}
-	
+
 
     // TODO: getSize() cachovat, jinak bude pekne narocnej
     public abstract int getSize();
-	
+
 	public abstract L2PacketType getType();
 }

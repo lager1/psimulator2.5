@@ -16,7 +16,7 @@ public class EthernetPacket extends L2Packet {
 
 	private MacAddress src;
 	private MacAddress dst;
-	
+
 	/**
 	 * Protokol vyssi vrstvy.
 	 */
@@ -27,7 +27,7 @@ public class EthernetPacket extends L2Packet {
 		this.dst = dst;
 		this.ethertype = ethertype;
 	}
-	
+
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype, L3Packet data) {
 		this.src = src;
 		this.dst = dst;
@@ -50,8 +50,8 @@ public class EthernetPacket extends L2Packet {
 	public L3Packet getData() {
 		return data;
 	}
-	
-	
+
+
 
 	@Override
 	public int getSize() {
@@ -62,6 +62,6 @@ public class EthernetPacket extends L2Packet {
 
 	@Override
 	public L2PacketType getType() {
-		return L2PacketType.ethernet2;
+		return L2PacketType.ethernetII;
 	}
 }

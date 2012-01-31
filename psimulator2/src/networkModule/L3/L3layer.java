@@ -16,7 +16,7 @@ import utils.WorkerThread;
  */
 public abstract class L3layer extends Layer implements SmartRunnable {
 
-	private WorkerThread worker = new WorkerThread(this);
+	protected WorkerThread worker = new WorkerThread(this);
 
 	public L3layer(NetMod netMod) {
 		super(netMod);

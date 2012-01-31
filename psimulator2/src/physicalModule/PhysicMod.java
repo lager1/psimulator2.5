@@ -5,9 +5,9 @@ package physicalModule;
 
 import dataStructures.L2Packet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import networkModule.NetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -42,11 +42,11 @@ public class PhysicMod implements SmartRunnable {
 	/**
 	 * Queue for incomming packets from cabels.
 	 */
-	private final Queue<Item> fromCabels = new LinkedList<Item>();
+	private final List<Item> receiveBuffer = Collections.synchronizedList(new LinkedList<Item>());
 	/**
 	 * Queue for incomming packets from network module.
 	 */
-	private final Queue<Item> fromNetMod = new LinkedList<Item>();
+	private final List<Item> sendBuffer = Collections.synchronizedList(new LinkedList<Item>());
 	/**
 	 * Working thread.
 	 */
@@ -69,9 +69,7 @@ public class PhysicMod implements SmartRunnable {
 	 * @param iface which receives packet
 	 */
 	public void receivePacket(L2Packet packet, Switchport iface) {
-		synchronized (fromCabels) {
-			fromCabels.add(new Item(packet, iface));
-		}
+		receiveBuffer.add(new Item(packet, iface));
 		worker.wake();
 	}
 
@@ -83,57 +81,23 @@ public class PhysicMod implements SmartRunnable {
 	 * @param iface through it will be send
 	 */
 	public void sendPacket(L2Packet packet, Switchport iface) {
-		synchronized (fromNetMod) {
-			fromNetMod.add(new Item(packet, iface));
-		}
+		sendBuffer.add(new Item(packet, iface));
 		worker.wake();
 	}
 
 	public void doMyWork() {
 
-		while (!isEmptyFromCabel() || !isEmptyFromNetMod()) {
-			if (!isEmptyFromCabel()) {
-				synchronized (fromCabels) {
-					Item m = fromCabels.remove();
-					netMod.receivePacket(m.packet, m.iface);
-				}
+		while (!receiveBuffer.isEmpty() || !sendBuffer.isEmpty()) {
+			if (!receiveBuffer.isEmpty()) {
+				Item m = receiveBuffer.remove(0);
+				netMod.receivePacket(m.packet, m.iface);
 			}
 
-			if (!isEmptyFromNetMod()) {
-				synchronized (fromNetMod) {
-					Item m = fromNetMod.remove();
-					m.iface.sendPacket(m.packet);
-				}
+			if (!sendBuffer.isEmpty()) {
+				Item m = sendBuffer.remove(0);
+				m.iface.sendPacket(m.packet);
 			}
 		}
-	}
-
-	/**
-	 * Return true if empty. synchronized via buffer TODO: ma byt synchronizovane?
-	 *
-	 * @return
-	 */
-	private boolean isEmptyFromCabel() {
-		synchronized (fromCabels) {
-			if (fromCabels.isEmpty()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Return true if empty. synchronized via buffer TODO: ma byt synchronizovane?
-	 *
-	 * @return
-	 */
-	private boolean isEmptyFromNetMod() {
-		synchronized (fromNetMod) {
-			if (fromNetMod.isEmpty()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void addInterface(Switchport iface) {

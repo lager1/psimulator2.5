@@ -14,7 +14,7 @@ import networkModule.L2.EthernetInterface;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-class ArpCache {
+public class ArpCache {
 
 	class ArpRecord {
 

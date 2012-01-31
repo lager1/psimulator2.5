@@ -4,8 +4,9 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
+import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
 
 /**
  * Represents "interface" on L2.
@@ -25,7 +26,8 @@ public class SimulatorSwitchport extends Switchport {
 	/**
 	 * Storage for packets to be sent.
 	 */
-	private Queue<L2Packet> buffer = new LinkedList<L2Packet>(); // TODO: synchronised
+	private List<L2Packet> buffer = Collections.synchronizedList(new LinkedList<L2Packet>());
+
 	/**
 	 * Current size of buffer in bytes.
 	 */
@@ -49,9 +51,7 @@ public class SimulatorSwitchport extends Switchport {
 			dropped++;
 		} else {
 			size += packetSize;
-			synchronized (buffer) {
-				buffer.add(packet);
-			}
+			buffer.add(packet);
 			connector.getCable().worker.wake();
 		}
 	}
@@ -72,9 +72,7 @@ public class SimulatorSwitchport extends Switchport {
 	 */
 	public L2Packet popPacket() {
 		L2Packet packet;
-		synchronized (buffer) {
-			packet = buffer.remove();
-		}
+		packet = buffer.remove(0);
 		size -= packet.getSize();
 		return packet;
 	}
@@ -84,10 +82,8 @@ public class SimulatorSwitchport extends Switchport {
 	 * Synchronied via buffer.
 	 */
 	public boolean isEmptyBuffer() {
-		synchronized (buffer) {
-			if (buffer.isEmpty()) {
-				return true;
-			}
+		if (buffer.isEmpty()) {
+			return true;
 		}
 		return false;
 	}
