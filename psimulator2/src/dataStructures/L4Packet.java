@@ -8,7 +8,7 @@ package dataStructures;
  *
  * @author neiss
  */
-class L4Packet {
+public abstract class L4Packet {
 
 	int getSize() {
 		int sum = 0;
