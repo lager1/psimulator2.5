@@ -20,12 +20,22 @@ public class ShellPriklad {
     public static int CISCO_CONFIG_MODE = 2;
     public static int CISCO_CONFIG_IF_MODE = 3;
 
+	/**
+	 * ========== Vypisovani promptu ==========
+	 * (( commandIsRunning == false ) && ( writePrompt == true )) tak se prompt vypise
+	 */
 
 
     /**
      * Na ciscu je obcas potreba zakazat vypisovani promptu. Defaultne true.
      */
-    private boolean vypisovatPromt = true;
+    private boolean writePrompt = true;
+
+	/**
+	 * Jakmile se zavola nejakej prikaz, tak by se melo nastavit na true.
+	 * Az bude false (nastavi prikaz), tak se zase zacne vypisovat prompt.
+	 */
+	private boolean commandIsRunning = false;
 
 	/**
 	 * Prompt, ktery se bude pridavat po zkonceni prikazu.
@@ -47,9 +57,20 @@ public class ShellPriklad {
         return mode;
     }
 
-    public void setVypisovatPromt(boolean vypisovatPromt) {
-        this.vypisovatPromt = vypisovatPromt;
+	/**
+	 * Cisco obcas nechce vypsal prompt, protoze napise dotaz a uzivatel odpovi..
+	 * @param vypisovatPromt
+	 */
+    public void setPromptWriting(boolean vypisovatPromt) {
+        this.writePrompt = vypisovatPromt;
     }
+
+	/**
+	 * Prikaz oznamuje ukonceni prace, aby shell zase zacal vypisovat prompt.
+	 */
+	public void commandEnded() {
+		this.commandIsRunning = false;
+	}
 
     /**
      * Vypise radek.
