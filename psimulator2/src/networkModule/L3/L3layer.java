@@ -5,6 +5,7 @@ package networkModule.L3;
 
 import dataStructures.L2Packet;
 import dataStructures.L4Packet;
+import dataStructures.ipAddresses.IpAddress;
 import networkModule.Layer;
 import networkModule.NetMod;
 import utils.SmartRunnable;
@@ -31,5 +32,5 @@ public abstract class L3layer extends Layer implements SmartRunnable {
 	/**
 	 * Prijima pakety od vyssi vrstvy.
 	 */
-	public abstract void sendPacket(L4Packet packet);
+	public abstract void sendPacket(L4Packet packet, IpAddress dst);
 }
