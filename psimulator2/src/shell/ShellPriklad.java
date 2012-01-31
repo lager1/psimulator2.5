@@ -7,8 +7,8 @@ package shell;
 
 /**
  * Toto je jen priklad shellu, jak si predstavujem to rozhrani. Nejak to,
- * Martine, podle toho udelej, pak tohle smazem. nebo si z toho udelej
- * interface.
+ * Martine, podle toho predelej, pak tohle smazem. nebo si z toho udelej
+ * interface..
  *
  * @author neiss
  */
@@ -19,13 +19,19 @@ public class ShellPriklad {
     public static int CISCO_PRIVILEGED_MODE = 1;
     public static int CISCO_CONFIG_MODE = 2;
     public static int CISCO_CONFIG_IF_MODE = 3;
-    
-    
-    
+
+
+
     /**
      * Na ciscu je obcas potreba zakazat vypisovani promptu. Defaultne true.
      */
     private boolean vypisovatPromt = true;
+
+	/**
+	 * Prompt, ktery se bude pridavat po zkonceni prikazu.
+	 */
+	private String prompt = "";
+
     /**
      * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle
      * toho (enable, configure terminal atd.). Dle stavu se bude resit
