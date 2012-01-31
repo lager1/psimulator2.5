@@ -8,7 +8,7 @@ import dataStructures.L2Packet;
 
 
 /**
- * Represents physical network interface.
+ * Represents physical switchport.
  * Sends and receives packet through cable.
  *
  * It is not running in its own thread, thread of PhysicMod handles it.
@@ -17,7 +17,6 @@ import dataStructures.L2Packet;
  */
 public abstract class Switchport {
 
-	protected String name;
 	protected PhysicMod physicMod;
 	/**
 	 * Link to cable's connector.
@@ -25,19 +24,13 @@ public abstract class Switchport {
 	 */
 	protected Connector connector;
 
-	public Switchport(String name, Connector connector, PhysicMod physicMod) {
-		this.name = name;
+	public Switchport(Connector connector, PhysicMod physicMod) {
 		this.connector = connector;
 		this.physicMod = physicMod;
 	}
 
-	public Switchport(String name, PhysicMod physicMod) {
-		this.name = name;
+	public Switchport(PhysicMod physicMod) {
 		this.physicMod = physicMod;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	/**

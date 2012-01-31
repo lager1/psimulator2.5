@@ -11,7 +11,7 @@ import utils.SmartRunnable;
 import utils.WorkerThread;
 
 /**
- *
+ * TODO: tohle asi prijde smazat nebo prejmenovat
  * @author neiss
  */
 public abstract class L3layer extends Layer implements SmartRunnable {

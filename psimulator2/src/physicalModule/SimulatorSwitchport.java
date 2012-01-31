@@ -17,11 +17,11 @@ import java.util.List;
 public class SimulatorSwitchport extends Switchport {
 
 	public SimulatorSwitchport(String name, Connector connector, PhysicMod physicMod) {
-		super(name, connector, physicMod);
+		super(connector, physicMod);
 	}
 
 	public SimulatorSwitchport(String name, PhysicMod physicMod) {
-		super(name, physicMod);
+		super(physicMod);
 	}
 	/**
 	 * Storage for packets to be sent.

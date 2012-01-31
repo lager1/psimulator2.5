@@ -15,6 +15,8 @@ import physicalModule.Switchport;
  * @author neiss
  */
 public class SimpleSwitchNetMod extends NetMod  {
+	
+	protected EthernetLayer linkLayer;
 
     public SimpleSwitchNetMod(AbstractDevice device) {
         super(device);
@@ -24,10 +26,10 @@ public class SimpleSwitchNetMod extends NetMod  {
     /**
      * Prijimani od fysickyho modulu.
      * @param packet
-     * @param iface
+     * @param swport
      */
     @Override
-    public void receivePacket(L2Packet packet, Switchport iface) {
-        linkLayer.receivePacket(packet, iface);
+    public void receivePacket(L2Packet packet, Switchport swport) {
+        linkLayer.receivePacket(packet, swport);
     }
 }

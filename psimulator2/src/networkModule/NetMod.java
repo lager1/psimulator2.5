@@ -6,7 +6,6 @@ package networkModule;
 
 import dataStructures.L2Packet;
 import device.AbstractDevice;
-import networkModule.L2.L2layer;
 import physicalModule.Switchport;
 
 //TODO: napsat javadoc
@@ -20,7 +19,6 @@ import physicalModule.Switchport;
 public abstract class NetMod {
 
     protected AbstractDevice device;
-    protected L2layer linkLayer;
 
     public NetMod(AbstractDevice device) {
         this.device = device;
@@ -33,7 +31,7 @@ public abstract class NetMod {
 	/**
 	 * Implementovat synchronizovane!
 	 * @param packet
-	 * @param iface
+	 * @param swport
 	 */
-    public abstract void receivePacket(L2Packet packet, Switchport iface);
+    public abstract void receivePacket(L2Packet packet, Switchport swport);
 }

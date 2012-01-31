@@ -16,11 +16,12 @@ import physicalModule.SimulatorSwitchport;
  *
  * @author neiss
  */
-public class EthernetInterface extends L2Interface {
+public class EthernetInterface {
 
 	private String name;
 	private MacAddress mac;
 	private Map<MacAddress, SwitchTableItem> switchingTable;
+	private List<Switchport> switchports;
 
 	private class SwitchTableItem {
 
