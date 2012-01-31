@@ -4,10 +4,11 @@
 
 package networkModule.L3;
 
+import dataStructures.EthernetPacket;
+import static dataStructures.Ethertype.*;
 import dataStructures.L2Packet;
 import dataStructures.L4Packet;
 import networkModule.NetMod;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * TODO: pridat paketovy filtr (NAT, ..).
@@ -16,12 +17,32 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class IPLayer extends L3layer {
 
+	ArpCache arpCache = new ArpCache();
+
 	public IPLayer(NetMod netMod) {
 		super(netMod);
 	}
 
 	@Override
-	public void receivePacket(L2Packet packet) {
+	public void receivePacket(L2Packet apacket) {
+		assert apacket.getClass() == EthernetPacket.class;
+		EthernetPacket packet = (EthernetPacket) apacket;
+
+
+//		switch (packet.getEthertype()) {
+//			case ARP:
+//				// tady se bude resit zda je to ARP packet, update cache + reakce
+//
+//				break;
+//
+//			case IPv4:
+//
+//				break;
+//
+//			default:
+//		}
+
+
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -33,7 +54,7 @@ public class IPLayer extends L3layer {
 	}
 
 	public void doMyWork() {
-		// tady bude muset resit
+		// prochazet jednotlivy buffery a vyrizovat jednotlivy pakety
 
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

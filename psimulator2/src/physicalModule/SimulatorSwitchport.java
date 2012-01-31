@@ -25,7 +25,7 @@ public class SimulatorSwitchport extends Switchport {
 	/**
 	 * Storage for packets to be sent.
 	 */
-	private Queue<L2Packet> buffer = new LinkedList<L2Packet>();
+	private Queue<L2Packet> buffer = new LinkedList<L2Packet>(); // TODO: synchronised
 	/**
 	 * Current size of buffer in bytes.
 	 */
