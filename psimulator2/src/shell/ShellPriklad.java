@@ -21,15 +21,8 @@ public class ShellPriklad {
     public static int CISCO_CONFIG_IF_MODE = 3;
 
 	/**
-	 * ========== Vypisovani promptu ==========
-	 * (( commandIsRunning == false ) && ( writePrompt == true )) tak se prompt vypise
+	 * (( commandIsRunning == true ) tak se prompt nevypisuje a chytaji se signaly a uzivatelsky vstup po Enter, nevola se processLine!
 	 */
-
-
-    /**
-     * Na ciscu je obcas potreba zakazat vypisovani promptu. Defaultne true.
-     */
-    private boolean writePrompt = true;
 
 	/**
 	 * Jakmile se zavola nejakej prikaz, tak by se melo nastavit na true.
@@ -55,14 +48,6 @@ public class ShellPriklad {
 
     public int getMode() {
         return mode;
-    }
-
-	/**
-	 * Cisco obcas nechce vypsal prompt, protoze napise dotaz a uzivatel odpovi..
-	 * @param vypisovatPromt
-	 */
-    public void setPromptWriting(boolean vypisovatPromt) {
-        this.writePrompt = vypisovatPromt;
     }
 
 	/**
