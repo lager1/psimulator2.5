@@ -22,7 +22,7 @@ import utils.WorkerThread;
 /**
  * Represents IP layer of ISO/OSI model.
  *
- * TODO: pridat paketovy filtr (NAT, ..).
+ * TODO: pridat paketovy filtr + routovaci tabulku
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
@@ -55,6 +55,10 @@ public class IPLayer implements SmartRunnable {
 	 */
 	private final ArpCache arpCache = new ArpCache();
 
+	/**
+	 * Packet filter.
+	 * Controls NAT, packet dropping, ..
+	 */
 	private final PacketFilter packetFilter = new PacketFilter();
 
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
@@ -124,7 +128,10 @@ public class IPLayer implements SmartRunnable {
 	}
 
 	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
-
+		// odnatovat
+		// je pro me?
+		//		ANO - predat vejs
+		//		NE - zaroutovat a predat do ethernetove vrstvy
 	}
 
 	public void sendPacket(L4Packet packet, IpAddress dst) {
@@ -170,7 +177,7 @@ public class IPLayer implements SmartRunnable {
 			}
 
 			if (!arpBuffer.isEmpty()) {
-				// domyslet, aby KDY pracovalo !!!
+				// TODO: domyslet, KDY bude obskoceno !!!
 			}
 		}
 	}

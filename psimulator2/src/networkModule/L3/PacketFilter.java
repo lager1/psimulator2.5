@@ -15,4 +15,7 @@ public class PacketFilter {
 //	public Packet processPacket() {
 
 //	}
+
+	// cisco NAT
+	// http://www.cisco.com/en/US/tech/tk648/tk361/technologies_tech_note09186a0080133ddd.shtml
 }
