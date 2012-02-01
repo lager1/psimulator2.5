@@ -45,11 +45,11 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setFirstInterface(Switchport iface) {
-		assert iface != null;
-		boolean res = firstCon.connectInterface(iface);
+	public boolean setFirstInterface(SimulatorSwitchport swport) {
+		assert swport != null;
+		boolean res = firstCon.connectInterface(swport);
 		if (res) {
-			iface.connector = firstCon;
+			swport.connector = firstCon;
 		}
 		return res;
 	}
@@ -60,11 +60,11 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setSecondInterface(Switchport iface) {
-		assert iface != null;
-		boolean res = SecondCon.connectInterface(iface);
+	public boolean setSecondInterface(SimulatorSwitchport swport) {
+		assert swport != null;
+		boolean res = SecondCon.connectInterface(swport);
 		if (res) {
-			iface.connector = SecondCon;
+			swport.connector = SecondCon;
 		}
 		return res;
 	}

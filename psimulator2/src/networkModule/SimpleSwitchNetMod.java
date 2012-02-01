@@ -8,6 +8,7 @@ package networkModule;
 import dataStructures.L2Packet;
 import device.AbstractDevice;
 import networkModule.L2.EthernetLayer;
+import physicalModule.PhysicMod;
 import physicalModule.Switchport;
 
 /**
@@ -18,18 +19,18 @@ public class SimpleSwitchNetMod extends NetMod  {
 	
 	protected EthernetLayer linkLayer;
 
-    public SimpleSwitchNetMod(AbstractDevice device) {
-        super(device);
-        linkLayer = new EthernetLayer(this);
-    }
+    public SimpleSwitchNetMod(EthernetLayer linkLayer, AbstractDevice device, PhysicMod physicMod) {
+		super(device, physicMod);
+		this.linkLayer = linkLayer;
+	}
 
-    /**
-     * Prijimani od fysickyho modulu.
-     * @param packet
-     * @param swport
-     */
-    @Override
-    public void receivePacket(L2Packet packet, Switchport swport) {
-        linkLayer.receivePacket(packet, swport);
-    }
+	/**
+	 * Prijimani od fysickyho modulu.
+	 * @param packet
+	 * @param switchportNumber 
+	 */
+	@Override
+	public void receivePacket(L2Packet packet, int switchportNumber) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

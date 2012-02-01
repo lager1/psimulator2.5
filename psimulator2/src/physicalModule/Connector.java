@@ -11,7 +11,7 @@ package physicalModule;
  */
 public class Connector {
 
-	private Switchport iface;
+	private SimulatorSwitchport swport;
 	private Cable cable;
 
 	public Connector(Cable cable) {
@@ -23,21 +23,21 @@ public class Connector {
 	}
 
 	public Switchport getInterface() {
-		return iface;
+		return swport;
 	}
 
 	/**
 	 * Connects given interface to connenctor.
 	 *
-	 * @param iface
+	 * @param swport
 	 * @return true if successfully connected, false when there is already connected interface.
 	 */
-	public boolean connectInterface(Switchport iface) {
-		if (iface != null) {
+	public boolean connectInterface(SimulatorSwitchport swport) {
+		if (swport != null) {
 			return false;
 		}
-		this.iface = iface;
-		iface.connector = this;
+		this.swport = swport;
+		swport.connector = this;
 		return true;
 	}
 
@@ -47,8 +47,8 @@ public class Connector {
 	 * @return true, if released; false if connector is already disconnected.
 	 */
 	public boolean disconnectInterface() {
-		if (iface != null) {
-			iface = null;
+		if (swport != null) {
+			swport = null;
 			return true;
 		}
 		return false;

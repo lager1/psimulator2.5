@@ -6,6 +6,7 @@ package networkModule;
 
 import dataStructures.L2Packet;
 import device.AbstractDevice;
+import physicalModule.PhysicMod;
 import physicalModule.Switchport;
 
 //TODO: napsat javadoc
@@ -19,19 +20,27 @@ import physicalModule.Switchport;
 public abstract class NetMod {
 
     protected AbstractDevice device;
+	protected PhysicMod physicMod;
 
-    public NetMod(AbstractDevice device) {
-        this.device = device;
-    }
-
+	public NetMod(AbstractDevice device, PhysicMod physicMod) {
+		assert device != null;
+		assert physicMod != null;
+		this.device = device;
+		this.physicMod = physicMod;
+	}
+	
     public AbstractDevice getDevice() {
         return device;
     }
+
+	public PhysicMod getPhysicMod() {
+		return physicMod;
+	}
 
 	/**
 	 * Implementovat synchronizovane!
 	 * @param packet
 	 * @param swport
 	 */
-    public abstract void receivePacket(L2Packet packet, Switchport swport);
+    public abstract void receivePacket(L2Packet packet, int  switchportNumber);
 }

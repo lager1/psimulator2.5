@@ -4,10 +4,7 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import networkModule.NetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -18,23 +15,15 @@ import utils.WorkerThread;
  * TODO: PhysicMod: pak nejak poresit velikosti bufferu
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ * @author Tomas Pitrinec
  */
 public class PhysicMod implements SmartRunnable {
 
-	private static class Item {
-
-		L2Packet packet;
-		Switchport iface;
-
-		public Item(L2Packet packet, Switchport iface) {
-			this.packet = packet;
-			this.iface = iface;
-		}
-	}
+	
 	/**
 	 * List of interfaces.
 	 */
-	private List<Switchport> interfaceList;
+	private Map<Integer,Switchport> switchports = new HashMap<Integer, Switchport>();
 	/**
 	 * Network module.
 	 */
@@ -42,26 +31,39 @@ public class PhysicMod implements SmartRunnable {
 	/**
 	 * Queue for incomming packets from cabels.
 	 */
-	private final List<Item> receiveBuffer = Collections.synchronizedList(new LinkedList<Item>());
+	private final List<BufferItem> receiveBuffer = Collections.synchronizedList(new LinkedList<BufferItem>());
 	/**
 	 * Queue for incomming packets from network module.
 	 */
-	private final List<Item> sendBuffer = Collections.synchronizedList(new LinkedList<Item>());
+	private final List<BufferItem> sendBuffer = Collections.synchronizedList(new LinkedList<BufferItem>());
 	/**
 	 * Working thread.
 	 */
 	private WorkerThread worker = new WorkerThread(this);
+	
+	private boolean ladiciVypisovani = true;
+	
+	
+// Konstruktory a vytvareni modulu: ----------------------------------------------------------------------------------------------
 
-	public PhysicMod(NetMod netMod, List<Switchport> ifaces) {
-		this.netMod = netMod;
-		this.interfaceList = ifaces;
-	}
 
 	public PhysicMod(NetMod netMod) {
 		this.netMod = netMod;
-		this.interfaceList = new ArrayList<Switchport>();
+	}
+	
+	public void addSwitchport(int number, boolean realSwitchport, Connector connector) {
+		Switchport swport;
+		if (!realSwitchport) {
+			swport = new SimulatorSwitchport(number, this, connector);
+		} else {
+			swport =new RealSwitchport(number, this);
+		}
+		switchports.put(swport.getNumber(), swport);
 	}
 
+	
+// Verejny metody na posilani paketu: -----------------------------------------------------------------------------------------
+	
 	/**
 	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
 	 *
@@ -69,7 +71,7 @@ public class PhysicMod implements SmartRunnable {
 	 * @param iface which receives packet
 	 */
 	public void receivePacket(L2Packet packet, Switchport iface) {
-		receiveBuffer.add(new Item(packet, iface));
+		receiveBuffer.add(new BufferItem(packet, iface));
 		worker.wake();
 	}
 
@@ -80,31 +82,74 @@ public class PhysicMod implements SmartRunnable {
 	 * @param packet to send via physical module
 	 * @param iface through it will be send
 	 */
-	public void sendPacket(L2Packet packet, Switchport iface) {
-		sendBuffer.add(new Item(packet, iface));
+	public void sendPacket(L2Packet packet, int switchportNumber) {
+		Switchport swport = switchports.get(switchportNumber);
+		if(swport == null){
+			ladiciVypisovani("K odeslani bylo zadano cislo switchportu, ktery neexistuje, prosuvih!");
+			System.exit(2);
+		}
+		sendBuffer.add(new BufferItem(packet, swport));
 		worker.wake();
 	}
+
+
+// Ostatni verejny metody: ------------------------------------------------------------------------------------------------------
 
 	public void doMyWork() {
 
 		while (!receiveBuffer.isEmpty() || !sendBuffer.isEmpty()) {
 			if (!receiveBuffer.isEmpty()) {
-				Item m = receiveBuffer.remove(0);
-				netMod.receivePacket(m.packet, m.iface);
+				BufferItem m = receiveBuffer.remove(0);
+				netMod.receivePacket(m.packet, m.switchport.getNumber());
 			}
 
 			if (!sendBuffer.isEmpty()) {
-				Item m = sendBuffer.remove(0);
-				m.iface.sendPacket(m.packet);
+				BufferItem m = sendBuffer.remove(0);
+				m.switchport.sendPacket(m.packet);
 			}
 		}
 	}
 
-	public void addInterface(Switchport iface) {
-		interfaceList.add(iface);
+	
+	/**
+	 * Returns numbers of switchports.
+	 * Uses Network Module to explore network hardware afer start.
+	 * @return 
+	 */
+	public List<Integer> getNumbersOfPorts(){
+		List<Integer> vratit = new LinkedList<Integer>();
+		for(Switchport swport: switchports.values()){
+			vratit.add(swport.getNumber());
+		}
+		return vratit;
 	}
 
-	public boolean removeInterface(Switchport iface) {
-		return interfaceList.remove(iface);
+//	/**
+//	 * Nebude nikdy potreba.
+//	 * @param iface
+//	 * @return 
+//	 */
+//	public boolean removeSwitchport(Switchport iface) {
+//		return switchportList.remove(iface);
+//	}
+	
+	
+// Privatni veci: --------------------------------------------------------------------------------------------------
+	
+	private class BufferItem {
+
+		L2Packet packet;
+		Switchport switchport;
+
+		public BufferItem(L2Packet packet, Switchport switchport) {
+			this.packet = packet;
+			this.switchport = switchport;
+		}
+	}
+	
+	private void ladiciVypisovani(String zprava){
+		if (ladiciVypisovani){
+			System.out.println("PhysicMod: "+zprava);
+		}
 	}
 }

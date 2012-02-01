@@ -8,41 +8,41 @@ import dataStructures.L2Packet;
 
 
 /**
- * Represents physical switchport.
+ * Represents abstract physical switchport.
  * Sends and receives packet through cable.
  *
  * It is not running in its own thread, thread of PhysicMod handles it.
  *
- * @author neiss
+ * @author neiss, haldyr
  */
 public abstract class Switchport {
 
 	protected PhysicMod physicMod;
+	
 	/**
-	 * Link to cable's connector.
-	 * Until cable is not connected ti is null.
+	 * Unique number in PhysicMod.
 	 */
-	protected Connector connector;
+	private final int number;
 
-	public Switchport(Connector connector, PhysicMod physicMod) {
-		this.connector = connector;
+	protected Switchport(int number, PhysicMod physicMod) {
+		this.number=number;
 		this.physicMod = physicMod;
 	}
 
-	public Switchport(PhysicMod physicMod) {
-		this.physicMod = physicMod;
+	public int getNumber() {
+		return number;
 	}
 
 	/**
 	 * Try to send packet through this interface.
 	 * It just adds packet to buffer (if capacity allows) and notifies connected cable that it has work to do.
 	 */
-	public abstract void sendPacket(L2Packet packet);
+	protected abstract void sendPacket(L2Packet packet);
 
 	/**
 	 * Receives packet from cable and pass it to physical module.
 	 */
-	public abstract void receivePacket(L2Packet packet);
+	protected abstract void receivePacket(L2Packet packet);
 
 	/**
 	 * Returns true if buffer is empty.
