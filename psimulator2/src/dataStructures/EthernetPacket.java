@@ -14,13 +14,13 @@ import dataStructures.L3Packet.L3PacketType;
  */
 public class EthernetPacket extends L2Packet {
 
-	private MacAddress src;
-	private MacAddress dst;
+	private final MacAddress src;
+	private final MacAddress dst;
 
 	/**
 	 * Protokol vyssi vrstvy.
 	 */
-	L3PacketType ethertype;
+	final L3PacketType ethertype;
 
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype) {
 		this.src = src;

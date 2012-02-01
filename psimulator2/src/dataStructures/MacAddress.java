@@ -7,14 +7,14 @@ package dataStructures;
 import java.util.Arrays;
 
 /**
- * Implementation of mac address. 
+ * Implementation of mac address.
  * Vnitrni representace je pomoci integeru, protoze s bytama byl problem se znainkem.
  * @author neiss
  */
 public class MacAddress {
 
-    private int[] representation;
-    
+    private final int[] representation;
+
     /**
      * Vyjimka pro tvoreni mac adresy.
      */
@@ -23,31 +23,31 @@ public class MacAddress {
             super(msg);
         }
     }
-    
+
 // Konstruktory -----------------------------------------------------------------------------------------------
 
     /**
      * Klasickej konstuktor, ocekava mac adresu oddelenou dvojteckama.
-     * @param address 
+     * @param address
      */
     public MacAddress(String address) {
         this.representation = stringToBytes(address, ':');
     }
-    
+
     /**
      * Predpoklada mac adresu oddelenou zadanym oddelovacem (napr. pomlckou apod.)
      * @param address
-     * @param delimiter 
+     * @param delimiter
      */
     public MacAddress(String address, char delimiter) {
         this.representation = stringToBytes(address, delimiter);
     }
 
 // vypisy a porovnavani ---------------------------------------------------------------------------
-    
+
     /**
      * Vrati klasickej vypis s oddelenim dvojteckama.
-     * @return 
+     * @return
      */
     @Override
     public String toString() {
@@ -73,11 +73,11 @@ public class MacAddress {
         }
         return true;
     }
-    
+
     /**
      * Porovnavani.
      * @param other
-     * @return 
+     * @return
      */
     public boolean isLessOrEqualThan(MacAddress other){
         return isByteLessThan(other, 0);
@@ -90,23 +90,23 @@ public class MacAddress {
     }
 
 // staticky metody ----------------------------------------------------------------------------------------
-    
+
     /**
      * Returns true, if given mac address is broadcast
      * @param mac
-     * @return 
+     * @return
      */
     public static boolean isBroadcast(MacAddress mac){
         for(int i=0;i<6;i++){
             if(mac.representation[i]!=255) return false;
-        } 
+        }
         return true;
     }
-	
+
 	public static MacAddress broadcast(){
 		return new MacAddress("ff:ff:ff:ff:ff:ff");
 	}
-    
+
 // privatni staticky metody -------------------------------------------------------------------------------
 
     private static int[] stringToBytes(String adr, char delimiter) {

@@ -41,13 +41,13 @@ public class IPLayer extends Layer implements SmartRunnable {
 	 */
 	private ArpCache arpCache = new ArpCache();
 
-	private List<L2Packet> receiveBuffer = Collections.synchronizedList(new LinkedList<L2Packet>());
-	private List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
+	private final List<L2Packet> receiveBuffer = Collections.synchronizedList(new LinkedList<L2Packet>());
+	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
 	 * Zde budou pakety, ktere je potreba odeslat, ale nemam ARP zaznam, takze byla odeslana ARP request, ale jeste nemam odpoved.
 	 * Obsluhovat me bude doMyWork().
 	 */
-	private List<SendItem> arpBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
+	private final List<SendItem> arpBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 
 	public IPLayer(NetMod netMod) {
 		super(netMod);
