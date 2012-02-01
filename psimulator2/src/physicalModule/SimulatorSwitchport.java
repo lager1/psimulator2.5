@@ -26,7 +26,7 @@ public class SimulatorSwitchport extends Switchport {
 	/**
 	 * Storage for packets to be sent.
 	 */
-	private List<L2Packet> buffer = Collections.synchronizedList(new LinkedList<L2Packet>());
+	private final List<L2Packet> buffer = Collections.synchronizedList(new LinkedList<L2Packet>());
 
 	/**
 	 * Current size of buffer in bytes.
@@ -79,12 +79,8 @@ public class SimulatorSwitchport extends Switchport {
 
 	/**
 	 * Return true if buffer is empty.
-	 * Synchronied via buffer.
 	 */
 	public boolean isEmptyBuffer() {
-		if (buffer.isEmpty()) {
-			return true;
-		}
-		return false;
+		return buffer.isEmpty();
 	}
 }

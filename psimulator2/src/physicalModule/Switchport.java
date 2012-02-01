@@ -45,8 +45,7 @@ public abstract class Switchport {
 	public abstract void receivePacket(L2Packet packet);
 
 	/**
-	 * Return true if buffer is empty.
-	 * Synchronied via buffer.
+	 * Returns true if buffer is empty.
 	 */
 	public abstract boolean isEmptyBuffer();
 
