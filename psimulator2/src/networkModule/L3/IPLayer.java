@@ -12,14 +12,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import networkModule.Layer;
 import networkModule.NetMod;
+import utils.SmartRunnable;
+import utils.WorkerThread;
 
 /**
  * TODO: pridat paketovy filtr (NAT, ..).
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class IPLayer extends L3layer {
+public class IPLayer extends Layer implements SmartRunnable {
 
 	private static class SendItem {
 		L4Packet packet;
@@ -31,6 +34,11 @@ public class IPLayer extends L3layer {
 		}
 	}
 
+	protected WorkerThread worker = new WorkerThread(this);
+
+	/**
+	 * ARP cache table.
+	 */
 	private ArpCache arpCache = new ArpCache();
 
 	private List<L2Packet> receiveBuffer = Collections.synchronizedList(new LinkedList<L2Packet>());
@@ -49,7 +57,6 @@ public class IPLayer extends L3layer {
 		return arpCache.getCache();
 	}
 
-	@Override
 	public void receivePacket(L2Packet packet) {
 		receiveBuffer.add(packet);
 		worker.wake();
@@ -72,7 +79,6 @@ public class IPLayer extends L3layer {
 		}
 	}
 
-	@Override
 	public void sendPacket(L4Packet packet, IpAddress dst) {
 		sendBuffer.add(new SendItem(packet, dst));
 		worker.wake();

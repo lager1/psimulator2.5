@@ -3,8 +3,6 @@
  */
 package utils;
 
-import utils.SmartRunnable;
-
 /**
  * Thread implements wake and run functions. It sleeps itselfs.
  * @author neiss
