@@ -81,7 +81,7 @@ public class ArpPacket extends L3Packet {
 	public ArpPacket(IpAddress senderIpAddress, MacAddress senderMacAddress) {
 		this.senderIpAddress = senderIpAddress;
 		this.senderMacAddress = senderMacAddress;
-		this.targetIpAddress = new IpAddress("0.0.0.0");
+		this.targetIpAddress = new IpAddress("0.0.0.0"); // asi k nicemu
 		this.targetMacAddress = new MacAddress("00:00:00:00:00:00");
 		this.operation = ArpOperation.ARP_REQUEST;
 	}
