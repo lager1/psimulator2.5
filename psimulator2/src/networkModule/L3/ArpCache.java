@@ -32,6 +32,7 @@ public class ArpCache {
 
 	/**
 	 * For platform formatted output only.
+	 *
 	 * @return
 	 */
 	public HashMap<IpAddress, ArpRecord> getCache() {
@@ -39,8 +40,8 @@ public class ArpCache {
 	}
 
 	/**
-	 * Returns MacAddres iff there is a record pair IpAddress <> MacAddress AND timeout is not off. It removes ArpRecord
-	 * and returns null, if timeout is off. Return null if there is no record with given IpAddress.
+	 * Returns MacAddres iff there is a record pair IpAddress with MacAddress AND timeout is not off. <br /> It removes
+	 * ArpRecord and returns null, if timeout is off. <br /> Return null if there is no record with given IpAddress.
 	 *
 	 * @param ip
 	 * @return

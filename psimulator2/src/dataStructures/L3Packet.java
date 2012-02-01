@@ -10,7 +10,7 @@ package dataStructures;
  */
 public abstract class L3Packet {
 
-    L2Packet l2packet;
+//    L2Packet l2packet;
     L4Packet data;
 
 	public enum L3PacketType{
