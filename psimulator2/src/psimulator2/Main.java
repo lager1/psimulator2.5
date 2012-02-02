@@ -19,6 +19,8 @@ public class Main {
 
         TestLogger.logMessage("testovací zpráva", TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
 
+
+		Psimulator vsechno = Psimulator.getPsimulator();
     }
 
 }
