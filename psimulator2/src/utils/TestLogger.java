@@ -53,11 +53,6 @@ public class TestLogger {
     private static boolean configured = false;
 
    
-    private static void configureTestLogger() {
-
-        ConfigureTestLogger.configure(activeSource, activeType);
-        configured = true;
-    }
 
     /**
      * metoda pro záznam testovacích, ladicích apod. zpráv.  Není určeno k logování
@@ -70,7 +65,7 @@ public class TestLogger {
 
         if (!configured) // pokud není zkonfigurováno
         {
-            configureTestLogger();
+            ConfigureTestLogger.configure(activeSource, activeType);
             configured = true;
         }
 
@@ -89,7 +84,7 @@ public class TestLogger {
             return;
         }
 
-
-        System.out.println("!!" + type.toString() + ":" + source.toString() + message);
+        ConfigureTestLogger.individualLog(message, type, source);
+        
     }
 }
