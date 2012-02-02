@@ -33,4 +33,16 @@ public class SystemListener implements LoggerListener {
 			System.exit(3);
 		}
 	}
+
+	public void listen(String name, int logLevel, LoggingCategory category, String message) {
+		try {
+			if (logLevel <= configuration.get(category)) {
+				System.out.println("[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + name + ": " + message);
+			}
+		} catch (NullPointerException e) {
+			System.out.println("An error occured during logging:-) \n"
+					+ "LoggingCategory was null.");
+			System.exit(3);
+		}
+	}
 }
