@@ -82,21 +82,21 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 */
 	private void handleReceivePacket(L2Packet packet, int switchportNumber) {
 		if (packet.getClass() != EthernetPacket.class) {	//kontrola spravnosti paketu
-			Psimulator.getLogger().logg (this, Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
-					"Zahazuju paket, protoze neni tridy " + packet.getClass().getName(), null);
+			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
+					"Zahazuju paket, protoze neni tridy " + packet.getClass().getName());
 		}
 
 		EthernetPacket p = (EthernetPacket) packet;
 
 		SwitchportSettings swport = switchports.get(switchportNumber);
 		if (swport == null) {
-			Psimulator.getLogger().logg(this, Logger.ERROR, LoggingCategory.ETHERNET_LAYER, 
-					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber), null);
+			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER, 
+					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber));
 		}
 		//kontrola, bylo-li nalezeno rozhrani
 		EthernetInterface iface = swport.assignedInterface;
 		if (iface == null) {
-			Psimulator.getLogger().logg(this, Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, prusvih!", null);
+			Psimulator.getLogger().logg(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, prusvih!");
 		}
 
 		iface.addSwitchTableItem(p.getSrc(), swport);
