@@ -5,6 +5,7 @@ import telnetd.io.BasicTerminalIO;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionEvent;
 import telnetd.shell.Shell;
+import utils.TestLogger;
 
 /**
  *
@@ -21,11 +22,8 @@ public class TelnetSession implements Shell {
         this.m_IO = m_Connection.getTerminalIO();
         this.m_Connection.addConnectionListener(this); //dont forget to register listener
 
-
-
-
-
     }
+
 
     //this implements the ConnectionListener!
     @Override
@@ -36,7 +34,7 @@ public class TelnetSession implements Shell {
             //close connection
             m_Connection.close();
         } catch (Exception ex) {
-            //log.error("connectionTimedOut()", ex);
+            TestLogger.logMessage("Connection time out", TestLogger.TYPE.INFO, TestLogger.SOURCE.TELNET);
         }
     }//connectionTimedOut
 
@@ -46,7 +44,7 @@ public class TelnetSession implements Shell {
             m_IO.write("CONNECTION_IDLE");
             m_IO.flush();
         } catch (IOException e) {
-           // log.error("connectionIdle()", e);
+           TestLogger.logMessage("CONNECTION_IDLE", TestLogger.TYPE.INFO, TestLogger.SOURCE.TELNET);
         }
 
     }//connectionIdle
@@ -58,7 +56,7 @@ public class TelnetSession implements Shell {
             m_IO.flush();
             this.m_Connection.close();
         } catch (Exception ex) {
-         //   log.error("connectionLogoutRequest()", ex);
+         TestLogger.logMessage("CONNECTION_LOGOUTREQUEST", TestLogger.TYPE.INFO, TestLogger.SOURCE.TELNET);
         }
     }//connectionLogout
 
@@ -68,7 +66,7 @@ public class TelnetSession implements Shell {
             m_IO.write("CONNECTION_BREAK");
             m_IO.flush();
         } catch (Exception ex) {
-           // log.error("connectionSentBreak()", ex);
+          TestLogger.logMessage("CONNECTION_BREAK", TestLogger.TYPE.INFO, TestLogger.SOURCE.TELNET);
         }
     }//connectionSentBreak
 }

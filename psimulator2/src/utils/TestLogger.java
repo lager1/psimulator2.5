@@ -17,6 +17,9 @@ public class TestLogger {
      */
     public static enum SOURCE {
 
+        /**
+         * zpráva z kontextu telnetu
+         */
         TELNET,
         ARP,
     }
@@ -26,9 +29,22 @@ public class TestLogger {
      */
     public static enum TYPE {
 
+        /**
+         * ladící zpráva
+         */
         DEBUG,
+        /**
+         * varovná zpráva
+         */
         WARNING,
-        ERROR
+        /**
+         * chybová zpráva
+         */
+        ERROR,
+        /**
+         * normální zpráva
+         */
+        INFO
     }
 
     
@@ -37,7 +53,7 @@ public class TestLogger {
     private static boolean configured = false;
 
    
-    public static void configureTestLogger() {
+    private static void configureTestLogger() {
 
         ConfigureTestLogger.configure(activeSource, activeType);
         configured = true;
