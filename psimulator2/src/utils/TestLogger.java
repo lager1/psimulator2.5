@@ -36,19 +36,10 @@ public class TestLogger {
     private static EnumMap<TYPE, Boolean> activeType = new EnumMap<TYPE, Boolean>(TYPE.class);
     private static boolean configured = false;
 
-    /**
-     * Tato metoda nastaví které hlášky se mají vypisovat. Můžete ji libovolně upravovat.
-     */
+   
     public static void configureTestLogger() {
 
-        activeSource.put(SOURCE.ARP, Boolean.TRUE);     // pro testování "modulu ARP"
-        activeSource.put(SOURCE.TELNET, Boolean.TRUE);   // pro testování modulu telnet
-
-
-        activeType.put(TYPE.DEBUG, Boolean.TRUE);  // zapne ladící hlášky
-        activeType.put(TYPE.WARNING, Boolean.TRUE);  // zapne vyrovné hlášky
-        activeType.put(TYPE.ERROR, Boolean.TRUE);  // zapne chybové hlášky
-
+        ConfigureTestLogger.configure(activeSource, activeType);
         configured = true;
     }
 
