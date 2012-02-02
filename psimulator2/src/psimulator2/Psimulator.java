@@ -31,4 +31,12 @@ public class Psimulator {
 	private Psimulator() {
 		logger = new Logger();
 	}
+	
+	/**
+	 * Zkratka pro logovani.
+	 * @return 
+	 */
+	public static Logger getLogger(){
+		return getPsimulator().logger;
+	}
 }
