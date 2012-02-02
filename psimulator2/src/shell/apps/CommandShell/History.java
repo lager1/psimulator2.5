@@ -10,7 +10,7 @@ import java.util.ListIterator;
 
 /**
  * třída pro uchování historií konsole +  přístup k nim
- * @author zaltair
+ * @author Martin Lukáš
  */
 public class History {
 

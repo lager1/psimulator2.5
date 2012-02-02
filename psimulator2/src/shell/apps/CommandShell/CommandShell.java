@@ -10,7 +10,6 @@ import exceptions.TelnetConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import shell.apps.TerminalApplication;
@@ -19,7 +18,7 @@ import utils.TestLogger;
 
 /**
  *
- * @author zaltair
+ * @author Martin Lukáš
  */
 public class CommandShell extends TerminalApplication {
 

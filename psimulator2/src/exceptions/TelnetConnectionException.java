@@ -6,7 +6,7 @@ package exceptions;
 
 /**
  *
- * @author zaltair
+ * @author Martin Lukáš
  */
 public class TelnetConnectionException extends Exception {
 

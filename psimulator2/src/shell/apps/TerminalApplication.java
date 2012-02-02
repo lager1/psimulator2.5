@@ -10,7 +10,7 @@ import telnetd.io.BasicTerminalIO;
 
 /**
  * class that should be inherited when creating a terminal application like command shell or text editor
- * @author zaltair
+ * @author Martin Lukáš
  */
 public abstract class TerminalApplication {
 

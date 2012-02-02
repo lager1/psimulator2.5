@@ -10,7 +10,7 @@ import utils.TestLogger.TYPE;
 
 /**
  *
- * @author zaltair
+ * @author Martin Lukáš
  */
 public class ConfigureTestLogger {
 

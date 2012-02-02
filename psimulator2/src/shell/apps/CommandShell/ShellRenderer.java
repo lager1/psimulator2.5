@@ -18,7 +18,7 @@ import utils.TestLogger;
 
 /**
  *
- * @author zaltair
+ * @author Martin Lukáš
  */
 public class ShellRenderer {
 
