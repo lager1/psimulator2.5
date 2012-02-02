@@ -28,9 +28,9 @@ import utils.WorkerThread;
  */
 public class IPLayer implements SmartRunnable {
 
-	private static class SendItem {
-		L4Packet packet;
-		IpAddress dst;
+	private class SendItem {
+		final L4Packet packet;
+		final IpAddress dst;
 
 		public SendItem(L4Packet packet, IpAddress dst) {
 			this.packet = packet;
@@ -38,9 +38,9 @@ public class IPLayer implements SmartRunnable {
 		}
 	}
 
-	private static class ReceiveItem {
-		L3Packet packet;
-		EthernetInterface iface;
+	private class ReceiveItem {
+		final L3Packet packet;
+		final EthernetInterface iface;
 
 		public ReceiveItem(L3Packet packet, EthernetInterface iface) {
 			this.packet = packet;
@@ -71,6 +71,8 @@ public class IPLayer implements SmartRunnable {
 
 	private final RoutingTable routingTable = new RoutingTable();
 	private final TcpIpNetMod netMod;
+
+	private boolean newArpReply = false;
 
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
@@ -120,11 +122,25 @@ public class IPLayer implements SmartRunnable {
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me, takze si ji muzu ulozit a je to ok
 				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
+				newArpReply = true; // TODO: domyslet, zda bych nemel reagovat i na ARP_REQUEST, pac se taky muzu dozvedet neco zajimavyho..
 				break;
 		}
+	}
 
+	private void handleArpBuffer() {
+		synchronized(arpBuffer) {
+			// nebude se moci stat, ze nastavim newArpReply mezitim na true, protoze to bude blokovany..
+			// nemelo by zamykat na moc dlouho, protoze zaznamy v ARP cache vydrzi skoro vecnost (4h), takze by buffer mel byt vesmes poloprazdny..
 
-
+			for (SendItem m : arpBuffer) {
+				MacAddress mac = arpCache.getMacAdress(m.dst);
+				if (mac != null) {
+					// TODO: obslouzit
+//					netMod.ethernetLayer.sendPacket(m., null, mac);
+				}
+			}
+			newArpReply = false;
+		}
 	}
 
 	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
@@ -176,8 +192,9 @@ public class IPLayer implements SmartRunnable {
 				handleSendPacket(m.packet, m.dst);
 			}
 
-			if (!arpBuffer.isEmpty()) {
+			if (newArpReply && !arpBuffer.isEmpty()) {
 				// TODO: domyslet, KDY bude obskoceno !!!
+				handleArpBuffer();
 			}
 		}
 	}
