@@ -7,15 +7,15 @@ package shell.apps.TextEditor;
 import device.AbstractDevice;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+import logging.LoggingCategory;
+
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.terminal.ColorHelper;
 import telnetd.io.toolkit.Editarea;
 import telnetd.io.toolkit.Statusbar;
 import telnetd.io.toolkit.Titlebar;
-import utils.TestLogger;
 
 /**
  *
@@ -75,11 +75,11 @@ public class TextEditor extends TerminalApplication {
             terminalIO.flush();
             ea.run();
 
-            TestLogger.logMessage("TextEditor return this value:" + terminalIO.CRLF + ea.getValue(), TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
 
+            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + terminalIO.CRLF + ea.getValue());
 
         } catch (IOException ex) {
-            Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
         }
 
         return 0;

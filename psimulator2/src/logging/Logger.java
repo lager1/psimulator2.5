@@ -73,6 +73,28 @@ public class Logger {
 			System.exit(2);
 		}
 	}
+        
+        
+	/**
+	 * Zalogovat zpravu. Automatické zjištění jména třídy která zavolala log
+	 * @param logLevel vlozit pres logging.Logger.
+	 * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
+	 * @param message logovana zprava
+	 */
+	public static void log(int logLevel, LoggingCategory category, String message) {
+            String name = new Exception().getStackTrace()[1].getClassName();
+            List<LoggerListener> listeners = psimulator2.Psimulator.getLogger().listeners;
+            
+		for (LoggerListener listener : listeners) {
+			listener.listen(name, logLevel, category, message);
+		}
+
+		if (logLevel == ERROR) {
+			System.exit(2);
+		}
+	}
+        
+        
 
 	/**
 	 * Returns String representation of int logLevel.

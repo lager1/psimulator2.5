@@ -8,13 +8,13 @@ import exceptions.TelnetConnectionException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+
+import logging.LoggingCategory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
-import utils.TestLogger;
 
 /**
  *
@@ -34,8 +34,10 @@ public class ShellRenderer {
     }
 
     /**
-     * hlavní funkce zobrazování shellu a čtení z terminálu, reakce na různé klávesy ENETER, BACKSCAPE, LEFT ....
-     * @return  vrací přečtenou hodnotu z řádku, příkaz
+     * hlavní funkce zobrazování shellu a čtení z terminálu, reakce na různé
+     * klávesy ENETER, BACKSCAPE, LEFT ....
+     *
+     * @return vrací přečtenou hodnotu z řádku, příkaz
      */
     public String handleInput() throws TelnetConnectionException {
 
@@ -99,7 +101,8 @@ public class ShellRenderer {
                         sb.deleteCharAt(cursor - 1);
                         moveCursorLeft(1);
                         draw();
-                        TestLogger.logMessage("Pozice kurzoru: " + cursor, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+                        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
+
                     }
                 }
 
@@ -126,11 +129,13 @@ public class ShellRenderer {
                     draw();
                 }
 
-                TestLogger.logMessage("Pozice kurzoru: " + cursor + " Tisknul jsem znak? TRUE/FALSE " + printOut, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor + " Tisknul jsem znak? TRUE/FALSE " + printOut);
+                
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ShellRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
+            
         }
 
         return sb.toString();
@@ -176,7 +181,9 @@ public class ShellRenderer {
     }
 
     /**
-     * funkce která překreslí řádek od pozice kurzoru až do jeho konce dle čtecího bufferu
+     * funkce která překreslí řádek od pozice kurzoru až do jeho konce dle
+     * čtecího bufferu
+     *
      * @throws IOException
      */
     private void draw() throws IOException {
@@ -188,6 +195,7 @@ public class ShellRenderer {
 
     /**
      * překreslí celou řádku, umístí kurzor na konec řádky
+     *
      * @throws IOException
      */
     private void drawLine() throws IOException {
@@ -201,7 +209,9 @@ public class ShellRenderer {
     }
 
     /**
-     * funkce obsluhující historii, respektive funkce volaná při přečtení kláves UP a DOWN
+     * funkce obsluhující historii, respektive funkce volaná při přečtení kláves
+     * UP a DOWN
+     *
      * @param key typ klávesy který byl přečten
      * @throws IOException
      */
@@ -232,8 +242,8 @@ public class ShellRenderer {
     }
 
     /**
-     * funkce obstarávající posun kurzoru vlevo.
-     * Posouvá "blikající" kurzor, ale i "neviditelný" kurzor značící pracovní místo v čtecím bufferu
+     * funkce obstarávající posun kurzoru vlevo. Posouvá "blikající" kurzor, ale
+     * i "neviditelný" kurzor značící pracovní místo v čtecím bufferu
      */
     private void moveCursorLeft(int times) {
 
@@ -245,19 +255,21 @@ public class ShellRenderer {
                     termIO.moveLeft(1);
                     cursor--;
                 } catch (IOException ex) {
-                    Logger.getLogger(ShellRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
+                    
                 }
 
 
             }
-            TestLogger.logMessage("VLEVO, pozice: " + cursor, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "VLEVO, pozice: " + cursor);
+            
         }
 
     }
 
     /**
-     *  funkce obstarávající posun kurzoru vpravo.
-     *  Posouvá "blikající" kurzor, ale i "neviditelný" kurzor značící pracovní místo v čtecím bufferu
+     * funkce obstarávající posun kurzoru vpravo. Posouvá "blikající" kurzor,
+     * ale i "neviditelný" kurzor značící pracovní místo v čtecím bufferu
      */
     private void moveCursorRight(int times) {
 
@@ -271,12 +283,14 @@ public class ShellRenderer {
                     termIO.moveRight(1);
                     cursor++;
                 } catch (IOException ex) {
-                    Logger.getLogger(ShellRenderer.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.log(Logger.WARNING, LoggingCategory.TELNET, "VPRAVO, pozice: " + cursor);
+                    
                 }
 
 
             }
-            TestLogger.logMessage("VPRAVO, pozice: " + cursor, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "VPRAVO, pozice: " + cursor);
+            
 
         }
     }

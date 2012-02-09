@@ -10,11 +10,13 @@ import exceptions.TelnetConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+import logging.LoggingCategory;
+
+
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
-import utils.TestLogger;
+
 
 /**
  *
@@ -28,7 +30,7 @@ public class CommandShell extends TerminalApplication {
     public String prompt = "default promt:~# ";
     private boolean ukoncit = false;
     private AbstractCommandParser parser;
-    private Object zamek;
+    private Object locker;
 
     public CommandShell(BasicTerminalIO terminalIO, AbstractDevice device) {
         super(terminalIO, device);
@@ -81,8 +83,9 @@ public class CommandShell extends TerminalApplication {
         try {
             terminalIO.write(text);
             terminalIO.flush();
-
-            TestLogger.logMessage(text, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+            
+            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
+            
         } catch (IOException ex) {
             throw new TelnetConnectionException("Method CommandShell.print failed");
         }
@@ -126,7 +129,7 @@ public class CommandShell extends TerminalApplication {
      * close session, terminal connection will be closed
      */
     public void closeSession() {
-        TestLogger.logMessage("Close session called", TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Close session called" );
         ukoncit = true;
     }
 
@@ -142,23 +145,23 @@ public class CommandShell extends TerminalApplication {
             terminalIO.eraseScreen();
             terminalIO.homeCursor();
         } catch (IOException ex) {
-            Logger.getLogger(CommandShell.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString() );
         }
 
 
-        String radek;
+        String line;
 
 
         while (!ukoncit) {
             try {
                 printPrompt();
 
-                radek = readLine();
-                this.history.add(radek);
+                line = readLine();
+                this.history.add(line);
 
-                TestLogger.logMessage("PRECETL JSEM :" + radek, TestLogger.TYPE.DEBUG, TestLogger.SOURCE.TELNET);
-
-                synchronized (zamek) {
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM :" + line );
+                
+                synchronized (locker) {
 //                parser.zpracujRadek(radek);
                 }
 
