@@ -9,7 +9,7 @@ import device.AbstractDevice;
 import telnetd.io.BasicTerminalIO;
 
 /**
- * class that should be inherited when creating a terminal application like command shell or text editor
+ * class that should be inherited when programming a terminal application like command shell or text editor
  * @author Martin Lukáš
  */
 public abstract class TerminalApplication {
