@@ -13,13 +13,14 @@ import java.util.List;
 public class Logger {
 
 	private final List<LoggerListener> listeners = new LinkedList<LoggerListener>();
-
+	
 	/**
 	 * Zavazna chyba. Vypise na hlavni serverovou konzoli (normalni println) a ukonci program.
 	 */
 	public static final int ERROR = 1;
 	/**
-	 * Varovani, deje se neco divnyho ale nemusim kvuli tomu ukoncit program.
+	 * Varovani. Deje se neco divnyho ale nemusim kvuli tomu ukoncit program. Rozhodne by se to ale melo vypisovat na
+	 * serverovou konsoli.
 	 */
 	public static final int WARNING = 2;
 	/**
@@ -40,7 +41,9 @@ public class Logger {
 	}
 
 	/**
-	 * Zalogovat zpravu.
+	 * Zalogovat zpravu. Nejkomplexnejsi logovani, loguje se jak objekt, kterej loguje, tak i nejakej objekt k ty
+	 * zprave.
+	 *
 	 * @param caller odkaz na volajiciho
 	 * @param logLevel vlozit pres logging.Logger.
 	 * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
@@ -58,7 +61,9 @@ public class Logger {
 	}
 
 	/**
-	 * Zalogovat zpravu. Logovana trida nemusi byt Loggable.
+	 * Zalogovat zpravu. Jednodussi logovani, logovana trida nemusi byt Loggable, posila se jen string s description.
+	 * Neposila se zadnej dodatecnej objekt.
+	 *
 	 * @param name identifikace volajiciho (abychom vedeli, kdo tu zpravu poslal)
 	 * @param logLevel vlozit pres logging.Logger.
 	 * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
@@ -73,18 +78,18 @@ public class Logger {
 			System.exit(2);
 		}
 	}
-        
-        
+
 	/**
-	 * Zalogovat zpravu. Automatické zjištění jména třídy která zavolala log
+	 * Zalogovat zpravu. Uple nejjednodussi logovani, automaticky se zjisti jméno třídy která zavolala log.
+	 *
 	 * @param logLevel vlozit pres logging.Logger.
 	 * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
 	 * @param message logovana zprava
 	 */
 	public static void log(int logLevel, LoggingCategory category, String message) {
-            String name = new Exception().getStackTrace()[1].getClassName();
-            List<LoggerListener> listeners = psimulator2.Psimulator.getLogger().listeners;
-            
+		String name = new Exception().getStackTrace()[1].getClassName();
+		List<LoggerListener> listeners = psimulator2.Psimulator.getLogger().listeners;
+
 		for (LoggerListener listener : listeners) {
 			listener.listen(name, logLevel, category, message);
 		}
@@ -93,11 +98,10 @@ public class Logger {
 			System.exit(2);
 		}
 	}
-        
-        
 
 	/**
 	 * Returns String representation of int logLevel.
+	 *
 	 * @param logLevel
 	 * @return
 	 */

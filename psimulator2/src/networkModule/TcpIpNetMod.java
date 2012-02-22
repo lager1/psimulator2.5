@@ -3,7 +3,6 @@
  */
 
 package networkModule;
-//TODO: prejmenovat, ud2lat javadoc
 
 import dataStructures.L2Packet;
 import device.AbstractDevice;
@@ -19,24 +18,22 @@ import physicalModule.Switchport;
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
  * @author neiss
  */
-public class TcpIpNetMod extends NetMod {
-
-
-    public TcpIpNetMod(AbstractDevice device, PhysicMod physicMod) {
-		super(device, physicMod);
-    }
-
-	public final EthernetLayer ethernetLayer = new EthernetLayer(this);
+public class TcpIpNetMod extends SimpleSwitchNetMod {
+	
+	
 	public final IPLayer ipLayer = new IPLayer(this);
 	public final TcpIpLayer tcpipLayer = new TcpIpLayer(this);
-    
+
+	public TcpIpNetMod(EthernetLayer ethernetLayer, AbstractDevice device, PhysicMod physicMod) {
+		super(ethernetLayer, device, physicMod);
+	}
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema
 
+	
+
 	@Override
-	public void receivePacket(L2Packet packet, int switchportNumber) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public boolean isSwitch() {
+		return false;
 	}
-
-
 }

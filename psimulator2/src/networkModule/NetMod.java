@@ -7,16 +7,18 @@ package networkModule;
 import dataStructures.L2Packet;
 import device.AbstractDevice;
 import physicalModule.PhysicMod;
-import physicalModule.Switchport;
 
-//TODO: napsat javadoc
+
+//TODO: napsat javadoc anglicky.
 /**
- * Nejabstraknejsi ze sitovejch modulu.
- * Interface representující síťový modul počítače bez rozhraní pro aplikační vrstvu, prakticky
- * tedy použitelnej jen pro switch.
- * Síťový modul zajišťuje síťovou komunikaci na 2.,3. a 4. vrstvě ISO/OSI modelu.
+ * Nejabstraknejsi ze sitovejch modulu. Interface representující síťový modul počítače bez rozhraní pro aplikační
+ * vrstvu, prakticky tedy použitelnej jen pro switch. Síťový modul zajišťuje síťovou komunikaci na 2.,3. a 4. vrstvě
+ * ISO/OSI modelu.
+ *
  * @author neiss
  */
+
+
 public abstract class NetMod {
 
     protected AbstractDevice device;
@@ -43,4 +45,11 @@ public abstract class NetMod {
 	 * @param swport
 	 */
     public abstract void receivePacket(L2Packet packet, int  switchportNumber);
+	
+	/**
+	 * Returns true, if device is switch and have only link layer.
+	 * @return 
+	 */
+	public abstract boolean isSwitch();
+	
 }

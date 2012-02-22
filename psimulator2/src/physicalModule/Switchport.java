@@ -61,7 +61,7 @@ public abstract class Switchport {
 // ----------------------------- zatim neni treba -----------------------------
 //	/**
 //	 * For comparison of two interfaces
-//	 * TODO: porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
+//	 * porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
 //	 */
 //	protected UUID hash = UUID.randomUUID();
 //	/**

@@ -19,19 +19,20 @@ public class EthernetPacket extends L2Packet {
 
 	/**
 	 * Protokol vyssi vrstvy.
+	 * Nema pro simulator zadnej velkej vyznam, ale je soucasti toho ethernet II paketu - 3. predaska PSI, slide 32
 	 */
-	final L3PacketType ethertype;
+	final L3PacketType type;
 
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype) {
 		this.src = src;
 		this.dst = dst;
-		this.ethertype = ethertype;
+		this.type = ethertype;
 	}
 
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype, L3Packet data) {
 		this.src = src;
 		this.dst = dst;
-		this.ethertype = ethertype;
+		this.type = ethertype;
 		this.data=data;
 	}
 
@@ -39,8 +40,12 @@ public class EthernetPacket extends L2Packet {
 		return dst;
 	}
 
+	/**
+	 * Vrati protokol vyssi vrstvy (polozku type z toho paketu)
+	 * @return 
+	 */
 	public L3PacketType getEthertype() {
-		return ethertype;
+		return type;
 	}
 
 	public MacAddress getSrc() {
@@ -56,7 +61,6 @@ public class EthernetPacket extends L2Packet {
 	@Override
 	public int getSize() {
 		int sum = 24; //8,6,6,2,?,4 (preambule, mac, mac, typ, data crc) - 3. predaska PSI
-		// TODO: pridat velikost tohoto paketu
 		return sum + (data != null ? data.getSize() : 0);
 	}
 
