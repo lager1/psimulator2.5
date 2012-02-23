@@ -72,7 +72,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 */
 	private void handleSendPacket(L3Packet packet, EthernetInterface iface, MacAddress target) {
 		EthernetPacket p = new EthernetPacket(iface.getMac(), target, packet.getType(), packet);
-		dispatchPacket(iface, p);
+		transmitPacket(iface, p);
 	}
 
 	/**
@@ -83,42 +83,53 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * @param switchportNumber
 	 */
 	private void handleReceivePacket(EthernetPacket packet, int switchportNumber) {
-
+		
+		//kontrola existence switchportu:
 		SwitchportSettings swport = switchports.get(switchportNumber);
 		if (swport == null) {
 			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER, 
 					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber));
 		}
-		//kontrola, bylo-li nalezeno rozhrani
+		//kontrola, bylo-li nalezeno rozhrani:
 		EthernetInterface iface = swport.assignedInterface;
 		if (iface == null) {
 			Psimulator.getLogger().logg(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, zrejme spatnej konfigurak, prusvih!");
 			return;
 		}
 
+		//pridani do switchovaci tabulky:
 		iface.addSwitchTableItem(packet.src, swport);
+		
+		//samotny vyrizovani paketu:
 		if (packet.dst.equals(iface.getMac())) {	//pokud je paket pro me
-			handlePacketForMe(packet,iface,swport);
-		} else {
+			handlePacketForMe(packet, iface, swport);
+		} else if (packet.dst.equals(MacAddress.broadcast())) { //paket je broadcastovej
+			handlePacketForMe(packet, iface, swport);
 			if (iface.switchingEnabled) {
-				dispatchPacket(iface, packet);
+				iface.transmitPacketOnAllSwitchports(packet);	// interface to odesle na vsechny porty
+			}
+		} else { //paket neni pro me, musim ho odeslat dal
+			if (iface.switchingEnabled) { //odesila se, kdyz je to dovoleny
+				transmitPacket(iface, packet);
 			} else {
-				Psimulator.getLogger().logg(this,Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER,"Nemam povoleno switchovat, zahazuju paket.",packet);
+				Psimulator.getLogger().logg(this, Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket.", packet);
 			}
 		}
 
 	}
 
 	/**
-	 * Stara se o samotny odeslani paketu.
+	 * Stara se o samotny odeslani paketu. Najde si switchport a na ten to odesle.
 	 *
 	 * @param iface
 	 * @param packet
 	 */
-	private void dispatchPacket(EthernetInterface iface, EthernetPacket packet) {
+	private void transmitPacket(EthernetInterface iface, EthernetPacket packet) {
 		SwitchportSettings swport = iface.getSwitchport(packet.dst);
 		if (swport == null) { // switchport nenalezen
-			iface.dispatchPacketOnAllSwitchports(packet);	// interface to odesle na vsechny porty
+			iface.transmitPacketOnAllSwitchports(packet);	// interface to odesle na vsechny porty
+		} else if ( packet.dst.equals(MacAddress.broadcast()) ) {	// je to broadcast, odesila se to vsude
+			iface.transmitPacketOnAllSwitchports(packet);	// interface to odesle na vsechny porty
 		} else {
 			netMod.getPhysicMod().sendPacket(packet, swport.switchportNumber); //odeslu to po tom najitym switchportu
 		}
@@ -131,6 +142,10 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		}else{
 			((TcpIpNetMod)netMod).ipLayer.receivePacket(packet.getData(), iface);
 		}
+	}
+	
+	private void handleReceivedBroadcastPacket(EthernetPacket packet, EthernetInterface iface, SwitchportSettings swport){
+		
 	}
 
 	

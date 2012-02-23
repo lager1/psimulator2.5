@@ -81,10 +81,10 @@ public class EthernetInterface {
 	 * Odesle paket na vsechny switchporty rozhrani.
 	 * @param p 
 	 */
-	protected void dispatchPacketOnAllSwitchports(EthernetPacket p){
-		for(SwitchportSettings switchports : switchpors.values()){
-			if(switchports.isUp){
-				etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchports.switchportNumber);
+	protected void transmitPacketOnAllSwitchports(EthernetPacket p){
+		for(SwitchportSettings switchport : switchpors.values()){
+			if(switchport.isUp){
+				etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
 			}
 		}
 	}

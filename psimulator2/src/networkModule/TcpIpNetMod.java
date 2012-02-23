@@ -4,7 +4,6 @@
 
 package networkModule;
 
-import dataStructures.L2Packet;
 import device.AbstractDevice;
 
 import physicalModule.PhysicMod;
@@ -12,10 +11,10 @@ import physicalModule.PhysicMod;
 import networkModule.L2.EthernetLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L4.TcpIpLayer;
-import physicalModule.Switchport;
 
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
+ * Dedi od SimpleSwitchNetMod, tedy se v tyhle tride resi spis komunikace nahoru.
  * @author neiss
  */
 public class TcpIpNetMod extends SimpleSwitchNetMod {
