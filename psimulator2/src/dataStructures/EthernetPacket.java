@@ -14,8 +14,8 @@ import dataStructures.L3Packet.L3PacketType;
  */
 public class EthernetPacket extends L2Packet {
 
-	private final MacAddress src;
-	private final MacAddress dst;
+	public final MacAddress src;
+	public final MacAddress dst;
 
 	/**
 	 * Protokol vyssi vrstvy.
@@ -36,10 +36,6 @@ public class EthernetPacket extends L2Packet {
 		this.data=data;
 	}
 
-	public MacAddress getDst() {
-		return dst;
-	}
-
 	/**
 	 * Vrati protokol vyssi vrstvy (polozku type z toho paketu)
 	 * @return 
@@ -47,11 +43,7 @@ public class EthernetPacket extends L2Packet {
 	public L3PacketType getEthertype() {
 		return type;
 	}
-
-	public MacAddress getSrc() {
-		return src;
-	}
-
+	
 	public L3Packet getData() {
 		return data;
 	}
