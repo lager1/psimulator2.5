@@ -29,6 +29,10 @@ public class IpAddress {
      */
     protected IpAddress(){}
 
+	/**
+	 * Returns inner representation.
+	 * @return 
+	 */
     public int getBits(){
         return bits;
     }

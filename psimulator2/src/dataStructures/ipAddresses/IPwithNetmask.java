@@ -20,21 +20,41 @@ public class IPwithNetmask {
         dopocitejMasku();
     }
 
+	/**
+	 * Creates new instance from two strings.
+	 * @param adr
+	 * @param maska 
+	 */
     public IPwithNetmask(String adr, String maska) {
         ip = new IpAddress(adr);
         mask = new IpNetmask(maska);
     }
 
+	/**
+	 * Creates new instance from IP as string and mask as number of bits (tedy pocet jednickovejch bitu).
+	 * @param adr
+	 * @param maska number of bits
+	 */
     public IPwithNetmask(String adr, int maska) {
         ip = new IpAddress(adr);
         mask = new IpNetmask(maska);
     }
     
+	/**
+	 * Creates new instance from existing IP and mask as number of bits.
+	 * @param adr
+	 * @param maska number of bits
+	 */
     public IPwithNetmask(IpAddress adr, int maska) {
         ip = adr;
         mask = new IpNetmask(maska);
     }
     
+	/**
+	 * Creates new instance from existing IP and netmask.
+	 * @param adr
+	 * @param mask 
+	 */
     public IPwithNetmask(IpAddress adr, IpNetmask mask){
         ip=adr;
         this.mask = mask;
