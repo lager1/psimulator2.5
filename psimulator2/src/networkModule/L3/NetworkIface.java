@@ -14,12 +14,33 @@ import networkModule.L2.EthernetInterface;
 public class NetworkIface {
 
 	public final String name;
-	public boolean isUp = true; //je nahozene
-	public IPwithNetmask ipAddress;
+	/**
+	 * Interface is Up.
+	 * default behavior on linux: true
+	 * default behavior on cisco: false
+	 */
+	public boolean isUp = true;
+	protected IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
 	public NetworkIface(String name, EthernetInterface iface) {
 		this.name = name;
 		this.ethernetInterface = iface;
+	}
+
+	public NetworkIface(String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
+		this.name = name;
+		this.ipAddress = ipAddress;
+		this.ethernetInterface = ethernetInterface;
+		this.isUp = isUp;
+	}
+
+	/**
+	 * Getter for IP address with mask.
+	 * Setter is not available. Set IP address on IPLayer with method setIpAddressOnInterface()
+	 * @return
+	 */
+	public IPwithNetmask getIpAddress() {
+		return ipAddress;
 	}
 }

@@ -1,10 +1,10 @@
 /*
  * created 31.1.2012
  */
-
 package networkModule.L3;
 
 import dataStructures.*;
+import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import exceptions.UnsupportedL3TypeException;
 import java.util.ArrayList;
@@ -28,25 +28,23 @@ import utils.WorkerThread;
 public class IPLayer implements SmartRunnable {
 
 	protected final WorkerThread worker = new WorkerThread(this);
-
 	/**
 	 * ARP cache table.
 	 */
 	private final ArpCache arpCache = new ArpCache();
-
 	/**
 	 * Packet filter.
 	 * Controls NAT, packet dropping, ..
 	 */
 	private final PacketFilter packetFilter = new PacketFilter();
-
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
 	 * Zde budou pakety, ktere je potreba odeslat, ale nemam ARP zaznam, takze byla odeslana ARP request, ale jeste nemam odpoved.
 	 * Obsluhovat me bude doMyWork().
+	 * Neni potreba miti synchronizaci, protoze sem leze jen vlakno z doMyWork().
 	 */
-	private final List<SendItem> storeBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
+	private final List<SendItem> storeBuffer = new LinkedList<SendItem>();
 	/**
 	 * Routing table with record.
 	 */
@@ -55,9 +53,12 @@ public class IPLayer implements SmartRunnable {
 	 * Link to network module.
 	 */
 	private final TcpIpNetMod netMod;
-
+	/**
+	 * When some ARP reply arrives this is set to true
+	 * so doMyWork() can process storeBuffer.
+	 * After processing storeBuffer it is set to false.
+	 */
 	private boolean newArpReply = false;
-
 	private final List<NetworkIface> networkIfaces = new ArrayList<NetworkIface>();
 
 	public IPLayer(TcpIpNetMod netMod) {
@@ -69,7 +70,7 @@ public class IPLayer implements SmartRunnable {
 	 * Potrebne pro vypis pro cisco a linux.
 	 * @return
 	 */
-	public HashMap<IpAddress,ArpCache.ArpRecord> getArpCache() {
+	public HashMap<IpAddress, ArpCache.ArpRecord> getArpCache() {
 		return arpCache.getCache();
 	}
 
@@ -91,47 +92,51 @@ public class IPLayer implements SmartRunnable {
 				break;
 
 			default:
-				throw new UnsupportedL3TypeException("Unsupported L3 type: "+packet.getType());
+				throw new UnsupportedL3TypeException("Unsupported L3 type: " + packet.getType());
 		}
 	}
 
 	private void handleReceiveArpPacket(ArpPacket packet, EthernetInterface iface) {
 		// tady se bude resit update cache + reakce
-		switch(packet.operation) {
+		switch (packet.operation) {
 			case ARP_REQUEST:
 				// ulozit si odesilatele
 				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
 				// jsem ja target? Ano -> poslat ARP reply
-//				if (packet.targetIpAddress.equals() ) {
-					// poslat ARP reply
-//				ArpPacket arp = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, null, iface.getMac()); // TODO: target IP address
-//				netMod.ethernetLayer.sendPacket(arp, iface, packet.senderMacAddress);
-//				}
+				if (isItMyIpAddress(packet.targetIpAddress)) { //poslat ARP reply
+					ArpPacket arp = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, packet.targetIpAddress, iface.getMac());
+					netMod.ethernetLayer.sendPacket(arp, iface, packet.senderMacAddress);
+				}
 				break;
 
 			case ARP_REPLY:
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me, takze si ji muzu ulozit a je to ok
 				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
-				newArpReply = true; // TODO: domyslet, zda bych nemel reagovat i na ARP_REQUEST, pac se taky muzu dozvedet neco zajimavyho..
+				newArpReply = true;
+				// TODO: domyslet, zda bych nemel reagovat i na ARP_REQUEST, pac se taky muzu dozvedet neco zajimavyho..
 				break;
 		}
 	}
 
 	private void handleArpBuffer() {
-		synchronized(storeBuffer) {
-			// nebude se moci stat, ze nastavim newArpReply mezitim na true, protoze to bude blokovany..
-			// nemelo by zamykat na moc dlouho, protoze zaznamy v ARP cache vydrzi skoro vecnost (4h), takze by buffer mel byt vesmes poloprazdny..
 
-			for (SendItem m : storeBuffer) {
-				MacAddress mac = arpCache.getMacAdress(m.dst);
-				if (mac != null) {
-					// TODO: obslouzit
+		// TODO: hrat si na casova razitka
+		long now = System.currentTimeMillis();
+
+		for (SendItem m : storeBuffer) {
+			MacAddress mac = arpCache.getMacAdress(m.dst);
+			if (mac != null) {
+				// TODO: obslouzit
 //					netMod.ethernetLayer.sendPacket(m., null, mac);
-				}
+				// vyndat z bufferu
+			} else {
+				// zkontrolovat casove razitko, pokud je starsi nez, tak smaznout && poslat zpatky 'destination host unreachable'
+				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
+//				if (now - zaznam.vratCas() > 10000) {
 			}
-			newArpReply = false;
 		}
+		newArpReply = false;
 	}
 
 	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
@@ -150,7 +155,7 @@ public class IPLayer implements SmartRunnable {
 
 		// 1) zaroutuj - zjisti odchozi rozhrani
 		// 2) zanatuj - packetFilter
-		// 3) zjisti MAC adresu z ARP cache - je=OK, neni=vygenerovat ARP request a vlozit do arpBuffer
+		// 3) zjisti MAC adresu z ARP cache - je=OK, neni=vygenerovat ARP request a vlozit do storeBuffer + touch na sendItem, ktera bude v storeBuffer
 
 		// 1
 //		routingTable.findRecord(dst);
@@ -184,10 +189,22 @@ public class IPLayer implements SmartRunnable {
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) {
-				// TODO: domyslet, KDY bude obskoceno !!!
+				// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
 				handleArpBuffer();
 			}
 		}
+	}
+
+	/**
+	 * Sets IpAddress with NetMask to given interface.
+	 * There is no other way to set IP address to interface.
+	 *
+	 * Reason for this method is that we might to add some actions after setting address in future.
+	 * @param iface
+	 * @param ipAddress
+	 */
+	public void setIpAddressOnInterface(NetworkIface iface, IPwithNetmask ipAddress) {
+		iface.ipAddress = ipAddress;
 	}
 
 	/**
@@ -199,17 +216,38 @@ public class IPLayer implements SmartRunnable {
 		}
 	}
 
+	/**
+	 * Return true if targetIpAddress is on my NetworkIface and isUp
+	 * @param targetIpAddress
+	 * @return
+	 */
+	private boolean isItMyIpAddress(IpAddress targetIpAddress) {
+		for (NetworkIface iface : networkIfaces) {
+			if (iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private class SendItem {
+
 		final L4Packet packet;
 		final IpAddress dst;
+		long timeStamp; // pro potreby storeBufferu
 
 		public SendItem(L4Packet packet, IpAddress dst) {
 			this.packet = packet;
 			this.dst = dst;
 		}
+
+		public void touch() {
+			this.timeStamp = System.currentTimeMillis();
+		}
 	}
 
 	private class ReceiveItem {
+
 		final L3Packet packet;
 		final EthernetInterface iface;
 

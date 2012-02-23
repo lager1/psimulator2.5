@@ -32,6 +32,7 @@ public class ArpPacket extends L3Packet {
 	public final IpAddress targetIpAddress;
 	/**
 	 * Target MAC address.
+	 * ARP request has always 00:00:00:00:00:00
 	 */
 	public final MacAddress targetMacAddress;
 	/**
