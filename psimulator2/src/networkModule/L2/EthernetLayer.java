@@ -21,9 +21,9 @@ import utils.WorkerThread;
  */
 public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
+	public final List<EthernetInterface> ifaces = new ArrayList<EthernetInterface>(); //TODO: naplnit
 	protected final WorkerThread worker = new WorkerThread(this);
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>(); //TODO: naplnit
-	private final List<EthernetInterface> ifaces = new ArrayList<EthernetInterface>(); //TODO: naplnit
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
 	
@@ -96,8 +96,8 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			return;
 		}
 
-		iface.addSwitchTableItem(packet.getSrc(), swport);
-		if (packet.getDst().equals(iface.getMac())) {	//pokud je paket pro me
+		iface.addSwitchTableItem(packet.src, swport);
+		if (packet.dst.equals(iface.getMac())) {	//pokud je paket pro me
 			handlePacketForMe(packet,iface,swport);
 		} else {
 			if (iface.switchingEnabled) {
@@ -116,7 +116,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * @param packet
 	 */
 	private void dispatchPacket(EthernetInterface iface, EthernetPacket packet) {
-		SwitchportSettings swport = iface.getSwitchport(packet.getDst());
+		SwitchportSettings swport = iface.getSwitchport(packet.dst);
 		if (swport == null) { // switchport nenalezen
 			iface.dispatchPacketOnAllSwitchports(packet);	// interface to odesle na vsechny porty
 		} else {
