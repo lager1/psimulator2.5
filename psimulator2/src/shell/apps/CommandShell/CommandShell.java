@@ -24,6 +24,12 @@ import telnetd.io.BasicTerminalIO;
  */
 public class CommandShell extends TerminalApplication {
 
+	public static final int DEFAULT_MODE = 0;
+	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
+	public static final int CISCO_PRIVILEGED_MODE = 1;
+	public static final int CISCO_CONFIG_MODE = 2;
+	public static final int CISCO_CONFIG_IF_MODE = 3;
+
     private ShellRenderer shellRenderer;
     private History history = new History();
     public boolean vypisPrompt = true; // v ciscu obcas potrebuju zakazat si vypisovani promptu
@@ -31,6 +37,12 @@ public class CommandShell extends TerminalApplication {
     private boolean ukoncit = false;
     private AbstractCommandParser parser;
     private Object locker;
+
+	/**
+	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
+	 * Dle stavu se bude resit napovidani a historie.
+	 */
+	private int mode = DEFAULT_MODE;
 
     public CommandShell(BasicTerminalIO terminalIO, AbstractDevice device) {
         super(terminalIO, device);
@@ -44,6 +56,15 @@ public class CommandShell extends TerminalApplication {
     public void setHistory(History history) {
         this.history = history;
     }
+
+	public void setPrompt(String prompt) {
+		this.prompt = prompt;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+
 
 //    public List<String> getCommandList() {
 //        return this.pocitac.getCommandList();
@@ -83,9 +104,9 @@ public class CommandShell extends TerminalApplication {
         try {
             terminalIO.write(text);
             terminalIO.flush();
-            
+
             Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
-            
+
         } catch (IOException ex) {
             throw new TelnetConnectionException("Method CommandShell.print failed");
         }
@@ -160,9 +181,9 @@ public class CommandShell extends TerminalApplication {
                 this.history.add(line);
 
                 Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM :" + line );
-                
+
                 synchronized (locker) {
-//                parser.zpracujRadek(radek);
+					parser.processLine(line, mode);
                 }
 
                 terminalIO.flush();

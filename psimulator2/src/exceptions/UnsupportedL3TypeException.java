@@ -8,9 +8,9 @@ package exceptions;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class UnsupportedL3Type extends RuntimeException {
+public class UnsupportedL3TypeException extends RuntimeException {
 
-	public UnsupportedL3Type(String message) {
+	public UnsupportedL3TypeException(String message) {
 		super(message);
 	}
 }

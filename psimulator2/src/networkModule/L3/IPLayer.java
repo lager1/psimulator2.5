@@ -6,7 +6,8 @@ package networkModule.L3;
 
 import dataStructures.*;
 import dataStructures.ipAddresses.IpAddress;
-import exceptions.UnsupportedL3Type;
+import exceptions.UnsupportedL3TypeException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,30 +21,11 @@ import utils.WorkerThread;
  * Represents IP layer of ISO/OSI model.
  *
  * TODO: pridat paketovy filtr + routovaci tabulku
+ * TODO: predelat EthernetInterface na neco abstratniho??
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class IPLayer implements SmartRunnable {
-
-	private class SendItem {
-		final L4Packet packet;
-		final IpAddress dst;
-
-		public SendItem(L4Packet packet, IpAddress dst) {
-			this.packet = packet;
-			this.dst = dst;
-		}
-	}
-
-	private class ReceiveItem {
-		final L3Packet packet;
-		final EthernetInterface iface;
-
-		public ReceiveItem(L3Packet packet, EthernetInterface iface) {
-			this.packet = packet;
-			this.iface = iface;
-		}
-	}
 
 	protected final WorkerThread worker = new WorkerThread(this);
 
@@ -64,17 +46,29 @@ public class IPLayer implements SmartRunnable {
 	 * Zde budou pakety, ktere je potreba odeslat, ale nemam ARP zaznam, takze byla odeslana ARP request, ale jeste nemam odpoved.
 	 * Obsluhovat me bude doMyWork().
 	 */
-	private final List<SendItem> arpBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
-
+	private final List<SendItem> storeBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
+	/**
+	 * Routing table with record.
+	 */
 	private final RoutingTable routingTable = new RoutingTable();
+	/**
+	 * Link to network module.
+	 */
 	private final TcpIpNetMod netMod;
 
 	private boolean newArpReply = false;
 
+	private final List<NetworkIface> networkIfaces = new ArrayList<NetworkIface>();
+
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
+		processEthernetInterfaces();
 	}
 
+	/**
+	 * Potrebne pro vypis pro cisco a linux.
+	 * @return
+	 */
 	public HashMap<IpAddress,ArpCache.ArpRecord> getArpCache() {
 		return arpCache.getCache();
 	}
@@ -97,7 +91,7 @@ public class IPLayer implements SmartRunnable {
 				break;
 
 			default:
-				throw new UnsupportedL3Type("Unsupported L3 type: "+packet.getType());
+				throw new UnsupportedL3TypeException("Unsupported L3 type: "+packet.getType());
 		}
 	}
 
@@ -125,11 +119,11 @@ public class IPLayer implements SmartRunnable {
 	}
 
 	private void handleArpBuffer() {
-		synchronized(arpBuffer) {
+		synchronized(storeBuffer) {
 			// nebude se moci stat, ze nastavim newArpReply mezitim na true, protoze to bude blokovany..
 			// nemelo by zamykat na moc dlouho, protoze zaznamy v ARP cache vydrzi skoro vecnost (4h), takze by buffer mel byt vesmes poloprazdny..
 
-			for (SendItem m : arpBuffer) {
+			for (SendItem m : storeBuffer) {
 				MacAddress mac = arpCache.getMacAdress(m.dst);
 				if (mac != null) {
 					// TODO: obslouzit
@@ -189,11 +183,39 @@ public class IPLayer implements SmartRunnable {
 				handleSendPacket(m.packet, m.dst);
 			}
 
-			if (newArpReply && !arpBuffer.isEmpty()) {
+			if (newArpReply && !storeBuffer.isEmpty()) {
 				// TODO: domyslet, KDY bude obskoceno !!!
 				handleArpBuffer();
 			}
 		}
 	}
 
+	/**
+	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkIface (L3 iface).
+	 */
+	private void processEthernetInterfaces() {
+		for (EthernetInterface iface : netMod.ethernetLayer.ifaces) {
+			networkIfaces.add(new NetworkIface(iface.name, iface));
+		}
+	}
+
+	private class SendItem {
+		final L4Packet packet;
+		final IpAddress dst;
+
+		public SendItem(L4Packet packet, IpAddress dst) {
+			this.packet = packet;
+			this.dst = dst;
+		}
+	}
+
+	private class ReceiveItem {
+		final L3Packet packet;
+		final EthernetInterface iface;
+
+		public ReceiveItem(L3Packet packet, EthernetInterface iface) {
+			this.packet = packet;
+			this.iface = iface;
+		}
+	}
 }
