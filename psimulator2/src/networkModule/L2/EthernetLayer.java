@@ -7,6 +7,7 @@ import dataStructures.EthernetPacket;
 import dataStructures.L3Packet;
 import dataStructures.MacAddress;
 import java.util.*;
+import javax.xml.bind.annotation.XmlTransient;
 import logging.*;
 import networkModule.Layer;
 import networkModule.NetMod;

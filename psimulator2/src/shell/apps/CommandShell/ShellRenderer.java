@@ -39,7 +39,7 @@ public class ShellRenderer {
      *
      * @return vrací přečtenou hodnotu z řádku, příkaz
      */
-    public String handleInput() throws TelnetConnectionException {
+    public String handleInput() throws TelnetConnectionException  {
 
         this.sb.setLength(0); // clear string builder
         boolean konecCteni = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
