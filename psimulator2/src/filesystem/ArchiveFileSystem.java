@@ -7,6 +7,7 @@ import de.schlichtherle.truezip.file.TFileOutputStream;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
+import filesystem.dataStructures.Node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,7 +42,7 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public boolean deleteFileOrDir(String path) {
+	public boolean rm_r(String path) {
 		TFile file = new TFile(path);
 		
 		if(!file.exists())
@@ -129,5 +130,10 @@ public class ArchiveFileSystem implements FileSystem {
 		} catch (FsSyncException ex) {
 			//Logger.getLogger(ArchiveFileSystem.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+
+	@Override
+	public Node[] listDir(String path) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

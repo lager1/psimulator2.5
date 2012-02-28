@@ -12,11 +12,19 @@ import logging.LoggingCategory;
 public class ReplayScriptConfig {
 
 	FileSystem fileSystem;
-
+	/**
+	 * object used for replaying command from file
+	 * @param fileSystem  filesystem, where files are searched
+	 */
 	public ReplayScriptConfig(FileSystem fileSystem) {
 		this.fileSystem = fileSystem;
 	}
 
+	/**
+	 * method for batch commands run  from file
+	 * @param fileName file to be replayed
+	 * @param parser parser which process command
+	 */
 	public void replay(String fileName, AbstractCommandParser parser) {
 
 		Scanner in = new Scanner(fileSystem.getInputStreamToFile(fileName));
