@@ -7,6 +7,7 @@ package config;
 
 import filesystem.ArchiveFileSystem;
 import filesystem.FileSystem;
+import filesystem.ReplayScriptConfig;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -21,7 +22,7 @@ public class TestFileSystem {
     
     public static String fileSystemPath = "network.fsm";
 	public static String testFileName = "/etc/iproute2/rt_tables";
-    public static String testString = "muhehe";
+    public static String testString = "ifconfig eth0 192.168.1.12# testovací zpráva";
     
 
     @Test
@@ -29,10 +30,11 @@ public class TestFileSystem {
 
 		testWrite();
 		testRead();
+		testReplay();
 
     }
 	
-	public void testWrite(){
+	private void testWrite(){
 	
 		FileSystem fsm = new ArchiveFileSystem(fileSystemPath);
 		PrintStream print = new PrintStream(fsm.getOutputStreamToFile(testFileName));
@@ -53,5 +55,18 @@ public class TestFileSystem {
 		fsm.umount();
 		
 	}
+	
+	private void testReplay(){
+	
+		FileSystem fsm = new ArchiveFileSystem(fileSystemPath);
+		
+		ReplayScriptConfig replayer = new ReplayScriptConfig(fsm);
+		
+		replayer.replay(testFileName, null);
+	
+	
+	}
+	
+	
 
 }

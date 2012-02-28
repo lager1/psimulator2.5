@@ -18,10 +18,7 @@ public enum LoggingCategory {
 	// vlastni tridy, ktere chceme take logovat
 	PACKET_FILTER,
 	ETHERNET_LAYER,
-        TELNET,
-        
-        ABSTRACT_NETWORK
-
-	;
-
+	TELNET,
+	ABSTRACT_NETWORK,
+	FILE_SYSTEM
 }
