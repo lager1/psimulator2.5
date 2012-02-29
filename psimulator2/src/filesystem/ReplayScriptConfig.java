@@ -43,7 +43,7 @@ public class ReplayScriptConfig {
 			command = command.substring(0,cmntPosition).trim();
 
 			if (parser != null) {
-				parser.processLine(command, parser.getMode());  // @TODO opravdu 0, zeptat se asi Standy?
+				parser.processLine(command, parser.getShell().getMode());  // @TODO opravdu 0, zeptat se asi Standy?
 			} else {
 				Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\""+command + "\"" );
 			}

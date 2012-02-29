@@ -63,6 +63,10 @@ public class CommandShell extends TerminalApplication {
 		this.mode = mode;
 	}
 
+	public int getMode() {
+		return mode;
+	}
+
 //    public List<String> getCommandList() {
 //        return this.pocitac.getCommandList();
 //    }
@@ -110,7 +114,7 @@ public class CommandShell extends TerminalApplication {
 	 * method used to print text to the terminal
 	 *
 	 * @param text text to be printed to the terminal
-	 
+
 	 */
 	public void print(String text) {
 		try {

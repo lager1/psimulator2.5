@@ -84,8 +84,8 @@ public abstract class AbstractCommandParser {
 	 */
 	public abstract String[] getCommands(int mode);
 
-	public int getMode() {
-		return mode;
+	public CommandShell getShell() {
+		return shell;
 	}
 
 	/**
