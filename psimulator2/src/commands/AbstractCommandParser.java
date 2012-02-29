@@ -84,6 +84,10 @@ public abstract class AbstractCommandParser {
 	 */
 	public abstract String[] getCommands(int mode);
 
+	public int getMode() {
+		return mode;
+	}
+
 	/**
 	 * Tuto metodu musi implementovat parsery.
 	 * V tuto chvili uz jsou naplneny promenne words i mode.

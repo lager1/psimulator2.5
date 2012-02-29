@@ -128,7 +128,11 @@ public class IPLayer implements SmartRunnable {
 			MacAddress mac = arpCache.getMacAdress(m.dst);
 			if (mac != null) {
 				// TODO: obslouzit
-//					netMod.ethernetLayer.sendPacket(m., null, mac);
+
+//				IpPacket packet = new IpPacket(null, null)
+
+//				netMod.ethernetLayer.sendPacket(m., null, mac);
+//				storeBuffer.remove(m); // TODO: muze byt romove kdyz iteruju nad bufferem?
 				// vyndat z bufferu
 			} else {
 				// zkontrolovat casove razitko, pokud je starsi nez, tak smaznout && poslat zpatky 'destination host unreachable'
