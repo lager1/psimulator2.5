@@ -4,7 +4,7 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
-import config.Network.HwComponentModel;
+import config.Components.HwComponentModel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

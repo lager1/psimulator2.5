@@ -3,10 +3,10 @@
  */
 package psimulator2;
 
-import config.Network.NetworkModel;
-import config.Network.SaveLoadException;
-import config.Network.Serializer.AbstractNetworkSerializer;
-import config.Network.Serializer.NetworkModelSerializerXML;
+import config.Components.NetworkModel;
+import config.Serializer.AbstractNetworkSerializer;
+import config.Serializer.NetworkModelSerializerXML;
+import config.Serializer.SaveLoadException;
 import java.io.File;
 import logging.Logger;
 import logging.LoggingCategory;

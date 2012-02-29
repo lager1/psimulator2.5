@@ -3,7 +3,7 @@
  */
 package commands;
 
-import config.Network.HwComponentModel;
+import config.Components.HwComponentModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
