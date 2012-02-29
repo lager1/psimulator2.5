@@ -4,8 +4,7 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
-import config.AbstractNetwork.NetworkDevice;
-import exceptions.TelnetConnectionException;
+import config.Network.HwComponentModel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
      */
     boolean nepokracovat = false;
 
-	public CiscoCommandParser(NetworkDevice networkDevice, CommandShell shell) {
+	public CiscoCommandParser(HwComponentModel networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
 	}
 

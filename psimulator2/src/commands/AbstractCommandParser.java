@@ -3,7 +3,7 @@
  */
 package commands;
 
-import config.AbstractNetwork.NetworkDevice;
+import config.Network.HwComponentModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ import shell.apps.CommandShell.CommandShell;
 public abstract class AbstractCommandParser {
 
 	protected CommandShell shell;
-	protected NetworkDevice networkDevice;
+	protected HwComponentModel networkDevice;
 	/**
 	 * Seznam slov v prijatem radku.
 	 */
@@ -40,7 +40,7 @@ public abstract class AbstractCommandParser {
 	 */
 	protected int mode;
 
-	public AbstractCommandParser(NetworkDevice networkDevice, CommandShell shell) {
+	public AbstractCommandParser(HwComponentModel networkDevice, CommandShell shell) {
 		this.networkDevice = networkDevice;
 		this.shell = shell;
 	}

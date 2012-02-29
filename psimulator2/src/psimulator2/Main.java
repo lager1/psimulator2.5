@@ -3,9 +3,11 @@
  */
 package psimulator2;
 
-import config.AbstractNetwork.Network;
-import java.util.logging.Level;
-import javax.xml.bind.JAXBException;
+import config.Network.NetworkModel;
+import config.Network.SaveLoadException;
+import config.Network.Serializer.AbstractNetworkSerializer;
+import config.Network.Serializer.NetworkModelSerializerXML;
+import java.io.File;
 import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.BootException;
@@ -27,11 +29,14 @@ public class Main {
 
         Psimulator psimulatorInstance = Psimulator.getPsimulator();
 
-
-        Network networkModel = null;
+		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();
+		
+        NetworkModel networkModel = null;
         try {
-            networkModel = Network.load(configFileName);
-        } catch (JAXBException ex) {
+            
+			networkModel = serializer.loadNetworkModelFromFile(new File(args[0]));
+			
+        } catch (SaveLoadException ex) {
             Logger.log(Logger.DEBUG, LoggingCategory.ABSTRACT_NETWORK, ex.toString());
             Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Cannot load network model form:" + configFileName);
 
@@ -41,7 +46,7 @@ public class Main {
         TelnetD telnetDaemon;
         try {
             Logger.log(Logger.INFO, LoggingCategory.TELNET, "Starting telnet listeners");
-            TelnetProperties properties = new TelnetProperties(networkModel.getDevices().values());
+            TelnetProperties properties = new TelnetProperties(networkModel.getComponentsMap().values(), Integer.valueOf(args[1]));
             telnetDaemon = TelnetD.createTelnetD(properties.getProperties());
             telnetDaemon.start();
             Logger.log(Logger.INFO, LoggingCategory.TELNET, "Telnet listeners successfully started");

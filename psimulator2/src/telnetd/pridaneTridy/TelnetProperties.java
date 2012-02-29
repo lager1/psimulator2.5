@@ -4,7 +4,7 @@
  */
 package telnetd.pridaneTridy;
 
-import config.AbstractNetwork.NetworkDevice;
+import config.Network.HwComponentModel;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -15,19 +15,21 @@ import java.util.Properties;
  */
 public class TelnetProperties {
 
+	
+
     public enum Shell {
 
         LINUX, CISCO
     }
     private Properties properties = new Properties();
 
-    public TelnetProperties(Collection<NetworkDevice> devices) {
+    public TelnetProperties(Collection<HwComponentModel> devices, int startPort) {
         commonSetup();
 
         StringBuilder allListeners = new StringBuilder();
 
-        for (NetworkDevice networkDevice : devices) {
-            addListener(networkDevice.getIDAsString(), networkDevice.getTelnetPort());
+        for (HwComponentModel networkDevice : devices) {
+            addListener(networkDevice.getIDAsString(), startPort++ );
             allListeners.append(",").append(networkDevice.getIDAsString());
         }
 
