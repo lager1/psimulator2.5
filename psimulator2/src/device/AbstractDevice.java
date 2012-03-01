@@ -4,6 +4,7 @@
 
 package device;
 
+import config.Components.HwComponentModel;
 import physicalModule.PhysicMod;
 import networkModule.NetMod;
 
@@ -17,6 +18,11 @@ public class AbstractDevice {
 	PhysicMod physicalModule;
 	NetMod networkModule;
 	ApplicationsList applications;
+	HwComponentModel saveModelRef;
+
+	public AbstractDevice(HwComponentModel saveModelRef) {
+		this.saveModelRef = saveModelRef;
+	}
 
 	public ApplicationsList getApplications() {
 		return applications;
@@ -33,5 +39,5 @@ public class AbstractDevice {
 	public PhysicMod getPhysicalModule() {
 		return physicalModule;
 	}
-	
+
 }
