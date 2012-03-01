@@ -4,6 +4,7 @@
 package commands;
 
 import config.Components.HwComponentModel;
+import device.AbstractDevice;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ import shell.apps.CommandShell.CommandShell;
 public abstract class AbstractCommandParser {
 
 	protected CommandShell shell;
-	protected HwComponentModel networkDevice;
+	protected AbstractDevice networkDevice;
 	/**
 	 * Seznam slov v prijatem radku.
 	 */
@@ -40,7 +41,7 @@ public abstract class AbstractCommandParser {
 	 */
 	protected int mode;
 
-	public AbstractCommandParser(HwComponentModel networkDevice, CommandShell shell) {
+	public AbstractCommandParser(AbstractDevice networkDevice, CommandShell shell) {
 		this.networkDevice = networkDevice;
 		this.shell = shell;
 	}
@@ -77,7 +78,7 @@ public abstract class AbstractCommandParser {
 	public abstract void catchSignal(int sig);
 
 	/**
-	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduchemu napovidani.
+	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.
 	 *
 	 * @param mode aktualni mod toho shellu (pro cisco)
 	 * @return

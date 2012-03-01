@@ -38,10 +38,27 @@ public class EthernetInterface {
 		this.etherLayer = etherLayer;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EthernetInterface other = (EthernetInterface) obj;
+		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+			return false;
+		}
+		if (this.mac != other.mac && (this.mac == null || !this.mac.equals(other.mac))) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Returns mac address of this interface.
-	 * @return 
+	 * @return
 	 */
 	public MacAddress getMac() {
 		return mac;
@@ -51,7 +68,7 @@ public class EthernetInterface {
 	/**
 	 * Da switchport, pres kterej se smeruje na zadanou mac adresu.
 	 * @param mac
-	 * @return 
+	 * @return
 	 */
 	public SwitchportSettings getSwitchport(MacAddress mac) {
 		if (switchpors.size() == 1) {
@@ -79,7 +96,7 @@ public class EthernetInterface {
 
 	/**
 	 * Odesle paket na vsechny switchporty rozhrani.
-	 * @param p 
+	 * @param p
 	 */
 	protected void transmitPacketOnAllSwitchports(EthernetPacket p){
 		for(SwitchportSettings switchport : switchpors.values()){
@@ -88,13 +105,13 @@ public class EthernetInterface {
 			}
 		}
 	}
-	
-	
-	
-	
-		
-	
-	
+
+
+
+
+
+
+
 
 
 // Polozka switchovaci tabulky:

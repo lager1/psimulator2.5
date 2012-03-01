@@ -3,6 +3,7 @@
  */
 package networkModule.L3;
 
+import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import networkModule.L2.EthernetInterface;
 
@@ -42,5 +43,9 @@ public class NetworkIface {
 	 */
 	public IPwithNetmask getIpAddress() {
 		return ipAddress;
+	}
+
+	public MacAddress getMacAddress() {
+		return ethernetInterface.getMac();
 	}
 }

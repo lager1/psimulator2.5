@@ -10,8 +10,15 @@ package dataStructures;
  */
 public abstract class L3Packet {
 
-//    L2Packet l2packet;
-    L4Packet data;
+    public final L4Packet data;
+
+	public L3Packet() {
+		this.data = null;
+	}
+
+	public L3Packet(L4Packet data) {
+		this.data = data;
+	}
 
 	public enum L3PacketType{
 		IPv4,

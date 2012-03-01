@@ -16,12 +16,12 @@ public class IpPacket extends L3Packet {
 	// TODO: dodelat
 	public final IpAddress src;
 	public final IpAddress dst;
-	public final int TTL; // TODO: poresit ruzny TTL na ruznych systemech
+	public final int ttl; // TODO: poresit ruzny TTL na ruznych systemech
 
-	public IpPacket(IpAddress src, IpAddress dst) {
+	public IpPacket(IpAddress src, IpAddress dst, int ttl) {
 		this.src = src;
 		this.dst = dst;
-		this.TTL = 255;
+		this.ttl = ttl;
 	}
 
 //	public IpPacket copy() {

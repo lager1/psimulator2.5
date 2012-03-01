@@ -24,31 +24,26 @@ public class EthernetPacket extends L2Packet {
 	final L3PacketType type;
 
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype) {
+		super();
 		this.src = src;
 		this.dst = dst;
 		this.type = ethertype;
 	}
 
 	public EthernetPacket(MacAddress src, MacAddress dst, L3PacketType ethertype, L3Packet data) {
+		super(data);
 		this.src = src;
 		this.dst = dst;
 		this.type = ethertype;
-		this.data=data;
 	}
 
 	/**
 	 * Vrati protokol vyssi vrstvy (polozku type z toho paketu)
-	 * @return 
+	 * @return
 	 */
 	public L3PacketType getEthertype() {
 		return type;
 	}
-	
-	public L3Packet getData() {
-		return data;
-	}
-
-
 
 	@Override
 	public int getSize() {

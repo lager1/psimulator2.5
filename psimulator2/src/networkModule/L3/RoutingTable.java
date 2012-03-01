@@ -16,17 +16,17 @@ import java.util.List;
  * @author neiss
  */
 public class RoutingTable {
-	
-	
+
+
 	private List<Record> records = new LinkedList<Record>();
-	
+
 	/**
      * Special pro cisco, nevim, co to dela.
      */
     public boolean classless = true;
-	
-	
-	
+
+
+
 	/**
 	 * Tahleta metoda hleda zaznam v routovaci tabulce, ktery odpovida zadane IP adrese a cely ho vrati. Slouzi
 	 * predevsim pro samotne routovani, kdyz potrebuju znat cely zaznam, a ne jen rozhrani (napr. na jakou branu to mam
@@ -44,7 +44,7 @@ public class RoutingTable {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Prida novej zaznam, priznaku UG, tzn na branu. V okamziku pridani musi bejt brana dosazitelna s priznakem U, tzn.
 	 * na rozhrani, ne gw. Lze pridat i zaznam s predvyplnenim rozhranim, i takovej ale musi mit branu uz dosazitelnou
@@ -80,7 +80,7 @@ public class RoutingTable {
 		Record z = new Record(adresat, brana, rozhr);
 		return pridaniZaznamu(z);
 	}
-	
+
 	/**
      * Prida novej zaznam priznaku U.
      * Spolecna metoda pro linux i cisco.
@@ -92,8 +92,8 @@ public class RoutingTable {
         Record z=new Record(adresat, rozhr);
         return pridaniZaznamu(z);
     }
-	
-	
+
+
 	/**
      * Prida novy zaznam na vlastni rozhrani.
      * Extra cisco metoda.
@@ -107,7 +107,7 @@ public class RoutingTable {
         Record z=new Record(adresat, rozhr, primo);
         return pridaniZaznamu(z);
 	}
-	
+
 	/**
      * Metoda na mazani zaznamu.
      * @param adresat musi byt zadan
@@ -135,7 +135,7 @@ public class RoutingTable {
     public boolean deleteRecord(Record z){
         return records.remove(z);
     }
-	
+
 	/**
      * Smaze vsechny zaznamy (U i UG) na zadanem rozhrani. Potreba pro mazani rout, kdyz se zmeni adresa nebo maska
      * na rozhrani.
@@ -168,7 +168,7 @@ public class RoutingTable {
         }
         return v;
     }
-    
+
     public int size(){
         return records.size();
     }
@@ -197,10 +197,10 @@ public class RoutingTable {
 		return null;
 	}
 
-	
+
 
 // privatni metody ----------------------------------------------------------------------------------------------------
-    
+
     /**
      * Prida zaznam na spravnou pozici. Jen vytazeny radky z puvodnich metod na pridani zaznamu U nebo UG
      * @param z
@@ -213,9 +213,9 @@ public class RoutingTable {
         records.add(i,z);
         return 0;
     }
-	
+
 	    /**
-     * Kontroluje, jestli tabulka uz pridavany radek neobsahuje. Zaznam musi obsahovat adresata a rozhrani 
+     * Kontroluje, jestli tabulka uz pridavany radek neobsahuje. Zaznam musi obsahovat adresata a rozhrani
      * (to je predem zjisteno), brana se kontroluje, jen kdyz neni null.
      * @param zazn
      * @return
@@ -260,25 +260,34 @@ public class RoutingTable {
 		//vic se nakonec uz nic neposouva...
 		return i;
 	}
-	
+
 // --------------------------------------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Trida pro jeden radek v routovaci tabulce.
 	 * Prakticky cela prekopirovana z minulyho simulatoru.
 	 */
 	public class Record {
+		/**
+		 * TODO
+		 */
         public final IPwithNetmask adresat;   // ty promenny jsou privatni, nechci, aby se daly zvenci upravovat
+		/**
+		 * Brana na kterou se bude paket posilat.
+		 */
         public final IpAddress brana;
+		/**
+		 * Rozhrani na ktere se bude posilat.
+		 */
         public final NetworkIface rozhrani;
         private boolean connected = false; // indikuju, zda tento zaznam je na primo pripojene rozhrani, spise pro cisco
 
-        
+
 		@Deprecated
         public boolean jePrimoPripojene() {
             return connected;
         }
-		
+
 		public Record(IPwithNetmask adresat, NetworkIface rozhrani) {
 			this.adresat = adresat;
 			this.rozhrani = rozhrani;
@@ -294,7 +303,7 @@ public class RoutingTable {
             this.connected = pripojene;
 			brana=null;
         }
-		
+
 		private Record(IPwithNetmask adresat, IpAddress brana, NetworkIface rozhrani){
             this.adresat=adresat;
             this.brana=brana;
@@ -325,5 +334,5 @@ public class RoutingTable {
         }
     }
 
-	
+
 }

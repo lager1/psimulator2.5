@@ -16,4 +16,11 @@ public abstract class L4Packet {
 		return sum;
 	}
 
+	public enum L4PacketType{
+		ICMP,
+		TCP,
+		UDP,
+	}
+
+	public abstract L4PacketType getType();
 }

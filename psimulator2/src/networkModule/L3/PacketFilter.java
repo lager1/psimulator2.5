@@ -4,6 +4,8 @@
 
 package networkModule.L3;
 
+import dataStructures.IpPacket;
+
 /**
  * Represents packet filter, implements network address translation.
  *
@@ -11,10 +13,13 @@ package networkModule.L3;
  */
 public class PacketFilter {
 
+	public IpPacket preRouting(IpPacket packet, NetworkIface in) {
+		return packet;
+	}
 
-//	public Packet processPacket() {
-
-//	}
+	public IpPacket postRouting(IpPacket packet, NetworkIface in, NetworkIface out) {
+		return packet;
+	}
 
 	// cisco NAT
 	// http://www.cisco.com/en/US/tech/tk648/tk361/technologies_tech_note09186a0080133ddd.shtml

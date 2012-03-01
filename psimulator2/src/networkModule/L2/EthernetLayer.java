@@ -27,8 +27,8 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>(); //TODO: naplnit
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
-	
-	
+
+
 
 // Verejny metody pro sitovou komunikaci: ----------------------------------------------------------------------------------------------------
 	public void receivePacket(EthernetPacket packet, int switchportNumber) {
@@ -41,9 +41,9 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		worker.wake();
 	}
 
-	
+
 // Ostatni verejny metody: --------------------------------------------------------------------------------------------------------------
-	
+
 	public void doMyWork() {
 		while ( ! (sendBuffer.isEmpty() && receiveBuffer.isEmpty())) {
 			if (!sendBuffer.isEmpty()) {
@@ -56,14 +56,14 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			}
 		}
 	}
-	
+
 	public String getDescription() {
 		return netMod.getDevice().getName()+": EthernetLayer";
 	}
 
-	
+
 // Privatni metody resici sitovou komunikaci: ------------------------------------------------------------------------
-	
+
 	/**
 	 * Obsluhuje pakety, ktery dala sitova vrstva k odeslani.
 	 *
@@ -84,11 +84,11 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * @param switchportNumber
 	 */
 	private void handleReceivePacket(EthernetPacket packet, int switchportNumber) {
-		
+
 		//kontrola existence switchportu:
 		SwitchportSettings swport = switchports.get(switchportNumber);
 		if (swport == null) {
-			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER, 
+			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
 					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber));
 		}
 		//kontrola, bylo-li nalezeno rozhrani:
@@ -100,7 +100,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 		//pridani do switchovaci tabulky:
 		iface.addSwitchTableItem(packet.src, swport);
-		
+
 		//samotny vyrizovani paketu:
 		if (packet.dst.equals(iface.getMac())) {	//pokud je paket pro me
 			handlePacketForMe(packet, iface, swport);
@@ -136,28 +136,28 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		}
 	}
 
-	
+
 	private void handlePacketForMe(EthernetPacket packet, EthernetInterface iface, SwitchportSettings swport) {
 		if (netMod.isSwitch()){
 			//TODO: Jedina vec, kdy se budou posilat pakety primo switchi je spanning tree protocol - tady bude jeho implementace.
 		}else{
-			((TcpIpNetMod)netMod).ipLayer.receivePacket(packet.getData(), iface);
+			((TcpIpNetMod)netMod).ipLayer.receivePacket(packet.data, iface);
 		}
 	}
-	
+
 	private void handleReceivedBroadcastPacket(EthernetPacket packet, EthernetInterface iface, SwitchportSettings swport){
-		
+
 	}
 
-	
-	
+
+
 // ostatni privatni metody: -----------------------------------------------------------------------------------------------------------
 
 
-	
+
 
 // tridy pro polozky v bufferech: ------------------------------------------------------------------------------------------------------------
-	
+
 	private class SendItem {
 
 		L3Packet packet;
@@ -183,7 +183,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	}
 
 // Konstruktory a nastavovani pri startu: -------------------------------------------------------------------------------------------------
-	
+
 	public EthernetLayer(NetMod netMod) {
 		super(netMod);
 		exploreHardware();
