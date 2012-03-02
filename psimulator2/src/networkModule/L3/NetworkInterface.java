@@ -12,7 +12,7 @@ import networkModule.L2.EthernetInterface;
  * Representuje prakticky jen nastaveni interfacu, samotna trida nic nedela.
  * @author neiss
  */
-public class NetworkIface {
+public class NetworkInterface {
 
 	public final String name;
 	/**
@@ -24,12 +24,12 @@ public class NetworkIface {
 	protected IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
-	public NetworkIface(String name, EthernetInterface iface) {
+	public NetworkInterface(String name, EthernetInterface iface) {
 		this.name = name;
 		this.ethernetInterface = iface;
 	}
 
-	public NetworkIface(String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
+	public NetworkInterface(String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
 		this.name = name;
 		this.ipAddress = ipAddress;
 		this.ethernetInterface = ethernetInterface;

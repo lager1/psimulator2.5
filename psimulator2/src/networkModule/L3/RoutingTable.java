@@ -56,7 +56,7 @@ public class RoutingTable {
 	 * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br /> 2: rozhrani nenalezeno, pro zadaneho adresata
 	 * neexistuje zaznam U<br />
 	 */
-	public int addRecord(IPwithNetmask adresat, IpAddress brana, NetworkIface rozhr) {
+	public int addRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr) {
 		boolean rozhraniNalezeno = false;
 		for (Record z : records) { //hledani spravnyho rozhrani
 			if (z.brana == null) { //tohle by moh bejt zaznam potrebnej zaznam priznaku U
@@ -88,7 +88,7 @@ public class RoutingTable {
      * @param rozhr predpoklada se, ze rozhrani na pocitaci existuje
      * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br />
      */
-    public int addRecord(IPwithNetmask adresat, NetworkIface rozhr){
+    public int addRecord(IPwithNetmask adresat, NetworkInterface rozhr){
         Record z=new Record(adresat, rozhr);
         return pridaniZaznamu(z);
     }
@@ -103,7 +103,7 @@ public class RoutingTable {
      * @return
      * @author Stanislav Řehák
      */
-    public int addRecord(IPwithNetmask adresat, NetworkIface rozhr, boolean primo) {
+    public int addRecord(IPwithNetmask adresat, NetworkInterface rozhr, boolean primo) {
         Record z=new Record(adresat, rozhr, primo);
         return pridaniZaznamu(z);
 	}
@@ -115,7 +115,7 @@ public class RoutingTable {
      * @param rozhr muze byt null
      * @return true - zaznam smazan<br /> false - zaznam nenalezen - nic nesmazano
      */
-    public boolean deleteRecord(IPwithNetmask adresat, IpAddress brana, NetworkIface rozhr){
+    public boolean deleteRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr){
         Record z;
         for(int i=0;i<records.size();i++){
             z=records.get(i);
@@ -142,7 +142,7 @@ public class RoutingTable {
      * @param rozhr
      * @return pocet smazanych rozhrani (spis pro ladeni, jinej efekt to asi nema)
      */
-    public int flushRecords(NetworkIface rozhr){
+    public int flushRecords(NetworkInterface rozhr){
         int p = 0; //pocet smazanych zaznamu
         List <Record>smazat = new LinkedList(); //dela se to pres pomocnej seznam, protoze jinak hazela
                                                 // java vyjimku ConcurrentModificationException
@@ -279,7 +279,7 @@ public class RoutingTable {
 		/**
 		 * Rozhrani na ktere se bude posilat.
 		 */
-        public final NetworkIface rozhrani;
+        public final NetworkInterface rozhrani;
         private boolean connected = false; // indikuju, zda tento zaznam je na primo pripojene rozhrani, spise pro cisco
 
 
@@ -288,7 +288,7 @@ public class RoutingTable {
             return connected;
         }
 
-		public Record(IPwithNetmask adresat, NetworkIface rozhrani) {
+		public Record(IPwithNetmask adresat, NetworkInterface rozhrani) {
 			this.adresat = adresat;
 			this.rozhrani = rozhrani;
 			brana=null;
@@ -297,14 +297,14 @@ public class RoutingTable {
         /*
          * Konstruktur pro cisco.
          */
-        private Record(IPwithNetmask adresat, NetworkIface rozhrani, boolean pripojene){
+        private Record(IPwithNetmask adresat, NetworkInterface rozhrani, boolean pripojene){
             this.adresat=adresat;
             this.rozhrani=rozhrani;
             this.connected = pripojene;
 			brana=null;
         }
 
-		private Record(IPwithNetmask adresat, IpAddress brana, NetworkIface rozhrani){
+		private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani){
             this.adresat=adresat;
             this.brana=brana;
             this.rozhrani=rozhrani;
@@ -313,7 +313,7 @@ public class RoutingTable {
         /*
          * Konstruktur pro cisco.
          */
-        private Record(IPwithNetmask adresat, IpAddress brana, NetworkIface rozhrani, boolean pripojene){
+        private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani, boolean pripojene){
             this.adresat=adresat;
             this.brana=brana;
             this.rozhrani=rozhrani;

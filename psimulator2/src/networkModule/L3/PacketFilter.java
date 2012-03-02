@@ -13,11 +13,11 @@ import dataStructures.IpPacket;
  */
 public class PacketFilter {
 
-	public IpPacket preRouting(IpPacket packet, NetworkIface in) {
+	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
 		return packet;
 	}
 
-	public IpPacket postRouting(IpPacket packet, NetworkIface in, NetworkIface out) {
+	public IpPacket postRouting(IpPacket packet, NetworkInterface in, NetworkInterface out) {
 		return packet;
 	}
 

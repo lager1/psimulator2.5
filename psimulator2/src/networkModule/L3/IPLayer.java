@@ -61,7 +61,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * storeBuffer it is set to false.
 	 */
 	private boolean newArpReply = false;
-	private final List<NetworkIface> networkIfaces = new ArrayList<NetworkIface>();
+	private final List<NetworkInterface> networkIfaces = new ArrayList<NetworkInterface>();
 
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
@@ -179,7 +179,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
 		// odnatovat
-		NetworkIface ifaceIn = findIncommingNetworkIface(iface);
+		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// zpracovat paket
 		handleSendIpPacket(packet, iface);
@@ -201,7 +201,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 			return;
 		}
 
-		NetworkIface ifaceIn = findIncommingNetworkIface(iface);
+		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// osetri TTL
 		if (packet.ttl == 1) {
@@ -295,27 +295,27 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param iface
 	 * @param ipAddress
 	 */
-	public void setIpAddressOnInterface(NetworkIface iface, IPwithNetmask ipAddress) {
+	public void setIpAddressOnInterface(NetworkInterface iface, IPwithNetmask ipAddress) {
 		iface.ipAddress = ipAddress;
 	}
 
 	/**
-	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkIface (L3 iface).
+	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkInterface (L3 iface).
 	 */
 	private void processEthernetInterfaces() {
 		for (EthernetInterface iface : netMod.ethernetLayer.ifaces) {
-			networkIfaces.add(new NetworkIface(iface.name, iface));
+			networkIfaces.add(new NetworkInterface(iface.name, iface));
 		}
 	}
 
 	/**
-	 * Returns true if targetIpAddress is on my NetworkIface and isUp
+	 * Returns true if targetIpAddress is on my NetworkInterface and isUp
 	 *
 	 * @param targetIpAddress
 	 * @return
 	 */
 	private boolean isItMyIpAddress(IpAddress targetIpAddress) {
-		for (NetworkIface iface : networkIfaces) {
+		for (NetworkInterface iface : networkIfaces) {
 			if (iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
 				return true;
 			}
@@ -368,11 +368,11 @@ public class IPLayer implements SmartRunnable, Loggable {
 		return netMod.getDevice().getName() + ": IpLayer";
 	}
 
-	private NetworkIface findIncommingNetworkIface(EthernetInterface inc) {
+	private NetworkInterface findIncommingNetworkIface(EthernetInterface inc) {
 		if (inc == null) {
 			return null;
 		}
-		for (NetworkIface iface : networkIfaces) {
+		for (NetworkInterface iface : networkIfaces) {
 			if (iface.ethernetInterface.name.equals(inc.name)) {
 				return iface;
 			}
