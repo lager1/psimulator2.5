@@ -373,7 +373,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 			return null;
 		}
 		for (NetworkIface iface : networkIfaces) {
-			if (iface.ethernetInterface.equals(inc)) {
+			if (iface.ethernetInterface.name.equals(inc.name)) {
 				return iface;
 			}
 		}

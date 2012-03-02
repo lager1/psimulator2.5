@@ -38,24 +38,6 @@ public class EthernetInterface {
 		this.etherLayer = etherLayer;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final EthernetInterface other = (EthernetInterface) obj;
-		if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-			return false;
-		}
-		if (this.mac != other.mac && (this.mac == null || !this.mac.equals(other.mac))) {
-			return false;
-		}
-		return true;
-	}
-
 	/**
 	 * Returns mac address of this interface.
 	 * @return
