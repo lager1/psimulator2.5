@@ -4,7 +4,7 @@
 
 package networkModule.L4;
 
-import dataStructures.L4Packet;
+import dataStructures.L3Packet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,17 +24,17 @@ public class TcpIpLayer extends Layer {
 		super(netMod);
 	}
 
-	public void receivePacket(L4Packet packet) {
+	public void receivePacket(L3Packet packet) {
 //		receiveBuffer.add(new ReceiveItem(packet));
 //		worker.wake();
 	}
 
 	private class ReceiveItem {
 
-		final L4Packet packet;
+		final L3Packet packet;
 //		final EthernetInterface iface;
 
-		public ReceiveItem(L4Packet packet) {
+		public ReceiveItem(L3Packet packet) {
 			this.packet = packet;
 		}
 	}

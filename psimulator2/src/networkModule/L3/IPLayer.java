@@ -1,5 +1,12 @@
 /*
  * created 31.1.2012
+ *
+ * TODO:
+ * doresit drobnosti (potreba vyzkoumat)
+ * doresit logovani
+ * doresit budik
+ * dopsat tridu starajici se o ICMP - IcmpHandler
+ *
  */
 package networkModule.L3;
 
@@ -25,8 +32,6 @@ import utils.WorkerThread;
 /**
  * Represents IP layer of ISO/OSI model.
  *
- * TODO: pridat paketovy filtr + routovaci tabulku TODO: predelat EthernetInterface na neco abstratniho??
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class IPLayer implements SmartRunnable, Loggable {
@@ -47,7 +52,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * nemam odpoved. Obsluhovat me bude doMyWork(). Neni potreba miti synchronizaci, protoze sem leze jen vlakno z
 	 * doMyWork().
 	 */
-	private final List<SendItem> storeBuffer = new LinkedList<SendItem>();
+	private final List<StoreItem> storeBuffer = new LinkedList<StoreItem>();
 	/**
 	 * Routing table with record.
 	 */
@@ -62,6 +67,10 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	private boolean newArpReply = false;
 	private final List<NetworkInterface> networkIfaces = new ArrayList<NetworkInterface>();
+	/**
+	 * Waiting time for ARP requests.
+	 */
+	private long arpTTL = 10000;
 
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
@@ -137,42 +146,38 @@ public class IPLayer implements SmartRunnable, Loggable {
 		}
 	}
 
-	private void handleArpBuffer() {
+	/**
+	 * Zpracovani ukladaciho bufferu pro pakety, ktere nesly odeslat, pac nemam MAC nextHopu.
+	 */
+	private void handleStoreBuffer() {
 
 		long now = System.currentTimeMillis();
 
-		List<SendItem> remove = new ArrayList<SendItem>();
+		List<StoreItem> remove = new ArrayList<StoreItem>();
 
-		for (SendItem m : storeBuffer) {
+		for (StoreItem m : storeBuffer) {
 
-			if (now - m.timeStamp > 10000) { // vice jak 10s stare se smaznou, kdyz ICMP REQ, tak se posle zpatky DHU
-
+			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
-				// TODO: poslat zpatky DHU ?? jen pokud je to ICMP REQ ?
+				sendIcmpDestinationHostUnreachable(m.packet); // TODO: poslat zpatky DHU ?? jen pokud je to ICMP REQ ?
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
 			}
 
-			// TODO: aso bi tu mela byt adresa z routovaci tabulky a ne cilova IP adresa daneho packetu, je tu potreba IP adresa nextHopu!
-
-			MacAddress mac = arpCache.getMacAdress(m.dst);
+			MacAddress mac = arpCache.getMacAdress(m.nextHop);
 			if (mac != null) {
-				// TODO: obslouzit
-//				IpPacket packet = new IpPacket(m., m.dst, ttl);
+				// obslouzit
+				netMod.ethernetLayer.sendPacket(m.packet, m.out, mac);
 
-
-//				netMod.ethernetLayer.sendPacket(m., null, mac);
-
-				// je obslouzeno, tak vyndam z bufferu
+				// vyndat z bufferu
 				remove.add(m);
 			}
 		}
 
-		// vymazani proslych zaznamu
-		for (SendItem m : remove) {
+		// vymazani proslych ci obslouzenych zaznamu
+		for (StoreItem m : remove) {
 			storeBuffer.remove(m);
 		}
-
 
 		newArpReply = false;
 	}
@@ -180,24 +185,23 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
 		// odnatovat
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
+		packet = packetFilter.preRouting(packet, ifaceIn);
 
 		// zpracovat paket
 		handleSendIpPacket(packet, iface);
 	}
 
 	/**
-	 * Bude resit zaroutovani, zanatovani, zjisteni MAC, ..
-	 *
-	 * TODO: routuje se, kdyz ma packet TTL==1 a az pak se zahodi?
+	 * Bude resit zaroutovani, zanatovani, zjisteni MAC, .. <br />
 	 *
 	 * @param packet
-	 * @param iface incomming EthernetInterface
+	 * @param iface incomming EthernetInterface, can be null
 	 */
 	private void handleSendIpPacket(IpPacket packet, EthernetInterface iface) {
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) {
-			netMod.tcpipLayer.receivePacket(packet.data);
+			netMod.tcpipLayer.receivePacket(packet);
 			return;
 		}
 
@@ -214,40 +218,41 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
-
 		if (record == null) {
 			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DHU vzdy??
-				sendIcmpDestinationNetworkUnreachable(packet); // TODO nemela by tohle resit vyssi vrstva?
+				sendIcmpDestinationNetworkUnreachable(packet);
 			}
 			Psimulator.getLogger().logg(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
 		}
 
-		// zmensi TTL
-		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1);
+		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
+		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
+		IpPacket p = new IpPacket(packet.src == null ? record.rozhrani.ipAddress.getIp() : packet.src, packet.dst, packet.ttl - 1);
 
 		// zanatuj
 		p = packetFilter.postRouting(p, ifaceIn, record.rozhrani);
 
+		// zjistit nexHopIp
+		// kdyz RT vrati record s branou, tak je nextHopIp record.brana
+		// kdyz je record bez brany, tak je nextHopIp uz ta hledana IP adresa
+		IpAddress nextHopIp = p.dst;
+		if (record.brana != null) {
+			nextHopIp = record.brana;
+		}
+
 		// zjisti MAC adresu z ARP cache - je=OK, neni=vygenerovat ARP request a vlozit do storeBuffer + touch na sendItem, ktera bude v storeBuffer
-		MacAddress mac = arpCache.getMacAdress(record.brana);
-		if (mac == null) { // posli ARP request a dej do fronty
-			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), record.brana);
+		MacAddress nextHopMac = arpCache.getMacAdress(nextHopIp);
+		if (nextHopMac == null) { // posli ARP request a dej do fronty
+			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), nextHopIp);
+			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast()); // TODO: odeslat ARP req na vsechny rozhrani v dany siti?, asi NE
 
-
-
-
-
-			// TODO: tady pokracovat!
-
-
-			netMod.ethernetLayer.sendPacket(arpPacket, null, MacAddress.broadcast()); // TODO: odeslat ARP req na vsechny rozhrani v dany siti????
-//			storeBuffer.add(new SendItem(p, null));
+			storeBuffer.add(new StoreItem(p, record.rozhrani.ethernetInterface, nextHopIp));
 			return;
 		}
 
-
-		netMod.ethernetLayer.sendPacket(p, record.rozhrani.ethernetInterface, mac);
+		// kdyz to doslo az sem, tak muzu odeslat..
+		netMod.ethernetLayer.sendPacket(p, record.rozhrani.ethernetInterface, nextHopMac);
 	}
 
 	/**
@@ -262,8 +267,8 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	private void handleSendPacket(L4Packet packet, IpAddress dst) {
-//		tady se bude volat nejakym zpusobem metoda handleSendIpPacket()
-//		handleSendIpPacket(null, null);
+		IpPacket p = new IpPacket(null, dst, ttl);
+		handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
 	}
 
 	public void doMyWork() {
@@ -277,12 +282,14 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 			if (!sendBuffer.isEmpty()) {
 				SendItem m = sendBuffer.remove(0);
-				handleSendPacket(m.packet, m.dst);
+				IpPacket p = new IpPacket(null, m.dst, ttl);
+				handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
+//				handleSendPacket(m.packet, m.dst); // pak smazat, az se metody s odesilam ICMP veci presunou jinam
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) {
 				// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
-				handleArpBuffer();
+				handleStoreBuffer();
 			}
 		}
 	}
@@ -345,10 +352,21 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 *
 	 * @param packet
 	 */
+	private void sendIcmpDestinationHostUnreachable(IpPacket packet) {
+		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: jaka se posila icmp_seq ?
+		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Host Unreachable na: "+packet.src, p);
+		handleSendPacket(p, packet.src);
+	}
+
+	/**
+	 * Sends DNU to packet.src.
+	 *
+	 * @param packet
+	 */
 	private void sendIcmpDestinationNetworkUnreachable(IpPacket packet) {
-		IcmpPacket pCasted = (IcmpPacket) packet.data;
+		IcmpPacket pCasted = (IcmpPacket) packet.data; // TODO: asi tu nebude
 		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE, pCasted.icmp_seq); // TODO: jaka se posila icmp_seq ?
-		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Network Unreachable: ", p);
+		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Net Unreachable na: "+packet.src, p);
 		handleSendPacket(p, packet.src);
 	}
 
@@ -359,7 +377,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	private void sendIcmpTimeExceeded(IpPacket packet) {
 		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.TIME_EXCEEDED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: icmp_seq ?
-		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Time Exceeded: ", p);
+		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Time Exceeded na: "+packet.src, p);
 		handleSendPacket(p, packet.src);
 	}
 
@@ -384,15 +402,10 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		final L4Packet packet;
 		final IpAddress dst;
-		long timeStamp; // pro potreby storeBufferu
 
 		public SendItem(L4Packet packet, IpAddress dst) {
 			this.packet = packet;
 			this.dst = dst;
-		}
-
-		public void touch() {
-			this.timeStamp = System.currentTimeMillis();
 		}
 	}
 
@@ -404,6 +417,42 @@ public class IPLayer implements SmartRunnable, Loggable {
 		public ReceiveItem(L3Packet packet, EthernetInterface iface) {
 			this.packet = packet;
 			this.iface = iface;
+		}
+	}
+
+	private class StoreItem {
+		/**
+		 * Packet to send.
+		 */
+		final IpPacket packet;
+		/**
+		 * Outgoing interface (gained from routing table).
+		 */
+		final EthernetInterface out;
+		/**
+		 * IP of nextHop (gained from routing table).
+		 */
+		final IpAddress nextHop;
+		/**
+		 * Time stamp - for handling old records (drop packet + send DHU).
+		 */
+		long timeStamp;
+
+		/**
+		 * Store item.
+		 * @param packet packet to send
+		 * @param out outgoing interface (gained from routing table)
+		 * @param nextHop IP of nextHop
+		 */
+		public StoreItem(IpPacket packet, EthernetInterface out, IpAddress nextHop) {
+			this.packet = packet;
+			this.nextHop = nextHop;
+			this.out = out;
+			this.timeStamp = System.currentTimeMillis();
+		}
+
+		public void touch() {
+			this.timeStamp = System.currentTimeMillis();
 		}
 	}
 }
