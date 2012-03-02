@@ -4,11 +4,9 @@
 
 package networkModule;
 
-import device.AbstractDevice;
+import device.Device;
 
-import physicalModule.PhysicMod;
 
-import networkModule.L2.EthernetLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L4.TcpIpLayer;
 
@@ -23,8 +21,8 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 	public final IPLayer ipLayer = new IPLayer(this);
 	public final TcpIpLayer tcpipLayer = new TcpIpLayer(this);
 
-	public TcpIpNetMod(EthernetLayer ethernetLayer, AbstractDevice device, PhysicMod physicMod) {
-		super(ethernetLayer, device, physicMod);
+	public TcpIpNetMod(Device device) {
+		super(device);
 	}
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema

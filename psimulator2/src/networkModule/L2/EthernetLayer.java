@@ -7,7 +7,6 @@ import dataStructures.EthernetPacket;
 import dataStructures.L3Packet;
 import dataStructures.MacAddress;
 import java.util.*;
-import javax.xml.bind.annotation.XmlTransient;
 import logging.*;
 import networkModule.Layer;
 import networkModule.NetMod;
@@ -59,6 +58,10 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 	public String getDescription() {
 		return netMod.getDevice().getName()+": EthernetLayer";
+	}
+	
+	public SwitchportSettings getSwitchport(int i){
+		return switchports.get(i);
 	}
 
 
@@ -203,6 +206,6 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * Z konfigurace priradi interfacy ke switchportum. TODO: implementovat
 	 */
 	private void assignInterfacesToSwitchports() {
-		throw new UnsupportedOperationException("Not yet implemented");
+		throw new UnsupportedOperationException("Not yet implemented"); //TODO: implementovat prirazeni switchportu k interfacum
 	}
 }

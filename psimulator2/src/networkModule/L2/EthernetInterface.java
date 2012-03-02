@@ -31,11 +31,16 @@ public class EthernetInterface {
 	protected boolean switchingEnabled = false;
 	private final EthernetLayer etherLayer;
 
-// Konstruktor:
+// Konstruktor a veci k nemu:
+	
 	public EthernetInterface(String name, MacAddress mac, EthernetLayer etherLayer) {
 		this.name = name;
 		this.mac = mac;
 		this.etherLayer = etherLayer;
+	}
+	
+	public void addSwitchportSettings(SwitchportSettings s){
+		switchpors.put(s.switchportNumber, s);
 	}
 
 	/**

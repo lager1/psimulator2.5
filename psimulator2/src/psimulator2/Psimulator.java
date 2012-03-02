@@ -4,15 +4,33 @@
 
 package psimulator2;
 
+import device.Device;
+import java.util.ArrayList;
+import java.util.List;
 import logging.Logger;
 
 /**
  * Instance of Psimulator.
+ * Pouzit navrhovy vzor Singleton.
+ * 
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Psimulator {
 
+	
+	public final List<Device> devices=new ArrayList<Device>();
+	public final Logger logger = new Logger();;
+	
+
+	private Psimulator() {
+		
+	}
+	
+	
+	
+// staticky metody (pro ten singleton)
+	
 	private static volatile Psimulator instance;
 
 	public static Psimulator getPsimulator() {
@@ -24,12 +42,6 @@ public class Psimulator {
 			}
 		}
 		return instance;
-	}
-
-	public final Logger logger;
-
-	private Psimulator() {
-		logger = new Logger();
 	}
 	
 	/**

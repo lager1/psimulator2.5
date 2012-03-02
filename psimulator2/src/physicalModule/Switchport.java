@@ -22,16 +22,20 @@ public abstract class Switchport {
 	/**
 	 * Unique number in PhysicMod.
 	 */
-	private final int number;
+	public final int number;
+	
+	/**
+	 * ID takove, jake je v konfiguracnim souboru.
+	 */
+	public final int configID;
 
-	protected Switchport(int number, PhysicMod physicMod) {
-		this.number=number;
+
+	public Switchport(PhysicMod physicMod, int number, int configID) {
 		this.physicMod = physicMod;
+		this.number = number;
+		this.configID = configID;
 	}
-
-	public int getNumber() {
-		return number;
-	}
+	
 
 	/**
 	 * Try to send packet through this interface.

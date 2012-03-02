@@ -4,7 +4,7 @@
  */
 package shell.apps.TextEditor;
 
-import device.AbstractDevice;
+import device.Device;
 import java.io.IOException;
 import java.util.ArrayList;
 import logging.Logger;
@@ -23,7 +23,7 @@ import telnetd.io.toolkit.Titlebar;
  */
 public class TextEditor extends TerminalApplication {
 
-    public TextEditor(BasicTerminalIO terminalIO, AbstractDevice device) {
+    public TextEditor(BasicTerminalIO terminalIO, Device device) {
         super(terminalIO, device);
     }
 

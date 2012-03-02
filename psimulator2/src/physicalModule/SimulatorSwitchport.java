@@ -42,16 +42,12 @@ public class SimulatorSwitchport extends Switchport {
 	 * @return
 	 */
 	private int dropped = 0;
+	
 
-	protected SimulatorSwitchport(int id,PhysicMod physicMod) {
-		super(id,physicMod);
+	public SimulatorSwitchport(PhysicMod physicMod, int number, int configID) {
+		super(physicMod, number, configID);
 	}
 	
-	SimulatorSwitchport(int number, PhysicMod physicMod, Connector connector) {
-		super(number,physicMod);
-		this.connector = connector;
-	}
-
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();

@@ -39,8 +39,14 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * Id of component
      */
     private Integer id;
+	
+	/**
+	 * Nastaveni pocitace pro potreby simulatoru.
+	 */
+	private DeviceSettings devSettings;
 
-    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces, int defaultZoomXPos, int defaultZoomYPos) {
+    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces, 
+			int defaultZoomXPos, int defaultZoomYPos, DeviceSettings devSettings) {
 
         // add values to variables
         this.id = id;
@@ -48,6 +54,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         this.deviceName = deviceName;
         this.defaultZoomXPos = defaultZoomXPos;
         this.defaultZoomYPos = defaultZoomYPos;
+		this.devSettings = devSettings;
 
         // add interfaces to map
         this.setInterfacesAsList(ethInterfaces);
@@ -236,6 +243,15 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     public void setId(Integer id) {
         this.id = id;
     }
+
+	public DeviceSettings getDevSettings() {
+		return devSettings;
+	}
+
+	public void setDevSettings(DeviceSettings devSettings) {
+		this.devSettings = devSettings;
+	}
     
+	
     
 }

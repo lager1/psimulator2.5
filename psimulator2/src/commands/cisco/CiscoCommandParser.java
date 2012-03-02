@@ -3,7 +3,7 @@
  */
 package commands.cisco;
 
-import device.AbstractDevice;
+import device.Device;
 import commands.AbstractCommandParser;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,7 +33,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
      */
     boolean nepokracovat = false;
 
-	public CiscoCommandParser(AbstractDevice networkDevice, CommandShell shell) {
+	public CiscoCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
 	}
 

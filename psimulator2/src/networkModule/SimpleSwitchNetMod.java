@@ -7,12 +7,11 @@ package networkModule;
 
 import dataStructures.EthernetPacket;
 import dataStructures.L2Packet;
-import device.AbstractDevice;
+import device.Device;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
-import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
 
 /**
@@ -22,11 +21,10 @@ import psimulator2.Psimulator;
  */
 public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 	
-	public final EthernetLayer ethernetLayer;
+	public final EthernetLayer ethernetLayer = new EthernetLayer(this);
 
-    public SimpleSwitchNetMod(EthernetLayer ethernetLayer, AbstractDevice device, PhysicMod physicMod) {
-		super(device, physicMod);
-		this.ethernetLayer = ethernetLayer;
+    public SimpleSwitchNetMod(Device device) {
+		super(device);
 	}
 
 	/**

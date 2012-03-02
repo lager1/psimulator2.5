@@ -5,7 +5,7 @@
 package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
-import device.AbstractDevice;
+import device.Device;
 import exceptions.TelnetConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class CommandShell extends TerminalApplication {
 	 */
 	private int mode = DEFAULT_MODE;
 
-	public CommandShell(BasicTerminalIO terminalIO, AbstractDevice device) {
+	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
 		this.shellRenderer = new ShellRenderer(terminalIO, this);
 	}

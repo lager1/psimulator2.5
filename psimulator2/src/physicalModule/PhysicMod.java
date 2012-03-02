@@ -4,6 +4,7 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
+import device.Device;
 import java.util.*;
 import networkModule.NetMod;
 import utils.SmartRunnable;
@@ -25,10 +26,6 @@ public class PhysicMod implements SmartRunnable {
 	 */
 	private Map<Integer,Switchport> switchports = new HashMap<Integer, Switchport>();
 	/**
-	 * Network module.
-	 */
-	private NetMod netMod;
-	/**
 	 * Queue for incomming packets from cabels.
 	 */
 	private final List<BufferItem> receiveBuffer = Collections.synchronizedList(new LinkedList<BufferItem>());
@@ -41,24 +38,34 @@ public class PhysicMod implements SmartRunnable {
 	 */
 	private WorkerThread worker = new WorkerThread(this);
 	
+	/**
+	 * Odkaz na PC.
+	 */
+	public final Device device;
+	
 	private boolean ladiciVypisovani = true;
 	
 	
 // Konstruktory a vytvareni modulu: ----------------------------------------------------------------------------------------------
 
-
-	public PhysicMod(NetMod netMod) {
-		this.netMod = netMod;
+	public PhysicMod(Device device) {
+		this.device = device;
 	}
+
 	
-	public void addSwitchport(int number, boolean realSwitchport, Connector connector) {
+	/**
+	 * Pridani switchportu
+	 * @param number cislo switchportu
+	 * @param realSwitchport je-li switchport realnym rozhranim (tzn. vede k realnymu pocitaci)
+	 */
+	public void addSwitchport(int number, boolean realSwitchport, int configID) {
 		Switchport swport;
 		if (!realSwitchport) {
-			swport = new SimulatorSwitchport(number, this, connector);
+			swport = new SimulatorSwitchport(this,number, configID);
 		} else {
-			swport =new RealSwitchport(number, this);
+			swport =new RealSwitchport(this,number,configID);
 		}
-		switchports.put(swport.getNumber(), swport);
+		switchports.put(swport.number, swport);
 	}
 
 	
@@ -100,7 +107,7 @@ public class PhysicMod implements SmartRunnable {
 		while (!receiveBuffer.isEmpty() || !sendBuffer.isEmpty()) {
 			if (!receiveBuffer.isEmpty()) {
 				BufferItem m = receiveBuffer.remove(0);
-				netMod.receivePacket(m.packet, m.switchport.getNumber());
+				getNetMod().receivePacket(m.packet, m.switchport.number);
 			}
 
 			if (!sendBuffer.isEmpty()) {
@@ -119,7 +126,7 @@ public class PhysicMod implements SmartRunnable {
 	public List<Integer> getNumbersOfPorts(){
 		List<Integer> vratit = new LinkedList<Integer>();
 		for(Switchport swport: switchports.values()){
-			vratit.add(swport.getNumber());
+			vratit.add(swport.number);
 		}
 		return vratit;
 	}
@@ -151,5 +158,9 @@ public class PhysicMod implements SmartRunnable {
 		if (ladiciVypisovani){
 			System.out.println("PhysicMod: "+zprava);
 		}
+	}
+	
+	private NetMod getNetMod(){
+		return device.getNetworkModule();
 	}
 }

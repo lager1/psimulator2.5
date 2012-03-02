@@ -5,7 +5,7 @@
 
 package shell.apps;
 
-import device.AbstractDevice;
+import device.Device;
 import telnetd.io.BasicTerminalIO;
 
 /**
@@ -15,9 +15,9 @@ import telnetd.io.BasicTerminalIO;
 public abstract class TerminalApplication {
 
     protected BasicTerminalIO terminalIO;
-    protected AbstractDevice device;
+    protected Device device;
 
-    public TerminalApplication(BasicTerminalIO terminalIO, AbstractDevice device) {
+    public TerminalApplication(BasicTerminalIO terminalIO, Device device) {
         this.terminalIO = terminalIO;
         this.device=device;
     }

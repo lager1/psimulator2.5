@@ -10,9 +10,9 @@ package device;
 public abstract class Application {
 	private int PID;
 	private String name;
-	private AbstractDevice device;
+	private Device device;
 
-	public Application(int PID, String name, AbstractDevice device) {
+	public Application(int PID, String name, Device device) {
 		this.PID = PID;
 		this.name = name;
 		this.device = device;

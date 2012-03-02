@@ -5,7 +5,7 @@
 package networkModule;
 
 import dataStructures.L2Packet;
-import device.AbstractDevice;
+import device.Device;
 import physicalModule.PhysicMod;
 
 
@@ -21,22 +21,19 @@ import physicalModule.PhysicMod;
 
 public abstract class NetMod {
 
-    protected AbstractDevice device;
-	protected PhysicMod physicMod;
+    protected Device device;
 
-	public NetMod(AbstractDevice device, PhysicMod physicMod) {
+	public NetMod(Device device) {
 		assert device != null;
-		assert physicMod != null;
 		this.device = device;
-		this.physicMod = physicMod;
 	}
 	
-    public AbstractDevice getDevice() {
+    public Device getDevice() {
         return device;
     }
 
 	public PhysicMod getPhysicMod() {
-		return physicMod;
+		return device.physicalModule;
 	}
 
 	/**
