@@ -21,6 +21,11 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 	public final IPLayer ipLayer = new IPLayer(this);
 	public final TcpIpLayer tcpipLayer = new TcpIpLayer(this);
 
+	/**
+	 * Konstruktor sitovyho modulu. 
+	 * Predpoklada uz hotovej pocitac a fysickej modul, protoze zkouma jeho nastaveni.
+	 * @param device 
+	 */
 	public TcpIpNetMod(Device device) {
 		super(device);
 	}
