@@ -3,6 +3,7 @@ package shell;
 import java.io.IOException;
 import logging.Logger;
 import logging.LoggingCategory;
+import shell.apps.CommandShell.CommandShell;
 import telnetd.io.BasicTerminalIO;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionEvent;
@@ -19,9 +20,14 @@ public class TelnetSession implements Shell {
 
     public void run(Connection con) {
 
+		Logger.log(Logger.INFO, LoggingCategory.TELNET, "telnet session estabilished with host: " + con.getConnectionData().getHostAddress() +" port: "+ con.getConnectionData().getPort());
+		
         this.m_Connection = con;
         this.m_IO = m_Connection.getTerminalIO();
         this.m_Connection.addConnectionListener(this); //dont forget to register listener
+		
+		new CommandShell(m_IO, null).run();
+		
 
     }
 
@@ -72,4 +78,9 @@ public class TelnetSession implements Shell {
           
         }
     }//connectionSentBreak
+	
+	public static Shell createShell() {
+        return new TelnetSession();
+    }//telnetd library needs this method
+
 }

@@ -7,6 +7,8 @@ package telnetd.pridaneTridy;
 import config.Components.HwComponentModel;
 import java.util.Collection;
 import java.util.Properties;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * x
@@ -49,8 +51,8 @@ public class TelnetProperties {
         properties.setProperty("term.xterm.class", "telnetd.io.terminal.xterm");
         properties.setProperty("term.xterm.aliases", "");
         properties.setProperty("shells", "std");
-        //  properties.setProperty("shell.std.class", "telnetd.shell.DummyShell");
-        properties.setProperty("shell.std.class", "shell.TelnetSession");
+       //   properties.setProperty("shell.std.class", "telnetd.shell.DummyShell");
+		   properties.setProperty("shell.std.class", "shell.TelnetSession");
 
     }
 
@@ -62,6 +64,8 @@ public class TelnetProperties {
 
     private void addListener(String name, int port) {
 
+		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + name + " listening port: " + port);
+		
         properties.setProperty(name + ".loginshell", "std");
         properties.setProperty(name + ".port", String.valueOf(port));
         properties.setProperty(name + ".floodprotection", "5");

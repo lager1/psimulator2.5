@@ -91,7 +91,7 @@ public class CommandShell extends TerminalApplication {
 		try {
 			return String.valueOf((char) this.terminalIO.read());
 		} catch (IOException ex) {
-			System.err.println("IOException, cannot read a single character from terminal");
+			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "IOException, cannot read a single character from terminal");
 		}
 
 		return "";
