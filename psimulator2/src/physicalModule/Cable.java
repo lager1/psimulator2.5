@@ -15,6 +15,16 @@ import utils.WorkerThread;
 public class Cable implements SmartRunnable {
 
 	public final int id;	// id z konfiguraku
+	/**
+	 * ID of first connector device.
+	 * (pro posilani paketu Martinovi)
+	 */
+	private int idFirstDevice;
+	/**
+	 * ID of second connector device.
+	 * (pro posilani paketu Martinovi)
+	 */
+	private int idSecondDevice;
 
 	private final Connector firstCon = new Connector(this);
 	private final Connector secondCon = new Connector(this);
@@ -112,5 +122,13 @@ public class Cable implements SmartRunnable {
 		} catch (InterruptedException ex) {
 			// ok
 		}
+	}
+
+	public void setFirstDeviceId(Integer id) {
+		this.idFirstDevice = id;
+	}
+
+	public void setSecondDeviceId(Integer id) {
+		this.idSecondDevice = id;
 	}
 }

@@ -146,12 +146,14 @@ public class Loader {
 	private void connectCables(NetworkModel network) {
 		for (CableModel cableModel : network.getCables()) {
 			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
-			// pro propojeni prvku kabely, musim mit switchporty od jednotlivych Devicu
+
 			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
 			cable.setFirstInterface(swportFirst);
+			cable.setFirstDeviceId(cableModel.getComponent1().getId());
 
 			SimulatorSwitchport swportSecond = findSwitchportFor(cableModel.getComponent2(), cableModel.getInterface2());
 			cable.setSecondInterface(swportSecond);
+			cable.setSecondDeviceId(cableModel.getComponent1().getId());
 		}
 	}
 
