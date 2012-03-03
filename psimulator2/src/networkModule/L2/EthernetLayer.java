@@ -21,7 +21,7 @@ import utils.WorkerThread;
  */
 public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
-	public final List<EthernetInterface> ifaces = new ArrayList<EthernetInterface>(); //TODO: naplnit
+	protected final List<EthernetInterface> ifaces = new ArrayList<EthernetInterface>(); //TODO: naplnit
 	protected final WorkerThread worker = new WorkerThread(this);
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>(); //TODO: naplnit
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
@@ -190,7 +190,18 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	public EthernetLayer(NetMod netMod) {
 		super(netMod);
 		exploreHardware();
-		assignInterfacesToSwitchports();
+	}
+	
+	/**
+	 * Prida novy interface.
+	 * @param name
+	 * @param mac
+	 * @return to pridany interface - loader s tim potrebuje jeste neco delat
+	 */
+	public EthernetInterface addInterface(String name, MacAddress mac){
+		EthernetInterface iface = new EthernetInterface(name, mac, this);
+		this.ifaces.add(iface);
+		return iface;
 	}
 
 	/**
@@ -202,10 +213,4 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		}
 	}
 
-	/**
-	 * Z konfigurace priradi interfacy ke switchportum. TODO: implementovat
-	 */
-	private void assignInterfacesToSwitchports() {
-		throw new UnsupportedOperationException("Not yet implemented"); //TODO: implementovat prirazeni switchportu k interfacum
-	}
 }

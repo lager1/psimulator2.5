@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @author neiss
  */
 public class MacAddress {
-
+	
     private final int[] representation;
 
     /**
@@ -42,6 +42,16 @@ public class MacAddress {
     public MacAddress(String address, char delimiter) {
         this.representation = stringToBytes(address, delimiter);
     }
+
+	/**
+	 * Konstruktor jen privatni pro staticky metody, napr. pro getRandomMac().
+	 * @param representation 
+	 */
+	private MacAddress(int[] representation) {
+		this.representation = representation;
+	}
+	
+	
 
 // vypisy a porovnavani ---------------------------------------------------------------------------
 
@@ -106,6 +116,19 @@ public class MacAddress {
 	public static MacAddress broadcast(){
 		return new MacAddress("ff:ff:ff:ff:ff:ff");
 	}
+	
+	public static MacAddress getRandomMac() {
+		int[] representation = new int[6];
+		for (int i = 0; i < 6; i++) {
+			representation[i] = (int) (Math.random() * 256);
+		}
+
+		MacAddress vratit =  new MacAddress(representation);
+		if(vratit.equals(broadcast())){	// kdyby se nahodou vygenerovala broadcastova, tak se musi generovat znova
+			return getRandomMac();
+		} else
+			return vratit;
+	}
 
 // privatni staticky metody -------------------------------------------------------------------------------
 
@@ -120,6 +143,11 @@ public class MacAddress {
         return vratit;
     }
 
+	/**
+	 * Vytvori z jednoho bytu jako stringu bajt jako integer.
+	 * @param s
+	 * @return 
+	 */
     private static int stringToByte(String s) {
         if (s.length() != 2) {
             throw new BadMacException("Nejakej byte nema spravnou dylku.");

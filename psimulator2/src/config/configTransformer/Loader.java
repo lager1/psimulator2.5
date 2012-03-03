@@ -63,7 +63,7 @@ public class Loader {
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {
+		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) { // prochazim interfacy a pridavam je jako switchporty
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
@@ -110,33 +110,61 @@ public class Loader {
 		DeviceSettings.NetworkModuleType netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu
 
 		if (netModType == tcp_ip_netmod) {	// modul je pro router
-			TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se
-
-			//nahrani interfacu:
-			for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {
-
-				EthernetInterface ethInterface = new EthernetInterface
-						(ifaceModel.getName(), new MacAddress(ifaceModel.getMacAddress()), nm.ethernetLayer); // vytvoreni novyho rozhrani
-				int cisloSwitchportu = switchporty.get(ifaceModel.getId());	// zjistim si z odkladaci mapy, ktery cislo switchportu mam priradit
-				ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
-				nm.ethernetLayer.ifaces.add(ethInterface);	// pridani interfacu do ethernetovy vrstvy
-
-				IPwithNetmask ip = null;
-				if (ifaceModel.getIpAddress() != null) {
-					ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
-				}
-
-				NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
-				nm.ipLayer.addNetworkInterface(netInterface);
-			}
-
-			return nm;
+			return createTcpIpNetMod(model, pc);
 		} else if (netModType == simple_switch_netMod) {
-			return new SimpleSwitchNetMod(pc);
+			return createSimpleSwitchNetMod(model,pc);
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network module.");
 		}
 
+	}
+	
+	/**
+	 * Metoda vytvori sitovej model routeru. Ke kazdymu switchportu priradi jeden interface, pojmenuje je, pripadne
+	 * nastavi adresy, vytvori a nastavi routovaci tabulku a nat.
+	 *
+	 * @param model
+	 * @param pc
+	 * @return
+	 */
+	private TcpIpNetMod createTcpIpNetMod(HwComponentModel model, Device pc) {
+		TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se 
+
+		//nahrani interfacu:
+		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {	// pro kazdy rozhrani
+
+			EthernetInterface ethInterface = nm.ethernetLayer.addInterface(ifaceModel.getName(), new MacAddress(ifaceModel.getMacAddress()));
+				// -> pridani novyho rozhrani ethernetovy vrstve, interface si jeste podrzim, abych mu moh pridavat switchporty
+			int cisloSwitchportu = switchporty.get(ifaceModel.getId());	// zjistim si z odkladaci mapy, ktery cislo switchportu mam priradit
+			ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
+
+			IPwithNetmask ip = null;
+			if (ifaceModel.getIpAddress() != null) {
+				ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
+			}
+
+			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
+			nm.ipLayer.addNetworkInterface(netInterface);
+		}
+		
+		//TODO dodelat nastaveni routovaci tabulky
+		
+		//TODO dodelat nastaveni natu (paketovyho filtru)
+
+		return nm;
+	}
+
+	/**
+	 * Vytvori sitovej modul switche, uplne ignoruje jeho nastaveni z konfigurace (kdyby tam nejaky bylo).
+	 * @param model
+	 * @param pc
+	 * @return 
+	 */
+	private NetMod createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
+		SimpleSwitchNetMod nm = new SimpleSwitchNetMod(pc);
+		nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
+				// -> switchi se priradi jedno rozhrani a da se mu mac prvniho switchportu
+		return nm;
 	}
 
 	/**
