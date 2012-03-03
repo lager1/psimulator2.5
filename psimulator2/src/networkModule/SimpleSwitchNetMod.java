@@ -20,7 +20,7 @@ import psimulator2.Psimulator;
  * @author neiss
  */
 public class SimpleSwitchNetMod extends NetMod  implements Loggable{
-	
+
 	public final EthernetLayer ethernetLayer = new EthernetLayer(this);
 
     public SimpleSwitchNetMod(Device device) {
@@ -30,7 +30,7 @@ public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 	/**
 	 * Prijimani od fysickyho modulu.
 	 * @param packet
-	 * @param switchportNumber 
+	 * @param switchportNumber
 	 */
 	@Override
 	public void receivePacket(L2Packet packet, int switchportNumber) {
@@ -41,9 +41,10 @@ public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 			ethernetLayer.receivePacket((EthernetPacket)packet, switchportNumber);
 		}
 	}
-	
-	
 
+
+
+	@Override
 	public String getDescription() {
 		return device.getName()+": "+getClass().getName();
 	}

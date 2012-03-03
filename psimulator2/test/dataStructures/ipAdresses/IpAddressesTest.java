@@ -222,7 +222,7 @@ public class IpAddressesTest {
         assertNull(IpAddress.correctAddress("0.0.254.0.9"));
         assertNull(IpAddress.correctAddress("1,1,1,1"));
     }
-    
+
     @Test
     public void testVratOJednickuVetsi() {
         IpAddress ip = new IpAddress("1.1.1.1");
@@ -240,14 +240,15 @@ public class IpAddressesTest {
         ip = new IpAddress("0.0.0.3");
         assertEquals("255.255.255.252", IpAddress.negateAddress(ip).toString());
     }
-    
-    
+
+
     @Test
     public void testVytvorAdresu(){
         assertEquals("1.1.1.1/32", new IPwithNetmask("1.1.1.1",32,false).toString());
         assertEquals("0.0.0.0/0", new IPwithNetmask("0.0.0.0/0",32,false).toString());
         assertEquals("255.255.255.255/1", new IPwithNetmask("255.255.255.255/1",32,false).toString());
         assertEquals("1.2.3.4/32", new IPwithNetmask("1.2.3.4",32,false).toString());
+		assertEquals("1.2.3.4/32", IPwithNetmask.createFromIpSlashMask("1.2.3.4/32").toString());
 
         try{
             new IPwithNetmask("",32,false);
@@ -280,10 +281,10 @@ public class IpAddressesTest {
         assertEquals("1.1.1.1/0", new IPwithNetmask("1.1.1.1/64",32,true).toString());
         assertEquals("1.1.1.1/2", new IPwithNetmask("1.1.1.1/34",-1,true).toString());
     }
-    
+
     @Test
     public void dopocitaniMasky(){
-        
+
         assertEquals("1.1.1.1/8", new IPwithNetmask("1.1.1.1").toString());
         assertEquals("100.1.2.3/8", new IPwithNetmask("100.1.2.3").toString());
         assertEquals("172.16.1.1/16", new IPwithNetmask("172.16.1.1").toString());

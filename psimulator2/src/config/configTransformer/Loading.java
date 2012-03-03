@@ -50,23 +50,23 @@ public class Loading {
 	 * @param model
 	 * @return
 	 */
-	private Device createDevice(HwComponentModel model){
+	private Device createDevice(HwComponentModel model) {
 
 		// vytvoreni samotnyho pocitace:
-		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()) );
+		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
 
 		// vytvoreni fysickyho modulu
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()){
-			pm.addSwitchport(cislovaniSwitchportu,false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
+		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {
+			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
 		}
 
 		// nastaveni sitovyho modulu
-		NetMod nm = createNetMod(model,pc);
+		NetMod nm = createNetMod(model, pc);
 		pc.setNetworkModule(nm);
 
 		return pc;
@@ -80,14 +80,14 @@ public class Loading {
 	 * @param t
 	 * @return
 	 */
-	private Device.DeviceType prevedTyp(HwTypeEnum t){
+	private Device.DeviceType prevedTyp(HwTypeEnum t) {
 		Device.DeviceType type;
-		if( (t == LINUX_ROUTER) || (t == END_DEVICE_NOTEBOOK) || (t==END_DEVICE_PC) || t==END_DEVICE_WORKSTATION ){
-			type=Device.DeviceType.linux_computer;
-		} else if (t==CISCO_ROUTER) {
+		if ((t == LINUX_ROUTER) || (t == END_DEVICE_NOTEBOOK) || (t == END_DEVICE_PC) || t == END_DEVICE_WORKSTATION) {
+			type = Device.DeviceType.linux_computer;
+		} else if (t == CISCO_ROUTER) {
 			type = Device.DeviceType.cisco_router;
-		} else if (t==CISCO_SWITCH || t==LINUX_SWITCH ){
-			type=Device.DeviceType.simple_switch;
+		} else if (t == CISCO_SWITCH || t == LINUX_SWITCH) {
+			type = Device.DeviceType.simple_switch;
 		} else {
 			throw new LoadingException("Unknown or forbidden type of network device.");
 		}
@@ -111,15 +111,18 @@ public class Loading {
 			//nahrani interfacu:
 			for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {
 
-				EthernetInterface ethInterface = new EthernetInterface
-						(ifaceModel.getName(), new MacAddress(ifaceModel.getMacAddress()), nm.ethernetLayer); // vytvoreni novyho rozhrani
+				EthernetInterface ethInterface = new EthernetInterface(ifaceModel.getName(), new MacAddress(ifaceModel.getMacAddress()), nm.ethernetLayer); // vytvoreni novyho rozhrani
 				int cisloSwitchportu = switchporty.get(ifaceModel.getId());	// zjistim si z odkladaci mapy, ktery cislo switchportu mam priradit
 				ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
 				nm.ethernetLayer.ifaces.add(ethInterface);	// pridani interfacu do ethernetovy vrstvy
 
+				IPwithNetmask ip = null;
 				if (ifaceModel.getIpAddress() != null) {
-					// nm.ipLayer.setIpAddressOnInterface(nm.ipLayer., null);	TODO: dodelat nastavovani IP na NetworkInterface z konfigurace
+					ip = IPwithNetmask.createFromIpSlashMask(ifaceModel.getIpAddress());
 				}
+
+				NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
+				nm.ipLayer.addNetworkInterface(netInterface);
 			}
 
 			return nm;

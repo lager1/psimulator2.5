@@ -74,7 +74,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-		processEthernetInterfaces();
+//		processEthernetInterfaces();
 	}
 	/**
 	 * Default TTL values.
@@ -307,13 +307,22 @@ public class IPLayer implements SmartRunnable, Loggable {
 		iface.ipAddress = ipAddress;
 	}
 
+//	/**
+//	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkInterface (L3 iface).
+//	 */
+//	private void processEthernetInterfaces() {
+//		for (EthernetInterface iface : netMod.ethernetLayer.ifaces) {
+//			networkIfaces.add(new NetworkInterface(iface.name, iface));
+//		}
+//	}
+
 	/**
-	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkInterface (L3 iface).
+	 * Adds Network interface to a list.
+	 * This method is used only in loading configuration file.
+	 * @param iface
 	 */
-	private void processEthernetInterfaces() {
-		for (EthernetInterface iface : netMod.ethernetLayer.ifaces) {
-			networkIfaces.add(new NetworkInterface(iface.name, iface));
-		}
+	public void addNetworkInterface(NetworkInterface iface) {
+		networkIfaces.add(iface);
 	}
 
 	/**

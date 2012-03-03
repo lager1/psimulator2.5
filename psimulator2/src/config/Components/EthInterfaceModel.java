@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlIDREF;
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
-    
+
     /**
      * Component that this interface belongs to
      */
@@ -18,7 +18,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
      * Cable that is connected to this interface
      */
     private CableModel cable;
-    
+
     // -------------------------------------------------------
     /**
      * Name.
@@ -32,7 +32,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
      * Mac address of this eth interface
      */
     private String macAddress;
-    
+
         /**
      * Type of component
      */
@@ -42,10 +42,14 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
      */
     private Integer id;
 
+	/**
+	 * If interface is on/off.
+	 */
+	private boolean isUp;
 
-    public EthInterfaceModel(Integer id, HwTypeEnum hwType, HwComponentModel hwComponent, CableModel cable, 
+    public EthInterfaceModel(Integer id, HwTypeEnum hwType, HwComponentModel hwComponent, CableModel cable,
             String ipAddress, String macAddress, String interfaceName) {
-        
+
         // assign variables
         this.id = id;
         this.hwType=hwType;
@@ -58,19 +62,19 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     public EthInterfaceModel() {
     }
-    
+
     @XmlAttribute @XmlID
     public String getIDAsString(){
         return String.valueOf(this.id);
     }
-    
+
     public void setIDAsString(String id){
         this.id = Integer.valueOf(id);
     }
 
     /**
      * Returns cable that is connected to interface
-     * @return 
+     * @return
      */
     @XmlIDREF
     public CableModel getCable() {
@@ -79,23 +83,23 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     /**
      * Sets cable to interface
-     * @param cable 
+     * @param cable
      */
     public void setCable(CableModel cable) {
         this.cable = cable;
     }
-    
+
     /**
      * Removes cable from interface
      */
     public void removeCable(){
         this.cable = null;
     }
- 
+
     /**
-     * Finds out if there is cable connected. 
+     * Finds out if there is cable connected.
      * @return true if it is, false if it isn't
-     */ 
+     */
     public boolean hasCable(){
         if(cable == null){
             return false;
@@ -103,27 +107,27 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
             return true;
         }
     }
-    
+
     /**
      * Gets hwComponent that this interface belong to
-     * @return 
+     * @return
      */
     @XmlAttribute @XmlIDREF
     public HwComponentModel getHwComponent() {
         return hwComponent;
     }
-    
+
     /**
      * Sets hw component to this interface
-     * @param hwComponent 
+     * @param hwComponent
      */
     public void setHwComponent(HwComponentModel hwComponent){
         this.hwComponent = hwComponent;
     }
-    
+
     /**
      * Gets ip address
-     * @return 
+     * @return
      */
     public String getIpAddress() {
         return ipAddress;
@@ -131,7 +135,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     /**
      * Sets ip address
-     * @param ipAddress 
+     * @param ipAddress
      */
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -139,7 +143,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     /**
      * Gets mac address
-     * @return 
+     * @return
      */
     public String getMacAddress() {
         return macAddress;
@@ -147,7 +151,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     /**
      * Sets mac address
-     * @param macAddress 
+     * @param macAddress
      */
     public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
@@ -155,7 +159,7 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 
     /**
      * Returns name of interface
-     * @return 
+     * @return
      */
     @Override
     public String getName() {
@@ -195,5 +199,11 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
         this.id = id;
     }
 
-    
+	public boolean isIsUp() {
+		return isUp;
+	}
+
+	public void setIsUp(boolean isUp) {
+		this.isUp = isUp;
+	}
 }

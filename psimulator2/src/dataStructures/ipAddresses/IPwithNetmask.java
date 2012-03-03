@@ -23,7 +23,7 @@ public class IPwithNetmask {
 	/**
 	 * Creates new instance from two strings.
 	 * @param adr
-	 * @param maska 
+	 * @param maska
 	 */
     public IPwithNetmask(String adr, String maska) {
         ip = new IpAddress(adr);
@@ -39,7 +39,7 @@ public class IPwithNetmask {
         ip = new IpAddress(adr);
         mask = new IpNetmask(maska);
     }
-    
+
 	/**
 	 * Creates new instance from existing IP and mask as number of bits.
 	 * @param adr
@@ -49,16 +49,16 @@ public class IPwithNetmask {
         ip = adr;
         mask = new IpNetmask(maska);
     }
-    
+
 	/**
 	 * Creates new instance from existing IP and netmask.
 	 * @param adr
-	 * @param mask 
+	 * @param mask
 	 */
-    public IPwithNetmask(IpAddress adr, IpNetmask mask){
-        ip=adr;
-        this.mask = mask;
-    }
+    public IPwithNetmask(IpAddress adr, IpNetmask mask) {
+		ip = adr;
+		this.mask = mask;
+	}
 
     /**
      * Vytvori adresu s maskou ze zadaneho Stringu, kde muze nebo nemusi byt
@@ -106,7 +106,18 @@ public class IPwithNetmask {
             mask = new IpNetmask(m);  // nastaveni masky
         }
     }
-    
+
+	public static IPwithNetmask createFromIpSlashMask(String ipSlashMask) {
+
+		String[] field = new String[2];
+		field = ipSlashMask.split("/");
+
+		IPwithNetmask ip = new IPwithNetmask(field[0], field[1]);
+		return ip;
+	}
+
+
+
 // metody pro porovnavani (mezi sebou), vypisy a getry: --------------------------------------------------------------------------------------------------
 
     public IpAddress getIp() {
@@ -116,7 +127,7 @@ public class IPwithNetmask {
     public IpNetmask getMask() {
         return mask;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -139,36 +150,36 @@ public class IPwithNetmask {
     public String toString() {
         return ip.toString() + "/" + mask.getNumberOfBits();
     }
-    
-    
- 
-    
-    
+
+
+
+
+
 // verejny metody poskytujici dalsi informace o siti a podobne: ----------------------------------------------------------------------
 
     public IpAddress getBroadcast() {
         return IpAddress.createIpFromBits( cisloSite() | ~mask.getBits() );
     }
-    
+
     public IPwithNetmask getNetworkNumber(){
         IpAddress adr = IpAddress.createIpFromBits(cisloSite());
         return new IPwithNetmask(adr,mask);
     }
-    
+
     /**
      * Vraci true, kdyz je adresa s maskou cislem site.
-     * @return 
+     * @return
      */
     public boolean isNetworkNumber(){
         if(this.equals(getNetworkNumber())) return true;
         else return false;
     }
-    
+
     /**
      * Vraci true, jestlize comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
      * Returns true, if comparedIP is in my network.
      * @param comparedIP
-     * @return 
+     * @return
      */
     public boolean isInMyNetwork (IpAddress comparedIP){
         int druhyCisloSite = comparedIP.getBits() & mask.bits; //jakoby cislo site ty porovnavany
@@ -176,13 +187,13 @@ public class IPwithNetmask {
         else return false;
     }
 
-// privatni metody: ----------------------------------------------------------------------------------------------------------------------    
-    
+// privatni metody: ----------------------------------------------------------------------------------------------------------------------
+
     /**
      * Vrati dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
      */
     private void dopocitejMasku(){
-        
+
         int bajt = IpAddress.bitsToArray(ip.getBits())[0]; //tady je ulozenej prvni bajt adresy
         /*
             A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
@@ -191,9 +202,9 @@ public class IPwithNetmask {
             D 	1110 	224-239 	multicast
             E 	1111 	240-255 	vyhrazeno jako rezerva
         */
-        if( bajt<128 ) 
+        if( bajt<128 )
             mask =  new IpNetmask(8);
-        else if( bajt>=128 && bajt<192 ) 
+        else if( bajt>=128 && bajt<192 )
             mask = new IpNetmask(16);
         else if(bajt >= 192)
             mask = new IpNetmask(24);
@@ -201,7 +212,7 @@ public class IPwithNetmask {
 
     /**
      * Da vnitrni representaci cisla site.
-     * @return 
+     * @return
      */
     private int cisloSite() { //vraci 32bit integer
         return mask.getBits() & ip.getBits();
