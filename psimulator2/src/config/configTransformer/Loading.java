@@ -27,58 +27,58 @@ import physicalModule.Switchport;
  * @author neiss
  */
 public class Loading {
-	
+
 	Psimulator s = Psimulator.getPsimulator();
-	
+
 	private Map<Integer,Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
-	
-	
+
+
 	/**
 	 * Metoda slouzi k nahravani konfigurace z Martinova modelu.
-	 * @param network 
+	 * @param network
 	 */
 	public void loadFromModel(NetworkModel network){
-		
+
 		for ( HwComponentModel device: network.getHwComponents() ){
 			s.devices.add(createDevice(device));
 		}
-		
+
 	}
-	
+
 	/**
 	 * Metoda na vytvoreni jednoho pocitace (device).
 	 * @param model
-	 * @return 
+	 * @return
 	 */
 	private Device createDevice(HwComponentModel model){
-		
+
 		// vytvoreni samotnyho pocitace:
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()) );
-		
+
 		// vytvoreni fysickyho modulu
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		for(EthInterfaceModel ifaceModel :model.getInterfacesAsList()){
+		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()){
 			pm.addSwitchport(cislovaniSwitchportu,false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
 		}
-		
+
 		// nastaveni sitovyho modulu
 		NetMod nm = createNetMod(model,pc);
 		pc.setNetworkModule(nm);
-		
+
 		return pc;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Metoda na prevedeni Martinova typu pocitace na nas typ.
 	 * @param t
-	 * @return 
+	 * @return
 	 */
 	private Device.DeviceType prevedTyp(HwTypeEnum t){
 		Device.DeviceType type;
@@ -99,7 +99,7 @@ public class Loading {
 	 * Vytvareni sitovyho modulu. Predpoklada jiz kompletni fysickej modul.
 	 * @param model konfigurace pocitace
 	 * @param pc odkaz na uz hotovej pocitac
-	 * @return 
+	 * @return
 	 */
 	private NetMod createNetMod(HwComponentModel model, Device pc) {
 
@@ -116,7 +116,7 @@ public class Loading {
 				int cisloSwitchportu = switchporty.get(ifaceModel.getId());	// zjistim si z odkladaci mapy, ktery cislo switchportu mam priradit
 				ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
 				nm.ethernetLayer.ifaces.add(ethInterface);	// pridani interfacu do ethernetovy vrstvy
-				
+
 				if (ifaceModel.getIpAddress() != null) {
 					// nm.ipLayer.setIpAddressOnInterface(nm.ipLayer., null);	TODO: dodelat nastavovani IP na NetworkInterface z konfigurace
 				}

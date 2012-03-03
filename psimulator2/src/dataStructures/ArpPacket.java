@@ -49,6 +49,7 @@ public class ArpPacket extends L3Packet {
 	 * @param targetMacAddress my MAC address (searched address)
 	 */
 	public ArpPacket(IpAddress senderIpAddress, MacAddress senderMacAddress, IpAddress targetIpAddress, MacAddress targetMacAddress) {
+		super(null);
 		this.senderIpAddress = senderIpAddress;
 		this.senderMacAddress = senderMacAddress;
 		this.targetIpAddress = targetIpAddress;
@@ -65,6 +66,7 @@ public class ArpPacket extends L3Packet {
 	 * @param targetIpAddress IP adresa pro kterou hledam MAC adresu
 	 */
 	public ArpPacket(IpAddress senderIpAddress, MacAddress senderMacAddress, IpAddress targetIpAddress) {
+		super(null);
 		this.senderIpAddress = senderIpAddress;
 		this.senderMacAddress = senderMacAddress;
 		this.targetIpAddress = targetIpAddress;
@@ -80,6 +82,7 @@ public class ArpPacket extends L3Packet {
 	 * @param senderMacAddress MAC address of changed interface
 	 */
 	public ArpPacket(IpAddress senderIpAddress, MacAddress senderMacAddress) {
+		super(null);
 		this.senderIpAddress = senderIpAddress;
 		this.senderMacAddress = senderMacAddress;
 		this.targetIpAddress = new IpAddress("0.0.0.0"); // asi k nicemu

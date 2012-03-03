@@ -18,7 +18,8 @@ public class IpPacket extends L3Packet {
 	public final IpAddress dst;
 	public final int ttl; // TODO: poresit ruzny TTL na ruznych systemech
 
-	public IpPacket(IpAddress src, IpAddress dst, int ttl) {
+	public IpPacket(IpAddress src, IpAddress dst, int ttl, L4Packet data) {
+		super(data);
 		this.src = src;
 		this.dst = dst;
 		this.ttl = ttl;

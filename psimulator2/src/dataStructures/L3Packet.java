@@ -12,10 +12,6 @@ public abstract class L3Packet {
 
     public final L4Packet data;
 
-	public L3Packet() {
-		this.data = null;
-	}
-
 	public L3Packet(L4Packet data) {
 		this.data = data;
 	}

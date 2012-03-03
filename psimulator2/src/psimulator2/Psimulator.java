@@ -12,25 +12,25 @@ import logging.Logger;
 /**
  * Instance of Psimulator.
  * Pouzit navrhovy vzor Singleton.
- * 
+ *
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Psimulator {
 
-	
+
 	public final List<Device> devices=new ArrayList<Device>();
-	public final Logger logger = new Logger();;
-	
+	public final Logger logger = new Logger();
+
 
 	private Psimulator() {
-		
+
 	}
-	
-	
-	
+
+
+
 // staticky metody (pro ten singleton)
-	
+
 	private static volatile Psimulator instance;
 
 	public static Psimulator getPsimulator() {
@@ -43,10 +43,10 @@ public class Psimulator {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Zkratka pro logovani.
-	 * @return 
+	 * @return
 	 */
 	public static Logger getLogger(){
 		return getPsimulator().logger;

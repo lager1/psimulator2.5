@@ -228,7 +228,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
 		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
-		IpPacket p = new IpPacket(packet.src == null ? record.rozhrani.ipAddress.getIp() : packet.src, packet.dst, packet.ttl - 1);
+		IpPacket p = new IpPacket(packet.src == null ? record.rozhrani.ipAddress.getIp() : packet.src, packet.dst, packet.ttl - 1, packet.data);
 
 		// zanatuj
 		p = packetFilter.postRouting(p, ifaceIn, record.rozhrani);
@@ -267,10 +267,11 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	private void handleSendPacket(L4Packet packet, IpAddress dst) {
-		IpPacket p = new IpPacket(null, dst, ttl);
-		handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
+		IpPacket p = new IpPacket(null, dst, ttl, packet);
+		handleSendIpPacket(p, null); // prichozi rozhrani je null, pac zadne takove neni
 	}
 
+	@Override
 	public void doMyWork() {
 
 		// prochazet jednotlivy buffery a vyrizovat jednotlivy pakety
@@ -282,7 +283,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 			if (!sendBuffer.isEmpty()) {
 				SendItem m = sendBuffer.remove(0);
-				IpPacket p = new IpPacket(null, m.dst, ttl);
+				IpPacket p = new IpPacket(null, m.dst, ttl, m.packet);
 				handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
 //				handleSendPacket(m.packet, m.dst); // pak smazat, az se metody s odesilam ICMP veci presunou jinam
 			}
@@ -386,6 +387,12 @@ public class IPLayer implements SmartRunnable, Loggable {
 		return netMod.getDevice().getName() + ": IpLayer";
 	}
 
+	/**
+	 * Returns NetworkInterface which belongs to the EthernetInterface inc. <br />
+	 * Returns null iff inc is null.
+	 * @param inc
+	 * @return
+	 */
 	private NetworkInterface findIncommingNetworkIface(EthernetInterface inc) {
 		if (inc == null) {
 			return null;
