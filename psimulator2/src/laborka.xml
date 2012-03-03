@@ -80,7 +80,7 @@
             <value idAsString="0">
                 <defaultZoomXPos>70</defaultZoomXPos>
                 <defaultZoomYPos>503</defaultZoomYPos>
-                <deviceName>PC0</deviceName>
+                <deviceName>pc1</deviceName>
                 <hwType>END_DEVICE_PC</hwType>
                 <id>0</id>
                 <interface hwComponent="0" idAsString="1">
@@ -92,7 +92,7 @@
                     <macAddress>AA-11-E0-00-00-00</macAddress>
                     <name>Eth0</name>
                 </interface>
-                <name>PC0</name>
+                <name>pc1</name>
             </value>
         </entry>
         <entry>
@@ -145,7 +145,7 @@
             <value idAsString="2">
                 <defaultZoomXPos>700</defaultZoomXPos>
                 <defaultZoomYPos>508</defaultZoomYPos>
-                <deviceName>linux1</deviceName>
+                <deviceName>pc2</deviceName>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>2</id>
                 <interface hwComponent="2" idAsString="3">
@@ -183,7 +183,7 @@
                     <macAddress>AA-11-E0-00-00-04</macAddress>
                     <name>Eth3</name>
                 </interface>
-                <name>linux1</name>
+                <name>pc2</name>
             </value>
         </entry>
         <entry>
@@ -299,45 +299,17 @@
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1330800077918</lastEditTimestamp>
+    <lastEditTimestamp>1330801699045</lastEditTimestamp>
     <counter>
         <nextId>45</nextId>
         <nextMacAddress>17</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_OPTIC</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_WORKSTATION</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_PC</key>
-                <value>1</value>
-            </entry>
-            <entry>
-                <key>CABLE_ETHERNET</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>REAL_PC</key>
                 <value>2</value>
             </entry>
             <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>LINUX_ROUTER</key>
-                <value>4</value>
-            </entry>
-            <entry>
-                <key>CISCO_SWITCH</key>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -345,8 +317,36 @@
                 <value>1</value>
             </entry>
             <entry>
+                <key>END_DEVICE_WORKSTATION</key>
+                <value>0</value>
+            </entry>
+            <entry>
                 <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_OPTIC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_PC</key>
+                <value>1</value>
+            </entry>
+            <entry>
+                <key>CISCO_SWITCH</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_ROUTER</key>
+                <value>4</value>
             </entry>
         </nextNumberMap>
     </counter>

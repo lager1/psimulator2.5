@@ -14,8 +14,10 @@ import utils.WorkerThread;
  */
 public class Cable implements SmartRunnable {
 
-	Connector firstCon = new Connector(this);
-	Connector SecondCon = new Connector(this);
+	public final int id;	// id z konfiguraku
+
+	private final Connector firstCon = new Connector(this);
+	private final Connector secondCon = new Connector(this);
 
 	WorkerThread worker = new WorkerThread(this);
 
@@ -26,16 +28,20 @@ public class Cable implements SmartRunnable {
 
 	/**
 	 * Creates cable with random delay time.
+	 * @param id
 	 */
-	public Cable() {
+	public Cable(int id) {
+		this.id = id;
 		this.delay = (long) Math.random() * 10;
 	}
 
 	/**
 	 * Creates cable with given delay time.
+	 * @param id
 	 * @param delay
 	 */
-	public Cable(long delay) {
+	public Cable(int id, long delay) {
+		this.id = id;
 		this.delay = delay;
 	}
 
@@ -62,13 +68,14 @@ public class Cable implements SmartRunnable {
 	 */
 	public boolean setSecondInterface(SimulatorSwitchport swport) {
 		assert swport != null;
-		boolean res = SecondCon.connectInterface(swport);
+		boolean res = secondCon.connectInterface(swport);
 		if (res) {
-			swport.connector = SecondCon;
+			swport.connector = secondCon;
 		}
 		return res;
 	}
 
+	@Override
 	public void doMyWork() {
 		L2Packet packet;
 		boolean firstIsEmpty = true;
@@ -76,7 +83,7 @@ public class Cable implements SmartRunnable {
 
 		do {
 			Switchport first = firstCon.getInterface(); // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
-			Switchport second = SecondCon.getInterface();
+			Switchport second = secondCon.getInterface();
 
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();

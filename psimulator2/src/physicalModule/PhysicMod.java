@@ -20,7 +20,7 @@ import utils.WorkerThread;
  */
 public class PhysicMod implements SmartRunnable {
 
-	
+
 	/**
 	 * List of interfaces.
 	 */
@@ -37,22 +37,22 @@ public class PhysicMod implements SmartRunnable {
 	 * Working thread.
 	 */
 	private WorkerThread worker = new WorkerThread(this);
-	
+
 	/**
 	 * Odkaz na PC.
 	 */
 	public final Device device;
-	
+
 	private boolean ladiciVypisovani = true;
-	
-	
+
+
 // Konstruktory a vytvareni modulu: ----------------------------------------------------------------------------------------------
 
 	public PhysicMod(Device device) {
 		this.device = device;
 	}
 
-	
+
 	/**
 	 * Pridani switchportu
 	 * @param number cislo switchportu
@@ -68,9 +68,9 @@ public class PhysicMod implements SmartRunnable {
 		switchports.put(swport.number, swport);
 	}
 
-	
+
 // Verejny metody na posilani paketu: -----------------------------------------------------------------------------------------
-	
+
 	/**
 	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
 	 *
@@ -117,11 +117,11 @@ public class PhysicMod implements SmartRunnable {
 		}
 	}
 
-	
+
 	/**
 	 * Returns numbers of switchports.
 	 * Uses Network Module to explore network hardware afer start.
-	 * @return 
+	 * @return
 	 */
 	public List<Integer> getNumbersOfPorts(){
 		List<Integer> vratit = new LinkedList<Integer>();
@@ -131,18 +131,22 @@ public class PhysicMod implements SmartRunnable {
 		return vratit;
 	}
 
+	public Map<Integer, Switchport> getSwitchports() {
+		return switchports;
+	}
+
 //	/**
 //	 * Nebude nikdy potreba.
 //	 * @param iface
-//	 * @return 
+//	 * @return
 //	 */
 //	public boolean removeSwitchport(Switchport iface) {
 //		return switchportList.remove(iface);
 //	}
-	
-	
+
+
 // Privatni veci: --------------------------------------------------------------------------------------------------
-	
+
 	private class BufferItem {
 
 		L2Packet packet;
@@ -153,13 +157,13 @@ public class PhysicMod implements SmartRunnable {
 			this.switchport = switchport;
 		}
 	}
-	
+
 	private void ladiciVypisovani(String zprava){
 		if (ladiciVypisovani){
 			System.out.println("PhysicMod: "+zprava);
 		}
 	}
-	
+
 	private NetMod getNetMod(){
 		return device.getNetworkModule();
 	}

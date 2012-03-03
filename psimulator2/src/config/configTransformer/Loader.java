@@ -21,6 +21,9 @@ import networkModule.L2.EthernetInterface;
 import networkModule.L3.NetworkInterface;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
+import physicalModule.Cable;
+import physicalModule.SimulatorSwitchport;
+import physicalModule.Switchport;
 
 /**
  *
@@ -43,6 +46,7 @@ public class Loader {
 			s.devices.add(createDevice(device));
 		}
 
+		connectCables(network);
 	}
 
 	/**
@@ -89,7 +93,7 @@ public class Loader {
 		} else if (t == CISCO_SWITCH || t == LINUX_SWITCH) {
 			type = Device.DeviceType.simple_switch;
 		} else {
-			throw new LoadingException("Unknown or forbidden type of network device.");
+			throw new LoaderException("Unknown or forbidden type of network device.");
 		}
 		return type;
 	}
@@ -106,7 +110,7 @@ public class Loader {
 		DeviceSettings.NetworkModuleType netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu
 
 		if (netModType == tcp_ip_netmod) {	// modul je pro router
-			TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se 
+			TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se
 
 			//nahrani interfacu:
 			for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {
@@ -130,9 +134,44 @@ public class Loader {
 		} else if (netModType == simple_switch_netMod) {
 			return new SimpleSwitchNetMod(pc);
 		} else {
-			throw new LoadingException("Unknown or forbidden type of network module.");
+			throw new LoaderException("Unknown or forbidden type of network module.");
 		}
 
 	}
 
+	/**
+	 * Projde vsechny kabely a spoji nase sitovy prvky.
+	 * @param network
+	 */
+	private void connectCables(NetworkModel network) {
+		for (CableModel cableModel : network.getCables()) {
+			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
+			// pro propojeni prvku kabely, musim mit switchporty od jednotlivych Devicu
+			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
+			cable.setFirstInterface(swportFirst);
+
+			SimulatorSwitchport swportSecond = findSwitchportFor(cableModel.getComponent2(), cableModel.getInterface2());
+			cable.setSecondInterface(swportSecond);
+		}
+	}
+
+	/**
+	 * Najde switchport, ktery odpovida zadanemu zarizeni a rozhrani.
+	 * @param component1
+	 * @param interface1
+	 * @return
+	 */
+	private SimulatorSwitchport findSwitchportFor(HwComponentModel component1, EthInterfaceModel interface1) {
+		for (Device device : s.devices) {
+			if (device.id == component1.getId()) {
+				for (Switchport swp : device.physicalModule.getSwitchports().values()) {
+					if (swp instanceof SimulatorSwitchport && swp.configID == interface1.getId()) {
+						return (SimulatorSwitchport)swp;
+					}
+				}
+			}
+		}
+
+		throw new LoaderException(String.format("Nepodarilo se najit Device s id=%d a k nemu SimulatorSwichport s id=%d", component1.getId(), interface1.getId()));
+	}
 }
