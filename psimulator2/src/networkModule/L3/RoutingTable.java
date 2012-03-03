@@ -284,7 +284,7 @@ public class RoutingTable {
 
 
 		@Deprecated
-        public boolean jePrimoPripojene() {
+        public boolean jePrimoPripojene() { // TODO: proc depracated? na ciscu to je potreba a tohle je "abstraktni" struktura, ktera musi pojmout vsechno
             return connected;
         }
 

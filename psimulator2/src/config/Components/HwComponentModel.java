@@ -1,5 +1,6 @@
 package config.Components;
 
+import config.Components.simulatorConfig.DeviceSettings;
 import java.util.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -16,7 +17,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * LinkedHashMap of EthInterfaces that component owns. Key is the
      * ethInterface ID.
      */
-    
+
     private Map<Integer, EthInterfaceModel> interfacesMap;
     // -------------------------------------------------------
     /**
@@ -39,13 +40,13 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * Id of component
      */
     private Integer id;
-	
+
 	/**
 	 * Nastaveni pocitace pro potreby simulatoru.
 	 */
 	private DeviceSettings devSettings;
 
-    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces, 
+    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces,
 			int defaultZoomXPos, int defaultZoomYPos, DeviceSettings devSettings) {
 
         // add values to variables
@@ -63,12 +64,12 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     public HwComponentModel() {
         this.interfacesMap = new LinkedHashMap<Integer, EthInterfaceModel>();
     }
-    
+
     @XmlAttribute @XmlID
     public String getIDAsString(){
         return String.valueOf(this.id);
     }
-    
+
     public void setIDAsString(String id){
         this.id = Integer.valueOf(id);
     }
@@ -204,7 +205,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     public Map<Integer, EthInterfaceModel> getInterfacesMap() {
         return interfacesMap;
     }
-    
+
     public void setInterfacesMap(Map<Integer, EthInterfaceModel> interfacesMap) {
         this.interfacesMap = interfacesMap;
     }
@@ -251,7 +252,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 	public void setDevSettings(DeviceSettings devSettings) {
 		this.devSettings = devSettings;
 	}
-    
-	
-    
+
+
+
 }

@@ -107,17 +107,6 @@ public class IPwithNetmask {
         }
     }
 
-	public static IPwithNetmask createFromIpSlashMask(String ipSlashMask) {
-
-		String[] field = new String[2];
-		field = ipSlashMask.split("/");
-
-		IPwithNetmask ip = new IPwithNetmask(field[0], field[1]);
-		return ip;
-	}
-
-
-
 // metody pro porovnavani (mezi sebou), vypisy a getry: --------------------------------------------------------------------------------------------------
 
     public IpAddress getIp() {

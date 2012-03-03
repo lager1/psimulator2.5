@@ -7,11 +7,12 @@ package config.configTransformer;
 import config.Components.*;
 import static config.Components.HwTypeEnum.*;
 import config.Components.NetworkModel;
+import config.Components.simulatorConfig.DeviceSettings;
 import device.Device;
 import networkModule.NetMod;
 import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
-import static config.Components.DeviceSettings.NetworkModuleType.*;
+import static config.Components.simulatorConfig.DeviceSettings.NetworkModuleType.*;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import networkModule.L2.EthernetInterface;
 import networkModule.L3.NetworkInterface;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
-import physicalModule.Switchport;
 
 /**
  *
@@ -118,7 +118,7 @@ public class Loading {
 
 				IPwithNetmask ip = null;
 				if (ifaceModel.getIpAddress() != null) {
-					ip = IPwithNetmask.createFromIpSlashMask(ifaceModel.getIpAddress());
+					ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
 				}
 
 				NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());

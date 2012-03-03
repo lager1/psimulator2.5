@@ -2,9 +2,9 @@
  * Erstellt am 2.3.2012.
  */
 
-package config.Components;
+package config.Components.simulatorConfig;
 
-import config.Components.simulatorConfig.NetworkAddressTranslationConfig;
+import config.Components.simulatorConfig.NatConfig;
 import config.Components.simulatorConfig.RoutingTableConfig;
 
 /**
@@ -15,13 +15,13 @@ public class DeviceSettings {
 
 	private NetworkModuleType netModType;
 	private RoutingTableConfig routingTabConfig;
-	private NetworkAddressTranslationConfig natConfig;
+	private NatConfig natConfig;
 
-	public NetworkAddressTranslationConfig getNatConfig() {
+	public NatConfig getNatConfig() {
 		return natConfig;
 	}
 
-	public void setNatConfig(NetworkAddressTranslationConfig natConfig) {
+	public void setNatConfig(NatConfig natConfig) {
 		this.natConfig = natConfig;
 	}
 

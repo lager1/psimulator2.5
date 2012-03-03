@@ -8,6 +8,6 @@ package config.Components.simulatorConfig;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class NetworkAddressTranslationConfig {
+public class NatConfig {
 
 }
