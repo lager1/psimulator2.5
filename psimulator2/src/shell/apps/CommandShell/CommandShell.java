@@ -45,6 +45,7 @@ public class CommandShell extends TerminalApplication {
 	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
 		this.shellRenderer = new ShellRenderer(terminalIO, this);
+		this.parser = device.createParser(this);
 	}
 
 	public History getHistory() {
@@ -179,6 +180,7 @@ public class CommandShell extends TerminalApplication {
 	public final int run() {
 
 		try {
+			terminalIO.setLinewrapping(true);
 			terminalIO.setAutoflushing(true);
 			terminalIO.eraseScreen();
 			terminalIO.homeCursor();

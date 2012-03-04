@@ -3,8 +3,11 @@
  */
 package device;
 
-import physicalModule.PhysicMod;
+import commands.AbstractCommandParser;
 import networkModule.NetMod;
+import physicalModule.PhysicMod;
+import shell.apps.CommandShell.CommandShell;
+import telnetd.pridaneTridy.TelnetProperties;
 
 /**
  *
@@ -20,6 +23,12 @@ public class Device {
 	ApplicationsList applications;
 	
 	private boolean networkModuleSet = false;
+	
+	/**
+	 * telnet port is configured by TelnetProperties.addListerner method, which is called in constructor
+	 * telnetPort is allocated when simulator is started. There is no need to store it in file.
+	 */
+	private transient int telnetPort = -1;
 
 	/**
 	 * Konstruktor. Nastavi zadany promenny, vytvori si fysickej modul.
@@ -34,12 +43,23 @@ public class Device {
 		this.name = name;
 		this.type = type;
 		physicalModule = new PhysicMod(this);
+		TelnetProperties.addListener(this);  // telnetPort is configured in this method
 	}
 
 	public ApplicationsList getApplications() {
 		return applications;
 	}
 
+	public int getTelnetPort() {
+		return telnetPort;
+	}
+
+	public void setTelnetPort(int telnetPort) {
+		this.telnetPort = telnetPort;
+	}
+
+	
+	
 	public String getName() {
 		return name;
 	}
@@ -56,7 +76,16 @@ public class Device {
 		
 	}
 	
+	/**
+	 * 
+	 * @param cmd
+	 * @return
+	 */
+	public AbstractCommandParser createParser(CommandShell cmd){
 	
+		throw new UnsupportedOperationException("Not supported yet."); // @TODO STANDA, TOMÁŠ .. implementovat prosím :)
+		
+	}
 
 	public enum DeviceType {
 
