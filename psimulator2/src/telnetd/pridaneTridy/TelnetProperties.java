@@ -4,9 +4,7 @@
  */
 package telnetd.pridaneTridy;
 
-import config.Components.HwComponentModel;
 import device.Device;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;

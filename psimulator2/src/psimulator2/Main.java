@@ -3,14 +3,14 @@
  */
 package psimulator2;
 
-import config.Components.NetworkModel;
-import config.Serializer.AbstractNetworkSerializer;
-import config.Serializer.NetworkModelSerializerXML;
-import config.Serializer.SaveLoadException;
 import config.configTransformer.Loader;
 import java.io.File;
 import logging.Logger;
 import logging.LoggingCategory;
+import shared.Components.NetworkModel;
+import shared.Serializer.AbstractNetworkSerializer;
+import shared.Serializer.NetworkModelSerializerXML;
+import shared.Serializer.SaveLoadException;
 import telnetd.BootException;
 import telnetd.TelnetD;
 import telnetd.pridaneTridy.TelnetProperties;

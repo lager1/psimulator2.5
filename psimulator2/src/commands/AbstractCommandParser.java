@@ -3,7 +3,6 @@
  */
 package commands;
 
-import config.Components.HwComponentModel;
 import device.Device;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -3,16 +3,11 @@
  */
 package config.configTransformer;
 
-import config.Components.*;
-import static config.Components.HwTypeEnum.*;
-import config.Components.NetworkModel;
-import config.Components.simulatorConfig.DeviceSettings;
+
 import device.Device;
 import networkModule.NetMod;
 import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
-import static config.Components.simulatorConfig.DeviceSettings.NetworkModuleType.*;
-import config.Components.simulatorConfig.Record;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -26,6 +21,11 @@ import networkModule.TcpIpNetMod;
 import physicalModule.Cable;
 import physicalModule.SimulatorSwitchport;
 import physicalModule.Switchport;
+import shared.Components.*;
+import shared.Components.simulatorConfig.DeviceSettings;
+import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
+import shared.Components.simulatorConfig.Record;
+
 
 /**
  *
@@ -54,7 +54,7 @@ public class Loader {
 	public void loadFromModel() {
 
 		for (HwComponentModel device : networkModel.getHwComponents()) {
-			if (device.getHwType() == REAL_PC) {
+			if (device.getHwType() == shared.Components.HwTypeEnum.REAL_PC) {
 				continue;
 			}
 
@@ -114,11 +114,11 @@ public class Loader {
 	 */
 	private Device.DeviceType prevedTyp(HwTypeEnum t) {
 		Device.DeviceType type;
-		if ((t == LINUX_ROUTER) || (t == END_DEVICE_NOTEBOOK) || (t == END_DEVICE_PC) || t == END_DEVICE_WORKSTATION) {
+		if ((t == HwTypeEnum.LINUX_ROUTER) || (t == HwTypeEnum.END_DEVICE_NOTEBOOK) || (t == HwTypeEnum.END_DEVICE_PC) || t == HwTypeEnum.END_DEVICE_WORKSTATION) {
 			type = Device.DeviceType.linux_computer;
-		} else if (t == CISCO_ROUTER) {
+		} else if (t == HwTypeEnum.CISCO_ROUTER) {
 			type = Device.DeviceType.cisco_router;
-		} else if (t == CISCO_SWITCH || t == LINUX_SWITCH) {
+		} else if (t == HwTypeEnum.CISCO_SWITCH || t == HwTypeEnum.LINUX_SWITCH) {
 			type = Device.DeviceType.simple_switch;
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network device: " + t);
@@ -143,19 +143,19 @@ public class Loader {
 			switch (pc.type) {
 				case cisco_router:
 				case linux_computer:
-					netModType = tcp_ip_netmod;
+					netModType = NetworkModuleType.tcp_ip_netmod;
 					break;
 				case simple_switch:
-					netModType = simple_switch_netMod;
+					netModType = NetworkModuleType.simple_switch_netMod;
 					break;
 				default:
 					throw new AssertionError();
 			}
 		}
 
-		if (netModType == tcp_ip_netmod) {	// modul je pro router
+		if (netModType == shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType.tcp_ip_netmod) {	// modul je pro router
 			return createTcpIpNetMod(model, pc);
-		} else if (netModType == simple_switch_netMod) {
+		} else if (netModType == shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType.simple_switch_netMod) {
 			return createSimpleSwitchNetMod(model, pc);
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network module.");

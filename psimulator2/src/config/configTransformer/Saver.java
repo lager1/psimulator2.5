@@ -4,18 +4,16 @@
 
 package config.configTransformer;
 
-import config.Components.EthInterfaceModel;
-import config.Components.HwComponentModel;
-import config.Components.NetworkModel;
-import config.Components.simulatorConfig.DeviceSettings;
-import config.Components.simulatorConfig.Record;
-import config.Components.simulatorConfig.RoutingTableConfig;
 import device.Device;
-import java.util.ArrayList;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.RoutingTable;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
+import shared.Components.EthInterfaceModel;
+import shared.Components.HwComponentModel;
+import shared.Components.NetworkModel;
+import shared.Components.simulatorConfig.DeviceSettings;
+import shared.Components.simulatorConfig.RoutingTableConfig;
 
 /**
  *
