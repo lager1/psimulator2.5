@@ -7,6 +7,8 @@ package telnetd.pridaneTridy;
 import config.Components.HwComponentModel;
 import device.Device;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -22,16 +24,18 @@ public class TelnetProperties {
 
 		LINUX, CISCO
 	}
-	private static Properties properties;
+	private static Properties properties = new Properties();
 	private static int lastPort = 11000;
+	private static List<String> listenerNames = new LinkedList<String>();
+	private static boolean finalConfiguration = false;
 
 	/**
 	 * this method should be executed only once
 	 */
 	private static void commonSetup() {
 
-		properties = new Properties();
-
+		finalConfiguration = true;
+		
 		properties.setProperty("terminals", "vt100,ansi,windoof,xterm");
 		properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
 		properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
@@ -45,9 +49,26 @@ public class TelnetProperties {
 		//   properties.setProperty("shell.std.class", "telnetd.shell.DummyShell");
 		properties.setProperty("shell.std.class", "shell.TelnetSession");
 
+
+		StringBuilder listeners = null;
+
+		for (String name : listenerNames) {
+			if (listeners == null) {
+				listeners = new StringBuilder(name);
+			} else {
+				listeners.append(",").append(name);
+			}
+		}
+
+		properties.setProperty("listeners", listeners.toString());
+
 	}
 
 	public static Properties getProperties() {
+
+		if (!TelnetProperties.finalConfiguration) {
+			commonSetup();
+		}
 
 		return properties;
 
@@ -55,11 +76,7 @@ public class TelnetProperties {
 
 	public static void addListener(Device device) {
 
-		if (properties == null) // run only once
-		{
-			commonSetup();
-		}
-
+		
 		String name = String.valueOf(device.configID);
 		int port = lastPort;
 		lastPort += 1;
@@ -67,6 +84,8 @@ public class TelnetProperties {
 		device.setTelnetPort(port);
 
 		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + lastPort);
+
+		listenerNames.add(name);
 
 		properties.setProperty(name + ".loginshell", "std");
 		properties.setProperty(name + ".port", String.valueOf(port));
@@ -81,10 +100,9 @@ public class TelnetProperties {
 
 	}
 
-	public static void setStartPort(int port){
-		lastPort=port;
+	public static void setStartPort(int port) {
+		lastPort = port;
 	}
-
 }
 
 /*
