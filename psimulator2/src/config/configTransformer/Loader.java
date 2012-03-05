@@ -88,13 +88,13 @@ public class Loader {
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
-		System.out.println("  "+model.getInterfacesMap().toString());
+//		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
+//		System.out.println("  "+model.getInterfacesMap().toString());
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
-			System.out.println("jedu");
+//			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
-			System.out.println("Pridal jem switchport pocitaci  s id="+ifaceModel.getId()+" s cislem "+cislovaniSwitchportu);
+//			System.out.println("Pridal jem switchport pocitaci  s id="+ifaceModel.getId()+" s cislem "+cislovaniSwitchportu);
 			cislovaniSwitchportu++;
 //			System.out.print("X "+ifaceModel.getId());
 		}
