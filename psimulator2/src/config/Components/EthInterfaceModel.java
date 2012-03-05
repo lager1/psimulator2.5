@@ -47,8 +47,9 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
 	 */
 	private boolean isUp;
 
+
     public EthInterfaceModel(Integer id, HwTypeEnum hwType, HwComponentModel hwComponent, CableModel cable,
-            String ipAddress, String macAddress, String interfaceName) {
+            String ipAddress, String macAddress, String interfaceName, boolean isUp) {
 
         // assign variables
         this.id = id;
@@ -58,6 +59,8 @@ public class EthInterfaceModel implements NameInterface,AbstractComponentModel {
         this.ipAddress = ipAddress;
         this.macAddress = macAddress;
         this.interfaceName = interfaceName;
+        
+        this.isUp = isUp;
     }
 
     public EthInterfaceModel() {
