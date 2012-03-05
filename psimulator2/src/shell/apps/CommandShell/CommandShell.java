@@ -35,7 +35,7 @@ public class CommandShell extends TerminalApplication {
 	public String prompt = "default promt:~# ";
 	private boolean ukoncit = false;
 	private AbstractCommandParser parser;
-	private Object locker;
+	private Object locker = new Object();
 	/**
 	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
 	 * Dle stavu se bude resit napovidani a historie.
@@ -207,6 +207,7 @@ public class CommandShell extends TerminalApplication {
 
 				terminalIO.flush();
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				return -1;
 			}
 		}

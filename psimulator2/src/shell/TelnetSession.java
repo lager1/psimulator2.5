@@ -26,7 +26,8 @@ public class TelnetSession implements Shell {
 
 		Logger.log(Logger.INFO, LoggingCategory.TELNET, "telnet session estabilished with host: " + con.getConnectionData().getHostAddress() + " port: " + con.getConnectionData().getPort());
 
-		this.port = con.getConnectionData().getPort();
+		
+		this.port = con.getConnectionData().getSocket().getLocalPort();
 		this.m_Connection = con;
 		this.m_IO = m_Connection.getTerminalIO();
 		this.m_Connection.addConnectionListener(this); //dont forget to register listener
