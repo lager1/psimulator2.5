@@ -29,7 +29,8 @@ import physicalModule.Switchport;
 
 /**
  *
- * @author neiss
+ * @author Tomas Pitrinec
+ * @author Stanislav Rehak
  */
 public class Loader {
 
@@ -191,13 +192,13 @@ public class Loader {
 		}
 
 		//nahrani osatnich nastaveni sotovyho modulu:
-		if (model.getDevSettings()!=null) {	// ostatni veci se muzou nahravat, jen kdyz je z ceho
+		if (model.getDevSettings() != null) {	// ostatni veci se muzou nahravat, jen kdyz je z ceho
 			// nastaveni routovaci tabulky:
-			for(RoutingTableConfig.Record record: model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
+			for (RoutingTableConfig.Record record : model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
 				IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
 				IpAddress brana = null;
-				if(record.getGateway()!=null){
-					 brana = new IpAddress(record.getGateway());
+				if (record.getGateway() != null) {
+					brana = new IpAddress(record.getGateway());
 				}
 				NetworkInterface iface = nm.ipLayer.getNetworkInteface(record.getInterfaceName());
 				nm.ipLayer.routingTable.addRecordWithoutControl(adresat, brana, iface);
