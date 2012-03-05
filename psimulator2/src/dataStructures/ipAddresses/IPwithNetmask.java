@@ -135,6 +135,11 @@ public class IPwithNetmask {
         return true;
     }
 
+	/**
+	 * Returns IP address with slash and netmask as number of bits.
+	 * Vypise jako IP lomitko pocet bitu.
+	 * @return
+	 */
     @Override
     public String toString() {
         return ip.toString() + "/" + mask.getNumberOfBits();

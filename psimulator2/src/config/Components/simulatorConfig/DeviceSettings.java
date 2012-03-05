@@ -4,11 +4,9 @@
 
 package config.Components.simulatorConfig;
 
-import config.Components.simulatorConfig.NatConfig;
-import config.Components.simulatorConfig.RoutingTableConfig;
 
 /**
- *
+ * Sem se bude davat nastaveni Device, ktery je jen pro simulator, aby neprekazelo Martinoj Svihlikoj.
  * @author Tomas Pitrinec
  */
 public class DeviceSettings {

@@ -197,6 +197,24 @@ public class RoutingTable {
 		return null;
 	}
 
+	/**
+     * Tahleta metoda slouží k přidávání záznamů z konfiguráku. Neprováděj se žádný kontroly, prostě se to tam
+     * přidá. Adresat a rozhrani musej bejt vyplneny, brana jen u priznaku
+     * UG, tzn. u routy na branu.
+     * @param adresat
+     * @param brana
+     * @param rozhr
+     * @author Stanislav Řehák
+     */
+    public void addRecordWithoutControl(IPwithNetmask adresat,IpAddress brana,NetworkInterface rozhr){
+        if(!adresat.isNetworkNumber()){
+            throw new RuntimeException("Chyba v konfiguracnim souboru, adresat "+ adresat.toString() +
+                    " v routovaci tabulce neni cislem site. ");
+        }
+        Record z = new Record(adresat,brana,rozhr);
+        records.add(najdiSpravnouPosici(z), z);
+    }
+
 
 
 // privatni metody ----------------------------------------------------------------------------------------------------
@@ -274,6 +292,7 @@ public class RoutingTable {
         public final IPwithNetmask adresat;   // ty promenny jsou privatni, nechci, aby se daly zvenci upravovat
 		/**
 		 * Brana na kterou se bude paket posilat.
+		 * Neni-li vyplnena, je to null.
 		 */
         public final IpAddress brana;
 		/**

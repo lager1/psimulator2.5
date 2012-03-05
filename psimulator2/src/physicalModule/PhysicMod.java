@@ -57,6 +57,7 @@ public class PhysicMod implements SmartRunnable {
 	 * Pridani switchportu
 	 * @param number cislo switchportu
 	 * @param realSwitchport je-li switchport realnym rozhranim (tzn. vede k realnymu pocitaci)
+	 * @param configID id z konfigurace - tedy ID u EthInterfaceModel
 	 */
 	public void addSwitchport(int number, boolean realSwitchport, int configID) {
 		Switchport swport;

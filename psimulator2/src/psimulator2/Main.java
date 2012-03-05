@@ -17,7 +17,8 @@ import telnetd.pridaneTridy.TelnetProperties;
 
 /**
  *
- * @author neiss
+ * @author Tomáš Pitřinec
+ * @author Martin Lukáš
  */
 public class Main {
 
@@ -30,12 +31,12 @@ public class Main {
 
 		Psimulator psimulatorInstance = Psimulator.getPsimulator();
 
-		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();
+		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
 
 		NetworkModel networkModel = null;
 		try {
 
-			networkModel = serializer.loadNetworkModelFromFile(new File(args[0]));
+			networkModel = serializer.loadNetworkModelFromFile(new File(args[0]));	// nacita se xmlko do ukladacich struktur
 
 		} catch (SaveLoadException ex) {
 			Logger.log(Logger.DEBUG, LoggingCategory.ABSTRACT_NETWORK, ex.toString());
@@ -46,8 +47,8 @@ public class Main {
 		int firstTelnetPort = 11000;
 		TelnetProperties.setStartPort(firstTelnetPort);
 
-		Loader loader = new Loader(networkModel);
-		loader.loadFromModel();
+		Loader loader = new Loader(networkModel);	// vytvari se simulator loader
+		loader.loadFromModel();	// simulator se startuje z tech ukladacich struktur
 
 
 		TelnetD telnetDaemon;

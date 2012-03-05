@@ -68,12 +68,13 @@ public class Device {
 		return networkModule;
 	}
 
+	/**
+	 * Tuto metodu pouzivat jen na zacatku behu programu pri konfiguraci!
+	 *
+	 * @param networkModule
+	 */
 	public void setNetworkModule(NetMod networkModule) {
-		if(!networkModuleSet){
-			this.networkModule = networkModule;
-			networkModuleSet=true;
-		} else throw new RuntimeException("Tohle by nemelo nastat, kontaktujte tvurce softwaru.");
-
+		this.networkModule = networkModule;
 	}
 
 	/**

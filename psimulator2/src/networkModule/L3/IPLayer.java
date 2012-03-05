@@ -52,7 +52,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	/**
 	 * Routing table with record.
 	 */
-	private final RoutingTable routingTable = new RoutingTable();
+	public final RoutingTable routingTable = new RoutingTable();
 	/**
 	 * Link to network module.
 	 */
@@ -73,6 +73,11 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	private final IcmpHandler icmpHandler;
 
+	/**
+	 * Konstruktor IP vrstvy.
+	 * Vytvori se v nem i prazdna routovaci tabulka.
+	 * @param netMod
+	 */
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
 		this.icmpHandler = new IcmpHandler(netMod, this);

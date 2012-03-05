@@ -12,8 +12,11 @@ import networkModule.NetMod;
 import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
 import static config.Components.simulatorConfig.DeviceSettings.NetworkModuleType.*;
+import config.Components.simulatorConfig.RoutingTableConfig;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
+import dataStructures.ipAddresses.IpAddress;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import networkModule.L2.EthernetInterface;
@@ -31,6 +34,11 @@ import physicalModule.Switchport;
 public class Loader {
 
 	Psimulator s = Psimulator.getPsimulator();
+	/**
+	 * odkladaci mapa mezi ID a cislama switchportu
+	 * Klicem je id z konfiguraku, hodnotou je prirazeny cislo switchportu
+	 * Pozor, pouziva se pro vsechny pocitace (tedy predpoklada se
+	 */
 	private Map<Integer, Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
 	private final NetworkModel networkModel;
 
@@ -75,13 +83,17 @@ public class Loader {
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
 //		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
-		// vytvoreni fysickyho modulu
+		// vytvoreni fysickyho modulu:
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) { // prochazim interfacy a pridavam je jako switchporty
+		System.out.println(model.getEthInterfaceCount());
+		System.out.println(model.getInterfacesMap().toString());
+		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
+			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
+			System.out.println("Pridal jem switchport pocitaci  s id="+ifaceModel.getId()+" s cislem "+cislovaniSwitchportu);
 			cislovaniSwitchportu++;
 //			System.out.print("X "+ifaceModel.getId());
 		}
@@ -178,9 +190,24 @@ public class Loader {
 			nm.ipLayer.addNetworkInterface(netInterface);
 		}
 
-		//TODO dodelat nastaveni routovaci tabulky
+		//nahrani osatnich nastaveni sotovyho modulu:
+		if (model.getDevSettings()!=null) {	// ostatni veci se muzou nahravat, jen kdyz je z ceho
+			// nastaveni routovaci tabulky:
+			for(RoutingTableConfig.Record record: model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
+				IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
+				IpAddress brana = null;
+				if(record.getGateway()!=null){
+					 brana = new IpAddress(record.getGateway());
+				}
+				NetworkInterface iface = nm.ipLayer.getNetworkInteface(record.getInterfaceName());
+				nm.ipLayer.routingTable.addRecordWithoutControl(adresat, brana, iface);
+			}
 
-		//TODO dodelat nastaveni natu (paketovyho filtru)
+			//TODO dodelat nastaveni natu (paketovyho filtru)
+
+			//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
+		}
+
 
 		return nm;
 	}
