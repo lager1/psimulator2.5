@@ -52,13 +52,13 @@ public class Loader {
 			s.devices.add(createDevice(device));
 		}
 
-		for (Device device : s.devices) { // TODO: tohle pap smaznou
-			System.out.println("device id="+device.configID);
-			for (Switchport swp : device.physicalModule.getSwitchports().values()) {
-				System.out.print(" "+swp.configID);
-			}
-			System.out.println("\n");
-		}
+//		for (Device device : s.devices) { // TODO: tohle pap smaznou
+//			System.out.println("device id="+device.configID);
+//			for (Switchport swp : device.physicalModule.getSwitchports().values()) {
+//				System.out.print(" "+swp.configID);
+//			}
+//			System.out.println("\n");
+//		}
 
 		connectCables();
 	}
@@ -73,7 +73,7 @@ public class Loader {
 
 		// vytvoreni samotnyho pocitace:
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
-		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
+//		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu
 		PhysicMod pm = pc.physicalModule;
@@ -83,7 +83,7 @@ public class Loader {
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
-			System.out.print("X "+ifaceModel.getId());
+//			System.out.print("X "+ifaceModel.getId());
 		}
 
 		// nastaveni sitovyho modulu
