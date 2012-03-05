@@ -18,11 +18,7 @@ import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import exceptions.UnsupportedL3TypeException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import logging.Loggable;
 import networkModule.L2.EthernetInterface;
 import networkModule.TcpIpNetMod;
@@ -66,15 +62,20 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * storeBuffer it is set to false.
 	 */
 	private boolean newArpReply = false;
-	private final List<NetworkInterface> networkIfaces = new ArrayList<NetworkInterface>();
+	private final Map<String, NetworkInterface> networkIfaces = new HashMap<String, NetworkInterface>();
 	/**
 	 * Waiting time for ARP requests.
 	 */
 	private long arpTTL = 10000;
 
+	/**
+	 * Handles ICMP answers, sends ICMP packet if neeeded.
+	 */
+	private final IcmpHandler icmpHandler;
+
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-//		processEthernetInterfaces();
+		this.icmpHandler = new IcmpHandler(netMod, this);
 	}
 	/**
 	 * Default TTL values.
@@ -88,6 +89,14 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public HashMap<IpAddress, ArpCache.ArpRecord> getArpCache() {
 		return arpCache.getCache();
+	}
+
+	/**
+	 * Potrebne pro Saver.
+	 * @return
+	 */
+	public Collection<NetworkInterface> getNetworkIfaces() {
+		return networkIfaces.values();
 	}
 
 	/**
@@ -159,7 +168,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
-				sendIcmpDestinationHostUnreachable(m.packet); // TODO: poslat zpatky DHU ?? jen pokud je to ICMP REQ ?
+				icmpHandler.sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
 			}
@@ -212,15 +221,15 @@ public class IPLayer implements SmartRunnable, Loggable {
 			// jestli je to ICMP, tak posli TTL expired
 			// zaloguj zahozeni paketu
 			Psimulator.getLogger().logg(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
-			sendIcmpTimeExceeded(packet);
+			icmpHandler.sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
 
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
-			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DHU vzdy??
-				sendIcmpDestinationNetworkUnreachable(packet);
+			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DNU vzdy??
+				icmpHandler.sendDestinationNetworkUnreachable(packet.src, packet);
 			}
 			Psimulator.getLogger().logg(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
@@ -266,7 +275,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 		worker.wake();
 	}
 
-	private void handleSendPacket(L4Packet packet, IpAddress dst) {
+	protected void handleSendPacket(L4Packet packet, IpAddress dst) {
 		IpPacket p = new IpPacket(null, dst, ttl, packet);
 		handleSendIpPacket(p, null); // prichozi rozhrani je null, pac zadne takove neni
 	}
@@ -285,7 +294,6 @@ public class IPLayer implements SmartRunnable, Loggable {
 				SendItem m = sendBuffer.remove(0);
 				IpPacket p = new IpPacket(null, m.dst, ttl, m.packet);
 				handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
-//				handleSendPacket(m.packet, m.dst); // pak smazat, az se metody s odesilam ICMP veci presunou jinam
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) {
@@ -307,22 +315,13 @@ public class IPLayer implements SmartRunnable, Loggable {
 		iface.ipAddress = ipAddress;
 	}
 
-//	/**
-//	 * Process EthernetInterfaces (L2 iface) and creates adequate NetworkInterface (L3 iface).
-//	 */
-//	private void processEthernetInterfaces() {
-//		for (EthernetInterface iface : netMod.ethernetLayer.ifaces) {
-//			networkIfaces.add(new NetworkInterface(iface.name, iface));
-//		}
-//	}
-
 	/**
 	 * Adds Network interface to a list.
 	 * This method is used only in loading configuration file.
 	 * @param iface
 	 */
 	public void addNetworkInterface(NetworkInterface iface) {
-		networkIfaces.add(iface);
+		networkIfaces.put(iface.name, iface);
 	}
 
 	/**
@@ -332,7 +331,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @return
 	 */
 	private boolean isItMyIpAddress(IpAddress targetIpAddress) {
-		for (NetworkInterface iface : networkIfaces) {
+		for (NetworkInterface iface : networkIfaces.values()) {
 			if (iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
 				return true;
 			}
@@ -357,40 +356,6 @@ public class IPLayer implements SmartRunnable, Loggable {
 		return false;
 	}
 
-	/**
-	 * Sends DHU to packet.src.
-	 *
-	 * @param packet
-	 */
-	private void sendIcmpDestinationHostUnreachable(IpPacket packet) {
-		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: jaka se posila icmp_seq ?
-		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Host Unreachable na: "+packet.src, p);
-		handleSendPacket(p, packet.src);
-	}
-
-	/**
-	 * Sends DNU to packet.src.
-	 *
-	 * @param packet
-	 */
-	private void sendIcmpDestinationNetworkUnreachable(IpPacket packet) {
-		IcmpPacket pCasted = (IcmpPacket) packet.data; // TODO: asi tu nebude
-		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE, pCasted.icmp_seq); // TODO: jaka se posila icmp_seq ?
-		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Net Unreachable na: "+packet.src, p);
-		handleSendPacket(p, packet.src);
-	}
-
-	/**
-	 * Send ICMP Time Exceeded message to the sender (packet.src).
-	 *
-	 * @param packet
-	 */
-	private void sendIcmpTimeExceeded(IpPacket packet) {
-		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.TIME_EXCEEDED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: icmp_seq ?
-		Psimulator.getLogger().logg(this, Logger.INFO, LoggingCategory.NET, "Posilam Time Exceeded na: "+packet.src, p);
-		handleSendPacket(p, packet.src);
-	}
-
 	@Override
 	public String getDescription() {
 		return netMod.getDevice().getName() + ": IpLayer";
@@ -406,12 +371,15 @@ public class IPLayer implements SmartRunnable, Loggable {
 		if (inc == null) {
 			return null;
 		}
-		for (NetworkInterface iface : networkIfaces) {
-			if (iface.ethernetInterface.name.equals(inc.name)) {
-				return iface;
-			}
+		NetworkInterface iface = getNetworkInteface(inc.name);
+		if (iface == null) {
+			throw new RuntimeException("Nenazeleno NetworkIface, ktere by bylo spojeno s EthernetInterface, ze ktereho prave prisel packet!");
 		}
-		throw new RuntimeException("Nenazeleno NetworkIface, ktere by bylo spojeno s EthernetInterface, ze ktereho prave prisel packet!");
+		return iface;
+	}
+
+	public NetworkInterface getNetworkInteface(String name) {
+		return networkIfaces.get(name);
 	}
 
 	private class SendItem {

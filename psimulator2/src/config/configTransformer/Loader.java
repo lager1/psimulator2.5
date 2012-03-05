@@ -32,15 +32,19 @@ public class Loader {
 
 	Psimulator s = Psimulator.getPsimulator();
 	private Map<Integer, Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
+	private final NetworkModel networkModel;
+
+	public Loader(NetworkModel networkModel) {
+		this.networkModel = networkModel;
+	}
 
 	/**
 	 * Metoda slouzi k nahravani konfigurace z Martinova modelu.
 	 *
-	 * @param network
 	 */
-	public void loadFromModel(NetworkModel network) {
+	public void loadFromModel() {
 
-		for (HwComponentModel device : network.getHwComponents()) {
+		for (HwComponentModel device : networkModel.getHwComponents()) {
 			if (device.getHwType() == REAL_PC) {
 				continue;
 			}
@@ -49,14 +53,14 @@ public class Loader {
 		}
 
 		for (Device device : s.devices) { // TODO: tohle pap smaznou
-			System.out.println("device id="+device.id);
+			System.out.println("device id="+device.configID);
 			for (Switchport swp : device.physicalModule.getSwitchports().values()) {
 				System.out.print(" "+swp.configID);
 			}
 			System.out.println("\n");
 		}
 
-		connectCables(network);
+		connectCables();
 	}
 
 	/**
@@ -69,6 +73,7 @@ public class Loader {
 
 		// vytvoreni samotnyho pocitace:
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
+		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu
 		PhysicMod pm = pc.physicalModule;
@@ -78,6 +83,7 @@ public class Loader {
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
+			System.out.print("X "+ifaceModel.getId());
 		}
 
 		// nastaveni sitovyho modulu
@@ -168,7 +174,7 @@ public class Loader {
 				ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
 			}
 
-			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
+			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getId(), ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
 			nm.ipLayer.addNetworkInterface(netInterface);
 		}
 
@@ -198,8 +204,8 @@ public class Loader {
 	 *
 	 * @param network
 	 */
-	private void connectCables(NetworkModel network) {
-		for (CableModel cableModel : network.getCables()) {
+	private void connectCables() {
+		for (CableModel cableModel : networkModel.getCables()) {
 			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
 
 			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
@@ -221,7 +227,7 @@ public class Loader {
 	 */
 	private SimulatorSwitchport findSwitchportFor(HwComponentModel component1, EthInterfaceModel interface1) {
 		for (Device device : s.devices) {
-			if (device.id == component1.getId()) {
+			if (device.configID == component1.getId()) {
 				for (Switchport swp : device.physicalModule.getSwitchports().values()) {
 					if (swp instanceof SimulatorSwitchport && swp.configID == interface1.getId()) {
 						return (SimulatorSwitchport) swp;

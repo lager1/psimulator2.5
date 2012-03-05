@@ -32,8 +32,8 @@ public class RoutingTableTest {
 	@Before
     public void setUp() {
         rt = new RoutingTable();
-        eth0=new NetworkInterface("eth0",null);
-        wlan0=new NetworkInterface("wlan0", null);
+        eth0=new NetworkInterface(1, "eth0",null);
+        wlan0=new NetworkInterface(2, "wlan0", null);
     }
 
     @After

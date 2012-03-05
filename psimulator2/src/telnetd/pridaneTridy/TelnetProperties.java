@@ -60,12 +60,12 @@ public class TelnetProperties {
 			commonSetup();
 		}
 
-		String name = String.valueOf(device.id);
+		String name = String.valueOf(device.configID);
 		int port = lastPort;
 		lastPort += 1;
 
 		device.setTelnetPort(port);
-		
+
 		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + lastPort);
 
 		properties.setProperty(name + ".loginshell", "std");
@@ -80,11 +80,11 @@ public class TelnetProperties {
 
 
 	}
-	
+
 	public static void setStartPort(int port){
 		lastPort=port;
 	}
-	
+
 }
 
 /*

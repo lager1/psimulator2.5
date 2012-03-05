@@ -17,7 +17,7 @@ import telnetd.pridaneTridy.TelnetProperties;
  */
 public class Device {
 
-	public final int id;	// id z konfiguraku
+	public final int configID;	// configID z konfiguraku
 	private String name;
 	public final DeviceType type;
 	public final PhysicMod physicalModule;
@@ -35,13 +35,13 @@ public class Device {
 	/**
 	 * Konstruktor. Nastavi zadany promenny, vytvori si fysickej modul.
 	 *
-	 * @param id
+	 * @param configID
 	 * @param name
 	 * @param type 	 *
 	 *
 	 */
-	public Device(int id, String name, DeviceType type) {
-		this.id = id;
+	public Device(int configID, String name, DeviceType type) {
+		this.configID = configID;
 		this.name = name;
 		this.type = type;
 		physicalModule = new PhysicMod(this);

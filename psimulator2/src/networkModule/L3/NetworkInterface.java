@@ -14,6 +14,8 @@ import networkModule.L2.EthernetInterface;
  */
 public class NetworkInterface {
 
+	public final int configID;
+
 	public final String name;
 	/**
 	 * Interface is Up.
@@ -24,12 +26,14 @@ public class NetworkInterface {
 	protected IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
-	public NetworkInterface(String name, EthernetInterface iface) {
+	public NetworkInterface(Integer configID, String name, EthernetInterface iface) {
+		this.configID = configID;
 		this.name = name;
 		this.ethernetInterface = iface;
 	}
 
-	public NetworkInterface(String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
+	public NetworkInterface(Integer configID, String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
+		this.configID = configID;
 		this.name = name;
 		this.ipAddress = ipAddress;
 		this.ethernetInterface = ethernetInterface;

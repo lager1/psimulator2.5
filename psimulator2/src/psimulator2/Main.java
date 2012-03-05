@@ -46,8 +46,8 @@ public class Main {
 		int firstTelnetPort = 11000;
 		TelnetProperties.setStartPort(firstTelnetPort);
 
-		Loader loader = new Loader();
-		loader.loadFromModel(networkModel);
+		Loader loader = new Loader(networkModel);
+		loader.loadFromModel();
 
 
 		TelnetD telnetDaemon;
