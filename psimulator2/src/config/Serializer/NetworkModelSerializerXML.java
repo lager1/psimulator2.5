@@ -81,6 +81,7 @@ public class NetworkModelSerializerXML implements AbstractNetworkSerializer {
             // if needed, uncomment this line:
             //Logger.getLogger(AbstractNetworkAdapter.class.getName()).log(Level.SEVERE, null, ex);
 
+			ex.printStackTrace(); // TODO: pak dat asi pryc
             // throw exception
             throw new SaveLoadException(new SaveLoadExceptionParametersWrapper(SaveLoadExceptionType.ERROR_WHILE_READING, fileName, false));
         }

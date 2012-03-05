@@ -39,9 +39,9 @@ public class Main {
 			networkModel = serializer.loadNetworkModelFromFile(new File(args[0]));	// nacita se xmlko do ukladacich struktur
 
 		} catch (SaveLoadException ex) {
+			ex.printStackTrace();
 			Logger.log(Logger.DEBUG, LoggingCategory.ABSTRACT_NETWORK, ex.toString());
-			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Cannot load network model form:" + configFileName);
-
+			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Cannot load network model from: " + configFileName);
 		}
 
 		int firstTelnetPort = 11000;

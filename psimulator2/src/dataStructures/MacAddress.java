@@ -54,6 +54,7 @@ public class MacAddress {
 		this.representation = representation;
 	}
 
+
 // vypisy a porovnavani ---------------------------------------------------------------------------
 	/**
 	 * Vrati klasickej vypis s oddelenim dvojteckama.

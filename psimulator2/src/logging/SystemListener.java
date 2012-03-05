@@ -22,6 +22,7 @@ public class SystemListener implements LoggerListener {
 		ConfigureSystemListener.configure(configuration);
 	}
 
+	@Override
 	public void listen(Loggable caller, int logLevel, LoggingCategory category, String message, Object object) {
 		try {
 			if (logLevel <= configuration.get(category)) {
@@ -34,6 +35,7 @@ public class SystemListener implements LoggerListener {
 		}
 	}
 
+	@Override
 	public void listen(String name, int logLevel, LoggingCategory category, String message) {
 		try {
 			if (logLevel <= configuration.get(category)) {

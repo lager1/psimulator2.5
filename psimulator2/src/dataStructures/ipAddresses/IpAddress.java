@@ -31,12 +31,12 @@ public class IpAddress {
 
 	/**
 	 * Returns inner representation.
-	 * @return 
+	 * @return
 	 */
     public int getBits(){
         return bits;
     }
-    
+
     /**
      * Vrati IP adresu jako string ve formatu 1.2.3.4
      * @return
@@ -60,13 +60,13 @@ public class IpAddress {
         }
         return true;
     }
-    
+
 // staticky metody pro ruzny prevadeni a tak: ----------------------------------------------------------------------------------------
 
     /**
      * Vrati adresu utvorenou ze stringu, kdyz je zadanej string ip adresou, jinak vrati null.
      * @param ret
-     * @return 
+     * @return
      */
     public static IpAddress correctAddress(String ret){
         try{
@@ -76,7 +76,7 @@ public class IpAddress {
             return null;
         }
     }
-    
+
     /**
      * Vrati adresu o jedna vetsi.
      * Udelany metosou pokus - omyl, ale testy prosly.
@@ -88,22 +88,22 @@ public class IpAddress {
         int nova=(int) ( (long)(p.bits) + 1L );
         return createIpFromBits(nova);
     }
-    
+
     /**
      * Negates given ip.
      * Neguje ip adresu, tzn. tam, kde driv byly jednicky dava nuly a naopak.
      * Nahrada za Standovu starou vratMaskuZWildCard, narozdil od ni ale uz neskouma, jestli je vysledek maskou.
      * @param ip
-     * @return 
+     * @return
      */
     public static IpAddress negateAddress(IpAddress ip){
         return createIpFromBits(~ip.bits);
     }
-    
+
     /**
      * Vytvori adresu ze integeru vnitrni reprezentace (z bitu)
      * @param r - ta vnitrni reprezentace
-     * @return 
+     * @return
      */
     protected static IpAddress createIpFromBits(int r){
         IpAddress vratit = new IpAddress();
@@ -119,7 +119,7 @@ public class IpAddress {
      */
     protected static int stringToBits(String adr) throws BadIpException{
         if (!adr.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
-            throw new BadIpException();
+            throw new BadIpException("Spatna IP: \""+adr+"\"");
         }
         //uz vim, ze se to sklada z cisel, pokracuju tedy:
         String[] pole = adr.split("\\."); //pole Stringu s jednotlivejma cislama
@@ -153,7 +153,7 @@ public class IpAddress {
     /**
      * Pole integeru prevadi na string.
      * @param array
-     * @return 
+     * @return
      */
     protected static String arrayToString(int[] array) {
         String ret = array[0] + "." + array[1] + "." + array[2] + "." + array[3];
@@ -163,7 +163,7 @@ public class IpAddress {
     /**
      * Ze zadanejch bitu vytvori string.
      * @param bits
-     * @return 
+     * @return
      */
     protected static String bitsToString(int bits) {
         return arrayToString(bitsToArray(bits));

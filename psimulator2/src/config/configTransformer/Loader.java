@@ -12,7 +12,7 @@ import networkModule.NetMod;
 import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
 import static config.Components.simulatorConfig.DeviceSettings.NetworkModuleType.*;
-import config.Components.simulatorConfig.RoutingTableConfig;
+import config.Components.simulatorConfig.Record;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -82,14 +82,14 @@ public class Loader {
 
 		// vytvoreni samotnyho pocitace:
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
-//		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
+		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu:
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-		System.out.println(model.getEthInterfaceCount());
-		System.out.println(model.getInterfacesMap().toString());
+		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
+		System.out.println("  "+model.getInterfacesMap().toString());
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
 			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
@@ -183,7 +183,7 @@ public class Loader {
 			ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
 
 			IPwithNetmask ip = null;
-			if (ifaceModel.getIpAddress() != null) {
+			if (ifaceModel.getIpAddress() != null && !ifaceModel.getIpAddress().equals("")) {
 				ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
 			}
 
@@ -194,7 +194,7 @@ public class Loader {
 		//nahrani osatnich nastaveni sotovyho modulu:
 		if (model.getDevSettings() != null) {	// ostatni veci se muzou nahravat, jen kdyz je z ceho
 			// nastaveni routovaci tabulky:
-			for (RoutingTableConfig.Record record : model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
+			for(Record record: model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
 				IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
 				IpAddress brana = null;
 				if (record.getGateway() != null) {

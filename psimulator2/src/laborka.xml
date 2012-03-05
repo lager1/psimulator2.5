@@ -283,9 +283,9 @@
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1330937409271</lastEditTimestamp>
+    <lastEditTimestamp>1330953793545</lastEditTimestamp>
     <counter>
-        <nextId>77</nextId>
+        <nextId>83</nextId>
         <nextMacAddress>27</nextMacAddress>
         <nextNumberMap>
             <entry>
@@ -310,7 +310,7 @@
             </entry>
             <entry>
                 <key>LINUX_SWITCH</key>
-                <value>3</value>
+                <value>4</value>
             </entry>
             <entry>
                 <key>LINUX_ROUTER</key>

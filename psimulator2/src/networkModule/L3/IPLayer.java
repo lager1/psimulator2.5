@@ -32,7 +32,7 @@ import utils.WorkerThread;
  */
 public class IPLayer implements SmartRunnable, Loggable {
 
-	protected final WorkerThread worker = new WorkerThread(this);
+	protected final WorkerThread worker;
 	/**
 	 * ARP cache table.
 	 */
@@ -81,6 +81,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
 		this.icmpHandler = new IcmpHandler(netMod, this);
+		this.worker = new WorkerThread(this);
 	}
 	/**
 	 * Default TTL values.
