@@ -1,7 +1,6 @@
 /*
  * Erstellt am 1.3.2012.
  */
-
 package config.configTransformer;
 
 import config.Components.*;
@@ -32,18 +31,29 @@ import physicalModule.Switchport;
 public class Loader {
 
 	Psimulator s = Psimulator.getPsimulator();
-
-	private Map<Integer,Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
-
+	private Map<Integer, Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
 
 	/**
 	 * Metoda slouzi k nahravani konfigurace z Martinova modelu.
+	 *
 	 * @param network
 	 */
-	public void loadFromModel(NetworkModel network){
+	public void loadFromModel(NetworkModel network) {
 
-		for ( HwComponentModel device: network.getHwComponents() ){
+		for (HwComponentModel device : network.getHwComponents()) {
+			if (device.getHwType() == REAL_PC) {
+				continue;
+			}
+
 			s.devices.add(createDevice(device));
+		}
+
+		for (Device device : s.devices) { // TODO: tohle pap smaznou
+			System.out.println("device id="+device.id);
+			for (Switchport swp : device.physicalModule.getSwitchports().values()) {
+				System.out.print(" "+swp.configID);
+			}
+			System.out.println("\n");
 		}
 
 		connectCables(network);
@@ -51,6 +61,7 @@ public class Loader {
 
 	/**
 	 * Metoda na vytvoreni jednoho pocitace (device).
+	 *
 	 * @param model
 	 * @return
 	 */
@@ -76,11 +87,9 @@ public class Loader {
 		return pc;
 	}
 
-
-
-
 	/**
 	 * Metoda na prevedeni Martinova typu pocitace na nas typ.
+	 *
 	 * @param t
 	 * @return
 	 */
@@ -93,32 +102,48 @@ public class Loader {
 		} else if (t == CISCO_SWITCH || t == LINUX_SWITCH) {
 			type = Device.DeviceType.simple_switch;
 		} else {
-			throw new LoaderException("Unknown or forbidden type of network device.");
+			throw new LoaderException("Unknown or forbidden type of network device: " + t);
 		}
 		return type;
 	}
 
-
 	/**
 	 * Vytvareni sitovyho modulu. Predpoklada jiz kompletni fysickej modul.
+	 *
 	 * @param model konfigurace pocitace
 	 * @param pc odkaz na uz hotovej pocitac
 	 * @return
 	 */
 	private NetMod createNetMod(HwComponentModel model, Device pc) {
 
-		DeviceSettings.NetworkModuleType netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu
+		DeviceSettings.NetworkModuleType netModType;
+
+		if (model.getDevSettings() != null) {
+			netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu
+		} else { // neni ulozeno v konfiguraci, o jaky typ modulu se jedna
+			switch (pc.type) {
+				case cisco_router:
+				case linux_computer:
+					netModType = tcp_ip_netmod;
+					break;
+				case simple_switch:
+					netModType = simple_switch_netMod;
+					break;
+				default:
+					throw new AssertionError();
+			}
+		}
 
 		if (netModType == tcp_ip_netmod) {	// modul je pro router
 			return createTcpIpNetMod(model, pc);
 		} else if (netModType == simple_switch_netMod) {
-			return createSimpleSwitchNetMod(model,pc);
+			return createSimpleSwitchNetMod(model, pc);
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network module.");
 		}
 
 	}
-	
+
 	/**
 	 * Metoda vytvori sitovej model routeru. Ke kazdymu switchportu priradi jeden interface, pojmenuje je, pripadne
 	 * nastavi adresy, vytvori a nastavi routovaci tabulku a nat.
@@ -128,13 +153,13 @@ public class Loader {
 	 * @return
 	 */
 	private TcpIpNetMod createTcpIpNetMod(HwComponentModel model, Device pc) {
-		TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se 
+		TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se
 
 		//nahrani interfacu:
 		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {	// pro kazdy rozhrani
 
 			EthernetInterface ethInterface = nm.ethernetLayer.addInterface(ifaceModel.getName(), new MacAddress(ifaceModel.getMacAddress()));
-				// -> pridani novyho rozhrani ethernetovy vrstve, interface si jeste podrzim, abych mu moh pridavat switchporty
+			// -> pridani novyho rozhrani ethernetovy vrstve, interface si jeste podrzim, abych mu moh pridavat switchporty
 			int cisloSwitchportu = switchporty.get(ifaceModel.getId());	// zjistim si z odkladaci mapy, ktery cislo switchportu mam priradit
 			ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
 
@@ -146,9 +171,9 @@ public class Loader {
 			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
 			nm.ipLayer.addNetworkInterface(netInterface);
 		}
-		
+
 		//TODO dodelat nastaveni routovaci tabulky
-		
+
 		//TODO dodelat nastaveni natu (paketovyho filtru)
 
 		return nm;
@@ -156,19 +181,21 @@ public class Loader {
 
 	/**
 	 * Vytvori sitovej modul switche, uplne ignoruje jeho nastaveni z konfigurace (kdyby tam nejaky bylo).
+	 *
 	 * @param model
 	 * @param pc
-	 * @return 
+	 * @return
 	 */
 	private NetMod createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
 		SimpleSwitchNetMod nm = new SimpleSwitchNetMod(pc);
 		nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
-				// -> switchi se priradi jedno rozhrani a da se mu mac prvniho switchportu
+		// -> switchi se priradi jedno rozhrani a da se mu mac prvniho switchportu
 		return nm;
 	}
 
 	/**
 	 * Projde vsechny kabely a spoji nase sitovy prvky.
+	 *
 	 * @param network
 	 */
 	private void connectCables(NetworkModel network) {
@@ -187,6 +214,7 @@ public class Loader {
 
 	/**
 	 * Najde switchport, ktery odpovida zadanemu zarizeni a rozhrani.
+	 *
 	 * @param component1
 	 * @param interface1
 	 * @return
@@ -196,7 +224,7 @@ public class Loader {
 			if (device.id == component1.getId()) {
 				for (Switchport swp : device.physicalModule.getSwitchports().values()) {
 					if (swp instanceof SimulatorSwitchport && swp.configID == interface1.getId()) {
-						return (SimulatorSwitchport)swp;
+						return (SimulatorSwitchport) swp;
 					}
 				}
 			}
