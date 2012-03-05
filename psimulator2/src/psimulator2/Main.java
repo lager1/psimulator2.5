@@ -50,7 +50,7 @@ public class Main {
 		NetworkModel networkModel = null;
 		try {
 
-			networkModel = serializer.loadNetworkModelFromFile(new File(args[0]));	// nacita se xmlko do ukladacich struktur
+			networkModel = serializer.loadNetworkModelFromFile(new File(configFileName));	// nacita se xmlko do ukladacich struktur
 
 		} catch (SaveLoadException ex) {
 			ex.printStackTrace();

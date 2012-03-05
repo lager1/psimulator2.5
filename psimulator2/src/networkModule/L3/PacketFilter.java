@@ -13,6 +13,16 @@ import dataStructures.IpPacket;
  */
 public class PacketFilter {
 
+	private final IPLayer ipLayer;
+	private final NatTable natTable;
+
+	public PacketFilter(IPLayer ipLayer) {
+		this.ipLayer = ipLayer;
+		this.natTable = new NatTable(ipLayer);
+	}
+
+
+
 	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
 		return packet;
 	}

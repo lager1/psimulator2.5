@@ -40,7 +40,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	/**
 	 * Packet filter. Controls NAT, packet dropping, ..
 	 */
-	private final PacketFilter packetFilter = new PacketFilter();
+	private final PacketFilter packetFilter = new PacketFilter(this);
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
