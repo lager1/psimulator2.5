@@ -248,7 +248,7 @@ public class IpAddressesTest {
         assertEquals("0.0.0.0/0", new IPwithNetmask("0.0.0.0/0",32,false).toString());
         assertEquals("255.255.255.255/1", new IPwithNetmask("255.255.255.255/1",32,false).toString());
         assertEquals("1.2.3.4/32", new IPwithNetmask("1.2.3.4",32,false).toString());
-		assertEquals("1.2.3.4/32", new IPwithNetmask("1.2.3.4/32", 24, true).toString());
+		assertEquals("1.2.3.4/24", new IPwithNetmask("1.2.3.4/24", 24, true).toString());
 
         try{
             new IPwithNetmask("",32,false);
