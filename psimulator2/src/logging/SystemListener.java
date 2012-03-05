@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class SystemListener implements LoggerListener {
 
-	final Map<LoggingCategory,Integer> configuration = new EnumMap<LoggingCategory, Integer>(LoggingCategory.class);
+	final Map<LoggingCategory,Integer> configuration = new EnumMap<>(LoggingCategory.class);
 
 	public SystemListener() {
 		ConfigureSystemListener.configure(configuration);

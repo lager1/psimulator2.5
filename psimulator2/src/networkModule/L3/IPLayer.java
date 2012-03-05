@@ -48,7 +48,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * nemam odpoved. Obsluhovat me bude doMyWork(). Neni potreba miti synchronizaci, protoze sem leze jen vlakno z
 	 * doMyWork().
 	 */
-	private final List<StoreItem> storeBuffer = new LinkedList<StoreItem>();
+	private final List<StoreItem> storeBuffer = new LinkedList<>();
 	/**
 	 * Routing table with record.
 	 */
@@ -62,7 +62,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * storeBuffer it is set to false.
 	 */
 	private boolean newArpReply = false;
-	private final Map<String, NetworkInterface> networkIfaces = new HashMap<String, NetworkInterface>();
+	private final Map<String, NetworkInterface> networkIfaces = new HashMap<>();
 	/**
 	 * Waiting time for ARP requests.
 	 */
@@ -168,7 +168,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		long now = System.currentTimeMillis();
 
-		List<StoreItem> remove = new ArrayList<StoreItem>();
+		List<StoreItem> remove = new ArrayList<>();
 
 		for (StoreItem m : storeBuffer) {
 

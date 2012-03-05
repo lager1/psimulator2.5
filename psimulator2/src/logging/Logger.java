@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class Logger {
 
-	private final List<LoggerListener> listeners = new LinkedList<LoggerListener>();
-	
+	private final List<LoggerListener> listeners = new LinkedList<>();
+
 	/**
 	 * Zavazna chyba. Vypise na hlavni serverovou konzoli (normalni println) a ukonci program.
 	 */

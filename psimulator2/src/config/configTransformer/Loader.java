@@ -40,7 +40,7 @@ public class Loader {
 	 * Klicem je id z konfiguraku, hodnotou je prirazeny cislo switchportu
 	 * Pozor, pouziva se pro vsechny pocitace (tedy predpoklada se
 	 */
-	private Map<Integer, Integer> switchporty = new HashMap<Integer, Integer>();	// odkladaci mapa mezi ID a cislama switchportu
+	private Map<Integer, Integer> switchporty = new HashMap<>();	// odkladaci mapa mezi ID a cislama switchportu
 	private final NetworkModel networkModel;
 
 	public Loader(NetworkModel networkModel) {
@@ -82,7 +82,7 @@ public class Loader {
 
 		// vytvoreni samotnyho pocitace:
 		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
-		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
+//		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu:
 		PhysicMod pm = pc.physicalModule;

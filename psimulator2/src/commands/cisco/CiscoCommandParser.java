@@ -205,8 +205,8 @@ public class CiscoCommandParser extends AbstractCommandParser {
         }
 
 
-
-		throw new UnsupportedOperationException("Not supported yet.");
+		return 0;
+//		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
