@@ -29,12 +29,21 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
-		if (args.length < 0) {
-			System.out.println("Prvni parametr musi byt soubor s nastavenim, napr. laborka.xml");
-			System.exit(2);
+		if (args.length < 1) {
+			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK,
+					"No configuration file attached, run again with configuration file as first argument.");
 		}
 
-		Psimulator psimulatorInstance = Psimulator.getPsimulator();
+		configFileName = args[0];
+
+		int firstTelnetPort = 11000;
+		if (args.length >= 2) {
+			try {
+				firstTelnetPort = Integer.parseInt(args[1]);
+			} catch (NumberFormatException ex) {
+				Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Second argument is not port number: "+args[1]);
+			}
+		}
 
 		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
 
@@ -49,7 +58,6 @@ public class Main {
 			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Cannot load network model from: " + configFileName);
 		}
 
-		int firstTelnetPort = 11000;
 		TelnetProperties.setStartPort(firstTelnetPort);
 
 		Loader loader = new Loader(networkModel);	// vytvari se simulator loader
