@@ -22,7 +22,7 @@ import utils.WorkerThread;
 public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 	protected final List<EthernetInterface> ifaces = new ArrayList<EthernetInterface>(); //TODO: naplnit
-	protected final WorkerThread worker = new WorkerThread(this);
+	protected final WorkerThread worker;
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>(); //TODO: naplnit
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
@@ -59,7 +59,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	public String getDescription() {
 		return netMod.getDevice().getName()+": EthernetLayer";
 	}
-	
+
 	public SwitchportSettings getSwitchport(int i){
 		return switchports.get(i);
 	}
@@ -190,8 +190,9 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	public EthernetLayer(NetMod netMod) {
 		super(netMod);
 		exploreHardware();
+		this.worker = new WorkerThread(this);
 	}
-	
+
 	/**
 	 * Prida novy interface.
 	 * @param name

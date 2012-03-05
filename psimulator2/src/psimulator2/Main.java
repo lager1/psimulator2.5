@@ -29,6 +29,11 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		if (args.length < 0) {
+			System.out.println("Prvni parametr musi byt soubor s nastavenim, napr. laborka.xml");
+			System.exit(2);
+		}
+
 		Psimulator psimulatorInstance = Psimulator.getPsimulator();
 
 		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
