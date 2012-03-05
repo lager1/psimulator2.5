@@ -169,6 +169,10 @@ public class RoutingTable {
         return v;
     }
 
+	/**
+	 * Returns number of records in routing table.
+	 * @return
+	 */
     public int size(){
         return records.size();
     }

@@ -8,8 +8,12 @@ import config.Components.EthInterfaceModel;
 import config.Components.HwComponentModel;
 import config.Components.NetworkModel;
 import config.Components.simulatorConfig.DeviceSettings;
+import config.Components.simulatorConfig.Record;
+import config.Components.simulatorConfig.RoutingTableConfig;
 import device.Device;
+import java.util.ArrayList;
 import networkModule.L3.NetworkInterface;
+import networkModule.L3.RoutingTable;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
 
@@ -32,7 +36,9 @@ public class Saver {
 
 			saveInterfaces(hwComponentModel, device);
 
-//			saveRoutingTable();
+			if (device.getNetworkModule().getClass() == TcpIpNetMod.class) {
+				saveRoutingTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
+			}
 
 //			saveNatTable();
 		}
@@ -58,5 +64,17 @@ public class Saver {
 			ethIfaceModel.setIpAddress(iface.getIpAddress().toString());
 			ethIfaceModel.setIsUp(iface.isUp);
 		}
+	}
+
+	private void saveRoutingTable(TcpIpNetMod netMod, HwComponentModel model) {
+		RoutingTableConfig rtc= new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci rt
+		model.getDevSettings().setRoutingTabConfig(rtc);
+		RoutingTable rt = netMod.ipLayer.routingTable;
+		for(int i = 0; i< rt.size();i++){
+			RoutingTable.Record radek=rt.getRecord(i);
+			rtc.addRecord(radek.adresat.toString(), null, null);
+		}
+
+
 	}
 }
