@@ -4,6 +4,8 @@
 package device;
 
 import commands.AbstractCommandParser;
+import commands.cisco.CiscoCommandParser;
+import commands.linux.LinuxCommandParser;
 import networkModule.NetMod;
 import physicalModule.PhysicMod;
 import shell.apps.CommandShell.CommandShell;
@@ -16,14 +18,14 @@ import telnetd.pridaneTridy.TelnetProperties;
 public class Device {
 
 	public final int id;	// id z konfiguraku
-	String name;
+	private String name;
 	public final DeviceType type;
 	public final PhysicMod physicalModule;
 	private NetMod networkModule;
 	ApplicationsList applications;
-	
+
 	private boolean networkModuleSet = false;
-	
+
 	/**
 	 * telnet port is configured by TelnetProperties.addListerner method, which is called in constructor
 	 * telnetPort is allocated when simulator is started. There is no need to store it in file.
@@ -58,8 +60,6 @@ public class Device {
 		this.telnetPort = telnetPort;
 	}
 
-	
-	
 	public String getName() {
 		return name;
 	}
@@ -73,18 +73,29 @@ public class Device {
 			this.networkModule = networkModule;
 			networkModuleSet=true;
 		} else throw new RuntimeException("Tohle by nemelo nastat, kontaktujte tvurce softwaru.");
-		
+
 	}
-	
+
 	/**
-	 * 
+	 * Creates parser according to a DeviceType.
 	 * @param cmd
 	 * @return
 	 */
 	public AbstractCommandParser createParser(CommandShell cmd){
-	
-		throw new UnsupportedOperationException("Not supported yet."); // @TODO STANDA, TOMÁŠ .. implementovat prosím :)
-		
+
+		switch (type) {
+			case cisco_router:
+				return new CiscoCommandParser(this, cmd);
+
+			case linux_computer:
+				return new LinuxCommandParser(this, cmd);
+
+			case simple_switch:
+				return null; // no parser
+
+			default:
+				throw new AssertionError();
+		}
 	}
 
 	public enum DeviceType {

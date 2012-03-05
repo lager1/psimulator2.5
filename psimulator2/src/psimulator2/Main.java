@@ -7,6 +7,7 @@ import config.Components.NetworkModel;
 import config.Serializer.AbstractNetworkSerializer;
 import config.Serializer.NetworkModelSerializerXML;
 import config.Serializer.SaveLoadException;
+import config.configTransformer.Loader;
 import java.io.File;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -45,8 +46,8 @@ public class Main {
 		int firstTelnetPort = 11000;
 		TelnetProperties.setStartPort(firstTelnetPort);
 
-		// SEM PŘIDEJTE VYTVÁŘENÍ Device Z networkModel. 
-		// v KONSTRUKTORU DEVICE VOLÁM TelnetProperties a věci z toho používám níže, tak proto to dejte sem. Pak tohle smažte!!
+		Loader loader = new Loader();
+		loader.loadFromModel(networkModel);
 
 
 		TelnetD telnetDaemon;
