@@ -10,18 +10,18 @@
  */
 package networkModule.L3;
 
-import psimulator2.Psimulator;
-import logging.LoggingCategory;
-import logging.Logger;
-import networkModule.L3.RoutingTable.Record;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import exceptions.UnsupportedL3TypeException;
 import java.util.*;
 import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
+import networkModule.L3.RoutingTable.Record;
 import networkModule.TcpIpNetMod;
+import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -74,8 +74,8 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private final IcmpHandler icmpHandler;
 
 	/**
-	 * Konstruktor IP vrstvy.
-	 * Vytvori se v nem i prazdna routovaci tabulka.
+	 * Constructor of IP layer.
+	 * Empty routing table is also created.
 	 * @param netMod
 	 */
 	public IPLayer(TcpIpNetMod netMod) {
@@ -88,7 +88,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	public int ttl = 255;
 
 	/**
-	 * Potrebne pro vypis pro cisco a linux.
+	 * Getter for cisco & linux listing.
 	 *
 	 * @return
 	 */
@@ -97,7 +97,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
-	 * Potrebne pro Saver.
+	 * Getter for Saver.
 	 * @return
 	 */
 	public Collection<NetworkInterface> getNetworkIfaces() {
@@ -161,7 +161,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
-	 * Zpracovani ukladaciho bufferu pro pakety, ktere nesly odeslat, pac nemam MAC nextHopu.
+	 * Process storeBuffer which is for packets without known MAC nextHop.
 	 */
 	private void handleStoreBuffer() {
 
@@ -206,7 +206,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
-	 * Bude resit zaroutovani, zanatovani, zjisteni MAC, .. <br />
+	 * Handles packet: is it for me?, routing, decrementing TTL, postrouting, MAC address finding.
 	 *
 	 * @param packet
 	 * @param iface incomming EthernetInterface, can be null
