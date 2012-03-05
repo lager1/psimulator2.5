@@ -61,6 +61,23 @@ public class IpAddress {
         return true;
     }
 
+	/**
+     * Vrati long hodnotu z adresy. Vhodne pro porovnavani adres.
+     * @param ip
+     * @return
+     * @author Stanislav Řehák
+     */
+    public long getLongRepresentation() {
+        long l = 0;
+        String[] pole = toString().split("\\.");
+        l += Long.valueOf(pole[0]) * 256 * 256 * 256;
+        l += Long.valueOf(pole[1]) * 256 * 256;
+        l += Long.valueOf(pole[2]) * 256;
+        l += Long.valueOf(pole[3]);
+        return l;
+    }
+
+
 // staticky metody pro ruzny prevadeni a tak: ----------------------------------------------------------------------------------------
 
     /**
