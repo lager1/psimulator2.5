@@ -233,13 +233,21 @@ public class IpAddressesTest {
         assertEquals("240.0.1.0", IpAddress.nextAddress(ip).toString());
     }
 
-    @Test
-    public void testVratMaskuZWildCard() {
-        IpAddress ip = new IpAddress("0.0.0.31");
-        assertEquals("255.255.255.224", IpAddress.negateAddress(ip).toString());
-        ip = new IpAddress("0.0.0.3");
-        assertEquals("255.255.255.252", IpAddress.negateAddress(ip).toString());
-    }
+	@Test
+	public void testVratMaskuZWildCard() {
+		IpAddress ip = new IpAddress("0.0.0.31");
+		assertEquals("255.255.255.224", IpAddress.negateAddress(ip).toString());
+		ip = new IpAddress("0.0.0.3");
+		assertEquals("255.255.255.252", IpAddress.negateAddress(ip).toString());
+
+		IpNetmask mask;
+		mask = IpNetmask.maskFromWildcard("0.0.0.255");
+		assertEquals("255.255.255.0", mask.toString());
+		mask = IpNetmask.maskFromWildcard("0.0.0.31");
+		assertEquals("255.255.255.224", mask.toString());
+		mask = IpNetmask.maskFromWildcard("0.0.0.3");
+		assertEquals("255.255.255.252", mask.toString());
+	}
 
 
     @Test

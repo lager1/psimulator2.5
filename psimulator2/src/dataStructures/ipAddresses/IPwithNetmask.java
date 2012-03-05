@@ -170,7 +170,7 @@ public class IPwithNetmask {
     }
 
     /**
-     * Vraci true, jestlize comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
+     * Vraci true, jestlize adresa v parametru (comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
      * Returns true, if comparedIP is in my network.
      * @param comparedIP
      * @return

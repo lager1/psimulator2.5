@@ -1,6 +1,5 @@
 /*
  * Erstellt am 27.10.2011.
- * TODO: implementovat
  */
 
 package networkModule;
@@ -22,10 +21,10 @@ import psimulator2.Psimulator;
 public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 
 	public final EthernetLayer ethernetLayer = new EthernetLayer(this);
-	
+
 	/**
 	 * Konstruktor sitovyho modulu predpoklada uz hotovej fysickej modul, protoze zkouma jeho nastaveni.
-	 * @param device 
+	 * @param device
 	 */
     public SimpleSwitchNetMod(Device device) {
 		super(device);

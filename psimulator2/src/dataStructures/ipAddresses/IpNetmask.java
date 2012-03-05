@@ -31,10 +31,16 @@ public class IpNetmask extends IpAddress{
             bits = bits | 1 << (31 - i);
         }
     }
-    
+
+	public static IpNetmask maskFromWildcard(String dlouhejFormat) {
+		IpAddress adr = new IpAddress(dlouhejFormat);
+		IpAddress prevracena = IpAddress.negateAddress(adr);
+		return new IpNetmask(prevracena);
+	}
+
     /**
-     * 
-     * @param vzor 
+     *
+     * @param vzor
      */
     private IpNetmask (IpAddress vzor){
         this.bits=vzor.bits;
@@ -42,10 +48,10 @@ public class IpNetmask extends IpAddress{
             throw new BadNetmaskException();
         }
     }
-    
+
     /**
      * Vrati pocet jednickovych bitu masky.
-     * @return 
+     * @return
      */
     public int getNumberOfBits(){
         if (bits == 0) {
@@ -59,18 +65,18 @@ public class IpNetmask extends IpAddress{
         }
         return pocet;
     }
-    
-    
+
+
 // staticky metody:
-    
+
     /**
      * Returns netmask, if given string is netmask, othervise returns null.
      * @param ret
-     * @return 
+     * @return
      */
     public static IpNetmask correctNetmask(String ret){
         IpAddress ip = correctAddress(ret);
-        if (ip==null) 
+        if (ip==null)
             return null;
         else {
             try {

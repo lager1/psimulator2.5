@@ -32,13 +32,17 @@ public class Saver {
 		for (Device device : s.devices) {
 			HwComponentModel hwComponentModel = networkModel.getHwComponentModelById(device.configID);
 
+			if (hwComponentModel.getDevSettings() == null) {	// nema/li jeste simulatorovy nastaveni, musi se spustit
+				hwComponentModel.setDevSettings(new DeviceSettings());
+			}
+
 			saveInterfaces(hwComponentModel, device);
 
-			if (device.getNetworkModule().getClass() == TcpIpNetMod.class) {
+			if (device.getNetworkModule().isStandardTcpIpNetMod()) {
 				saveRoutingTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
 			}
 
-//			saveNatTable();
+			// TODO: saveNatTable();
 		}
 	}
 
@@ -65,12 +69,12 @@ public class Saver {
 	}
 
 	private void saveRoutingTable(TcpIpNetMod netMod, HwComponentModel model) {
-		RoutingTableConfig rtc= new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci rt
-		model.getDevSettings().setRoutingTabConfig(rtc);
+		RoutingTableConfig rtc= new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci routovaci tabulky
+		model.getDevSettings().setRoutingTabConfig(rtc);	// priradim tu novou konfiguraci do nastaveni pocitace
 		RoutingTable rt = netMod.ipLayer.routingTable;
 		for(int i = 0; i< rt.size();i++){
 			RoutingTable.Record radek=rt.getRecord(i);
-			rtc.addRecord(radek.adresat.toString(), null, null);
+			rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
 		}
 
 

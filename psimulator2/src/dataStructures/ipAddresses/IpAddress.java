@@ -109,7 +109,7 @@ public class IpAddress {
     /**
      * Negates given ip.
      * Neguje ip adresu, tzn. tam, kde driv byly jednicky dava nuly a naopak.
-     * Nahrada za Standovu starou vratMaskuZWildCard, narozdil od ni ale uz neskouma, jestli je vysledek maskou.
+     * Nahrada za Standovu starou vratMaskuZWildCard, narozdil od ni ale uz nezkouma, jestli je vysledek maskou.
      * @param ip
      * @return
      */

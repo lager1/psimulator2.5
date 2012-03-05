@@ -13,7 +13,6 @@ import java.util.Map;
  * mac adresu, muze mit vic switchportu, ma ethernetovou switchovaci tabulku.
  *
  * TODO: U switchovaci tabulky se zatim neresi vyprseni zaznamu.
- * TODO: Neni zadnej konstruktor.
  *
  * Switchovaci tabulka nic nedela, kdyz ma interface jen jeden switchport (kvuli zrychleni).
  *
@@ -32,13 +31,13 @@ public class EthernetInterface {
 	private final EthernetLayer etherLayer;
 
 // Konstruktor a veci k nemu:
-	
+
 	public EthernetInterface(String name, MacAddress mac, EthernetLayer etherLayer) {
 		this.name = name;
 		this.mac = mac;
 		this.etherLayer = etherLayer;
 	}
-	
+
 	public void addSwitchportSettings(SwitchportSettings s){
 		switchpors.put(s.switchportNumber, s);
 	}

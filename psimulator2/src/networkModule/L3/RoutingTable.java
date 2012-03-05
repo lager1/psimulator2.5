@@ -18,7 +18,7 @@ import java.util.List;
 public class RoutingTable {
 
 
-	private List<Record> records = new LinkedList<Record>();
+	private List<Record> records = new LinkedList<>();
 
 	/**
      * Special pro cisco, nevim, co to dela.
@@ -290,9 +290,7 @@ public class RoutingTable {
 	 * Prakticky cela prekopirovana z minulyho simulatoru.
 	 */
 	public class Record {
-		/**
-		 * TODO
-		 */
+
         public final IPwithNetmask adresat;   // ty promenny jsou privatni, nechci, aby se daly zvenci upravovat
 		/**
 		 * Brana na kterou se bude paket posilat.
@@ -305,9 +303,11 @@ public class RoutingTable {
         public final NetworkInterface rozhrani;
         private boolean connected = false; // indikuju, zda tento zaznam je na primo pripojene rozhrani, spise pro cisco
 
-
-		@Deprecated
-        public boolean jePrimoPripojene() { // TODO: proc depracated? na ciscu to je potreba a tohle je "abstraktni" struktura, ktera musi pojmout vsechno
+		/**
+		 * Potreba pro cisco.
+		 * @return
+		 */
+        public boolean jePrimoPripojene() {
             return connected;
         }
 

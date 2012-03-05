@@ -16,15 +16,15 @@ import networkModule.L4.TcpIpLayer;
  * @author neiss
  */
 public class TcpIpNetMod extends SimpleSwitchNetMod {
-	
-	
+
+
 	public final IPLayer ipLayer = new IPLayer(this);
 	public final TcpIpLayer tcpipLayer = new TcpIpLayer(this);
 
 	/**
-	 * Konstruktor sitovyho modulu. 
+	 * Konstruktor sitovyho modulu.
 	 * Predpoklada uz hotovej pocitac a fysickej modul, protoze zkouma jeho nastaveni.
-	 * @param device 
+	 * @param device
 	 */
 	public TcpIpNetMod(Device device) {
 		super(device);
@@ -32,10 +32,10 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema
 
-	
+
 
 	@Override
-	public boolean isSwitch() {
+	public final boolean isSwitch() {	// final, nejde uz dal prepisovat
 		return false;
 	}
 }

@@ -27,7 +27,7 @@ public abstract class NetMod {
 		assert device != null;
 		this.device = device;
 	}
-	
+
     public Device getDevice() {
         return device;
     }
@@ -42,11 +42,20 @@ public abstract class NetMod {
 	 * @param swport
 	 */
     public abstract void receivePacket(L2Packet packet, int  switchportNumber);
-	
+
 	/**
 	 * Returns true, if device is switch and have only link layer.
-	 * @return 
+	 * @return
 	 */
 	public abstract boolean isSwitch();
-	
+
+	/**
+	 * Jestli je to klasickej TCP/IP Network Modul.
+	 *
+	 * @return true, kdyz je potomkem nebo instanci tridy TcpIpNetmod
+	 */
+	public final boolean isStandardTcpIpNetMod(){
+		return TcpIpNetMod.class.isAssignableFrom(this.getClass());	// funguje to, mam to otestovany
+	}
+
 }
