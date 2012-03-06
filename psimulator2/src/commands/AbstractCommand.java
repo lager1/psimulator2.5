@@ -27,4 +27,6 @@ public abstract class AbstractCommand {
 	protected int getRef() {
 		return parser.ref;
 	}
+
+	public abstract void catchUserInput(String input);
 }
