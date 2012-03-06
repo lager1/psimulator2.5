@@ -6,12 +6,7 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import networkModule.L3.IPLayer;
-import networkModule.L3.NatAccessList.AccessList;
-import networkModule.L3.NatPoolAccess.PoolAccess;
 import networkModule.L3.NetworkInterface;
-import psimulator2.Main;
-import networkModule.L3.NatPool.Pool;
-import networkModule.TcpIpNetMod;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -33,7 +28,7 @@ public class ShowCommand extends CiscoCommand {
 	public ShowCommand(AbstractCommandParser parser) {
 		super(parser);
 		this.stavCisco = parser.getShell().getMode();
-		this.ipLayer = ((TcpIpNetMod)(getDevice().getNetworkModule())).ipLayer;
+		this.ipLayer = getNetMod().ipLayer;
 	}
 
 

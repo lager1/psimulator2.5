@@ -29,6 +29,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		Logger.setLogger();
+
 		if (args.length < 1) {
 			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK,
 					"No configuration file attached, run again with configuration file as first argument.");

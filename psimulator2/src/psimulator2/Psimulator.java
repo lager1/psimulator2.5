@@ -8,6 +8,7 @@ import device.Device;
 import java.util.ArrayList;
 import java.util.List;
 import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Instance of Psimulator.
@@ -19,7 +20,7 @@ import logging.Logger;
 public class Psimulator {
 
 
-	public final List<Device> devices=new ArrayList<Device>();
+	public final List<Device> devices=new ArrayList<>();
 	public final Logger logger = new Logger();
 
 
@@ -50,5 +51,12 @@ public class Psimulator {
 	 */
 	public static Logger getLogger(){
 		return getPsimulator().logger;
+	}
+
+	/**
+	 * Zkratka pro logovani.
+	 */
+	public static void logg(String name, int logLevel, LoggingCategory category, String message) {
+		getPsimulator().logger.log(name, logLevel, category, message);
 	}
 }

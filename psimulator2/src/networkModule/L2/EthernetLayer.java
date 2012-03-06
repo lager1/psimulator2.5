@@ -93,13 +93,13 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		//kontrola existence switchportu:
 		SwitchportSettings swport = switchports.get(switchportNumber);
 		if (swport == null) {
-			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
+			Psimulator.getLogger().log(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
 					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber));
 		}
 		//kontrola, bylo-li nalezeno rozhrani:
 		EthernetInterface iface = swport.assignedInterface;
 		if (iface == null) {
-			Psimulator.getLogger().logg(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, zrejme spatnej konfigurak, prusvih!");
+			Psimulator.getLogger().log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, zrejme spatnej konfigurak, prusvih!");
 			return;
 		}
 
@@ -118,7 +118,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			if (iface.switchingEnabled) { //odesila se, kdyz je to dovoleny
 				transmitPacket(iface, packet);
 			} else {
-				Psimulator.getLogger().logg(this, Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket.", packet);
+				Psimulator.getLogger().log(this, Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket.", packet);
 			}
 		}
 

@@ -48,5 +48,9 @@ public enum LoggingCategory {
 	 * Zpravy z AbstractCommandParser a AbstractCommand, tedy spolecny pro linux i cisco.
 	 */
 	GENERIC_COMMANDS,
+	/**
+	 * Zpravy z jednotlivych cisco prikazu.
+	 */
+	CISCO_COMMAND_PARSER,
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 }

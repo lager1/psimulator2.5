@@ -76,7 +76,7 @@
                     <hwType>END_DEVICE_PC</hwType>
                     <id>1</id>
                     <interfaceName>Eth0</interfaceName>
-                    <ipAddress></ipAddress>
+                    <ipAddress>192.168.1.1/24</ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-00</macAddress>
                     <name>Eth0</name>
@@ -97,8 +97,8 @@
                     <hwType>CISCO_ROUTER</hwType>
                     <id>17</id>
                     <interfaceName>FastEthernet0/0</interfaceName>
-                    <ipAddress></ipAddress>
-                    <isUp>false</isUp>
+                    <ipAddress>10.0.0.1/29</ipAddress>
+                    <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-09</macAddress>
                     <name>FastEthernet0/0</name>
                 </interface>
@@ -107,8 +107,8 @@
                     <hwType>CISCO_ROUTER</hwType>
                     <id>18</id>
                     <interfaceName>FastEthernet0/1</interfaceName>
-                    <ipAddress></ipAddress>
-                    <isUp>false</isUp>
+                    <ipAddress>192.168.2.2/26</ipAddress>
+                    <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-0A</macAddress>
                     <name>FastEthernet0/1</name>
                 </interface>
@@ -146,7 +146,7 @@
                     <hwType>LINUX_ROUTER</hwType>
                     <id>3</id>
                     <interfaceName>Eth0</interfaceName>
-                    <ipAddress>1.1.1.1/24</ipAddress>
+                    <ipAddress>192.16.1.2/24</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-01</macAddress>
                     <name>Eth0</name>
@@ -166,7 +166,7 @@
                     <hwType>LINUX_ROUTER</hwType>
                     <id>5</id>
                     <interfaceName>Eth2</interfaceName>
-                    <ipAddress>2.2.2.2/26</ipAddress>
+                    <ipAddress>192.16.2.1/26</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-03</macAddress>
                     <name>Eth2</name>
@@ -206,7 +206,7 @@
                     <hwType>CISCO_ROUTER</hwType>
                     <id>23</id>
                     <interfaceName>FastEthernet0/1</interfaceName>
-                    <ipAddress></ipAddress>
+                    <ipAddress>10.0.0.2/29</ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0E</macAddress>
                     <name>FastEthernet0/1</name>
@@ -283,41 +283,17 @@
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1330953793545</lastEditTimestamp>
+    <lastEditTimestamp>1331049128742</lastEditTimestamp>
     <counter>
-        <nextId>84</nextId>
+        <nextId>86</nextId>
         <nextMacAddress>27</nextMacAddress>
         <nextNumberMap>
-            <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_WORKSTATION</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>2</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_PC</key>
-                <value>1</value>
-            </entry>
             <entry>
                 <key>LINUX_SWITCH</key>
                 <value>4</value>
             </entry>
             <entry>
-                <key>LINUX_ROUTER</key>
-                <value>7</value>
-            </entry>
-            <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -325,11 +301,35 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_OPTIC</key>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>CISCO_SWITCH</key>
+                <key>END_DEVICE_PC</key>
+                <value>1</value>
+            </entry>
+            <entry>
+                <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>REAL_PC</key>
+                <value>2</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_ROUTER</key>
+                <value>7</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_WORKSTATION</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

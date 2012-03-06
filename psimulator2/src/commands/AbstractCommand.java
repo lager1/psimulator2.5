@@ -76,7 +76,7 @@ public abstract class AbstractCommand implements Loggable {
 	 */
 	public String getName() {
 		if (name == null) {
-			Psimulator.getLogger().logg(this.getClass().getName(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz teto tridy nevraci jmeno.");
+			Psimulator.getLogger().log(this.getClass().getName(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz teto tridy nevraci jmeno.");
 		}
 		return name;
 	}
@@ -91,7 +91,7 @@ public abstract class AbstractCommand implements Loggable {
 		if (nm.isStandardTcpIpNetMod()) {
 			return (TcpIpNetMod) nm;
 		} else {
-			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz zavolal TcpIpNetmod, kterej ale device nema.");
+			Psimulator.getLogger().log(getDescription(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz zavolal TcpIpNetmod, kterej ale device nema.");
 			return null;
 		}
 	}

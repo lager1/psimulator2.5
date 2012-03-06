@@ -38,7 +38,7 @@ public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 	@Override
 	public void receivePacket(L2Packet packet, int switchportNumber) {
 		if (packet.getClass() != EthernetPacket.class) {	//kontrola spravnosti paketu
-			Psimulator.getLogger().logg(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
+			Psimulator.getLogger().log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
 					"Zahazuju paket, protoze neni ethernetovej, je totiz tridy " + packet.getClass().getName());
 		} else {
 			ethernetLayer.receivePacket((EthernetPacket)packet, switchportNumber);

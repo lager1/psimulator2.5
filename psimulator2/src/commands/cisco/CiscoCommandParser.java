@@ -111,15 +111,15 @@ public class CiscoCommandParser extends AbstractCommandParser {
                 }
 
 //                if (debug) {
-//                    if (kontrola("ip", first)) {
+//                    if (isCommand("ip", first)) {
 //                        command = new CiscoIp(pc, kon, slova, false, mode);
 //                        return;
 //                    }
-//                    if (kontrola("access-list", first)) {
+//                    if (isCommand("access-list", first)) {
 //                        command = new CiscoAccessList(pc, kon, slova, false);
 //                        return;
 //                    }
-//                    if (kontrola("no", first)) {
+//                    if (isCommand("no", first)) {
 //                        no();
 //                        return;
 //                    }
@@ -136,26 +136,26 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
                     return;
                 }
-//                if (kontrola("ip", first)) {
-//                    command = new CiscoIp(pc, kon, slova, false, mode);
-//                    return;
-//                }
-//                if (kontrola("interface", first)) {
+                if (isCommand("ip", first)) {
+                    command = new IpCommand(this, false);
+                    return;
+                }
+//                if (isCommand("interface", first)) {
 //                    iface();
 //                    return;
 //                }
-//                if (kontrola("access-list", first)) {
+//                if (isCommand("access-list", first)) {
 //                    command = new CiscoAccessList(pc, kon, slova, false);
 //                    return;
 //                }
-//                if (kontrola("no", first)) {
+//                if (isCommand("no", first)) {
 //                    no();
 //                    return;
 //                }
                 break;
 
 //            case CISCO_CONFIG_IF_MODE:
-//                if (kontrola("exit", first)) {
+//                if (isCommand("exit", first)) {
 //                    mode = CONFIG;
 //                    kon.prompt = pc.jmeno + "(config)#";
 //                    aktualni = null; // zrusime odkaz na menene rozhrani
@@ -168,15 +168,15 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
 //                    return;
 //                }
-//                if (kontrola("ip", first)) {
+//                if (isCommand("ip", first)) {
 //                    command = new CiscoIp(pc, kon, slova, false, mode, aktualni);
 //                    return;
 //                }
-//                if (kontrola("no", first)) {
+//                if (isCommand("no", first)) {
 //                    no();
 //                    return;
 //                }
-//                if (kontrola("shutdown", first)) {
+//                if (isCommand("shutdown", first)) {
 //                    shutdown();
 //                    return;
 //                }
