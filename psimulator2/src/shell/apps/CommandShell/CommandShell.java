@@ -10,7 +10,6 @@ import exceptions.TelnetConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -33,7 +32,7 @@ public class CommandShell extends TerminalApplication {
 	private History history = new History();
 	public boolean vypisPrompt = true; // v ciscu obcas potrebuju zakazat si vypisovani promptu
 	public String prompt = "default promt:~# ";
-	private boolean ukoncit = false;
+	private boolean quit = false;
 	private AbstractCommandParser parser;
 	private Object locker = new Object();
 	/**
@@ -82,7 +81,7 @@ public class CommandShell extends TerminalApplication {
 		try {
 			ret = shellRenderer.handleInput();
 		} catch (TelnetConnectionException ex) {
-			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Connection with user lost");
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
 		}
 
 		return ret;
@@ -92,7 +91,7 @@ public class CommandShell extends TerminalApplication {
 		try {
 			return String.valueOf((char) this.terminalIO.read());
 		} catch (IOException ex) {
-			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "IOException, cannot read a single character from terminal");
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException, cannot read a single character from terminal");
 		}
 
 		return "";
@@ -115,7 +114,7 @@ public class CommandShell extends TerminalApplication {
 	 * method used to print text to the terminal
 	 *
 	 * @param text text to be printed to the terminal
-
+	 *
 	 */
 	public void print(String text) {
 		try {
@@ -123,7 +122,7 @@ public class CommandShell extends TerminalApplication {
 			terminalIO.flush();
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
 		} catch (IOException ex) {
-			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Connection with user lost.");
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost.");
 		}
 
 
@@ -169,7 +168,7 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void closeSession() {
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Close session called");
-		ukoncit = true;
+		quit = true;
 	}
 
 	public void setParser(AbstractCommandParser parser) {
@@ -192,7 +191,7 @@ public class CommandShell extends TerminalApplication {
 		String line;
 
 
-		while (!ukoncit) {
+		while (!quit) {
 			try {
 				printPrompt();
 
@@ -207,11 +206,25 @@ public class CommandShell extends TerminalApplication {
 
 				terminalIO.flush();
 			} catch (Exception ex) {
-				ex.printStackTrace();
-				return -1;
+
+				if (quit) // if there is a quit request, then it is ok
+				{
+					return 0;
+				} else {
+					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "CommandShell");
+					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
+					return -1;
+				}
+
 			}
 		}
 
+		return 0;
+	}
+
+	@Override
+	public int quit() {
+		this.quit = true;
 		return 0;
 	}
 }

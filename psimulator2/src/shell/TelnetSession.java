@@ -6,6 +6,7 @@ import java.util.List;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
+import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionEvent;
@@ -21,6 +22,7 @@ public class TelnetSession implements Shell {
 	private BasicTerminalIO m_IO;
 	private int port = -1;
 	private Device device;
+	private TerminalApplication rootApplication;
 
 	public void run(Connection con) {
 
@@ -52,7 +54,9 @@ public class TelnetSession implements Shell {
 
 
 		CommandShell cmd = new CommandShell(m_IO, this.device);  // create command shell
-		int retValue = cmd.run();
+		this.rootApplication = cmd;
+		
+		int retValue = this.rootApplication.run();
 
 		if (retValue != 0) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Command shell escaped with non-zero return value: " + retValue);
@@ -89,6 +93,7 @@ public class TelnetSession implements Shell {
 	@Override
 	public void connectionLogoutRequest(ConnectionEvent ce) {
 		try {
+			this.rootApplication.quit();
 			m_IO.write("CONNECTION_LOGOUTREQUEST");
 			m_IO.flush();
 			this.m_Connection.close();

@@ -16,6 +16,8 @@ public abstract class TerminalApplication {
 
     protected BasicTerminalIO terminalIO;
     protected Device device;
+	protected TerminalApplication childProcess;
+	
 
     public TerminalApplication(BasicTerminalIO terminalIO, Device device) {
         this.terminalIO = terminalIO;
@@ -23,11 +25,13 @@ public abstract class TerminalApplication {
     }
     
     /**
-     *  execute application
+     * execute application
      * @param terminalIO
      * @param pocitac
      * @return return exit value of program retValue == 0 ==> OK , retValue <-1  ==> fail
      */
-    protected abstract int run();
+    public abstract int run();
+	
+	public abstract int quit();
 
 }

@@ -23,6 +23,8 @@ import telnetd.io.toolkit.Titlebar;
  */
 public class TextEditor extends TerminalApplication {
 
+	private boolean quit = false;
+	
     public TextEditor(BasicTerminalIO terminalIO, Device device) {
         super(terminalIO, device);
     }
@@ -79,11 +81,25 @@ public class TextEditor extends TerminalApplication {
             Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + terminalIO.CRLF + ea.getValue());
 
         } catch (IOException ex) {
-            Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
+			
+			if (quit) // if there is a quit request, then it is ok
+				{
+					return 0;
+				} else {
+					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "TextEditor");
+					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
+					return -1;
+				}
         }
 
         return 0;
 
 
     }
+
+	@Override
+	public int quit() {
+		this.quit = true;
+		return 0;
+	}
 }
