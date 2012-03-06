@@ -15,7 +15,7 @@ import shell.apps.CommandShell.CommandShell;
  * Parser si bude muset pamatovat posledni spusteny prikaz, aby kdyz dostane signal SIG_INT, aby dokazal poslat prikaz
  * vypnuti posledni spustene aplikace/prikazu.
  *
- * @author neiss
+ * @author Stanislav Rehak
  */
 public abstract class AbstractCommandParser {
 
@@ -76,7 +76,7 @@ public abstract class AbstractCommandParser {
 	 * @param userInput
 	 */
 	@Deprecated
-	public abstract void catchUserInput(String userInput); // TODO asi se pak smaze, jeste uvidim. -Standa
+	public void catchUserInput(String userInput){} // TODO asi se pak smaze, jeste uvidim. -Standa
 
 	/**
 	 * Zavola parser se signalem od uzivatele. napr.: Ctrl+C, Ctrl+Z, ..
@@ -108,7 +108,12 @@ public abstract class AbstractCommandParser {
 		return runningCommand;
 	}
 
-	public void finishCommand() {
+
+	/**
+	 * Prikaz notifikuje parser o svym skonceni.
+	 * @param exitCode
+	 */
+	public void finishCommand(int exitCode) {
 		this.runningCommand = null;
 		shell.vypisPrompt = true;
 	}

@@ -9,7 +9,8 @@ package logging;
  */
 public enum LoggingCategory {
 
-	// pouze k posilani paketu:
+// pouze k posilani paketu:
+
 	/**
 	 * zpravy od kabelu o posilani paketu
 	 */
@@ -25,7 +26,9 @@ public enum LoggingCategory {
 	NET,
 	TRANSPORT,
 
-	// vlastni tridy, ktere chceme take logovat:
+
+// vlastni tridy, ktere chceme take logovat:
+	
 	PACKET_FILTER,
 	/**
 	 * zpravy z EthernetLayer sitovyho modulu

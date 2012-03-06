@@ -10,17 +10,12 @@ import shell.apps.CommandShell.CommandShell;
 
 /**
  *
- * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ * @author Tomáš Pitřinec
  */
 public class LinuxCommandParser extends AbstractCommandParser {
 
 	public LinuxCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
-	}
-
-	@Override
-	public void catchUserInput(String userInput) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
