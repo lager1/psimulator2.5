@@ -38,7 +38,8 @@ public class TelnetProperties {
 		properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
 		properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
 		properties.setProperty("term.ansi.class", "telnetd.io.terminal.ansi");
-		properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt320,vt220,linux,screen");
+		properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt220,linux,screen");   // vt320 is not working properly
+		// properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt320,vt220,linux,screen");
 		properties.setProperty("term.windoof.class", "telnetd.io.terminal.Windoof");
 		properties.setProperty("term.windoof.aliases", "");
 		properties.setProperty("term.xterm.class", "telnetd.io.terminal.xterm");
