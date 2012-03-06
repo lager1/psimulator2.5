@@ -81,7 +81,7 @@ public class TelnetProperties {
 
 		device.setTelnetPort(port);
 
-		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + lastPort);
+		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + device.getTelnetPort());
 
 		listenerNames.add(name);
 
