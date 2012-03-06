@@ -53,8 +53,6 @@ public class CiscoCommandParser extends AbstractCommandParser {
             return 0; // prazdny Enter
         }
 
-		shell.printLine("prijato: "+line); // TODO: smazat
-
 		switch (mode) {
             case CISCO_USER_MODE:
                 if (kontrola("enable", first)) {

@@ -54,10 +54,12 @@ public abstract class AbstractCommandParser {
 	 * @return navratovy kod
 	 */
 	public int processLine(String line, int mode) {
+		System.out.printf("prislo do AbsCom: %s, mode: %d \n", line, mode);
+
 		this.line = line;
 		this.mode = mode;
+		this.ref = 0;
 		splitLine(line);
-
 
 		return processLineForParsers();
 	}
@@ -160,7 +162,7 @@ public abstract class AbstractCommandParser {
 	 * seznamu words, ktery dedi od Abstraktni. @autor Stanislav Řehák
 	 */
 	private void splitLine(String line) {
-		words = new ArrayList<String>();
+		words = new ArrayList<>();
 		line = line.trim(); // rusim bile znaky na zacatku a na konci
 		String[] bileZnaky = {" ", "\t"};
 		for (int i = 0; i < bileZnaky.length; i++) { // odstraneni bylych znaku
