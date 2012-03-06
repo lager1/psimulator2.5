@@ -116,11 +116,11 @@ public class TerminalIO
    */
   public synchronized int read() throws IOException {
     int i = m_TelnetIO.read();
-    System.out.print("Opravdu přečtena hodnota:"+i);
+   // System.out.print("Opravdu přečtena hodnota:"+i);
     //translate possible control sequences
     i = m_Terminal.translateControlCharacter(i);
 
-    System.out.println(" a přeložená hodnota:"+i);
+    //System.out.println(" a přeložená hodnota:"+i);
     //catch & fire a logoutrequest event
     if (i == LOGOUTREQUEST) {
       m_Connection.processConnectionEvent(new ConnectionEvent(m_Connection, ConnectionEvent.CONNECTION_LOGOUTREQUEST));
