@@ -28,7 +28,7 @@ public enum LoggingCategory {
 
 
 // vlastni tridy, ktere chceme take logovat:
-	
+
 	PACKET_FILTER,
 	/**
 	 * zpravy z EthernetLayer sitovyho modulu
@@ -44,5 +44,9 @@ public enum LoggingCategory {
 	 * zpravy z buildeni z Martinovy konfigurace
 	 */
 	LOADER_SAVER,
+	/**
+	 * Zpravy z AbstractCommandParser a AbstractCommand, tedy spolecny pro linux i cisco.
+	 */
+	GENERIC_COMMANDS,
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 }

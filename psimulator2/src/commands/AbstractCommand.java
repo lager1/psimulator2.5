@@ -1,21 +1,28 @@
 /*
  * created 6.3.2012
  */
-
 package commands;
 
 import device.Device;
+import logging.Loggable;
+import logging.LoggingCategory;
+import networkModule.NetMod;
+import networkModule.TcpIpNetMod;
+import psimulator2.Psimulator;
+import logging.Logger;
 
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public abstract class AbstractCommand {
+public abstract class AbstractCommand implements Loggable {
 
 	public final AbstractCommandParser parser;
+	private String name;
 
 	/**
 	 * Konstruktor prikazu. Nedavat zadny slozity veci / na to je metoda
+	 *
 	 * @param parser
 	 */
 	public AbstractCommand(AbstractCommandParser parser) {
@@ -24,12 +31,14 @@ public abstract class AbstractCommand {
 
 	/**
 	 * Samotny spusteni prikazu, nebude se to vsechno uz delat v konstruktoru.
+	 *
 	 * @return
 	 */
-	public abstract void runCommand();
+	public abstract void run();
 
 	/**
 	 * Predavani uzivatelskyho vstupu prave bezicimu commandu.
+	 *
 	 * @param input
 	 */
 	public abstract void catchUserInput(String input);
@@ -42,12 +51,54 @@ public abstract class AbstractCommand {
 		return parser.nextWordPeek();
 	}
 
+	/**
+	 * Zkratka: vrati hodnotu ukazatele do seznamu slov.
+	 *
+	 * @return
+	 */
 	protected int getRef() {
 		return parser.ref;
 	}
 
-	protected Device getDevice(){
+	/**
+	 * Zkratka na vraceni pocitace.
+	 *
+	 * @return
+	 */
+	protected Device getDevice() {
 		return parser.device;
+	}
+
+	/**
+	 * Vraci jmeno prikazu
+	 *
+	 * @return
+	 */
+	public String getName() {
+		if (name == null) {
+			Psimulator.getLogger().logg(this.getClass().getName(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz teto tridy nevraci jmeno.");
+		}
+		return name;
+	}
+
+	/**
+	 * Zkratka na vraceni TCP/IP sitovyho modulu.
+	 *
+	 * @return
+	 */
+	protected TcpIpNetMod getNetMod() {
+		NetMod nm = parser.device.getNetworkModule();
+		if (nm.isStandardTcpIpNetMod()) {
+			return (TcpIpNetMod) nm;
+		} else {
+			Psimulator.getLogger().logg(getDescription(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz zavolal TcpIpNetmod, kterej ale device nema.");
+			return null;
+		}
+	}
+
+	@Override
+	public String getDescription() {
+		return getDevice().getName() + ": command " + getName() + ": ";
 	}
 
 	/**
@@ -63,9 +114,4 @@ public abstract class AbstractCommand {
 	protected void print(String s) {
 		parser.getShell().print(s);
 	}
-//
-//	protected TcpIpNetMod getNetMod(){
-//		return parser.device.getNetworkModule();
-//	}
-
 }

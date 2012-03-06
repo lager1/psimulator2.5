@@ -104,7 +104,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                 if (isCommand("configure", first)) {
 //                    configure();
 					command = new ConfigureCommand(this);
-					command.runCommand();
+					command.run();
                     return;
                 }
                 if (isCommand("show", first)) {

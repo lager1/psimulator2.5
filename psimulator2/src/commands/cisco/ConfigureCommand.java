@@ -19,7 +19,7 @@ public class ConfigureCommand extends CiscoCommand {
 	}
 
 	@Override
-	public void runCommand() {
+	public void run() {
 
 		String nextWord = nextWord();
 		System.out.println("dalsi: "+nextWord);
