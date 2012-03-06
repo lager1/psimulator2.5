@@ -20,7 +20,7 @@ import shell.apps.CommandShell.CommandShell;
 public abstract class AbstractCommandParser {
 
 	protected CommandShell shell;
-	protected Device networkDevice;
+	protected Device device;
 	/**
 	 * Seznam slov v prijatem radku.
 	 */
@@ -41,7 +41,7 @@ public abstract class AbstractCommandParser {
 	protected int mode;
 
 	public AbstractCommandParser(Device networkDevice, CommandShell shell) {
-		this.networkDevice = networkDevice;
+		this.device = networkDevice;
 		this.shell = shell;
 	}
 

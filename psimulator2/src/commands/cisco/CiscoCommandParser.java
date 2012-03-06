@@ -3,8 +3,8 @@
  */
 package commands.cisco;
 
-import device.Device;
 import commands.AbstractCommandParser;
+import device.Device;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,8 +33,9 @@ public class CiscoCommandParser extends AbstractCommandParser {
      */
     boolean nepokracovat = false;
 
-	public CiscoCommandParser(Device networkDevice, CommandShell shell) {
-		super(networkDevice, shell);
+	public CiscoCommandParser(Device device, CommandShell shell) {
+		super(device, shell);
+		shell.setPrompt(device.getName()+">");
 	}
 
 	@Override
@@ -52,9 +53,12 @@ public class CiscoCommandParser extends AbstractCommandParser {
             return 0; // prazdny Enter
         }
 
+		shell.printLine("prijato: "+line); // TODO: smazat
+
 		switch (mode) {
             case CISCO_USER_MODE:
                 if (kontrola("enable", first)) {
+					System.out.println("AAA_enable");
 					changeMode(CISCO_PRIVILEGED_MODE);
                     return 0;
                 }
@@ -81,6 +85,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     return 0;
                 }
                 if (kontrola("disable", first)) {
+					System.out.println("AAA_disable");
 					changeMode(CISCO_USER_MODE);
                     return 0;
                 }
@@ -345,12 +350,12 @@ public class CiscoCommandParser extends AbstractCommandParser {
 		switch (mode) {
 			case CISCO_USER_MODE:
 				shell.setMode(mode);
-                shell.setPrompt(networkDevice.getName() + ">");
+                shell.setPrompt(device.getName() + ">");
 				break;
 
 			case CISCO_PRIVILEGED_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(networkDevice.getName() + "#");
+				shell.setPrompt(device.getName() + "#");
 
 				if (this.mode == CISCO_CONFIG_MODE || this.mode == CISCO_CONFIG_IF_MODE) { // jdu z configu
 					shell.printWithDelay(getFormattedTime() + ": %SYS-5-CONFIG_I: Configured from console by console", 100);
@@ -359,7 +364,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 			case CISCO_CONFIG_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(networkDevice.getName() + "(config)#");
+				shell.setPrompt(device.getName() + "(config)#");
 				if (this.mode == CISCO_PRIVILEGED_MODE) { // jdu z privilegovaneho
 					shell.printLine("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
 	//				configure1 = false;
@@ -369,7 +374,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 			case CISCO_CONFIG_IF_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(networkDevice.getName() + "(config-if)#");
+				shell.setPrompt(device.getName() + "(config-if)#");
 				break;
 
 			default:
