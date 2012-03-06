@@ -10,18 +10,36 @@ package logging;
 public enum LoggingCategory {
 
 	// pouze k posilani paketu:
-	CABEL_SENDING,	// zpravy od kabelu o posilani paketu
-	PHYSICAL,	// zpravy od fysickyho modulu sitovejch zarizeni
-	LINK,	// posilani paketu na linkovy vrstve
+	/**
+	 * zpravy od kabelu o posilani paketu
+	 */
+	CABEL_SENDING,
+	/**
+	 * zpravy od fysickyho modulu sitovejch zarizeni
+	 */
+	PHYSICAL,
+	/**
+	 * posilani paketu na linkovy vrstve
+	 */
+	LINK,
 	NET,
 	TRANSPORT,
 
 	// vlastni tridy, ktere chceme take logovat:
 	PACKET_FILTER,
-	ETHERNET_LAYER, // zpravy z EthernetLayer sitovyho modulu
+	/**
+	 * zpravy z EthernetLayer sitovyho modulu
+	 */
+	ETHERNET_LAYER,
 	TELNET,
+	/**
+	 * logovaci zpravy z mainu
+	 */
 	ABSTRACT_NETWORK,
 	FILE_SYSTEM,
-	LOADER_SAVER, // zpravy z buildeni z Martinovy konfigurace
-	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY POPIS, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
+	/**
+	 * zpravy z buildeni z Martinovy konfigurace
+	 */
+	LOADER_SAVER,
+	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 }

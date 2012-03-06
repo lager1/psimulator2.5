@@ -15,24 +15,24 @@ public class Logger {
 	private final List<LoggerListener> listeners = new LinkedList<>();
 
 	/**
-	 * Zavazna chyba. Vypise na hlavni serverovou konzoli (normalni println) a ukonci program.
+	 * 1: Zavazna chyba. Vypise na hlavni serverovou konzoli (normalni println) a ukonci program.
 	 */
 	public static final int ERROR = 1;
 	/**
-	 * Varovani. Deje se neco divnyho ale nemusim kvuli tomu ukoncit program. Rozhodne by se to ale melo vypisovat na
+	 * 2: Varovani. Deje se neco divnyho ale nemusim kvuli tomu ukoncit program. Rozhodne by se to ale melo vypisovat na
 	 * serverovou konsoli.
 	 */
 	public static final int WARNING = 2;
 	/**
-	 * Dulezitejsi zpravy, informace o spusteni pocitace, informace o zahozenych paketech, ..
+	 * 3: Dulezitejsi zpravy, informace o spusteni pocitace, informace o zahozenych paketech, ..
 	 */
 	public static final int IMPORTANT = 3;
 	/**
-	 * Standardni logovani, vcetne posilani zprav pro Martina Svihlika.
+	 * 4: Standardni logovani, vcetne posilani zprav pro Martina Svihlika.
 	 */
 	public static final int INFO = 4;
 	/**
-	 * Ladici rezim.
+	 * 5: Ladici rezim.
 	 */
 	public static final int DEBUG = 5;
 
