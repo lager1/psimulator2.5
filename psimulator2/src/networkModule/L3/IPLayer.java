@@ -74,6 +74,14 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private final IcmpHandler icmpHandler;
 
 	/**
+	 * Getter for Cisco commands.
+	 * @return
+	 */
+	public NatTable getNatTable() {
+		return packetFilter.getNatTable();
+	}
+
+	/**
 	 * Constructor of IP layer.
 	 * Empty routing table is also created.
 	 * @param netMod
@@ -384,6 +392,11 @@ public class IPLayer implements SmartRunnable, Loggable {
 		return iface;
 	}
 
+	/**
+	 * Return interface with name or null iff there is no such interface.
+	 * @param name
+	 * @return
+	 */
 	public NetworkInterface getNetworkInteface(String name) {
 		return networkIfaces.get(name);
 	}

@@ -71,6 +71,21 @@ public class MacAddress {
 		return vratit.substring(0, vratit.length() - 1);//aby se odmazala ta posledni dvojtecka
 	}
 
+	/**
+	 * Vrati ve formatu aabb.ccdd.eeff
+	 * @return
+	 */
+	public String getCiscoRepresentation() {
+		String vratit = "";
+		for (int i = 0; i < 6; i++) {
+			vratit += byteToString(representation[i]);
+			if (i % 2 == 1) {
+				vratit += ".";
+			}
+		}
+		return vratit.substring(0, vratit.length() - 1);//aby se odmazala ta posledni dvojtecka
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {

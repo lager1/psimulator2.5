@@ -51,15 +51,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		isAmbiguousCommand = false;
 
-		if (words.size() < 1) {
-            return; // jen mezera
-        }
-
 		String first = nextWord();
-
-		if (first.equals("")) {
-            return; // prazdny Enter
-        }
 
 		switch (mode) {
             case CISCO_USER_MODE:
@@ -68,16 +60,17 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     return;
                 }
                 if (isCommand("ping", first)) {
-//                    prikaz = new CiscoPing(pc, kon, slova);
+//                    command = new CiscoPing(pc, kon, slova);
 //                    return;
                 }
                 if (isCommand("traceroute", first)) {
-//                    prikaz = new CiscoTraceroute(pc, kon, slova);
+//                    command = new CiscoTraceroute(pc, kon, slova);
 //                    return;
                 }
                 if (isCommand("show", first)) {
-//                    prikaz = new CiscoShow(pc, kon, slova, mode);
-//                    return;
+                    command = new ShowCommand(this);
+					command.run();
+                    return;
                 }
                 if (isCommand("exit", first) || isCommand("logout", first)) {
 					shell.closeSession();
@@ -94,11 +87,11 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     return;
                 }
                 if (isCommand("ping", first)) {
-//                    prikaz = new CiscoPing(pc, kon, slova);
+//                    command = new CiscoPing(pc, kon, slova);
 //                    return;
                 }
                 if (isCommand("traceroute", first)) {
-//                    prikaz = new CiscoTraceroute(pc, kon, slova);
+//                    command = new CiscoTraceroute(pc, kon, slova);
 //                    return;
                 }
                 if (isCommand("configure", first)) {
@@ -108,8 +101,9 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     return;
                 }
                 if (isCommand("show", first)) {
-//                    prikaz = new CiscoShow(pc, kon, slova, mode);
-//                    return;
+                    command = new ShowCommand(this);
+					command.run();
+					return;
                 }
                 if (isCommand("exit", first) || isCommand("logout", first)) {
                     shell.closeSession();
@@ -118,11 +112,11 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 //                if (debug) {
 //                    if (kontrola("ip", first)) {
-//                        prikaz = new CiscoIp(pc, kon, slova, false, mode);
+//                        command = new CiscoIp(pc, kon, slova, false, mode);
 //                        return;
 //                    }
 //                    if (kontrola("access-list", first)) {
-//                        prikaz = new CiscoAccessList(pc, kon, slova, false);
+//                        command = new CiscoAccessList(pc, kon, slova, false);
 //                        return;
 //                    }
 //                    if (kontrola("no", first)) {
@@ -143,7 +137,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     return;
                 }
 //                if (kontrola("ip", first)) {
-//                    prikaz = new CiscoIp(pc, kon, slova, false, mode);
+//                    command = new CiscoIp(pc, kon, slova, false, mode);
 //                    return;
 //                }
 //                if (kontrola("interface", first)) {
@@ -151,7 +145,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    return;
 //                }
 //                if (kontrola("access-list", first)) {
-//                    prikaz = new CiscoAccessList(pc, kon, slova, false);
+//                    command = new CiscoAccessList(pc, kon, slova, false);
 //                    return;
 //                }
 //                if (kontrola("no", first)) {
@@ -175,7 +169,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    return;
 //                }
 //                if (kontrola("ip", first)) {
-//                    prikaz = new CiscoIp(pc, kon, slova, false, mode, aktualni);
+//                    command = new CiscoIp(pc, kon, slova, false, mode, aktualni);
 //                    return;
 //                }
 //                if (kontrola("no", first)) {
@@ -192,10 +186,10 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 //        if (debug) {
 //            if (slova.get(0).equals("ifconfig")) { // pak smazat
-//                prikaz = new LinuxIfconfig(pc, kon, slova);
+//                command = new LinuxIfconfig(pc, kon, slova);
 //                return;
 //            } else if (slova.get(0).equals("route")) {
-//                prikaz = new LinuxRoute(pc, kon, slova);
+//                command = new LinuxRoute(pc, kon, slova);
 //                return;
 //            }
 //        }
@@ -219,13 +213,16 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 	@Override
 	public void catchSignal(int sig) {
+		// tady bude pak reakce na Ctrl+Z
+		//		prechod do jinych modu
+
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public String[] getCommands(int mode) {
 		// TODO: getCommands() poresit
-		return new String[0];
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	/**
@@ -237,16 +234,16 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	}
 
 	/**
-     * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
-     * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
-     * @param cmd prikaz, ktery zadal uzivatel
-     * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
+     * Tato metoda simuluje zkracovani commandu tak, jak cini cisco.
+     * @param command command, na ktery se zjistuje, zda lze na nej doplnit.
+     * @param cmd command, ktery zadal uzivatel
+     * @return Vrati true, pokud retezec cmd je jedinym moznym commandem, na ktery ho lze doplnit.
      */
     protected boolean isCommand(String command, String cmd) {
 
         int i = 10;
 
-        // Zde jsou zadefinovany vsechny prikazy. Jsou rozdeleny do poli podle poctu znaku,
+        // Zde jsou zadefinovany vsechny commandy. Jsou rozdeleny do poli podle poctu znaku,
         // ktere je potreba k jejich bezpecne identifikaci. Cisla byla ziskana z praveho cisca IOS version 12.4
         String[] jedna = {"terminal", "inside", "outside", "source", "static", "pool", "netmask", "permit"};
         // + ip, exit
@@ -275,7 +272,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
             }
         }
 
-        if (command.equals("exit")) { // specialni chovani prikazu exit v ruznych stavech
+        if (command.equals("exit")) { // specialni chovani commandu exit v ruznych stavech
             switch (mode) {
                 case CISCO_USER_MODE:
                 case CISCO_PRIVILEGED_MODE:
@@ -288,7 +285,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     i = 1;
             }
         }
-        if (command.equals("ip")) { // specialni chovani prikazu ip v ruznych stavech
+        if (command.equals("ip")) { // specialni chovani commandu ip v ruznych stavech
             switch (mode) {
                 case CISCO_CONFIG_MODE:
                 case CISCO_PRIVILEGED_MODE:
@@ -298,7 +295,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     i = 1;
             }
         }
-        if (command.equals("route")) { // specialni chovani prikazu route v ruznych stavech
+        if (command.equals("route")) { // specialni chovani commandu route v ruznych stavech
             switch (mode) {
                 case CISCO_PRIVILEGED_MODE:
                     i = 2;
@@ -308,7 +305,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
             }
         }
 
-        if (cmd.length() >= i && command.startsWith(cmd)) { // lze doplnit na jeden jedinecny prikaz
+        if (cmd.length() >= i && command.startsWith(cmd)) { // lze doplnit na jeden jedinecny command
             return true;
         }
 
@@ -327,7 +324,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
     }
 
 	/**
-     * Vypise chybovou hlasku pri zadani nekompletniho prikazu.
+     * Vypise chybovou hlasku pri zadani nekompletniho commandu.
      */
     protected void incompleteCommand() {
         shell.printLine("% Incomplete command.");
@@ -380,22 +377,4 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		}
 	}
-
-	/**
-     * Prepina cisco do stavu config (CONFIG).
-     */
-    private void configure() {
-
-
-    }
-
-//	/**
-//     * Vypise chybu pri 'configure' a nastavi vypisovani promptu+zrusi configure1 flag
-//     */
-//    private void configureVypisChybu() {
-//        kon.posliRadek("?Must be \"terminal\"");
-//		kon.posliServisne("podporovan je pouze terminal");
-//		configure1 = false;
-//		kon.vypisPrompt = true;
-//    }
 }

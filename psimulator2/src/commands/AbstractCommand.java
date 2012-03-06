@@ -5,11 +5,11 @@ package commands;
 
 import device.Device;
 import logging.Loggable;
+import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
-import logging.Logger;
 
 /**
  *
@@ -113,5 +113,9 @@ public abstract class AbstractCommand implements Loggable {
 	 */
 	protected void print(String s) {
 		parser.getShell().print(s);
+	}
+
+	protected void printWithDelay(String s, int delay) {
+		parser.getShell().printWithDelay(s, delay);
 	}
 }

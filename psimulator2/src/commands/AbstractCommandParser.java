@@ -71,6 +71,10 @@ public abstract class AbstractCommandParser {
 		this.ref = 0;
 		splitLine(line);
 
+		if (line.isEmpty()) {
+			return;
+		}
+
 		processLineForParsers();
 	}
 
@@ -106,7 +110,6 @@ public abstract class AbstractCommandParser {
 	 */
 	public void finishCommand(int exitCode) {
 		this.runningCommand = null;
-		shell.vypisPrompt = true;
 	}
 
 	/**

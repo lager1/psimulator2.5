@@ -55,6 +55,10 @@ public class NatTable {
 		this.ipLayer = ipLayer;
     }
 
+	public List<Record> getNatTable() {
+		return table;
+	}
+
 //    /**
 //     * True, pokud je uz tam je zdrojova ip v tabulce.
 //     * @param in adresa, kterou chceme porovnavat

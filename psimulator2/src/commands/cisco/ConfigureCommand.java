@@ -22,7 +22,6 @@ public class ConfigureCommand extends CiscoCommand {
 	public void run() {
 
 		String nextWord = nextWord();
-		System.out.println("dalsi: "+nextWord);
 
 		if (nextWord.isEmpty()) {
 			parser.runningCommand = this;

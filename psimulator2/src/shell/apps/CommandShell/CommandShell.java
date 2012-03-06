@@ -30,10 +30,6 @@ public class CommandShell extends TerminalApplication {
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
 	private History history = new History();
-	/**
-	 * v ciscu obcas potrebuju zakazat si vypisovani promptu
-	 */
-	public boolean vypisPrompt = true;
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;

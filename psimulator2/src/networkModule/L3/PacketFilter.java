@@ -21,7 +21,9 @@ public class PacketFilter {
 		this.natTable = new NatTable(ipLayer);
 	}
 
-
+	public NatTable getNatTable() {
+		return natTable;
+	}
 
 	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
 		return packet;

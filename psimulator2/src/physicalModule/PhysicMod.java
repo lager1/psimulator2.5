@@ -6,6 +6,7 @@ package physicalModule;
 import dataStructures.L2Packet;
 import device.Device;
 import java.util.*;
+import networkModule.L3.NetworkInterface;
 import networkModule.NetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -24,7 +25,7 @@ public class PhysicMod implements SmartRunnable {
 	/**
 	 * List of interfaces.
 	 */
-	private Map<Integer,Switchport> switchports = new HashMap<Integer, Switchport>();
+	private Map<Integer,Switchport> switchports = new HashMap<>();
 	/**
 	 * Queue for incomming packets from cabels.
 	 */
@@ -103,6 +104,7 @@ public class PhysicMod implements SmartRunnable {
 
 // Ostatni verejny metody: ------------------------------------------------------------------------------------------------------
 
+	@Override
 	public void doMyWork() {
 
 		while (!receiveBuffer.isEmpty() || !sendBuffer.isEmpty()) {
@@ -125,7 +127,7 @@ public class PhysicMod implements SmartRunnable {
 	 * @return
 	 */
 	public List<Integer> getNumbersOfPorts(){
-		List<Integer> vratit = new LinkedList<Integer>();
+		List<Integer> vratit = new LinkedList<>();
 		for(Switchport swport: switchports.values()){
 			vratit.add(swport.number);
 		}
@@ -144,6 +146,20 @@ public class PhysicMod implements SmartRunnable {
 //	public boolean removeSwitchport(Switchport iface) {
 //		return switchportList.remove(iface);
 //	}
+
+	/**
+	 * Returns true iff there is cable attached to this iface.
+	 * @param iface
+	 * @return
+	 */
+	public boolean isCableConnected(NetworkInterface iface) {
+		for (Switchport sw : switchports.values()) {
+			if (sw.configID == iface.configID) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 // Privatni veci: --------------------------------------------------------------------------------------------------
