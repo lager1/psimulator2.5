@@ -5,7 +5,6 @@
 package commands;
 
 import device.Device;
-import networkModule.TcpIpNetMod;
 
 /**
  *
@@ -49,6 +48,20 @@ public abstract class AbstractCommand {
 
 	protected Device getDevice(){
 		return parser.device;
+	}
+
+	/**
+	 * Zkratka pro vypisovani do shellu.
+	 */
+	protected void printLine(String s) {
+		parser.getShell().printLine(s);
+	}
+
+	/**
+	 * Zkratka pro vypisovani do shellu.
+	 */
+	protected void print(String s) {
+		parser.getShell().print(s);
 	}
 //
 //	protected TcpIpNetMod getNetMod(){

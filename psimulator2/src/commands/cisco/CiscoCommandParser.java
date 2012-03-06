@@ -3,6 +3,7 @@
  */
 package commands.cisco;
 
+import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import device.Device;
 import java.text.DateFormat;
@@ -38,31 +39,33 @@ public class CiscoCommandParser extends AbstractCommandParser {
      */
     private NetworkInterface configuredInterface = null;
 
+	private AbstractCommand command = null;
+
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
 		shell.setPrompt(device.getName()+">");
 	}
 
 	@Override
-	public int processLineForParsers() {
+	public void processLineForParsers() {
 
 		isAmbiguousCommand = false;
 
 		if (words.size() < 1) {
-            return 0; // jen mezera
+            return; // jen mezera
         }
 
 		String first = nextWord();
 
 		if (first.equals("")) {
-            return 0; // prazdny Enter
+            return; // prazdny Enter
         }
 
 		switch (mode) {
             case CISCO_USER_MODE:
                 if (isCommand("enable", first)) {
 					changeMode(CISCO_PRIVILEGED_MODE);
-                    return 0;
+                    return;
                 }
                 if (isCommand("ping", first)) {
 //                    prikaz = new CiscoPing(pc, kon, slova);
@@ -78,17 +81,17 @@ public class CiscoCommandParser extends AbstractCommandParser {
                 }
                 if (isCommand("exit", first) || isCommand("logout", first)) {
 					shell.closeSession();
-                    return 0;
+                    return;
                 }
                 break;
 
             case CISCO_PRIVILEGED_MODE:
                 if (isCommand("enable", first)) { // funguje u cisco taky, ale nic nedela
-                    return 0;
+                    return;
                 }
                 if (isCommand("disable", first)) {
 					changeMode(CISCO_USER_MODE);
-                    return 0;
+                    return;
                 }
                 if (isCommand("ping", first)) {
 //                    prikaz = new CiscoPing(pc, kon, slova);
@@ -100,7 +103,9 @@ public class CiscoCommandParser extends AbstractCommandParser {
                 }
                 if (isCommand("configure", first)) {
 //                    configure();
-                    return 0;
+					command = new ConfigureCommand(this);
+					command.runCommand();
+                    return;
                 }
                 if (isCommand("show", first)) {
 //                    prikaz = new CiscoShow(pc, kon, slova, mode);
@@ -108,7 +113,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
                 }
                 if (isCommand("exit", first) || isCommand("logout", first)) {
                     shell.closeSession();
-                    return 0;
+                    return;
                 }
 
 //                if (debug) {
@@ -127,15 +132,16 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                }
                 break;
 
-//            case CISCO_CONFIG_MODE:
-//                if (kontrola("exit", first) || first.equals("end")) {
+            case CISCO_CONFIG_MODE:
+                if (isCommand("exit", first) || first.equals("end")) {
+					changeMode(CISCO_PRIVILEGED_MODE);
 //                    mode = ROOT;
 //                    kon.prompt = pc.jmeno + "#";
 //                    Date d = new Date();
 //                    cekej(100);
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
-//                    return;
-//                }
+                    return;
+                }
 //                if (kontrola("ip", first)) {
 //                    prikaz = new CiscoIp(pc, kon, slova, false, mode);
 //                    return;
@@ -152,7 +158,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    no();
 //                    return;
 //                }
-//                break;
+                break;
 
 //            case CISCO_CONFIG_IF_MODE:
 //                if (kontrola("exit", first)) {
@@ -197,7 +203,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
         if (isAmbiguousCommand) {
             isAmbiguousCommand = false;
             ambiguousCommand();
-            return 0;
+            return;
         }
 
         switch (mode) {
@@ -209,14 +215,6 @@ public class CiscoCommandParser extends AbstractCommandParser {
             default:
 				shell.printLine("% Unknown command or computer name, or unable to find computer address");
         }
-
-
-		return 0;
-	}
-
-	@Override
-	public void catchUserInput(String userInput) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
@@ -233,7 +231,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	/**
 	 * Vrati
 	 */
-	public String getFormattedTime() {
+	protected String getFormattedTime() {
 		Date d = new Date();
 		return formator.format(d);
 	}
@@ -244,7 +242,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
      * @param cmd prikaz, ktery zadal uzivatel
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    private boolean isCommand(String command, String cmd) {
+    protected boolean isCommand(String command, String cmd) {
 
         int i = 10;
 
@@ -324,14 +322,14 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	/**
      * Vypise chybovou hlasku pri zadani neplatneho vstupu.
      */
-    private void invalidInputDetected() {
+    protected void invalidInputDetected() {
         shell.printLine("\n% Invalid input detected.\n");
     }
 
 	/**
      * Vypise chybovou hlasku pri zadani nekompletniho prikazu.
      */
-    private void incompleteCommand() {
+    protected void incompleteCommand() {
         shell.printLine("% Incomplete command.");
     }
 
@@ -346,7 +344,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	 * Target mode we want change to.
 	 * @param mode
 	 */
-	private void changeMode(int mode) {
+	protected void changeMode(int mode) {
 		switch (mode) {
 			case CISCO_USER_MODE:
 				shell.setMode(mode);
@@ -386,45 +384,10 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	/**
      * Prepina cisco do stavu config (CONFIG).
      */
-//    private void configure() {
-//
-//        if (slova.size() == 1 && !configure1) {
-//            kon.posli("Configuring from terminal, memory, or network [terminal]? ");
-//            kon.vypisPrompt = false;
-//            configure1 = true;
-//            return;
-//        }
-//
-//        int cis = 1;
-//        if (configure1) {
-//            cis = 0;
-//        }
-//        if (!slova.get(cis).isEmpty() && ("memory".startsWith(slova.get(cis))
-//                || "network".startsWith(slova.get(cis))
-//                || slova.get(cis).equals("?"))) {
-//            configureVypisChybu();
-//            return;
-//        }
-//
-//        if (kontrola("terminal", slova.get(cis)) || configure1) {
-//            stav = CONFIG;
-//            kon.prompt = pc.jmeno + "(config)#";
-//            kon.posliRadek("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
-//            configure1 = false;
-//            kon.vypisPrompt = true;
-//            return;
-//        }
-//
-//        int pocet = pc.jmeno.length() + 1 + slova.get(0).length() + 1;
-//        String ret = "";
-//
-//        for (int i = 0; i < pocet; i++) {
-//            ret += " ";
-//        }
-//        ret += "^";
-//        kon.posliRadek(ret);
-//        kon.posliRadek("% Invalid input detected at '^' marker.\n");
-//    }
+    private void configure() {
+
+
+    }
 
 //	/**
 //     * Vypise chybu pri 'configure' a nastavi vypisovani promptu+zrusi configure1 flag

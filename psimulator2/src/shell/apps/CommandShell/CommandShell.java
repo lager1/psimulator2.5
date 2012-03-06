@@ -161,7 +161,7 @@ public class CommandShell extends TerminalApplication {
 	 * just print prompt
 	 */
 	public void printPrompt() {
-		if (vypisPrompt) {
+		if (parser.writePrompt()) {
 			print(prompt);
 		}
 	}
@@ -204,8 +204,8 @@ public class CommandShell extends TerminalApplication {
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM :" + line);
 
 				synchronized (locker) {
-					parser.processLine(line, mode);
-				}
+						parser.processLine(line, mode);
+					}
 
 				terminalIO.flush();
 			} catch (Exception ex) {

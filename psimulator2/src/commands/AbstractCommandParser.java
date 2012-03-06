@@ -44,7 +44,7 @@ public abstract class AbstractCommandParser {
 	 * Kvuli prikazum, ktere bezi dlouho, ty budou muset bezet ve vlastnim vlakne a zde bude na ne odkaz.
 	 * Az prikaz skonci, tak tohle bude null.
 	 */
-	private AbstractCommand runningCommand = null;
+	public AbstractCommand runningCommand = null;
 
 	public AbstractCommandParser(Device networkDevice, CommandShell shell) {
 		this.device = networkDevice;
@@ -59,24 +59,20 @@ public abstract class AbstractCommandParser {
 	 * @param mode aktualni mod toho shellu (pro cisco)
 	 * @return navratovy kod
 	 */
-	public int processLine(String line, int mode) {
-		System.out.printf("prislo do AbsCom: %s, mode: %d \n", line, mode);
+	public void processLine(String line, int mode) {
+
+		if (runningCommand != null) {
+			runningCommand.catchUserInput(line);
+			return;
+		}
 
 		this.line = line;
 		this.mode = mode;
 		this.ref = 0;
 		splitLine(line);
 
-		return processLineForParsers();
+		processLineForParsers();
 	}
-
-	/**
-	 * Slouzi k predavani uzivatelskyho vstupu prave spustenymu prikazu (kdyz se ten prikaz napr. na neco pta.
-	 *
-	 * @param userInput
-	 */
-	@Deprecated
-	public void catchUserInput(String userInput){} // TODO asi se pak smaze, jeste uvidim. -Standa
 
 	/**
 	 * Zavola parser se signalem od uzivatele. napr.: Ctrl+C, Ctrl+Z, ..
@@ -102,12 +98,7 @@ public abstract class AbstractCommandParser {
 	 * V tuto chvili uz jsou naplneny promenne words i mode.
 	 *
 	 */
-	protected abstract int processLineForParsers();
-
-	public AbstractCommand getRunningCommand() {
-		return runningCommand;
-	}
-
+	protected abstract void processLineForParsers();
 
 	/**
 	 * Prikaz notifikuje parser o svym skonceni.
@@ -116,6 +107,25 @@ public abstract class AbstractCommandParser {
 	public void finishCommand(int exitCode) {
 		this.runningCommand = null;
 		shell.vypisPrompt = true;
+	}
+
+	/**
+	 * Vrati shellu informaci, zda ma vypisovat prompt.
+	 * @return
+	 */
+	public boolean writePrompt() {
+		if (runningCommand == null) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Slouzi k servisnim vypisum o napr nepodporovanych prikazech.
+	 * @param line
+	 */
+	public void printSimulatorInfo(String line) {
+		shell.printLine("[PSIMULATOR] "+line);
 	}
 
 	/**
