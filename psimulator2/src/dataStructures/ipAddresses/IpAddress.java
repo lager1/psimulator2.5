@@ -117,6 +117,28 @@ public class IpAddress {
         return createIpFromBits(~ip.bits);
     }
 
+	/**
+	 * Vrati true, kdyz je adresa v RFC zakazana, tedy kdyz je prvni bajt vetsi nez 223.
+	 * Odpovida jeZakazanaIpAdresa ze staryho psimulatoru.
+	 * @param ip
+	 * @return
+	 */
+	public static boolean isForbiddenIP(IpAddress ip) {
+		/*
+        A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
+        B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
+        C 	110 	192-223 	255.255.255.0 	21 	8 	2 097 152 	254
+        D 	1110 	224-239 	multicast
+        E 	1111 	240-255 	vyhrazeno jako rezerva
+         */
+		int[] pole = bitsToArray(ip.getBits());
+		if (pole[0] >= 224) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
     /**
      * Vytvori adresu ze integeru vnitrni reprezentace (z bitu)
      * @param r - ta vnitrni reprezentace

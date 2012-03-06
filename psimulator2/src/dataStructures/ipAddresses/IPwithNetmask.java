@@ -15,6 +15,11 @@ public class IPwithNetmask {
     private IpNetmask mask;
 
 // konstruktory: ----------------------------------------------------------------------------------------------------
+
+	/**
+	 * Creates a new instance from string of IP address, the mask is computed automatically.
+	 * @param adr
+	 */
     public IPwithNetmask(String adr) {
         ip = new IpAddress(adr);
         dopocitejMasku();
@@ -183,26 +188,28 @@ public class IPwithNetmask {
 
 // privatni metody: ----------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Vrati dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
-     */
-    private void dopocitejMasku(){
+	/**
+	 * Setts the automatically computed mask. The mask is computed from IP address according to rules in comentar.
+	 *
+	 * Nastavi dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
+	 */
+	private void dopocitejMasku() {
 
-        int bajt = IpAddress.bitsToArray(ip.getBits())[0]; //tady je ulozenej prvni bajt adresy
-        /*
-            A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
-            B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
-            C 	110 	192-223 	255.255.255.0 	21 	8 	2 097 152 	254
-            D 	1110 	224-239 	multicast
-            E 	1111 	240-255 	vyhrazeno jako rezerva
-        */
-        if( bajt<128 )
-            mask =  new IpNetmask(8);
-        else if( bajt>=128 && bajt<192 )
-            mask = new IpNetmask(16);
-        else if(bajt >= 192)
-            mask = new IpNetmask(24);
-    }
+//            A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
+//            B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
+//            C 	110 	192-223 	255.255.255.0 	21 	8 	2 097 152 	254
+//            D 	1110 	224-239 	multicast
+//            E 	1111 	240-255 	vyhrazeno jako rezerva
+
+		int bajt = IpAddress.bitsToArray(ip.getBits())[0]; //tady je ulozenej prvni bajt adresy
+		if (bajt < 128) {
+			mask = new IpNetmask(8);
+		} else if (bajt >= 128 && bajt < 192) {
+			mask = new IpNetmask(16);
+		} else if (bajt >= 192) {
+			mask = new IpNetmask(24);
+		}
+	}
 
     /**
      * Da vnitrni representaci cisla site.
