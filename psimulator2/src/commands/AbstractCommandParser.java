@@ -32,13 +32,19 @@ public abstract class AbstractCommandParser {
 	/**
 	 * ukazatel do seznamu slov.
 	 */
-	private int ref;
+	protected int ref;
 
 	/**
 	 * Vesmes docasne uloziste modu, aby se nemusel predavat do vsech funkci, kde je potreba.
 	 * Vlastnikem modu je CommandShell, protoze preci Shell musi vedet, ve kterem stavu on sam je.
 	 */
 	protected int mode;
+
+	/**
+	 * Kvuli prikazum, ktere bezi dlouho, ty budou muset bezet ve vlastnim vlakne a zde bude na ne odkaz.
+	 * Az prikaz skonci, tak tohle bude null.
+	 */
+	private AbstractCommand runningCommand = null;
 
 	public AbstractCommandParser(Device networkDevice, CommandShell shell) {
 		this.device = networkDevice;
@@ -69,7 +75,8 @@ public abstract class AbstractCommandParser {
 	 *
 	 * @param userInput
 	 */
-	public abstract void catchUserInput(String userInput);
+	@Deprecated
+	public abstract void catchUserInput(String userInput); // TODO asi se pak smaze, jeste uvidim. -Standa
 
 	/**
 	 * Zavola parser se signalem od uzivatele. napr.: Ctrl+C, Ctrl+Z, ..
@@ -96,6 +103,15 @@ public abstract class AbstractCommandParser {
 	 *
 	 */
 	protected abstract int processLineForParsers();
+
+	public AbstractCommand getRunningCommand() {
+		return runningCommand;
+	}
+
+	public void finishCommand() {
+		this.runningCommand = null;
+		shell.vypisPrompt = true;
+	}
 
 	/**
 	 * Tahle metoda postupne vraci words, podle vnitrni promenny ref. Pocita s tim, ze prazdny retezec ji nemuze prijit.

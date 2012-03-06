@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import networkModule.L3.NetworkInterface;
 import shell.apps.CommandShell.CommandShell;
 import static shell.apps.CommandShell.CommandShell.*;
 
@@ -31,7 +32,11 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	 * TODO: nezrusit tohle?
 	 *
      */
-    boolean nepokracovat = false;
+    private boolean isAmbiguousCommand = false;
+	/**
+     * Rozhrani, ktere se bude upravovat ve stavu IFACE
+     */
+    private NetworkInterface configuredInterface = null;
 
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
@@ -41,7 +46,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	@Override
 	public int processLineForParsers() {
 
-		nepokracovat = false;
+		isAmbiguousCommand = false;
 
 		if (words.size() < 1) {
             return 0; // jen mezera
@@ -55,55 +60,53 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		switch (mode) {
             case CISCO_USER_MODE:
-                if (kontrola("enable", first)) {
-					System.out.println("AAA_enable");
+                if (isCommand("enable", first)) {
 					changeMode(CISCO_PRIVILEGED_MODE);
                     return 0;
                 }
-                if (kontrola("ping", first)) {
+                if (isCommand("ping", first)) {
 //                    prikaz = new CiscoPing(pc, kon, slova);
 //                    return;
                 }
-                if (kontrola("traceroute", first)) {
+                if (isCommand("traceroute", first)) {
 //                    prikaz = new CiscoTraceroute(pc, kon, slova);
 //                    return;
                 }
-                if (kontrola("show", first)) {
+                if (isCommand("show", first)) {
 //                    prikaz = new CiscoShow(pc, kon, slova, mode);
 //                    return;
                 }
-                if (kontrola("exit", first) || kontrola("logout", first)) {
+                if (isCommand("exit", first) || isCommand("logout", first)) {
 					shell.closeSession();
                     return 0;
                 }
                 break;
 
             case CISCO_PRIVILEGED_MODE:
-                if (kontrola("enable", first)) { // funguje u cisco taky, ale nic nedela
+                if (isCommand("enable", first)) { // funguje u cisco taky, ale nic nedela
                     return 0;
                 }
-                if (kontrola("disable", first)) {
-					System.out.println("AAA_disable");
+                if (isCommand("disable", first)) {
 					changeMode(CISCO_USER_MODE);
                     return 0;
                 }
-                if (kontrola("ping", first)) {
+                if (isCommand("ping", first)) {
 //                    prikaz = new CiscoPing(pc, kon, slova);
 //                    return;
                 }
-                if (kontrola("traceroute", first)) {
+                if (isCommand("traceroute", first)) {
 //                    prikaz = new CiscoTraceroute(pc, kon, slova);
 //                    return;
                 }
-                if (kontrola("configure", first)) {
+                if (isCommand("configure", first)) {
 //                    configure();
-//                    return;
+                    return 0;
                 }
-                if (kontrola("show", first)) {
+                if (isCommand("show", first)) {
 //                    prikaz = new CiscoShow(pc, kon, slova, mode);
 //                    return;
                 }
-                if (kontrola("exit", first) || kontrola("logout", first)) {
+                if (isCommand("exit", first) || isCommand("logout", first)) {
                     shell.closeSession();
                     return 0;
                 }
@@ -191,8 +194,8 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //            }
 //        }
 //
-        if (nepokracovat) {
-            nepokracovat = false;
+        if (isAmbiguousCommand) {
+            isAmbiguousCommand = false;
             ambiguousCommand();
             return 0;
         }
@@ -209,7 +212,6 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 
 		return 0;
-//		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
@@ -242,7 +244,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
      * @param cmd prikaz, ktery zadal uzivatel
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    private boolean kontrola(String command, String cmd) {
+    private boolean isCommand(String command, String cmd) {
 
         int i = 10;
 
@@ -258,7 +260,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
         String[] ctyri = {"configure", "disable"};
         //String[] pet = {"route"};
 
-        List<String[]> seznam = new ArrayList<String[]>();
+        List<String[]> seznam = new ArrayList<>();
         seznam.add(jedna);
         seznam.add(dva);
         seznam.add(tri);
@@ -313,7 +315,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
         }
 
         if (command.startsWith(cmd)) {
-            nepokracovat = true;
+            isAmbiguousCommand = true;
         }
 
         return false;
@@ -380,4 +382,57 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		}
 	}
+
+	/**
+     * Prepina cisco do stavu config (CONFIG).
+     */
+//    private void configure() {
+//
+//        if (slova.size() == 1 && !configure1) {
+//            kon.posli("Configuring from terminal, memory, or network [terminal]? ");
+//            kon.vypisPrompt = false;
+//            configure1 = true;
+//            return;
+//        }
+//
+//        int cis = 1;
+//        if (configure1) {
+//            cis = 0;
+//        }
+//        if (!slova.get(cis).isEmpty() && ("memory".startsWith(slova.get(cis))
+//                || "network".startsWith(slova.get(cis))
+//                || slova.get(cis).equals("?"))) {
+//            configureVypisChybu();
+//            return;
+//        }
+//
+//        if (kontrola("terminal", slova.get(cis)) || configure1) {
+//            stav = CONFIG;
+//            kon.prompt = pc.jmeno + "(config)#";
+//            kon.posliRadek("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
+//            configure1 = false;
+//            kon.vypisPrompt = true;
+//            return;
+//        }
+//
+//        int pocet = pc.jmeno.length() + 1 + slova.get(0).length() + 1;
+//        String ret = "";
+//
+//        for (int i = 0; i < pocet; i++) {
+//            ret += " ";
+//        }
+//        ret += "^";
+//        kon.posliRadek(ret);
+//        kon.posliRadek("% Invalid input detected at '^' marker.\n");
+//    }
+
+//	/**
+//     * Vypise chybu pri 'configure' a nastavi vypisovani promptu+zrusi configure1 flag
+//     */
+//    private void configureVypisChybu() {
+//        kon.posliRadek("?Must be \"terminal\"");
+//		kon.posliServisne("podporovan je pouze terminal");
+//		configure1 = false;
+//		kon.vypisPrompt = true;
+//    }
 }
