@@ -22,5 +22,6 @@ public enum LoggingCategory {
 	TELNET,
 	ABSTRACT_NETWORK,
 	FILE_SYSTEM,
+	LOADER_SAVER, // zpravy z buildeni z Martinovy konfigurace
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY POPIS, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 }
