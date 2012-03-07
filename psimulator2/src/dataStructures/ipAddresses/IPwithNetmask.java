@@ -174,6 +174,15 @@ public class IPwithNetmask {
         else return false;
     }
 
+	/**
+	 * Vraci true, kdyz je adresa s maskou broadcastem site.
+	 * @return
+	 */
+	public boolean isBroadcast() {
+		if (this.getIp().equals(getBroadcast())) return true;
+		else return false;
+	}
+
     /**
      * Vraci true, jestlize adresa v parametru (comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
      * Returns true, if comparedIP is in my network.

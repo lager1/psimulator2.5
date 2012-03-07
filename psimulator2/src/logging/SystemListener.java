@@ -1,22 +1,24 @@
 /*
  * created 2.2.2012
  */
-
 package logging;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Main server listener.
- * Writes everything to server's console.
+ * Main server listener. Writes everything to server's console.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  * @author Tomáš Pitřinec
  */
 public class SystemListener implements LoggerListener {
 
-	final Map<LoggingCategory,Integer> configuration = new EnumMap<>(LoggingCategory.class);
+	/**
+	 * Key - logging cathegory <br />
+	 * Value - Logger.{ERROR,WARNING,IMPORTAN,INFO,DEBUG}, if INFO selected all facilities before it are also selected.
+	 */
+	public final Map<LoggingCategory, Integer> configuration = new EnumMap<>(LoggingCategory.class);
 
 	public SystemListener() {
 		ConfigureSystemListener.configure(configuration);

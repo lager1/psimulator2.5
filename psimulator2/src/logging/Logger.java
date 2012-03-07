@@ -120,4 +120,23 @@ public class Logger {
 				return "UNKNOWN_LOG_LEVEL";
 		}
 	}
+
+	/**
+	 * Returns true iff SystemListener is set ON for category with DEBUG facility.
+	 * @param category
+	 * @return
+	 */
+	public static boolean isDebugOn(LoggingCategory category) {
+		for (LoggerListener listener : listeners) {
+			if (listener instanceof SystemListener) {
+				SystemListener sl = (SystemListener) listener;
+				if (sl.configuration.get(LoggingCategory.CISCO_COMMAND_PARSER) == Logger.DEBUG) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
 }

@@ -6,6 +6,8 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  *
@@ -18,10 +20,12 @@ public abstract class CiscoCommand extends AbstractCommand {
 	 * nevim, k cemu to tu je
 	 */
 	protected boolean ambiguous = false;
+	protected final boolean debug;
 
 	public CiscoCommand(AbstractCommandParser parser) {
 		super(parser);
 		this.parser = (CiscoCommandParser) parser;
+		this.debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
 	}
 
 	protected void invalidInputDetected() {
@@ -44,7 +48,7 @@ public abstract class CiscoCommand extends AbstractCommand {
      * @param min kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    protected boolean kontrola(String command, String cmd, int min) {
+    protected boolean kontrola(String command, String cmd, int min) { // TODO: kontrola prejmenovat
 
         if (cmd.length() == 0) {
             incompleteCommand();
@@ -71,7 +75,7 @@ public abstract class CiscoCommand extends AbstractCommand {
      * @param min kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    protected boolean kontrolaBezVypisu(String command, String cmd, int min) {
+    protected boolean kontrolaBezVypisu(String command, String cmd, int min) { // TODO: kontrolaBezVypisu prejmenovat
 
         if (cmd.length() == 0) {
             return false;
@@ -84,6 +88,20 @@ public abstract class CiscoCommand extends AbstractCommand {
         if (command.startsWith(cmd)) {
             ambiguousCommand();
             ambiguous = true;
+        }
+        return false;
+    }
+
+	/**
+     * Zjisti, zda je rezetec prazdny.
+     * Kdyz ano, tak to jeste vypise hlasku incompleteCommand.
+     * @param s
+     * @return
+     */
+    protected boolean jePrazdny(String s) {
+        if (s.equals("")) {
+            incompleteCommand();
+            return true;
         }
         return false;
     }

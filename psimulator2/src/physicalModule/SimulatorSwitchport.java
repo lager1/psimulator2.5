@@ -15,13 +15,13 @@ import java.util.List;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class SimulatorSwitchport extends Switchport {
-	
+
 	/**
 	 * Link to cable's connector.
 	 * Until cable is not connected ti is null.
 	 */
 	protected Connector connector;
-	
+
 	/**
 	 * Storage for packets to be sent.
 	 */
@@ -42,12 +42,12 @@ public class SimulatorSwitchport extends Switchport {
 	 * @return
 	 */
 	private int dropped = 0;
-	
+
 
 	public SimulatorSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
 	}
-	
+
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();

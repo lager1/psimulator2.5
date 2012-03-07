@@ -11,7 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import logging.Logger;
+import logging.LoggingCategory;
+import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
+import networkModule.NetMod;
+import networkModule.TcpIpNetMod;
 import shell.apps.CommandShell.CommandShell;
 import static shell.apps.CommandShell.CommandShell.*;
 
@@ -37,13 +42,27 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	/**
      * Rozhrani, ktere se bude upravovat ve stavu IFACE
      */
-    private NetworkInterface configuredInterface = null;
+    protected NetworkInterface configuredInterface = null;
 
-	private AbstractCommand command = null;
+	protected AbstractCommand command = null;
+
+	private final boolean debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
+
+	private final IPLayer ipLayer;
 
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
 		shell.setPrompt(device.getName()+">");
+		if (debug) {
+			changeMode(CISCO_PRIVILEGED_MODE);
+		}
+
+		NetMod nm = device.getNetworkModule();
+		if (nm.isStandardTcpIpNetMod()) {
+			this.ipLayer = ((TcpIpNetMod) nm).ipLayer;
+		} else {
+			this.ipLayer = null;
+		}
 	}
 
 	@Override
@@ -140,10 +159,10 @@ public class CiscoCommandParser extends AbstractCommandParser {
                     command = new IpCommand(this, false);
                     return;
                 }
-//                if (isCommand("interface", first)) {
-//                    iface();
-//                    return;
-//                }
+                if (isCommand("interface", first)) {
+                    iface();
+                    return;
+                }
 //                if (isCommand("access-list", first)) {
 //                    command = new CiscoAccessList(pc, kon, slova, false);
 //                    return;
@@ -154,24 +173,29 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                }
                 break;
 
-//            case CISCO_CONFIG_IF_MODE:
-//                if (isCommand("exit", first)) {
+            case CISCO_CONFIG_IF_MODE:
+                if (isCommand("exit", first)) {
+					changeMode(CISCO_CONFIG_MODE);
+
 //                    mode = CONFIG;
 //                    kon.prompt = pc.jmeno + "(config)#";
 //                    aktualni = null; // zrusime odkaz na menene rozhrani
-//                    return;
-//                }
-//                if (first.equals("end")) {
+                    return;
+                }
+                if (first.equals("end")) {
+					changeMode(CISCO_PRIVILEGED_MODE);
 //                    mode = ROOT;
 //                    kon.prompt = pc.jmeno + "#";
 //                    Date d = new Date();
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
-//                    return;
+					return;
+				}
 //                }
-//                if (isCommand("ip", first)) {
-//                    command = new CiscoIp(pc, kon, slova, false, mode, aktualni);
-//                    return;
-//                }
+                if (isCommand("ip", first)) {
+                    command = new IpAddressCommand(this, false);
+					command.run();
+                    return;
+                }
 //                if (isCommand("no", first)) {
 //                    no();
 //                    return;
@@ -181,7 +205,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    return;
 //                }
 //
-//				break;
+				break;
         }
 
 //        if (debug) {
@@ -341,7 +365,7 @@ public class CiscoCommandParser extends AbstractCommandParser {
 	 * Target mode we want change to.
 	 * @param mode
 	 */
-	protected void changeMode(int mode) {
+	protected final void changeMode(int mode) {
 		switch (mode) {
 			case CISCO_USER_MODE:
 				shell.setMode(mode);
@@ -364,6 +388,8 @@ public class CiscoCommandParser extends AbstractCommandParser {
 					shell.printLine("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
 	//				configure1 = false;
 	//				kon.vypisPrompt = true;
+				} else if (this.mode == CISCO_CONFIG_IF_MODE) {
+					configuredInterface = null;
 				}
 				break;
 
@@ -377,4 +403,46 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		}
 	}
+
+	/**
+     * Prepne cisco do stavu config-if (IFACE).
+     * Kdyz ma prikaz interface 2 argumenty, tak se sloucej do jednoho (pripad: interface fastEthernet 0/0).
+     * 0 nebo vice nez argumenty znamena chybovou hlasku.
+     * Do globalni promenne 'aktualni' uklada referenci na rozhrani, ktere chce uzivatel konfigurovat.
+     * prikaz 'interface fastEthernet0/1'
+     */
+    private void iface() {
+
+        String rozhrani = "";
+        switch (words.size()) {
+            case 1:
+                incompleteCommand();
+                return;
+            case 2:
+                rozhrani = words.get(1);
+                break;
+            case 3:
+                rozhrani = words.get(1) + words.get(2);
+                break;
+            default:
+                invalidInputDetected();
+                return;
+        }
+
+        boolean nalezeno = false;
+
+        for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
+            if (iface.name.equalsIgnoreCase(rozhrani)) {
+                this.configuredInterface = iface;
+                nalezeno = true;
+            }
+        }
+
+        if (nalezeno == false) {
+            invalidInputDetected();
+            return;
+        }
+
+		changeMode(CommandShell.CISCO_CONFIG_IF_MODE);
+    }
 }

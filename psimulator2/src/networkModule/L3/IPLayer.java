@@ -325,7 +325,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param iface
 	 * @param ipAddress
 	 */
-	public void setIpAddressOnInterface(NetworkInterface iface, IPwithNetmask ipAddress) {
+	public void changeIpAddressOnInterface(NetworkInterface iface, IPwithNetmask ipAddress) {
 		iface.ipAddress = ipAddress;
 	}
 

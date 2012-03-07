@@ -19,7 +19,6 @@ public class IpCommand extends CiscoCommand {
 	private AbstractCommand command;
 //	private final NetworkInterface iface;
 	private final int state;
-	private final boolean debug = true;
 
 	public IpCommand(AbstractCommandParser parser, boolean no) {
 		super(parser);
@@ -37,7 +36,7 @@ public class IpCommand extends CiscoCommand {
             dalsi = nextWord();
         }
 
-        if(dalsi.length() == 0) {
+        if(dalsi.isEmpty()) {
             incompleteCommand();
             return;
         }
@@ -66,7 +65,8 @@ public class IpCommand extends CiscoCommand {
 
         if (state == CommandShell.CISCO_CONFIG_IF_MODE) {
             if (kontrolaBezVypisu("address", dalsi, 3)) {
-//                command = new CiscoIpAddress(pc, kon, slova, no, rozhrani);
+                command = new IpAddressCommand(parser, no);
+				command.run();
                 return;
             }
 
