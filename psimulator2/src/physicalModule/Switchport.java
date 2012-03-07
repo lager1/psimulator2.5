@@ -18,12 +18,12 @@ import dataStructures.L2Packet;
 public abstract class Switchport {
 
 	protected PhysicMod physicMod;
-	
+
 	/**
 	 * Unique number in PhysicMod.
 	 */
 	public final int number;
-	
+
 	/**
 	 * ID takove, jake je v konfiguracnim souboru.
 	 */
@@ -35,7 +35,7 @@ public abstract class Switchport {
 		this.number = number;
 		this.configID = configID;
 	}
-	
+
 
 	/**
 	 * Try to send packet through this interface.
@@ -60,6 +60,12 @@ public abstract class Switchport {
 	 * @return
 	 */
 	public abstract L2Packet popPacket();
+
+	/**
+	 * Returns true, if on the other end of cable is connected other network device.
+	 * @return
+	 */
+	public abstract boolean isConnected();
 
 
 // ----------------------------- zatim neni treba -----------------------------

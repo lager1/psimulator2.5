@@ -138,28 +138,6 @@ public class PhysicMod implements SmartRunnable {
 		return switchports;
 	}
 
-//	/**
-//	 * Nebude nikdy potreba.
-//	 * @param iface
-//	 * @return
-//	 */
-//	public boolean removeSwitchport(Switchport iface) {
-//		return switchportList.remove(iface);
-//	}
-
-	/**
-	 * Returns true iff there is cable attached to this iface.
-	 * @param iface
-	 * @return
-	 */
-	public boolean isCableConnected(NetworkInterface iface) {
-		for (Switchport sw : switchports.values()) {
-			if (sw.configID == iface.configID) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 
 // Privatni veci: --------------------------------------------------------------------------------------------------

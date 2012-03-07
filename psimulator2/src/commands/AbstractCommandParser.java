@@ -136,7 +136,7 @@ public abstract class AbstractCommandParser {
 	 *
 	 * @return prazdny retezec, kdyz je na konci seznamu
 	 */
-	protected String nextWord() {
+	public String nextWord() {
 		String res;
 		if (ref < words.size()) {
 			res = words.get(ref);
@@ -153,7 +153,7 @@ public abstract class AbstractCommandParser {
 	 *
 	 * @return prazdny retezec, kdyz je na konci seznamu
 	 */
-	protected String nextWordPeek() {
+	public String nextWordPeek() {
 		String res;
 		if (ref < words.size()) {
 			res = words.get(ref);
@@ -165,6 +165,14 @@ public abstract class AbstractCommandParser {
 
 	protected int getRef() {
 		return ref;
+	}
+
+	public String getWordsAsString(){
+		String vratit="Words: ";
+		for(String s:words){
+			vratit+="^"+s+"^ ";
+		}
+		return vratit;
 	}
 
 	/**

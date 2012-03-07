@@ -7,6 +7,9 @@ import dataStructures.EthernetPacket;
 import dataStructures.MacAddress;
 import java.util.HashMap;
 import java.util.Map;
+import logging.Logger;
+import logging.LoggingCategory;
+import physicalModule.Switchport;
 
 /**
  * Representace ethernetovyho interface (sitovy karty) se switchovaci tabulkou. Spolecny pro switch i router. Ma jmeno,
@@ -78,6 +81,20 @@ public class EthernetInterface {
 			}
 			switchingTable.put(mac, new SwitchTableItem(swportSett, System.nanoTime() / (10 ^ 9)));
 		}
+	}
+
+	/**
+	 * Returns true, if the interface is on the cable connected to some other interface.
+	 * @return
+	 */
+	public boolean isConnected(){
+		for(SwitchportSettings swportsett: switchpors.values()){
+			Switchport swport = etherLayer.physicMod.getSwitchports().get(swportsett.switchportNumber);
+			if(swport.isConnected()){	// swport by nemel bejt nikdy null, protoze na zacatku behu ethernetovy vrstvy se vola metoda exploreHardware
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

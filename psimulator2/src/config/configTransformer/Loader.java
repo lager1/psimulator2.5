@@ -237,11 +237,11 @@ public class Loader {
 			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
 
 			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
-			cable.setFirstInterface(swportFirst);
+			cable.setFirstSwitchport(swportFirst);
 			cable.setFirstDeviceId(cableModel.getComponent1().getId());
 
 			SimulatorSwitchport swportSecond = findSwitchportFor(cableModel.getComponent2(), cableModel.getInterface2());
-			cable.setSecondInterface(swportSecond);
+			cable.setSecondSwitchport(swportSecond);
 			cable.setSecondDeviceId(cableModel.getComponent1().getId());
 		}
 	}

@@ -21,7 +21,6 @@ public class Psimulator {
 
 
 	public final List<Device> devices=new ArrayList<>();
-	public final Logger logger = new Logger();
 
 
 	private Psimulator() {
@@ -45,18 +44,5 @@ public class Psimulator {
 		return instance;
 	}
 
-	/**
-	 * Zkratka pro logovani.
-	 * @return
-	 */
-	public static Logger getLogger(){
-		return getPsimulator().logger;
-	}
 
-	/**
-	 * Zkratka pro logovani.
-	 */
-	public static void logg(String name, int logLevel, LoggingCategory category, String message) {
-		getPsimulator().logger.log(name, logLevel, category, message);
-	}
 }

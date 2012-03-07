@@ -23,7 +23,7 @@ public class NetworkInterface {
 	 * default behavior on cisco: false
 	 */
 	public boolean isUp = true;
-	protected IPwithNetmask ipAddress;
+	public IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
 	public NetworkInterface(Integer configID, String name, EthernetInterface iface) {

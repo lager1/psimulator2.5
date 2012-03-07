@@ -37,7 +37,7 @@ public class IcmpHandler implements Loggable {
 	 */
 	public void sendTimeToLiveExceeded(IpAddress dst, IpPacket packet) {
 		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.TIME_EXCEEDED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: icmp_seq ?
-		Psimulator.getLogger().log(this, Logger.INFO, LoggingCategory.NET, "Posilam Time Exceeded na: "+dst, p);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam Time Exceeded na: "+dst, p);
 		ipLayer.handleSendPacket(p, dst);
 	}
 
@@ -48,7 +48,7 @@ public class IcmpHandler implements Loggable {
 	 */
 	public void sendDestinationHostUnreachable(IpAddress dst, IpPacket packet) {
 		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.HOST_UNREACHABLE, 0); // TODO: jaka se posila icmp_seq ?
-		Psimulator.getLogger().log(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Host Unreachable na: "+dst, p);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Host Unreachable na: "+dst, p);
 		ipLayer.handleSendPacket(p, dst);
 	}
 
@@ -60,7 +60,7 @@ public class IcmpHandler implements Loggable {
 	public void sendDestinationNetworkUnreachable(IpAddress dst, IpPacket packet) {
 		IcmpPacket pCasted = (IcmpPacket) packet.data; // TODO: asi tu nebude
 		IcmpPacket p = new IcmpPacket(IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE, pCasted.icmp_seq); // TODO: jaka se posila icmp_seq ?
-		Psimulator.getLogger().log(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Net Unreachable na: "+packet.src, p);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam Destination Net Unreachable na: "+packet.src, p);
 		ipLayer.handleSendPacket(p, dst);
 	}
 

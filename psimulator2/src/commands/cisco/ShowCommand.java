@@ -331,7 +331,7 @@ public class ShowCommand extends CiscoCommand {
 		if (!iface.isUp) {
 			s += "administratively down";
 		} else {
-			boolean isCableConnected = getDevice().physicalModule.isCableConnected(iface);
+			boolean isCableConnected = iface.ethernetInterface.isConnected();
 			if (isCableConnected == false) { // bez kabelu && nahozene
 				s += "down";
 				// This indicates a physical problem,

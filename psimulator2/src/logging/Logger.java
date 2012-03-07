@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * Cela trida bude jen staticka - lip se pak loguje.
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Logger {
@@ -36,6 +36,10 @@ public class Logger {
 	 */
 	public static final int DEBUG = 5;
 
+
+	/**
+	 * Setting up logger. Replacement for constructor.
+	 */
 	public static void setLogger() {
 		listeners.add(new SystemListener());
 	}

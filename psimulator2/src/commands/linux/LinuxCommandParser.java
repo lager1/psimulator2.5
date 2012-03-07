@@ -1,7 +1,6 @@
 /*
  * created 5.3.2012
  */
-
 package commands.linux;
 
 import commands.AbstractCommand;
@@ -9,19 +8,24 @@ import commands.AbstractCommandParser;
 import device.Device;
 import java.util.ArrayList;
 import java.util.List;
+import logging.*;
+import logging.LoggingCategory;
+import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
+import utils.Other;
 
 /**
  *
  * @author Tomáš Pitřinec
  */
-public class LinuxCommandParser extends AbstractCommandParser {
+public class LinuxCommandParser extends AbstractCommandParser implements Loggable{
 
 	private List<String> commands = new ArrayList<>();
 
 	public LinuxCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
 		registerCommands();
+		shell.prompt=device.getName()+": ~# ";
 	}
 
 	/**
@@ -30,6 +34,7 @@ public class LinuxCommandParser extends AbstractCommandParser {
 	 */
 	private void registerCommands() {
 		commands.add("ifconfig");
+		commands.add("exit");
 	}
 
 	@Override
@@ -42,17 +47,51 @@ public class LinuxCommandParser extends AbstractCommandParser {
 		return (String[]) commands.toArray();
 	}
 
+	/**
+	 * Tady se predevsim zpracovava prichozi radek. Chytaj se tu vsechny vyjimku, aby se mohly zalogovat a nesly nikam
+	 * dal.
+	 */
 	@Override
 	protected void processLineForParsers() {
-		AbstractCommand command = getLinuxCommand();
-		if(command != null){
-			command.run();
+		try {
+			String commandName = nextWordPeek();
+			if (!commandName.isEmpty()) {	// kdyz je nejakej prikaz vubec poslanej, nejradsi bych posilani niceho zrusil
+
+				AbstractCommand command = getLinuxCommand(commandName);
+				if (command != null) {
+					command.run();
+				} else {
+					shell.printLine("bash: " + commandName + ": command not found");
+				}
+
+			}
+		} catch (Exception ex) {
+			logDebug(Logger.WARNING, ex.toString() + "\n" + Other.stackToString(ex));
 		}
-
 	}
 
-	private AbstractCommand getLinuxCommand() {
-		throw new UnsupportedOperationException("Not yet implemented");
+	private AbstractCommand getLinuxCommand(String name) {
+		if (name.equals("ifconfig")) {
+			return new Ifconfig(this);
+		} else if (name.equals("exit")){
+			return new Exit(this);
+		} else {
+			return null;
+		}
 	}
+
+	@Override
+	public String getDescription() {
+		return device.getName()+": LinuxCommandParser: ";
+	}
+
+
+	private void logDebug(int logLevel, String message){
+		if (logLevel == 0) {
+			logLevel = Logger.DEBUG;
+		}
+		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMAND_PARSER, message, null);
+	}
+
 
 }

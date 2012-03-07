@@ -75,11 +75,11 @@
                     <cable>26</cable>
                     <hwType>END_DEVICE_PC</hwType>
                     <id>1</id>
-                    <interfaceName>Eth0</interfaceName>
+                    <interfaceName>eth0</interfaceName>
                     <ipAddress>192.168.1.1/24</ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-00</macAddress>
-                    <name>Eth0</name>
+                    <name>eth0</name>
                 </interface>
                 <name>pc1</name>
             </value>
@@ -145,11 +145,11 @@
                     <cable>26</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>3</id>
-                    <interfaceName>Eth0</interfaceName>
+                    <interfaceName>eth0</interfaceName>
                     <ipAddress>192.16.1.2/24</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-01</macAddress>
-                    <name>Eth0</name>
+                    <name>eth0</name>
                 </interface>
                 <interface hwComponent="2" idAsString="4">
                     <cable>27</cable>
@@ -244,11 +244,11 @@
                     <cable>27</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>8</id>
-                    <interfaceName>Eth0</interfaceName>
+                    <interfaceName>eth0</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-05</macAddress>
-                    <name>Eth0</name>
+                    <name>eth0</name>
                 </interface>
                 <interface hwComponent="7" idAsString="9">
                     <cable>28</cable>

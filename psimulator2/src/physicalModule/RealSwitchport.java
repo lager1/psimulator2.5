@@ -11,11 +11,11 @@ import dataStructures.L2Packet;
  * @author neiss
  */
 public class RealSwitchport extends Switchport{
-	
+
 	public RealSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
 	}
-	
+
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -36,6 +36,11 @@ public class RealSwitchport extends Switchport{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	
-	
+	@Override
+	public boolean isConnected() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+
+
 }

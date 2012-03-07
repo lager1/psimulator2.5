@@ -11,6 +11,7 @@ import logging.*;
 import networkModule.Layer;
 import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
+import physicalModule.PhysicMod;
 import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -26,6 +27,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<>();
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
+	public final PhysicMod physicMod;	// zkratka na fusickej modul
 
 
 
@@ -93,13 +95,13 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		//kontrola existence switchportu:
 		SwitchportSettings swport = switchports.get(switchportNumber);
 		if (swport == null) {
-			Psimulator.getLogger().log(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
+			Logger.log(getDescription(), Logger.ERROR, LoggingCategory.ETHERNET_LAYER,
 					("Prisel paket na switchport, o jehoz existenci nemam tuseni: switchport c.: " + switchportNumber));
 		}
 		//kontrola, bylo-li nalezeno rozhrani:
 		EthernetInterface iface = swport.assignedInterface;
 		if (iface == null) {
-			Psimulator.getLogger().log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, zrejme spatnej konfigurak, prusvih!");
+			Logger.log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu, zrejme spatnej konfigurak, prusvih!");
 			return;
 		}
 
@@ -118,7 +120,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			if (iface.switchingEnabled) { //odesila se, kdyz je to dovoleny
 				transmitPacket(iface, packet);
 			} else {
-				Psimulator.getLogger().log(this, Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket.", packet);
+				Logger.log(this, Logger.IMPORTANT, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket.", packet);
 			}
 		}
 
@@ -192,6 +194,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	public EthernetLayer(NetMod netMod) {
 		super(netMod);
 		exploreHardware();
+		this.physicMod=netMod.getPhysicMod();
 		this.worker = new WorkerThread(this);
 	}
 

@@ -4,6 +4,8 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
+import logging.Logger;
+import logging.LoggingCategory;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -14,7 +16,7 @@ import utils.WorkerThread;
  */
 public class Cable implements SmartRunnable {
 
-	public final int id;	// id z konfiguraku
+	public final int configID;	// id z konfiguraku
 	/**
 	 * ID of first connector device.
 	 * (pro posilani paketu Martinovi)
@@ -26,8 +28,8 @@ public class Cable implements SmartRunnable {
 	 */
 	private int idSecondDevice;
 
-	private final Connector firstCon = new Connector(this);
-	private final Connector secondCon = new Connector(this);
+	private SimulatorSwitchport firstCon;
+	private SimulatorSwitchport secondCon;
 
 	WorkerThread worker = new WorkerThread(this);
 
@@ -38,10 +40,10 @@ public class Cable implements SmartRunnable {
 
 	/**
 	 * Creates cable with random delay time.
-	 * @param id
+	 * @param configID
 	 */
-	public Cable(int id) {
-		this.id = id;
+	public Cable(int configID) {
+		this.configID = configID;
 		this.delay = (long) Math.random() * 10;
 	}
 
@@ -51,7 +53,7 @@ public class Cable implements SmartRunnable {
 	 * @param delay
 	 */
 	public Cable(int id, long delay) {
-		this.id = id;
+		this.configID = id;
 		this.delay = delay;
 	}
 
@@ -61,13 +63,9 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setFirstInterface(SimulatorSwitchport swport) {
-		assert swport != null;
-		boolean res = firstCon.connectInterface(swport);
-		if (res) {
-			swport.connector = firstCon;
-		}
-		return res;
+	public void setFirstSwitchport(SimulatorSwitchport swport) {
+		swport.cabel = this;
+		this.firstCon = swport;
 	}
 
 	/*
@@ -76,13 +74,9 @@ public class Cable implements SmartRunnable {
 	 * @param iface cannot be null
 	 * @return true if connector was empty and now is connected to interface.
 	 */
-	public boolean setSecondInterface(SimulatorSwitchport swport) {
-		assert swport != null;
-		boolean res = secondCon.connectInterface(swport);
-		if (res) {
-			swport.connector = secondCon;
-		}
-		return res;
+	public void setSecondSwitchport(SimulatorSwitchport swport) {
+		swport.cabel = this;
+		this.secondCon = swport;
 	}
 
 	@Override
@@ -92,8 +86,8 @@ public class Cable implements SmartRunnable {
 		boolean secondIsEmpty = true;
 
 		do {
-			Switchport first = firstCon.getInterface(); // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
-			Switchport second = secondCon.getInterface();
+			Switchport first = firstCon; // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
+			Switchport second = secondCon;
 
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();
@@ -130,5 +124,22 @@ public class Cable implements SmartRunnable {
 
 	public void setSecondDeviceId(Integer id) {
 		this.idSecondDevice = id;
+	}
+
+	/**
+	 * Vraci to switchport na druhym konci kabelu nez je ten zadanej.
+	 * Returns switchport on the other end of the cable, where is the given.
+	 * @param one
+	 * @return
+	 */
+	public SimulatorSwitchport getTheOtherSwitchport(Switchport one) {
+		if (one == firstCon) {
+			return secondCon;
+		} else if (one == secondCon) {
+			return firstCon;
+		} else {
+			Logger.log(Logger.ERROR, LoggingCategory.PHYSICAL, "Byla spatne zavolana metoda getTheOtherSwitchport na kabelu s configID " + configID);
+			return null;
+		}
 	}
 }

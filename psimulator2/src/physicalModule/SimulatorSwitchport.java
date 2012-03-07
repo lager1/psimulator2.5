@@ -16,11 +16,13 @@ import java.util.List;
  */
 public class SimulatorSwitchport extends Switchport {
 
-	/**
-	 * Link to cable's connector.
-	 * Until cable is not connected ti is null.
-	 */
-	protected Connector connector;
+//	/**
+//	 * Link to cable's connector.
+//	 * Until cable is not connected ti is null.
+//	 */
+//	protected Connector connector;
+
+	protected Cable cabel;
 
 	/**
 	 * Storage for packets to be sent.
@@ -51,12 +53,12 @@ public class SimulatorSwitchport extends Switchport {
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
-		if ((size + packetSize > capacity) || connector == null) { // (drop packet, run out of capacity) || (no cable is connected)
+		if ((size + packetSize > capacity) || cabel == null) { // (drop packet, run out of capacity) || (no cable is connected)
 			dropped++;
 		} else {
 			size += packetSize;
 			buffer.add(packet);
-			connector.getCable().worker.wake();
+			cabel.worker.wake();
 		}
 	}
 
@@ -86,5 +88,20 @@ public class SimulatorSwitchport extends Switchport {
 	 */
 	public boolean isEmptyBuffer() {
 		return buffer.isEmpty();
+	}
+
+	/**
+	 * Returns true, if on the other end of cable is connected other network device.
+	 * @return
+	 */
+	@Override
+	public boolean isConnected() {
+		if (cabel == null) {
+			return false;
+		}
+		if (cabel.getTheOtherSwitchport(this) != null) {
+			return true;
+		}
+		return false;
 	}
 }

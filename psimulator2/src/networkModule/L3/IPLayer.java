@@ -234,7 +234,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 		if (packet.ttl == 1) {
 			// jestli je to ICMP, tak posli TTL expired
 			// zaloguj zahozeni paketu
-			Psimulator.getLogger().log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
+			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
 			icmpHandler.sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
@@ -245,7 +245,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DNU vzdy??
 				icmpHandler.sendDestinationNetworkUnreachable(packet.src, packet);
 			}
-			Psimulator.getLogger().log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
+			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
 		}
 

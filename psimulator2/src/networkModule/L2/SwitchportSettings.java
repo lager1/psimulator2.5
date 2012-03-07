@@ -18,6 +18,5 @@ public class SwitchportSettings {
 		this.switchportNumber = switchportNumber;
 		isUp=true;
 	}
-	
-	
+
 }
