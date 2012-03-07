@@ -50,7 +50,7 @@ public class TelnetSession implements Shell {
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot find device which listen on port: " + this.port);
 		}
 
-		Logger.log(Logger.INFO, LoggingCategory.TELNET, "TelnetSession sucessfuly created for device:" + device.getName() + " on port: " + this.port+ " using:" + con.getConnectionData().getNegotiatedTerminalType());
+		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "TelnetSession sucessfuly created for device:" + device.getName() + " on port: " + this.port+ " using:" + con.getConnectionData().getNegotiatedTerminalType());
 
 		
 
