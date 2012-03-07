@@ -19,12 +19,18 @@ import logging.LoggingCategory;
  */
 public class Psimulator {
 
+	private static String name="psimulator";
+
 
 	public final List<Device> devices=new ArrayList<>();
 
 
 	private Psimulator() {
 
+	}
+
+	public static String getNameOfProgram(){
+		return name;
 	}
 
 

@@ -48,23 +48,25 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	/**
-	 * Tady se predevsim zpracovava prichozi radek. Chytaj se tu vsechny vyjimku, aby se mohly zalogovat a nesly nikam
+	 * Tady se predevsim zpracovava prichozi radek. Chytaj se tu vsechny vyjimky, aby se mohly zalogovat a nesly nikam
 	 * dal.
 	 */
 	@Override
 	protected void processLineForParsers() {
-		try {
+		try {	// nechci hazet pripadne hozeny vyjimky dal
+
 			String commandName = nextWordPeek();
 			if (!commandName.isEmpty()) {	// kdyz je nejakej prikaz vubec poslanej, nejradsi bych posilani niceho zrusil
 
 				AbstractCommand command = getLinuxCommand(commandName);
 				if (command != null) {
-					command.run();
+					command.run();	// TODO: doresit nastaveni prave spustenyho prikazu a navratovyho kodu
 				} else {
 					shell.printLine("bash: " + commandName + ": command not found");
 				}
 
 			}
+
 		} catch (Exception ex) {
 			logDebug(Logger.WARNING, ex.toString() + "\n" + Other.stackToString(ex));
 		}

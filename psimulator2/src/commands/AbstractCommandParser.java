@@ -163,6 +163,10 @@ public abstract class AbstractCommandParser {
 		return res;
 	}
 
+	public List<String> getWords() {
+		return words;
+	}
+
 	protected int getRef() {
 		return ref;
 	}

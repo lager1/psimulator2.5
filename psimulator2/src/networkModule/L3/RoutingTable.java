@@ -158,6 +158,14 @@ public class RoutingTable {
         return p;
     }
 
+	/**
+	 * Smaze uplne vsechny zaznamy v routovaci tabulce.
+	 * Odpovida smazVsechnyZaznamy ve stary verzi simulatoru.
+	 */
+	public void flushAllRecords() {
+		records = new LinkedList<>();
+    }
+
     @Deprecated
     public String vypisSeLinuxove(){
         String v="";

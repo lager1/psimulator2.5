@@ -87,4 +87,13 @@ public class Other {
 	public static double zaokrouhli(double d) {
 		return ((double) Math.round(d * 1000)) / 1000;
 	}
+
+	public static boolean jeInteger(String ret) {
+        try {
+            int a = Integer.parseInt(ret);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 }
