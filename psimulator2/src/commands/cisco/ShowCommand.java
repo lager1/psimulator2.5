@@ -358,7 +358,7 @@ public class ShowCommand extends CiscoCommand {
 		s += "\n";
 		String mac = iface.getMacAddress().getCiscoRepresentation();
 		s += "  Hardware is Gt96k FE, address is " + mac + " (" + mac + ")\n";
-		if (iface.getIpAddress().getIp() != null) {
+		if (iface.getIpAddress() != null) {
 			s += "  Internet address is " + iface.getIpAddress().getIp() + "\n";
 		}
 		s += "  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec, \n"

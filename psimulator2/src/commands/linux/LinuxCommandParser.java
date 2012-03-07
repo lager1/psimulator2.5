@@ -12,7 +12,7 @@ import logging.*;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
-import utils.Other;
+import utils.Util;
 
 /**
  *
@@ -68,7 +68,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			}
 
 		} catch (Exception ex) {
-			logDebug(Logger.WARNING, ex.toString() + "\n" + Other.stackToString(ex));
+			logDebug(Logger.WARNING, ex.toString() + "\n" + Util.stackToString(ex));
 		}
 	}
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
-import utils.Other;
+import utils.Util;
 
 /**
  *
@@ -501,7 +501,7 @@ public class Ifconfig extends AbstractCommand{
     public String toString() {
         String vratit = "  Parametry prikazy ifconfig:"
 				+ "\n\t"+parser.getWordsAsString()
-				+ "\n\tnavratovyKodParseru: "+ Other.rozlozNaMocniny2(navrKod)
+				+ "\n\tnavratovyKodParseru: "+ Util.rozlozNaMocniny2(navrKod)
 				+ "\n\tminus_a: "+minus_a;
         if (jmenoRozhrani != null) {
             vratit += "\n\trozhrani: " + jmenoRozhrani;

@@ -10,7 +10,7 @@ import java.io.StringWriter;
  *
  * @author Tomas Pitrinec
  */
-public class Other {
+public class Util {
 
 	/**
 	 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.

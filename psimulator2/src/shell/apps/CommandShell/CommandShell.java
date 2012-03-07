@@ -210,6 +210,7 @@ public class CommandShell extends TerminalApplication {
 				{
 					return 0;
 				} else {
+					ex.printStackTrace();
 					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "CommandShell");
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 					return -1;

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
@@ -19,13 +20,14 @@ import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
 import shell.apps.CommandShell.CommandShell;
 import static shell.apps.CommandShell.CommandShell.*;
+import utils.Util;
 
 
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class CiscoCommandParser extends AbstractCommandParser {
+public class CiscoCommandParser extends AbstractCommandParser implements Loggable {
 
 	/**
      * Specialni formatovac casu pro vypis servisnich informaci z cisca.
@@ -72,62 +74,63 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		String first = nextWord();
 
-		switch (mode) {
-            case CISCO_USER_MODE:
-                if (isCommand("enable", first)) {
-					changeMode(CISCO_PRIVILEGED_MODE);
-                    return;
-                }
-                if (isCommand("ping", first)) {
+		try {
+			switch (mode) {
+				case CISCO_USER_MODE:
+					if (isCommand("enable", first)) {
+						changeMode(CISCO_PRIVILEGED_MODE);
+						return;
+					}
+					if (isCommand("ping", first)) {
 //                    command = new CiscoPing(pc, kon, slova);
 //                    return;
-                }
-                if (isCommand("traceroute", first)) {
+					}
+					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
 //                    return;
-                }
-                if (isCommand("show", first)) {
-                    command = new ShowCommand(this);
-					command.run();
-                    return;
-                }
-                if (isCommand("exit", first) || isCommand("logout", first)) {
-					shell.closeSession();
-                    return;
-                }
-                break;
+					}
+					if (isCommand("show", first)) {
+						command = new ShowCommand(this);
+						command.run();
+						return;
+					}
+					if (isCommand("exit", first) || isCommand("logout", first)) {
+						shell.closeSession();
+						return;
+					}
+					break;
 
-            case CISCO_PRIVILEGED_MODE:
-                if (isCommand("enable", first)) { // funguje u cisco taky, ale nic nedela
-                    return;
-                }
-                if (isCommand("disable", first)) {
-					changeMode(CISCO_USER_MODE);
-                    return;
-                }
-                if (isCommand("ping", first)) {
+				case CISCO_PRIVILEGED_MODE:
+					if (isCommand("enable", first)) { // funguje u cisco taky, ale nic nedela
+						return;
+					}
+					if (isCommand("disable", first)) {
+						changeMode(CISCO_USER_MODE);
+						return;
+					}
+					if (isCommand("ping", first)) {
 //                    command = new CiscoPing(pc, kon, slova);
 //                    return;
-                }
-                if (isCommand("traceroute", first)) {
+					}
+					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
 //                    return;
-                }
-                if (isCommand("configure", first)) {
+					}
+					if (isCommand("configure", first)) {
 //                    configure();
-					command = new ConfigureCommand(this);
-					command.run();
-                    return;
-                }
-                if (isCommand("show", first)) {
-                    command = new ShowCommand(this);
-					command.run();
-					return;
-                }
-                if (isCommand("exit", first) || isCommand("logout", first)) {
-                    shell.closeSession();
-                    return;
-                }
+						command = new ConfigureCommand(this);
+						command.run();
+						return;
+					}
+					if (isCommand("show", first)) {
+						command = new ShowCommand(this);
+						command.run();
+						return;
+					}
+					if (isCommand("exit", first) || isCommand("logout", first)) {
+						shell.closeSession();
+						return;
+					}
 
 //                if (debug) {
 //                    if (isCommand("ip", first)) {
@@ -143,26 +146,26 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                        return;
 //                    }
 //                }
-                break;
+					break;
 
-            case CISCO_CONFIG_MODE:
-                if (isCommand("exit", first) || first.equals("end")) {
-					changeMode(CISCO_PRIVILEGED_MODE);
+				case CISCO_CONFIG_MODE:
+					if (isCommand("exit", first) || first.equals("end")) {
+						changeMode(CISCO_PRIVILEGED_MODE);
 //                    mode = ROOT;
 //                    kon.prompt = pc.jmeno + "#";
 //                    Date d = new Date();
 //                    cekej(100);
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
-                    return;
-                }
-                if (isCommand("ip", first)) {
-                    command = new IpCommand(this, false);
-                    return;
-                }
-                if (isCommand("interface", first)) {
-                    iface();
-                    return;
-                }
+						return;
+					}
+					if (isCommand("ip", first)) {
+						command = new IpCommand(this, false);
+						return;
+					}
+					if (isCommand("interface", first)) {
+						iface();
+						return;
+					}
 //                if (isCommand("access-list", first)) {
 //                    command = new CiscoAccessList(pc, kon, slova, false);
 //                    return;
@@ -171,31 +174,31 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    no();
 //                    return;
 //                }
-                break;
+					break;
 
-            case CISCO_CONFIG_IF_MODE:
-                if (isCommand("exit", first)) {
-					changeMode(CISCO_CONFIG_MODE);
+				case CISCO_CONFIG_IF_MODE:
+					if (isCommand("exit", first)) {
+						changeMode(CISCO_CONFIG_MODE);
 
 //                    mode = CONFIG;
 //                    kon.prompt = pc.jmeno + "(config)#";
 //                    aktualni = null; // zrusime odkaz na menene rozhrani
-                    return;
-                }
-                if (first.equals("end")) {
-					changeMode(CISCO_PRIVILEGED_MODE);
+						return;
+					}
+					if (first.equals("end")) {
+						changeMode(CISCO_PRIVILEGED_MODE);
 //                    mode = ROOT;
 //                    kon.prompt = pc.jmeno + "#";
 //                    Date d = new Date();
 //                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
-					return;
-				}
+						return;
+					}
 //                }
-                if (isCommand("ip", first)) {
-                    command = new IpAddressCommand(this, false);
-					command.run();
-                    return;
-                }
+					if (isCommand("ip", first)) {
+						command = new IpAddressCommand(this, false);
+						command.run();
+						return;
+					}
 //                if (isCommand("no", first)) {
 //                    no();
 //                    return;
@@ -205,8 +208,8 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //                    return;
 //                }
 //
-				break;
-        }
+					break;
+			}
 
 //        if (debug) {
 //            if (slova.get(0).equals("ifconfig")) { // pak smazat
@@ -218,21 +221,24 @@ public class CiscoCommandParser extends AbstractCommandParser {
 //            }
 //        }
 //
-        if (isAmbiguousCommand) {
-            isAmbiguousCommand = false;
-            ambiguousCommand();
-            return;
-        }
+			if (isAmbiguousCommand) {
+				isAmbiguousCommand = false;
+				ambiguousCommand();
+				return;
+			}
 
-        switch (mode) {
-            case CISCO_CONFIG_MODE:
-            case CISCO_CONFIG_IF_MODE:
-                invalidInputDetected();
-                break;
+			switch (mode) {
+				case CISCO_CONFIG_MODE:
+				case CISCO_CONFIG_IF_MODE:
+					invalidInputDetected();
+					break;
 
-            default:
-				shell.printLine("% Unknown command or computer name, or unable to find computer address");
-        }
+				default:
+					shell.printLine("% Unknown command or computer name, or unable to find computer address");
+			}
+		} catch (Exception e) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, e.toString() + "\n" + Util.stackToString(e), e);
+		}
 	}
 
 	@Override
@@ -445,4 +451,9 @@ public class CiscoCommandParser extends AbstractCommandParser {
 
 		changeMode(CommandShell.CISCO_CONFIG_IF_MODE);
     }
+
+	@Override
+	public String getDescription() {
+		return device.getName()+": CiscoCommandParser: ";
+	}
 }
