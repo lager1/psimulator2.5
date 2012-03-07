@@ -81,7 +81,7 @@ public class Loader {
 	private Device createDevice(HwComponentModel model) {
 
 		// vytvoreni samotnyho pocitace:
-		Device pc = new Device(model.getId(), model.getDeviceName(), prevedTyp(model.getHwType()));
+		Device pc = new Device(model.getId(), model.getName(), prevedTyp(model.getHwType()));
 //		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu:
