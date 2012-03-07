@@ -1,7 +1,6 @@
 /*
  * created 5.3.2012
  */
-
 package config.configTransformer;
 
 import device.Device;
@@ -47,8 +46,8 @@ public class Saver {
 	}
 
 	/**
-	 * Saves IP address with netmask and isUp of all interfaces of device.
-	 * Saves also NetworkModuleType.
+	 * Saves IP address with netmask and isUp of all interfaces of device. Saves also NetworkModuleType.
+	 *
 	 * @param hwComponentModel
 	 * @param device
 	 */
@@ -69,11 +68,11 @@ public class Saver {
 	}
 
 	private void saveRoutingTable(TcpIpNetMod netMod, HwComponentModel model) {
-		RoutingTableConfig rtc= new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci routovaci tabulky
+		RoutingTableConfig rtc = new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci routovaci tabulky
 		model.getDevSettings().setRoutingTabConfig(rtc);	// priradim tu novou konfiguraci do nastaveni pocitace
 		RoutingTable rt = netMod.ipLayer.routingTable;
-		for(int i = 0; i< rt.size();i++){
-			RoutingTable.Record radek=rt.getRecord(i);
+		for (int i = 0; i < rt.size(); i++) {
+			RoutingTable.Record radek = rt.getRecord(i);
 			rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
 		}
 

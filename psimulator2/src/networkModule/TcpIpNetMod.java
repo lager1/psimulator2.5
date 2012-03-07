@@ -5,10 +5,8 @@
 package networkModule;
 
 import device.Device;
-
-
 import networkModule.L3.IPLayer;
-import networkModule.L4.TcpIpLayer;
+import networkModule.L4.TransportLayer;
 
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
@@ -18,8 +16,8 @@ import networkModule.L4.TcpIpLayer;
 public class TcpIpNetMod extends SimpleSwitchNetMod {
 
 
-	public final IPLayer ipLayer = new IPLayer(this);
-	public final TcpIpLayer tcpipLayer = new TcpIpLayer(this);
+	public final IPLayer ipLayer;
+	public final TransportLayer tcpipLayer = new TransportLayer(this);
 
 	/**
 	 * Konstruktor sitovyho modulu.
@@ -28,6 +26,7 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 	 */
 	public TcpIpNetMod(Device device) {
 		super(device);
+		this.ipLayer = new IPLayer(this);
 	}
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema

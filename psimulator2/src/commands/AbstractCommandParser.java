@@ -171,6 +171,10 @@ public abstract class AbstractCommandParser {
 		return ref;
 	}
 
+	/**
+	 * Tomasova debugovaci metoda.
+	 * @return
+	 */
 	public String getWordsAsString(){
 		String vratit="Words: ";
 		for(String s:words){

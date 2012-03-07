@@ -357,10 +357,10 @@ public class Ifconfig extends AbstractCommand{
         if (pouzitIp != -1){ //adresa byla zadana, musi se nastavit
             nahodRozhrani(r);
             String nastavit = seznamIP.get(pouzitIp).toString();
-            if (r.ipAddress!=null && nastavit.equals(r.ipAddress.toString())){
+            if (r.getIpAddress()!=null && nastavit.equals(r.getIpAddress().toString())){
                 //ip existuje a je stejna, nic se nemeni
             } else { //IP adresa neni stejna, bude se menit
-                r.ipAddress=vytvorAdresu(nastavit);
+				ipLayer.changeIpAddressOnInterface(r, vytvorAdresu(nastavit));
                 zmena=true;
             }
         }
@@ -368,7 +368,7 @@ public class Ifconfig extends AbstractCommand{
         //nastavovani masky ze Stringu m
         if (maska != null) { //zadana maska jako 255.255.255.0
             nahodRozhrani(r);
-            if(r.ipAddress!=null && r.ipAddress.getMask().toString().equals(maska)){
+            if(r.getIpAddress()!=null && r.getIpAddress().getMask().toString().equals(maska)){
                 //ip adresa existuje a ma stejnou masku, nic se nemeni
             }else{//zadana hodnota je jina nez puvodni, musi se menit
                 priradMasku(r, maska);
@@ -378,7 +378,7 @@ public class Ifconfig extends AbstractCommand{
 
         //nastavovani masky za lomitkem
         if (pocetBituMasky != -1) { //zadana adresa s maskou za lomitkem
-            if (r.ipAddress != null && ( r.ipAddress.getMask().getNumberOfBits() == pocetBituMasky ) ){
+            if (r.getIpAddress() != null && ( r.getIpAddress().getMask().getNumberOfBits() == pocetBituMasky ) ){
                 //ip adresa existuje a ma stejnou masku, nic se nemeni
             }else{//zadana hodnota je jina nez puvodni, musi se menit
                 priradMasku(r, pocetBituMasky);
@@ -412,10 +412,10 @@ public class Ifconfig extends AbstractCommand{
      * @param pocetBitu
      */
 	private void priradMasku(NetworkInterface iface, int pocetBitu) {
-		if (iface.ipAddress == null) {
+		if (iface.getIpAddress() == null) {
 			printLine("SIOCSIFNETMASK: Cannot assign requested address");
 		} else {
-			iface.ipAddress = new IPwithNetmask(iface.ipAddress.getIp(), pocetBitu);
+			ipLayer.changeIpAddressOnInterface(iface, new IPwithNetmask(iface.getIpAddress().getIp(), pocetBitu));
 		}
 	}
 
@@ -426,12 +426,12 @@ public class Ifconfig extends AbstractCommand{
      * @param m string masky; nesmi bejt null
      */
     private void priradMasku(NetworkInterface iface, String m){//pokusi se nastavit masku
-        if(iface.ipAddress==null){ //neni nastavena IP adresa, vypise se chybovy hlaseni a skonci se
+        if(iface.getIpAddress() == null){ //neni nastavena IP adresa, vypise se chybovy hlaseni a skonci se
             printLine("SIOCSIFNETMASK: Cannot assign requested address");
         } else {
 			try{//je potreba zkontrolovat spravnost masky!!! //proto vyjimka
 				IpNetmask mask = new IpNetmask(m);
-				iface.ipAddress = new IPwithNetmask(iface.ipAddress.getIp(),mask);
+				ipLayer.changeIpAddressOnInterface(iface, new IPwithNetmask(iface.getIpAddress().getIp(), mask));
 			}catch(BadNetmaskException ex){
 				printLine("SIOCSIFNETMASK: Invalid argument");
 			}
@@ -441,8 +441,8 @@ public class Ifconfig extends AbstractCommand{
 
     private void vyridRoutovani(NetworkInterface r){
 		ipLayer.routingTable.flushRecords(r); //mazani rout
-        if(r.ipAddress!=null){
-			ipLayer.routingTable.addRecord(r.ipAddress.getNetworkNumber(), r);
+        if(r.getIpAddress()!=null){
+			ipLayer.routingTable.addRecord(r.getIpAddress().getNetworkNumber(), r);
         }
     }
 
@@ -466,10 +466,10 @@ public class Ifconfig extends AbstractCommand{
 		int b = (int) (Math.random() * 100); //nahodne cislo 0 - 99
 
 		printLine(r.name + "\tLink encap:Ethernet  HWadr " + r.getMacAddress());
-		if (r.ipAddress != null) {
-			printLine("\tinet adr:" + r.ipAddress.getIp().toString() + "  Bcast:"
-					+ r.ipAddress.getBroadcast().toString()
-					+ "  Mask:" + r.ipAddress.getMask().toString());
+		if (r.getIpAddress() != null) {
+			printLine("\tinet adr:" + r.getIpAddress().getIp().toString() + "  Bcast:"
+					+ r.getIpAddress().getBroadcast().toString()
+					+ "  Mask:" + r.getIpAddress().getMask().toString());
 		}
 		printLine("\tUP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1"); //asi ne cesky
 		if (r.ethernetInterface.isConnected()) {

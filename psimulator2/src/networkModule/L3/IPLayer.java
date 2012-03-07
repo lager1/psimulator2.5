@@ -10,6 +10,7 @@
  */
 package networkModule.L3;
 
+import networkModule.L4.IcmpHandler;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -21,7 +22,6 @@ import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.RoutingTable.Record;
 import networkModule.TcpIpNetMod;
-import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -64,9 +64,9 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private boolean newArpReply = false;
 	private final Map<String, NetworkInterface> networkIfaces = new HashMap<>();
 	/**
-	 * Waiting time for ARP requests.
+	 * Waiting time [ms] for ARP requests.
 	 */
-	private long arpTTL = 10000;
+	private long arpTTL = 10_000;
 
 	/**
 	 * Handles ICMP answers, sends ICMP packet if neeeded.
@@ -88,7 +88,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-		this.icmpHandler = new IcmpHandler(netMod, this);
+		this.icmpHandler = netMod.tcpipLayer.icmphandler;
 		this.worker = new WorkerThread(this);
 	}
 	/**
@@ -281,16 +281,24 @@ public class IPLayer implements SmartRunnable, Loggable {
 	/**
 	 * Method for sending packet from layer 4.
 	 *
-	 * @param packet
-	 * @param dst
+	 * @param packet data to be sent
+	 * @param dst destination address
 	 */
 	public void sendPacket(L4Packet packet, IpAddress dst) {
 		sendBuffer.add(new SendItem(packet, dst));
 		worker.wake();
 	}
 
-	protected void handleSendPacket(L4Packet packet, IpAddress dst) {
-		IpPacket p = new IpPacket(null, dst, ttl, packet);
+	/**
+	 * Method for sending from IPLayer and IcmpHandler only! <br />
+	 * In this method everything is in the same thread. <br />
+	 * Don't use it from Layer 4!
+	 *
+	 * @param packet data to be sent
+	 * @param dst destination address
+	 */
+	public void handleSendPacket(L4Packet packet, IpAddress dst) {
+		IpPacket p = new IpPacket(null, dst, ttl, packet); // src IP je null, pac v tuto chvili se jeste nevi, z jakeho rozhrani to pujde ven
 		handleSendIpPacket(p, null); // prichozi rozhrani je null, pac zadne takove neni
 	}
 

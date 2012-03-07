@@ -23,7 +23,11 @@ public class NetworkInterface {
 	 * default behavior on cisco: false
 	 */
 	public boolean isUp = true;
-	public IPwithNetmask ipAddress;
+	/**
+	 * Je naschval protected! Nekdy v budoucnu mozna budeme chtit pridat nejake akce, kdyz se zmeni IP..
+	 * IP na rozhrani se meni pred IPLayer a metodu changeIpAddressOnInterface().
+	 */
+	protected IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
 	public NetworkInterface(Integer configID, String name, EthernetInterface iface) {
