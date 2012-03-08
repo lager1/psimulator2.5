@@ -634,4 +634,11 @@ public class TerminalIO
 
   /** end Constants Declaration  ******************************************/
 
+  /**NEW CONSTANTS DECLARATION **/
+  // SOURCE : EXPERIMENTAL + http://nemesis.lonestar.org/reference/telecom/codes/ascii.html
+  public static final int CTRL_C = 3;
+  public static final int CTRL_Z = 26;
+  public static final int CTRL_W = 23;
+  
+  
 }//class TerminalIO

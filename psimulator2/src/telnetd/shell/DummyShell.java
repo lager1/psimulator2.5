@@ -76,7 +76,7 @@ public class DummyShell
       m_IO = m_Connection.getTerminalIO();
       //dont forget to register listener
       m_Connection.addConnectionListener(this);
-
+	 
       //clear the screen and start from zero
       m_IO.eraseScreen();
       m_IO.homeCursor();

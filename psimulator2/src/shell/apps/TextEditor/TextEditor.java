@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import logging.Logger;
 import logging.LoggingCategory;
-
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.terminal.ColorHelper;
@@ -72,13 +71,13 @@ public class TextEditor extends TerminalApplication {
             lines.add("o");
 
             ea.setValue(lines);
-
+			
             ea.draw();
             terminalIO.flush();
             ea.run();
 
 
-            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + terminalIO.CRLF + ea.getValue());
+            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + BasicTerminalIO.CRLF + ea.getValue());
 
         } catch (IOException ex) {
 			

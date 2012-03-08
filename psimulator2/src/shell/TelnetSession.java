@@ -7,6 +7,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
 import shell.apps.TerminalApplication;
+import shell.apps.TextEditor.TextEditor;
 import telnetd.io.BasicTerminalIO;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionEvent;
@@ -57,6 +58,10 @@ public class TelnetSession implements Shell {
 		CommandShell cmd = new CommandShell(m_IO, this.device);  // create command shell
 		this.rootApplication = cmd;
 
+//		TextEditor edt = new TextEditor(m_IO, device);
+//		this.rootApplication = edt;
+//		
+		
 		int retValue = this.rootApplication.run();
 
 		if (retValue != 0) {

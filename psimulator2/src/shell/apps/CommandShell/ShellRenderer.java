@@ -101,10 +101,28 @@ public class ShellRenderer {
                         sb.deleteCharAt(cursor - 1);
                         moveCursorLeft(1);
                         draw();
-                        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
+                        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Backspace upravil pozici kurzoru na: " + cursor);
 
                     }
                 }
+				
+				if(i == TerminalIO.CTRL_W){  // ctrl + w deletes a previous word
+					printOut=false;
+					
+					while(cursor != 0){
+						sb.deleteCharAt(cursor - 1);
+                        moveCursorLeft(1);
+                        draw();
+                        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "CTRL+W upravil pozici kurzoru na: " + cursor);
+						
+						if(cursor!=0 && Character.isSpaceChar(sb.charAt(cursor-1)))  // delete until space is found
+							break;
+						
+					}
+					
+					
+				}
+				
 
                 if (i == 12) {
                     printOut = false;
