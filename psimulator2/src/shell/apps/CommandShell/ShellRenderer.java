@@ -227,11 +227,11 @@ public class ShellRenderer {
         this.commandShell.printPrompt();
 
         if (key == TerminalIO.UP) {
-            this.sb.setLength(0);
-            this.sb.append(this.commandShell.getHistory().getPreviousCommand());
+          //  this.sb.setLength(0);
+            this.commandShell.getHistory().handlePrevious(this.sb);
         } else if (key == TerminalIO.DOWN) {
-            this.sb.setLength(0);
-            this.sb.append(this.commandShell.getHistory().getNextCommand());
+          //  this.sb.setLength(0);
+            this.commandShell.getHistory().handleNext(this.sb);
         }
 
         termIO.write(this.sb.toString());

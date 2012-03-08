@@ -9,100 +9,172 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * třída pro uchování historií konsole +  přístup k nim
+ * třída pro uchování historií konsole + přístup k nim
+ *
  * @author Martin Lukáš
  */
 public class History {
 
-    private ArrayList<String> acctualHistory;
-    private List<ArrayList> historyList;
+	private List<String> activeHistory;
+	private List<List> listOfHistorys;
 //    private int historyIterator = 0;
-    private ListIterator<String> iterator;
-    private ListIterator<ArrayList> iteratorList;
+	private ListIterator<String> commandIterartor;
+	private ListIterator<List> historysIterator;
+	String activeHistoryLine;
+	private boolean calledNext = false;
+	private boolean calledPrevious = false;
 
-    public History() {
-        this.acctualHistory = new ArrayList<String>();
-        this.iterator = this.acctualHistory.listIterator(this.acctualHistory.size());
+	public History() {
+		this.activeHistory = new ArrayList<String>();
+		this.commandIterartor = this.activeHistory.listIterator(this.activeHistory.size());
 
-        this.historyList = new ArrayList<ArrayList>(2);
-        this.historyList.add(acctualHistory);
-        this.iteratorList = historyList.listIterator();
-    }
+		this.listOfHistorys = new ArrayList<>(2);
+		this.listOfHistorys.add(activeHistory);
+		this.historysIterator = listOfHistorys.listIterator();
 
-    /**
-     * pokud uživatel odešle příkaz, pak by se měl nastavit iterátor do výchozí
-     * pozice, aby při dalším listování historií se začalo posledním odeslaným příkazem
-     */
-    private void resetIterator() {
-        this.iterator = this.acctualHistory.listIterator(this.acctualHistory.size());
-    }
+	}
 
-    /**
-     * metoda, která rotuje dvě různé historie
-     */
-    public void swapHistory() {
-        if (historyList.size() == 1) {
-            historyList.add(new ArrayList<String>());
-        }
+	/**
+	 * pokud uživatel odešle příkaz, pak by se měl nastavit iterátor do výchozí pozice, aby při dalším listování
+	 * historií se začalo posledním odeslaným příkazem
+	 */
+	private void resetIterator() {
+		this.commandIterartor = this.activeHistory.listIterator(this.activeHistory.size());
+	}
 
-        if (!iteratorList.hasNext()) // pokud nemá další pak nastavím iterátor nastavím na začátek
-        {
-            this.iteratorList = historyList.listIterator();
-        }
+	/**
+	 * metoda, která rotuje dvě různé historie
+	 */
+	public void swapHistory() {
+		if (listOfHistorys.size() == 1) {
+			listOfHistorys.add(new ArrayList<String>());
+		}
 
-        this.acctualHistory = iteratorList.next();
+		if (!historysIterator.hasNext()) // pokud nemá další pak nastavím iterátor nastavím na začátek
+		{
+			this.historysIterator = listOfHistorys.listIterator();
+		}
 
-        resetIterator();
+		this.activeHistory = historysIterator.next();
 
-    }
+		resetIterator();
 
-    public void add(String command) {
+	}
 
-        command = command.trim();
+	/**
+	 * command entered
+	 *
+	 * @param command
+	 */
+	public void add(String command) {
 
-        if (command.isEmpty() || command.equalsIgnoreCase("")) {
-            return;
-        }
+		command = command.trim();
 
-        if (!acctualHistory.isEmpty()) {
+		if (command.isEmpty() || command.equalsIgnoreCase("")) { // do not add empty command
+			return;
+		}
 
-            String lastCommand = acctualHistory.get(acctualHistory.size()-1).trim();
+		if (!activeHistory.isEmpty()) {
 
-            if (command.equalsIgnoreCase(lastCommand)) {
-                return;
-            }
-        }
+			String lastCommand = activeHistory.get(activeHistory.size() - 1).trim();
 
-        this.acctualHistory.add(command);
-        resetIterator();
+			if (command.equalsIgnoreCase(lastCommand)) { // do not add two same commands
+				return;
+			}
+		}
 
-    }
+		this.calledNext = false;
+		this.calledPrevious = false;
+		this.activeHistoryLine = null;
+		this.activeHistory.add(command);
+		resetIterator();
 
-    public String getPreviousCommand() {
+	}
 
-        if (acctualHistory.isEmpty()) {
-            return "";
-        }
+	/**
+	 * iterating in history to the oldest command
+	 *
+	 * @param sb
+	 * @return
+	 */
+	public String handlePrevious(StringBuilder sb) {
 
-        if (this.iterator.hasPrevious()) {
-            return this.iterator.previous();
-        } else {
-            return "";
-        }
+		String ret = "";
 
-    }
+		if (activeHistory.isEmpty()) {
+			return ret;
+		}
 
-    public String getNextCommand() {
+		if (!this.commandIterartor.hasNext()) // there is no next = iterator pointing at the end => store active commandLine
+		{
+			this.activeHistoryLine = sb.toString();
+		}
 
-        if (acctualHistory.isEmpty()) {
-            return "";
-        }
+		if (calledNext) { // double iterate
+			if (this.commandIterartor.hasPrevious()) {
+				this.commandIterartor.previous();
+			}
 
-        if (this.iterator.hasNext()) {
-            return this.iterator.next();
-        } else {
-            return "";
-        }
+		}
 
-    }
+		if (this.commandIterartor.hasPrevious()) {
+
+			ret = this.commandIterartor.previous();
+			calledNext = false;
+			calledPrevious = true;
+
+
+			sb.setLength(0);
+			sb.append(ret);
+
+		}
+
+		return ret;
+
+	}
+
+	/**
+	 * iterating in history to the newest command
+	 *
+	 * @param sb
+	 * @return
+	 */
+	public String handleNext(StringBuilder sb) {
+
+		String ret = "";
+
+		if (activeHistory.isEmpty()) {
+			return ret;
+		}
+
+		if (calledPrevious) { // double iterate
+			if (this.commandIterartor.hasNext()) {
+				this.commandIterartor.next();
+			}
+		}
+
+
+		if (this.commandIterartor.hasNext()) {
+			ret = this.commandIterartor.next();
+
+			this.calledNext = true;
+			this.calledPrevious = false;
+
+			sb.setLength(0);
+			sb.append(ret);
+
+		} else if (this.activeHistoryLine != null) {
+			ret = this.activeHistoryLine;
+			this.activeHistoryLine = null;
+
+			this.calledNext = false;
+			this.calledPrevious = false;
+			
+			sb.setLength(0);
+			sb.append(ret);
+
+		}
+
+		return ret;
+	}
 }
