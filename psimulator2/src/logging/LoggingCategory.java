@@ -46,9 +46,13 @@ public enum LoggingCategory {
 	IP_LAYER,
 	TELNET,
 	/**
-	 * logovaci zpravy z mainu
+	 * nacitani a ukladani ukladacich struktur do xml souboru (povetsinou balicek psimulator2)
 	 */
-	ABSTRACT_NETWORK,
+	XML_LOAD_SAVE,
+	/**
+	 * nacitani a ukladani nastaveni samotnyho simulatoru do ukladacich struktur (balicek config.configTransformer)
+	 */
+	NETWORK_MODEL_LOAD_SAVE,
 	FILE_SYSTEM,
 	/**
 	 * zpravy z buildeni z Martinovy konfigurace

@@ -29,6 +29,9 @@ public class SystemListener implements LoggerListener {
 		try {
 			if (logLevel <= configuration.get(category)) {
 				System.out.println("[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": " + message);
+				if (Exception.class.isAssignableFrom(object.getClass())) {
+					((Exception) object).printStackTrace();
+				}
 			}
 		} catch (NullPointerException e) {
 			System.out.println("An error occured during logging:-) \n"

@@ -7,6 +7,7 @@ package shell;
 /**
  * Toto je jen priklad shellu, jak si predstavujem to rozhrani. Nejak to, Martine, podle toho predelej, pak tohle
  * smazem. nebo si z toho udelej interface..
+ * TODO: ShellPriklad prijde smazat.
  *
  * @author neiss
  */

@@ -17,13 +17,12 @@ import utils.Util;
  *
  * @author Tomas Pitrinec
  */
-public class Ifconfig extends AbstractCommand{
+public class Ifconfig extends AbstractCommand {
 
+	boolean ladiciVypisovani=true; //jestli se maj vypisovat informace pro ladeni
 
 	private final IPLayer ipLayer = getNetMod().ipLayer;
 
-
-    boolean ladiciVypisovani=true; //jestli se maj vypisovat informace pro ladeni
 
     String jmenoRozhrani; //jmeno rozhrani, jak bylo zadano
     /**
@@ -524,7 +523,6 @@ public class Ifconfig extends AbstractCommand{
         }
 
         return vratit;
-
     }
 
     private void errNeznamyPrepinac(String ret) {

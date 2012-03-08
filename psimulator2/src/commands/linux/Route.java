@@ -21,7 +21,7 @@ import utils.Util;
  */
 public class Route extends AbstractCommand {
 
-	boolean ladiciVypisovani = true; //pro debug
+	boolean ladiciVypisovani = false; //pro debug
 
 	private final IPLayer ipLayer = getNetMod().ipLayer;	// zkratka
 

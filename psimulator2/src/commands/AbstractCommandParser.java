@@ -7,7 +7,11 @@ import device.Device;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
+import utils.Util;
 
 /**
  * Abstraktni parser prikazu spolecnej pro linux i pro cisco.
@@ -17,7 +21,7 @@ import shell.apps.CommandShell.CommandShell;
  *
  * @author Stanislav Rehak
  */
-public abstract class AbstractCommandParser {
+public abstract class AbstractCommandParser implements Loggable {
 
 	protected CommandShell shell;
 	protected Device device;
@@ -60,22 +64,30 @@ public abstract class AbstractCommandParser {
 	 * @return navratovy kod
 	 */
 	public void processLine(String line, int mode) {
+		try {	// chytani vyjimek, aby se nepropagovaly dal do telnetu
 
-		if (runningCommand != null) {
-			runningCommand.catchUserInput(line);
-			return;
+			if (runningCommand != null) {
+				runningCommand.catchUserInput(line);
+				return;
+			}
+
+			this.line = line;
+			this.mode = mode;
+			this.ref = 0;
+			splitLine(line);
+
+			if (line.isEmpty()) {
+				return;
+			}
+
+
+			if (!processSharedCommands()) {	// zkusi se, jestli to neni spolecnej prikaz
+				processLineForParsers();	// jinak se zavola konkretni parser
+			}
+
+		} catch (Exception ex) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_COMMANDS, "Nekde byla hozena vyjimka.", ex);
 		}
-
-		this.line = line;
-		this.mode = mode;
-		this.ref = 0;
-		splitLine(line);
-
-		if (line.isEmpty()) {
-			return;
-		}
-
-		processLineForParsers();
 	}
 
 	/**
@@ -222,5 +234,27 @@ public abstract class AbstractCommandParser {
 		}
 		String[] pole = line.split(" ");
 		words.addAll(Arrays.asList(pole));
+	}
+
+	/**
+	 * Obsluhuje prikazy spolecny pro linux i cisco.
+	 * @return true, kdyz to byl spolecny prikaz a je tedy vyrizen.
+	 */
+	private boolean processSharedCommands() {
+
+		String commandName = nextWordPeek();
+
+		if(commandName.equals("save")||commandName.equals("uloz")){
+			PsimulatorSave cmd = new PsimulatorSave(this);
+			cmd.run();
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public String getDescription() {
+		return device.getName()+": AbstractCommandParser";
 	}
 }

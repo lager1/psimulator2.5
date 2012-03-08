@@ -14,6 +14,7 @@ import shared.Serializer.SaveLoadException;
 import telnetd.BootException;
 import telnetd.TelnetD;
 import telnetd.pridaneTridy.TelnetProperties;
+import utils.Util;
 
 /**
  *
@@ -32,7 +33,7 @@ public class Main {
 		Logger.setLogger();
 
 		if (args.length < 1) {
-			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK,
+			Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE,
 					"No configuration file attached, run again with configuration file as first argument.");
 		}
 
@@ -43,7 +44,7 @@ public class Main {
 			try {
 				firstTelnetPort = Integer.parseInt(args[1]);
 			} catch (NumberFormatException ex) {
-				Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Second argument is not port number: "+args[1]);
+				Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Second argument is not port number: "+args[1]);
 			}
 		}
 
@@ -55,13 +56,14 @@ public class Main {
 			networkModel = serializer.loadNetworkModelFromFile(new File(configFileName));	// nacita se xmlko do ukladacich struktur
 
 		} catch (SaveLoadException ex) {
-			ex.printStackTrace();
-			Logger.log(Logger.DEBUG, LoggingCategory.ABSTRACT_NETWORK, ex.toString());
-			Logger.log(Logger.ERROR, LoggingCategory.ABSTRACT_NETWORK, "Cannot load network model from: " + configFileName);
+			Logger.log(Logger.DEBUG, LoggingCategory.XML_LOAD_SAVE, Util.stackToString(ex));
+			Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Cannot load network model from: " + configFileName);
 		}
 
 		TelnetProperties.setStartPort(firstTelnetPort);
 
+		Psimulator.getPsimulator().configModel = networkModel;
+		Psimulator.getPsimulator().lastConfigFile = configFileName;
 		Loader loader = new Loader(networkModel);	// vytvari se simulator loader
 		loader.loadFromModel();	// simulator se startuje z tech ukladacich struktur
 
@@ -80,9 +82,6 @@ public class Main {
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Error occured when creating telnet servers.");
 		}
-
-
-
 
 	}
 }

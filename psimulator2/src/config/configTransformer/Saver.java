@@ -27,6 +27,9 @@ public class Saver {
 		this.networkModel = networkModel;
 	}
 
+	/**
+	 * Ulozi nastaveni do netwrkModelu zadanyho v konstruktoru.
+	 */
 	public void saveToModel() {
 		for (Device device : s.devices) {
 			HwComponentModel hwComponentModel = networkModel.getHwComponentModelById(device.configID);
@@ -63,7 +66,9 @@ public class Saver {
 
 		for (NetworkInterface iface : netMod.ipLayer.getNetworkIfaces()) {
 			EthInterfaceModel ethIfaceModel = hwComponentModel.getEthInterface(iface.configID);
-			ethIfaceModel.setIpAddress(iface.getIpAddress().toString());
+			if (iface.getIpAddress() != null) {
+				ethIfaceModel.setIpAddress(iface.getIpAddress().toString());
+			}
 			ethIfaceModel.setIsUp(iface.isUp);
 		}
 	}
@@ -74,7 +79,11 @@ public class Saver {
 		RoutingTable rt = netMod.ipLayer.routingTable;
 		for (int i = 0; i < rt.size(); i++) {
 			RoutingTable.Record radek = rt.getRecord(i);
-			rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
+			if (radek.brana != null) {
+				rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
+			} else {
+				rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, null);
+			}
 		}
 
 

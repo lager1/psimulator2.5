@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import logging.*;
 import logging.LoggingCategory;
-import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
 import utils.Util;
 
@@ -69,7 +68,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			}
 
 		} catch (Exception ex) {
-			logDebug(Logger.WARNING, ex.toString() + "\n" + Util.stackToString(ex));
+			Logger.log(this, Logger.WARNING, LoggingCategory.LINUX_COMMAND_PARSER, "Hozena vyjimka", ex);
 		}
 	}
 
@@ -87,7 +86,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	@Override
 	public String getDescription() {
-		return device.getName()+": LinuxCommandParser: ";
+		return device.getName()+": LinuxCommandParser";
 	}
 
 
