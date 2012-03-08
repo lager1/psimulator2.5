@@ -55,6 +55,10 @@ public enum LoggingCategory {
 	 */
 	LOADER_SAVER,
 	/**
+	 * Zpravy ze simulatoru pro tridu, kterou sem nechci pridavat.
+	 */
+	GENERIC,
+	/**
 	 * Zpravy z AbstractCommandParser a AbstractCommand, tedy spolecny pro linux i cisco.
 	 */
 	GENERIC_COMMANDS,

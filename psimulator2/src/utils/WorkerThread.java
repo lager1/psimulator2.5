@@ -3,15 +3,20 @@
  */
 package utils;
 
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
+
 /**
  * Thread implements wake and run functions. It sleeps itselfs.
  * @author neiss
  */
-public final class WorkerThread implements Runnable {
+public final class WorkerThread implements Runnable, Loggable {
 
     private Thread myThread;
     private volatile boolean isRunning = false;
 	private SmartRunnable worker;
+	private boolean dieCalled = false;
 
     public WorkerThread(SmartRunnable worker) {
 		assert worker != null;
@@ -24,9 +29,7 @@ public final class WorkerThread implements Runnable {
 	 * Wakes thread so it can work.
 	 */
     public synchronized void wake() {
-        if (isRunning) {
-            return;
-        } else {
+        if (!isRunning) {
             isRunning = true;
             this.notifyAll();
         }
@@ -36,22 +39,36 @@ public final class WorkerThread implements Runnable {
 	 * This function should be never called!
 	 * It is called automaticaly by thread management.
 	 */
+	@Override
     public void run() {
-        while (true) {
+        while (!dieCalled) {
             worker.doMyWork();
             synchronized (this) {
                 isRunning = false;
-                while (!isRunning) {
+                while (!isRunning && !dieCalled) {
                     //tenhlecten cyklus je tady proti nejakejm falesnejm buzenim.
                     //System.out.println(this.toString()+": Beh cyklu s wait()");
                     try {
                         wait();
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
-                        System.exit(2);
+						Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC, "InterruptedException in the sleep! Is it normal on not?", ex);
                     }
                 }
             }
         }
     }
+
+	/**
+	 * Wakes thread and dies.
+	 */
+	public void die() {
+		this.dieCalled = true;
+		wake();
+	}
+
+	@Override
+	public String getDescription() {
+		return "WorkerThread";
+	}
 }

@@ -78,17 +78,17 @@ public abstract class PingApplication extends Application {
 	public void atStart() {
 		if (target == null) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no target! Exiting..", null);
-			device.killApplication(PID);
+			kill();
 		}
 		if (getPort() == null) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no port assigned! Exiting..", null);
-			device.killApplication(PID);
+			kill();
 		}
 
 		startMessage();
 		sendPings();
 		Util.sleep(timeout);
-		device.exitApplication(PID);
+		exit();
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class Device {
 	 *
 	 * @param configID
 	 * @param name
-	 * @param type 	 *
+	 * @param type
 	 *
 	 */
 	public Device(int configID, String name, DeviceType type) {
@@ -105,52 +105,27 @@ public class Device {
 	}
 
 	/**
-	 * Adds application to list of running applications and starts it.
-	 * @param app
-	 */
-	public void runApplication(Application app) {
-		applications.put(app.PID, app);
-		app.start();
-	}
-
-	/**
-	 * Exits application specified with PID. <br />
-	 * This function unregister its port from network module and it does call applications's atExit().
-	 * @param PID
-	 * @return true iff application exists and then exited.
-	 */
-	public boolean exitApplication(int PID) {
-		Application app = applications.get(PID);
-		if (app == null) {
-			return false;
-		}
-		app.stop();
-		applications.remove(PID);
-		return true;
-	}
-
-	/**
-	 * Kill application specified with PID. <br />
-	 * This function unregister its port from network module but it doesn't call applications's atExit().
-	 * @param PID
-	 * @return true iff application exists and then exited.
-	 */
-	public boolean killApplication(int PID) {
-		Application app = applications.get(PID);
-		if (app == null) {
-			return false;
-		}
-		app.kill();
-		applications.remove(PID);
-		return true;
-	}
-
-	/**
 	 * Returns free PID for new applications.
 	 * @return
 	 */
 	public int getFreePID() {
 		return pidCounter++;
+	}
+
+	/**
+	 * Register application to list of running applications.
+	 * @param app
+	 */
+	public void registerApplication(Application app) {
+		applications.put(app.getPID(), app);
+	}
+
+	/**
+	 * Unregister application from list of running applications.
+	 * @param app
+	 */
+	public void unregisterApplication(Application app) {
+		applications.remove(app.getPID());
 	}
 
 	public enum DeviceType {
