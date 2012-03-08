@@ -50,12 +50,17 @@ public abstract class Application implements SmartRunnable, Loggable {
 		this.port = port;
 	}
 
+	public Integer getPort() {
+		return port;
+	}
+
 	/**
 	 * Starts aplication by turning on listening on port.
 	 * TransportLayer returns port if port is null and saves it.
 	 */
 	public void start() {
 		this.port = transportLayer.registerApplication(this, port);
+		atStart();
 	}
 
 	/**
@@ -66,6 +71,20 @@ public abstract class Application implements SmartRunnable, Loggable {
 		atExit();
 		transportLayer.unregisterApplication(port);
 	}
+
+	/**
+	 * Exit the application without calling atExit(). <br />
+	 * Don't call this method from commands! Call device.killApplication() instead.
+	 */
+	public void kill() {
+		transportLayer.unregisterApplication(port);
+	}
+
+	/**
+	 * Implement this function to run some commands right before application start. <br />
+	 * (treba pro nejake kontroly atd.)
+	 */
+	public abstract void atStart();
 
 	/**
 	 * Implement this function to run some commands right before application exit. <br />

@@ -5,6 +5,7 @@ package networkModule.L4;
 
 import applications.Application;
 import dataStructures.IpPacket;
+import dataStructures.ipAddresses.IpAddress;
 import java.util.HashMap;
 import java.util.Map;
 import logging.Loggable;
@@ -32,12 +33,17 @@ public class TransportLayer extends Layer implements Loggable {
 	 */
 	private final Map<Integer, Application> applications = new HashMap<>();
 	private int portCounter = 1025;
+	private static final int portMAX = 65_535;
 
 	public TransportLayer(TcpIpNetMod netMod) {
 		super(netMod);
 		this.icmphandler = new IcmpHandler(netMod);
 	}
 
+	/**
+	 * This method should be called from L4.
+	 * @param packet
+	 */
 	public void receivePacket(IpPacket packet) {
 		if (packet.data == null) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Prisel mi sem paket, ktery nema zadna L4 data! Zahazuji packet:", packet);
@@ -70,18 +76,6 @@ public class TransportLayer extends Layer implements Loggable {
 	protected void forwardPacketToApplication(IpPacket packet, int port) {
 		applications.get(port).receivePacket(packet);
 	}
-
-//	/**
-//	 * Register application to listen and accept packets.
-//	 *
-//	 * @param app to register
-//	 * @return port number
-//	 */
-//	public int registerApplication(Application app) {
-//		int port = getFreePort();
-//		registerApplication(app, port);
-//		return port;
-//	}
 
 	/**
 	 * Register application to listen and accept packets.
@@ -117,11 +111,12 @@ public class TransportLayer extends Layer implements Loggable {
 	 *
 	 * @return
 	 */
-	private int getFreePort() {
-		if (portCounter > 65536) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "There are on free ports available! Assigning port numbers greater than 65536", null);
+	private Integer getFreePort() {
+		if (portCounter > portMAX) {
+			portCounter = portCounter - portMAX + 1024;
+			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Resetting portCounter.", null);
 		}
-
+//		TODO: tady se to bude cyklit, pokud budou pouzivany vsechny porty
 		if (applications.containsKey(portCounter)) {
 			portCounter++;
 			return getFreePort();

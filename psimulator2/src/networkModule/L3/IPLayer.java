@@ -296,7 +296,18 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param dst destination address
 	 */
 	public void sendPacket(L4Packet packet, IpAddress dst) {
-		sendBuffer.add(new SendItem(packet, dst));
+		sendPacket(packet, dst, this.ttl);
+	}
+
+	/**
+	 * Method for sending packet from layer 4.
+	 *
+	 * @param packet data to be sent
+	 * @param dst destination address
+	 * @param ttl Time To Live value
+	 */
+	public void sendPacket(L4Packet packet, IpAddress dst, int ttl) {
+		sendBuffer.add(new SendItem(packet, dst, ttl));
 		worker.wake();
 	}
 
@@ -458,10 +469,12 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		final L4Packet packet;
 		final IpAddress dst;
+		final int ttl;
 
-		public SendItem(L4Packet packet, IpAddress dst) {
+		public SendItem(L4Packet packet, IpAddress dst, int ttl) {
 			this.packet = packet;
 			this.dst = dst;
+			this.ttl = ttl;
 		}
 	}
 

@@ -104,7 +104,7 @@ public class IcmpHandler implements Loggable {
 	 * Sends ICMP packet with given type, code to dst. <br />
 	 *
 	 * @param packet
-	 * @param dst
+	 * @param dst destination IP
 	 * @param type
 	 * @param code
 	 */
@@ -119,6 +119,33 @@ public class IcmpHandler implements Loggable {
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam "+type+" "+code+" na: "+dst, p);
 		ipLayer.handleSendPacket(p, dst);
 	}
-}
 
+//	protected void send(IpAddress target, Integer ttl, Integer port, int seq) {
+//		int sendTtl = this.ipLayer.ttl;
+//		if (ttl != null) {
+//			sendTtl = ttl;
+//		}
+//
+//		send(null, target, Type.REQUEST, Code.DEFAULT);
+//
+//		TODO: ttl, port-> identifier
+//	}
+
+	/**
+	 * Sends ICMP echo request to given target.
+	 * @param target
+	 * @param ttl Time To Live - can be null, in that case default value of IPLayer is used
+	 * @param seq sequence number
+	 * @param id application identifier (port)
+	 */
+	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id) {
+		int sendTtl = this.ipLayer.ttl;
+		if (ttl != null) {
+			sendTtl = ttl;
+		}
+
+		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq);
+		ipLayer.sendPacket(packet, target, sendTtl);
+	}
+}
 

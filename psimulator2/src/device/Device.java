@@ -114,7 +114,8 @@ public class Device {
 	}
 
 	/**
-	 * Exits application specified with PID.
+	 * Exits application specified with PID. <br />
+	 * This function unregister its port from network module and it does call applications's atExit().
 	 * @param PID
 	 * @return true iff application exists and then exited.
 	 */
@@ -124,6 +125,22 @@ public class Device {
 			return false;
 		}
 		app.stop();
+		applications.remove(PID);
+		return true;
+	}
+
+	/**
+	 * Kill application specified with PID. <br />
+	 * This function unregister its port from network module but it doesn't call applications's atExit().
+	 * @param PID
+	 * @return true iff application exists and then exited.
+	 */
+	public boolean killApplication(int PID) {
+		Application app = applications.get(PID);
+		if (app == null) {
+			return false;
+		}
+		app.kill();
 		applications.remove(PID);
 		return true;
 	}

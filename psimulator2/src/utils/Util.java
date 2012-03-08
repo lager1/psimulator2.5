@@ -5,6 +5,8 @@ package utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -96,6 +98,18 @@ public class Util {
         }
         return true;
     }
+
+	/**
+	 * Uspi aktualni vlakno na pocet ms.
+	 * @param ns
+	 */
+	public static void sleep(int ns) {
+		try {
+			Thread.sleep(ns);
+		} catch (InterruptedException ex) {
+			Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
 	/**
 	 * Dorovna zadanej String mezerama na zadanou dylku. Kdyz je String delsi nez zadana dylka, tak nic neudela a String
