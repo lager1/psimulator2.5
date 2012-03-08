@@ -56,7 +56,7 @@ public class ShowCommand extends CiscoCommand {
         rozh += nextWord();
 
         iface = null;
-        iface = ipLayer.getNetworkInteface(rozh); // TODO: asi refactorovat, moc se mi to nelibi
+        iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
         if (iface == null) {
             invalidInputDetected();
             return false;

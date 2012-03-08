@@ -48,6 +48,10 @@ public enum LoggingCategory {
 	 * Zpravy z AbstractCommandParser a AbstractCommand, tedy spolecny pro linux i cisco.
 	 */
 	GENERIC_COMMANDS,
+	/**
+	 * Zpravy z aplikaci, kdyz nechci urcit konretni aplikaci.
+	 */
+	GENERIC_APPLICATION,
 
 	/**
 	 * Zpravy command parseru na linuxu.

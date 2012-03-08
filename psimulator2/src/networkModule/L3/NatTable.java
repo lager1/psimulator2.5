@@ -11,6 +11,7 @@ import networkModule.L3.NatAccessList.AccessList;
 import networkModule.L3.NatPool.Pool;
 
 /**
+ * TODO: poresit generovani portu kvuli kolizim s poslouchajicima aplikacema.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */

@@ -411,15 +411,15 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	/**
-     * Prepne cisco do stavu config-if (IFACE).
-     * Kdyz ma prikaz interface 2 argumenty, tak se sloucej do jednoho (pripad: interface fastEthernet 0/0).
-     * 0 nebo vice nez argumenty znamena chybovou hlasku.
-     * Do globalni promenne 'aktualni' uklada referenci na rozhrani, ktere chce uzivatel konfigurovat.
+     * Prepne cisco do stavu config-if (IFACE). <br />
+     * Kdyz ma prikaz interface 2 argumenty, tak se sloucej do jednoho (pripad: interface fastEthernet 0/0).<br />
+     * 0 nebo vice nez argumenty znamena chybovou hlasku.<br />
+     * Do globalni promenne 'aktualni' uklada referenci na rozhrani, ktere chce uzivatel konfigurovat.<br />
      * prikaz 'interface fastEthernet0/1'
      */
     private void iface() {
 
-        String rozhrani = "";
+        String rozhrani;
         switch (words.size()) {
             case 1:
                 incompleteCommand();
@@ -435,16 +435,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
                 return;
         }
 
-        boolean nalezeno = false;
+		this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
 
-        for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
-            if (iface.name.equalsIgnoreCase(rozhrani)) {
-                this.configuredInterface = iface;
-                nalezeno = true;
-            }
-        }
-
-        if (nalezeno == false) {
+        if (configuredInterface == null) {
             invalidInputDetected();
             return;
         }

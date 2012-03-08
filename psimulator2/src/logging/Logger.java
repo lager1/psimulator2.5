@@ -108,7 +108,7 @@ public class Logger {
 	 * @param logLevel
 	 * @return
 	 */
-	public static String logLevelToString(int logLevel) {
+	protected static String logLevelToString(int logLevel) {
 		switch (logLevel) {
 			case 1:
 				return "ERROR";

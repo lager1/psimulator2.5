@@ -15,7 +15,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
-import networkModule.NetMod;
+import networkModule.TcpIpNetMod;
 
 /**
  * Handles creating and sending ICMP packets.
@@ -24,12 +24,14 @@ import networkModule.NetMod;
  */
 public class IcmpHandler implements Loggable {
 
-	private final NetMod netMod;
+	private final TcpIpNetMod netMod;
 	private final IPLayer ipLayer;
+	private final TransportLayer transportLayer;
 
-	public IcmpHandler(NetMod netMod, IPLayer ipLayer) {
+	public IcmpHandler(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-		this.ipLayer = ipLayer;
+		this.ipLayer = netMod.ipLayer;
+		this.transportLayer = netMod.transportLayer;
 	}
 
 	public void handleReceivedIcmpPacket(IpPacket packet) {
@@ -47,7 +49,7 @@ public class IcmpHandler implements Loggable {
 			case TIME_EXCEEDED:
 			case UNDELIVERED:
 				// predat aplikacim
-
+				transportLayer.forwardPacketToApplication(packet, p.id);
 				break;
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Neznamy typ ICMP paketu:", packet);

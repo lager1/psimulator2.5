@@ -10,7 +10,6 @@
  */
 package networkModule.L3;
 
-import networkModule.L4.IcmpHandler;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -21,6 +20,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.RoutingTable.Record;
+import networkModule.L4.IcmpHandler;
 import networkModule.TcpIpNetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -88,7 +88,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-		this.icmpHandler = netMod.tcpipLayer.icmphandler;
+		this.icmpHandler = netMod.transportLayer.icmphandler;
 		this.worker = new WorkerThread(this);
 	}
 	/**
@@ -224,7 +224,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) {
-			netMod.tcpipLayer.receivePacket(packet);
+			netMod.transportLayer.receivePacket(packet);
 			return;
 		}
 
@@ -407,6 +407,20 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public NetworkInterface getNetworkInteface(String name) {
 		return networkIfaces.get(name);
+	}
+
+	/**
+	 * Return interface with name (ignores case) or null iff there is no such interface.
+	 * @param name
+	 * @return
+	 */
+	public NetworkInterface getNetworkIntefaceIgnoreCase(String name) {
+		for (NetworkInterface iface : networkIfaces.values()) {
+			if (iface.name.equalsIgnoreCase(name)) {
+				return iface;
+			}
+		}
+		return null;
 	}
 
 	private class SendItem {

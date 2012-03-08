@@ -17,7 +17,7 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 
 
 	public final IPLayer ipLayer;
-	public final TransportLayer tcpipLayer = new TransportLayer(this);
+	public final TransportLayer transportLayer = new TransportLayer(this);
 
 	/**
 	 * Konstruktor sitovyho modulu.
