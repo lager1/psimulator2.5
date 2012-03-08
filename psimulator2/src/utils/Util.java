@@ -96,4 +96,21 @@ public class Util {
         }
         return true;
     }
+
+	/**
+	 * Dorovna zadanej String mezerama na zadanou dylku. Kdyz je String delsi nez zadana dylka, tak nic neudela a String
+	 * vrati nezmenenej. Protoze String se nikdy nemeni, ale vzdy se vytvori novej, se zadavany, Stringem se nic
+	 * nestane.
+	 *
+	 * @param ret
+	 * @param dylka
+	 * @return
+	 */
+	public static String zarovnej(String ret, int dylka) {
+		int dorovnat = dylka - ret.length();
+		for (int i = 0; i < dorovnat; i++) {
+			ret = ret + " ";
+		}
+		return ret;
+	}
 }

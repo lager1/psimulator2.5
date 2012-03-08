@@ -23,7 +23,13 @@ public enum LoggingCategory {
 	 * posilani paketu na linkovy vrstve
 	 */
 	LINK,
+	/**
+	 * posilani paketu na sitovy vrstve
+	 */
 	NET,
+	/**
+	 * posilani paketu na transportni vrstve
+	 */
 	TRANSPORT,
 
 
@@ -34,6 +40,10 @@ public enum LoggingCategory {
 	 * zpravy z EthernetLayer sitovyho modulu
 	 */
 	ETHERNET_LAYER,
+	/**
+	 * zpravy z ip layer
+	 */
+	IP_LAYER,
 	TELNET,
 	/**
 	 * logovaci zpravy z mainu

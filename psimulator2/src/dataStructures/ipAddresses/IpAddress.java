@@ -93,6 +93,13 @@ public class IpAddress {
             return null;
         }
     }
+	
+	public static boolean isCorrectAddress(String ret) {
+		if (correctAddress(ret) != null) {
+			return true;
+		}
+		return false;
+	}
 
     /**
      * Vrati adresu o jedna vetsi.

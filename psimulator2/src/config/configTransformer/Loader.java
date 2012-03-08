@@ -191,9 +191,11 @@ public class Loader {
 			nm.ipLayer.addNetworkInterface(netInterface);
 		}
 
-		//nahrani osatnich nastaveni sotovyho modulu:
-		if (model.getDevSettings() != null) {	// ostatni veci se muzou nahravat, jen kdyz je z ceho
-			// nastaveni routovaci tabulky:
+		//nahrani osatnich nastaveni sitovyho modulu:
+
+		// nastaveni routovaci tabulky:
+		if (model.getDevSettings() != null) {	// network modul uz byl nekdy ulozenej, nahrava se z neho
+
 			for(Record record: model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
 				IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
 				IpAddress brana = null;
@@ -203,11 +205,13 @@ public class Loader {
 				NetworkInterface iface = nm.ipLayer.getNetworkInteface(record.getInterfaceName());
 				nm.ipLayer.routingTable.addRecordWithoutControl(adresat, brana, iface);
 			}
-
-			//TODO dodelat nastaveni natu (paketovyho filtru)
-
-			//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
+		} else {	// network modul jeste nebyl ulozenej, je cerstve vytvorenej Martinouvym simulatorem, je potreba tabulku donastavit dle rozhrani
+			nm.ipLayer.updateNewRoutingTable();
 		}
+
+		//TODO dodelat nastaveni natu (paketovyho filtru)
+
+		//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
 
 
 		return nm;

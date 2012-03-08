@@ -33,7 +33,7 @@ public class TelnetProperties {
 	private static void commonSetup() {
 
 		finalConfiguration = true;
-		
+
 		properties.setProperty("terminals", "vt100,ansi,windoof,xterm");
 		properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
 		properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
@@ -75,14 +75,14 @@ public class TelnetProperties {
 
 	public static void addListener(Device device) {
 
-		
+
 		String name = String.valueOf(device.configID);
 		int port = lastPort;
 		lastPort += 1;
 
 		device.setTelnetPort(port);
 
-		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + device.getTelnetPort());
+		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + device.getTelnetPort());
 
 		listenerNames.add(name);
 

@@ -35,6 +35,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	private void registerCommands() {
 		commands.add("ifconfig");
 		commands.add("exit");
+		commands.add("route");
 	}
 
 	@Override
@@ -75,6 +76,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	private AbstractCommand getLinuxCommand(String name) {
 		if (name.equals("ifconfig")) {
 			return new Ifconfig(this);
+		} else if (name.equals("route")){
+			return new Route(this);
 		} else if (name.equals("exit")){
 			return new Exit(this);
 		} else {

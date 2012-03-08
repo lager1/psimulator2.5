@@ -313,7 +313,7 @@ public class Ifconfig extends AbstractCommand{
 		} else {
 			if (rozhrani == null) { //vypsat vsechno
 				if (navrKod == 0) { //vypisuje se, jen kdyz je to ale vsechno v poradku
-					for (NetworkInterface rozhr : ipLayer.getNetworkIfaces()) {
+					for (NetworkInterface rozhr : ipLayer.getSortedNetworkIfaces()) {
 						vypisRozhrani(rozhr);
 					}
 				}

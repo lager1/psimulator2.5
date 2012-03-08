@@ -12,7 +12,7 @@ import networkModule.L2.EthernetInterface;
  * Representuje prakticky jen nastaveni interfacu, samotna trida nic nedela.
  * @author neiss
  */
-public class NetworkInterface {
+public class NetworkInterface implements Comparable<NetworkInterface> {
 
 	public final int configID;
 
@@ -55,5 +55,15 @@ public class NetworkInterface {
 
 	public MacAddress getMacAddress() {
 		return ethernetInterface.getMac();
+	}
+
+	/**
+	 * Aby se to dalo radit podle jmena interface.
+	 * @param o
+	 * @return
+	 */
+	@Override
+	public int compareTo(NetworkInterface o) {
+		return name.compareTo(o.name);
 	}
 }

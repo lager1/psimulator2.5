@@ -88,6 +88,13 @@ public class IpNetmask extends IpAddress{
         }
     }
 
+	public static boolean isCorrectNetmask(String ret) {
+		if (correctNetmask(ret) != null) {
+			return true;
+		}
+		return false;
+	}
+
     /**
      * Vraci true, kdyz je zadany integer maskou, tzn., kdyz jsou to nejdriv jednicky a pak nuly.
      * @param maska

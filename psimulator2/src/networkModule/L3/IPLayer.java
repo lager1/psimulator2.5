@@ -114,6 +114,17 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
+	 * Returns interfaces as collection sorted by interfaces name.
+	 * Uzitecny pro vypisy u prikazu.
+	 * @return
+	 */
+	public Collection<NetworkInterface> getSortedNetworkIfaces() {
+		List<NetworkInterface> ifaces = new ArrayList<>(networkIfaces.values());
+		Collections.sort(ifaces);
+		return ifaces;
+	}
+
+	/**
 	 * Method for receiving packet from layer 2.
 	 *
 	 * @param packet
@@ -407,6 +418,26 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public NetworkInterface getNetworkInteface(String name) {
 		return networkIfaces.get(name);
+	}
+
+	/**
+	 * Fill the routing table during simulator routing from addresses on interfaces.
+	 * Has be called only if in the configuration file does'n exist any routing table configuration.
+	 *
+	 * Naplni routovaci tabulku dle adres na rozhranich, tak jak to dela linux.
+	 * Volat jenom pri konfiguraci, nebyla-li routovaci tabulka ulozena.
+	 */
+	public void updateNewRoutingTable() {
+		if (routingTable.size() != 0) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Spustena metoda updateNewRoutingTable, ktera je urcena pro vyplneni routovaci tabulky dle rozhrani, nebyla-li zadana v konfiguraku. "
+					+ "Tabulka vsak neni prazdna.", null);
+			return;
+		}
+		for (NetworkInterface iface : getNetworkIfaces()) {
+			if (iface.getIpAddress() != null) {
+				routingTable.addRecord(iface.ipAddress.getNetworkNumber(), iface);
+			}
+		}
 	}
 
 	/**
