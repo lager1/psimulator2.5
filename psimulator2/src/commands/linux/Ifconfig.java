@@ -292,7 +292,7 @@ public class Ifconfig extends AbstractCommand {
         }
 
         if(broadcast!=null || add.size()>0 ||del.size()>0){
-			parser.printSimulatorInfo("Parametry broadcast, add a del prikazu ifconfig zatim nejsou podporovane.");
+			parser.printService("Parametry broadcast, add a del prikazu ifconfig zatim nejsou podporovane.");
         }
 
 

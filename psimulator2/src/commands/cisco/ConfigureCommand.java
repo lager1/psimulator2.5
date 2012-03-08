@@ -36,7 +36,7 @@ public class ConfigureCommand extends CiscoCommand {
 		}
 
 		if ("memory".startsWith(nextWord) || "network".startsWith(nextWord) || "replace".startsWith(nextWord) || "?".startsWith(nextWord)) {
-			parser.printSimulatorInfo("only supported keyword by this version of simulator is \"terminal\"");
+			parser.printService("only supported keyword by this version of simulator is \"terminal\"");
 			return;
 		}
 
@@ -54,7 +54,7 @@ public class ConfigureCommand extends CiscoCommand {
 
 		if ("memory".startsWith(nextWord) || "network".startsWith(nextWord) || "?".startsWith(nextWord)) {
 			printLine("?Must be \"terminal\"");
-			parser.printSimulatorInfo("only supported keyword \"terminal\"");
+			parser.printService("only supported keyword \"terminal\"");
 			return;
 		}
 

@@ -10,8 +10,8 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
 
 /**
  * Abstraktni parser prikazu spolecnej pro linux i pro cisco.
@@ -95,7 +95,7 @@ public abstract class AbstractCommandParser implements Loggable {
 	 *
 	 * @param sig
 	 */
-	public abstract void catchSignal(int sig);
+	public abstract void catchSignal(Signal sig);
 
 	/**
 	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.
@@ -139,8 +139,8 @@ public abstract class AbstractCommandParser implements Loggable {
 	 * Slouzi k servisnim vypisum o napr nepodporovanych prikazech.
 	 * @param line
 	 */
-	public void printSimulatorInfo(String line) {
-		shell.printLine("[PSIMULATOR] "+line);
+	public void printService(String line) {
+		shell.printLine(Psimulator.getNameOfProgram()+": "+line);
 	}
 
 	/**
@@ -256,5 +256,16 @@ public abstract class AbstractCommandParser implements Loggable {
 	@Override
 	public String getDescription() {
 		return device.getName()+": AbstractCommandParser";
+	}
+
+	public enum Signal {
+		/**
+		 * Ctrl+C
+		 */
+		INT,
+		/**
+		 * Ctrl+Z
+		 */
+		ENDZ,
 	}
 }

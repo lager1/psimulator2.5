@@ -46,7 +46,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
      */
     protected NetworkInterface configuredInterface = null;
 
-	protected AbstractCommand command = null;
+	private AbstractCommand command = null;
 
 	private final boolean debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
 
@@ -109,8 +109,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					if (isCommand("ping", first)) {
-//                    command = new CiscoPing(pc, kon, slova);
-//                    return;
+						command = new PingCommand(this);
+						command.run();
+						return;
 					}
 					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
@@ -242,7 +243,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	@Override
-	public void catchSignal(int sig) {
+	public void catchSignal(Signal sig) {
 		// tady bude pak reakce na Ctrl+Z
 		//		prechod do jinych modu
 

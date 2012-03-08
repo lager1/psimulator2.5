@@ -15,7 +15,7 @@ import logging.LoggingCategory;
  */
 public abstract class CiscoCommand extends AbstractCommand {
 
-	protected final CiscoCommandParser parser;
+	protected final CiscoCommandParser parser; // hides field on purpose
 	/**
 	 * nevim, k cemu to tu je
 	 */

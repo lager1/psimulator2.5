@@ -5,6 +5,8 @@
 package applications;
 
 import commands.AbstractCommand;
+import commands.ApplicationNotifiable;
+import commands.cisco.CiscoCommandParser;
 import dataStructures.IcmpPacket;
 import device.Device;
 import shell.apps.CommandShell.CommandShell;
@@ -17,10 +19,12 @@ import shell.apps.CommandShell.CommandShell;
 public class CiscoPingApplication extends PingApplication {
 
 	private final CommandShell shell;
+	private final CiscoCommandParser parser;
 
-	public CiscoPingApplication(Device device, AbstractCommand command) {
+	public CiscoPingApplication(Device device, CiscoCommandParser parser, ApplicationNotifiable command) {
 		super(device, command);
-		this.shell = command.parser.getShell();
+		this.parser = parser;
+		this.shell = parser.getShell();
 	}
 
 	@Override

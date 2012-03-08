@@ -5,6 +5,7 @@
 package applications;
 
 import commands.AbstractCommand;
+import commands.ApplicationNotifiable;
 import dataStructures.IcmpPacket;
 import dataStructures.IpPacket;
 import dataStructures.ipAddresses.IpAddress;
@@ -29,10 +30,10 @@ public abstract class PingApplication extends Application {
 	protected int count = 0;
 	protected int size = 56; // default linux size (without header)
 	protected int timeout;
-	protected Stats stats;
+	protected Stats stats = new Stats();
 	protected int seq = 1;
 	protected final IcmpHandler icmpHandler;
-	protected final AbstractCommand command;
+	protected final ApplicationNotifiable command;
 	/**
 	 * kdyz nebude zadan, tak se pouzije vychozi systemova hodnota ze sitoveho modulu
 	 */
@@ -47,7 +48,7 @@ public abstract class PingApplication extends Application {
 	 */
 	protected Map<Integer, Long> timestamps = new HashMap<>();
 
-	public PingApplication(Device device, AbstractCommand command) {
+	public PingApplication(Device device, ApplicationNotifiable command) {
 		super("ping", device);
 		this.icmpHandler = transportLayer.icmphandler;
 		this.command = command;
@@ -108,6 +109,7 @@ public abstract class PingApplication extends Application {
 	public void atExit() {
 		stats.countStats();
 		printStats();
+		command.applicationFinished();
 	}
 
 	@Override

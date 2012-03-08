@@ -38,7 +38,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	@Override
-	public void catchSignal(int sig) {
+	public void catchSignal(Signal sig) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

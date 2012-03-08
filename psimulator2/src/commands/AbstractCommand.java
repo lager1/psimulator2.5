@@ -114,7 +114,17 @@ public abstract class AbstractCommand implements Loggable {
 		parser.getShell().print(s);
 	}
 
+	/**
+	 * Zkratka pro vypisovani do shellu.
+	 */
 	protected void printWithDelay(String s, int delay) {
 		parser.getShell().printWithDelay(s, delay);
+	}
+
+	/**
+	 * Zkratka pro vypisovani do shellu.
+	 */
+	protected void printService(String s) {
+		parser.printService(s);
 	}
 }
