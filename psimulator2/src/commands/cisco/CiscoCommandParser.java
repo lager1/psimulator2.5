@@ -5,6 +5,8 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.linux.Ifconfig;
+import commands.linux.Route;
 import device.Device;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -131,6 +133,19 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					if (isCommand("exit", first) || isCommand("logout", first)) {
 						shell.closeSession();
 						return;
+					}
+
+					if (debug) {
+						if (first.equals("ifconfig")) {
+							AbstractCommand cmd = new Ifconfig(this);
+							cmd.run();
+							return;
+						}
+						if (first.equals("route")) {
+							AbstractCommand cmd = new Route(this);
+							cmd.run();
+							return;
+						}
 					}
 
 //                if (debug) {
@@ -261,7 +276,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public String[] getCommands(int mode) {
 		// TODO: getCommands() poresit
-		throw new UnsupportedOperationException("Not supported yet.");
+		return new String[0];
 	}
 
 	/**

@@ -15,7 +15,6 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
-import networkModule.TcpIpNetMod;
 
 /**
  * Handles creating and sending ICMP packets.
@@ -24,14 +23,10 @@ import networkModule.TcpIpNetMod;
  */
 public class IcmpHandler implements Loggable {
 
-	private final TcpIpNetMod netMod;
-	private final IPLayer ipLayer;
 	private final TransportLayer transportLayer;
 
-	public IcmpHandler(TcpIpNetMod netMod) {
-		this.netMod = netMod;
-		this.ipLayer = netMod.ipLayer;
-		this.transportLayer = netMod.transportLayer;
+	public IcmpHandler(TransportLayer transportLayer) {
+		this.transportLayer = transportLayer;
 	}
 
 	public void handleReceivedIcmpPacket(IpPacket packet) {
@@ -42,7 +37,7 @@ public class IcmpHandler implements Loggable {
 			case REQUEST:
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.DEFAULT, p.id, p.seq);
-				ipLayer.handleSendPacket(reply, packet.src);
+				getIpLayer().handleSendPacket(reply, packet.src);
 
 				break;
 			case REPLY:
@@ -54,6 +49,10 @@ public class IcmpHandler implements Loggable {
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Neznamy typ ICMP paketu:", packet);
 		}
+	}
+
+	public IPLayer getIpLayer() {
+		return transportLayer.getIpLayer();
 	}
 
 	/**
@@ -85,7 +84,7 @@ public class IcmpHandler implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return netMod.getDevice().getName() + ": IcmpHandler";
+		return "IcmpHandler";
 	}
 
 	/**
@@ -117,7 +116,7 @@ public class IcmpHandler implements Loggable {
 			p = new IcmpPacket(type, code);
 		}
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam "+type+" "+code+" na: "+dst, p);
-		ipLayer.handleSendPacket(p, dst);
+		getIpLayer().handleSendPacket(p, dst);
 	}
 
 //	protected void send(IpAddress target, Integer ttl, Integer port, int seq) {
@@ -139,13 +138,13 @@ public class IcmpHandler implements Loggable {
 	 * @param id application identifier (port)
 	 */
 	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id) {
-		int sendTtl = this.ipLayer.ttl;
+		int sendTtl = this.getIpLayer().ttl;
 		if (ttl != null) {
 			sendTtl = ttl;
 		}
 
 		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq);
-		ipLayer.sendPacket(packet, target, sendTtl);
+		getIpLayer().sendPacket(packet, target, sendTtl);
 	}
 }
 

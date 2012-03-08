@@ -29,7 +29,7 @@ public abstract class PingApplication extends Application {
 	protected IpAddress target;
 	protected int count = 0;
 	protected int size = 56; // default linux size (without header)
-	protected int timeout;
+	protected int timeout = 10_000;
 	protected Stats stats = new Stats();
 	protected int seq = 1;
 	protected final IcmpHandler icmpHandler;
@@ -86,6 +86,7 @@ public abstract class PingApplication extends Application {
 			kill();
 		}
 
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
 		startMessage();
 		sendPings();
 		Util.sleep(timeout);
@@ -97,6 +98,7 @@ public abstract class PingApplication extends Application {
 	 */
 	private void sendPings() {
 		for (int i = 0; i < count; i++) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" posilam ping seq="+seq, null);
 			timestamps.put(seq, System.currentTimeMillis());
 			icmpHandler.sendRequest(target, ttl, seq++, port);
 			stats.odeslane++;
@@ -137,9 +139,12 @@ public abstract class PingApplication extends Application {
 
 			long delay = System.currentTimeMillis() - sendTime;
 			if (delay <= timeout) { // ok, paket dorazil vcas
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil ping s seq="+seq, packet);
 				stats.odezvy.add(delay);
 				stats.prijate++;
 				handleIncommingPacket(packet);
+			} else {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil, ale mezitim vyprsel timeout, packet seq="+seq, packet);
 			}
 		}
 	}

@@ -17,7 +17,7 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 
 
 	public final IPLayer ipLayer;
-	public final TransportLayer transportLayer = new TransportLayer(this);
+	public final TransportLayer transportLayer;
 
 	/**
 	 * Konstruktor sitovyho modulu.
@@ -27,6 +27,7 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 	public TcpIpNetMod(Device device) {
 		super(device);
 		this.ipLayer = new IPLayer(this);
+		this.transportLayer = new TransportLayer(this);
 	}
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema

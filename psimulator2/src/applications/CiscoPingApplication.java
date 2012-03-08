@@ -9,6 +9,8 @@ import commands.ApplicationNotifiable;
 import commands.cisco.CiscoCommandParser;
 import dataStructures.IcmpPacket;
 import device.Device;
+import logging.Logger;
+import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -25,6 +27,8 @@ public class CiscoPingApplication extends PingApplication {
 		super(device, command);
 		this.parser = parser;
 		this.shell = parser.getShell();
+		this.count = 5;
+		this.timeout = 1_000; // default is 2_000
 	}
 
 	@Override
@@ -43,6 +47,8 @@ public class CiscoPingApplication extends PingApplication {
 
 	@Override
 	protected void handleIncommingPacket(IcmpPacket packet) {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
+
 		switch (packet.type) {
 			case REPLY:
 				shell.print("!"); // ok

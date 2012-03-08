@@ -11,6 +11,7 @@ import java.util.Map;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.L3.IPLayer;
 import networkModule.Layer;
 import networkModule.TcpIpNetMod;
 
@@ -22,8 +23,9 @@ import networkModule.TcpIpNetMod;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class TransportLayer extends Layer implements Loggable {
+public class TransportLayer implements Loggable {
 
+	public final TcpIpNetMod netMod;
 	public final IcmpHandler icmphandler;
 	/**
 	 * List of registred applications. <br />
@@ -36,8 +38,12 @@ public class TransportLayer extends Layer implements Loggable {
 	private static final int portMAX = 65_535;
 
 	public TransportLayer(TcpIpNetMod netMod) {
-		super(netMod);
-		this.icmphandler = new IcmpHandler(netMod);
+		this.netMod = netMod;
+		this.icmphandler = new IcmpHandler(this);
+	}
+
+	public IPLayer getIpLayer() {
+		return netMod.ipLayer;
 	}
 
 	/**

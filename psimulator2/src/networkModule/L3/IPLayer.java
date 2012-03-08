@@ -69,11 +69,6 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private long arpTTL = 10_000;
 
 	/**
-	 * Handles ICMP answers, sends ICMP packet if neeeded.
-	 */
-	private final IcmpHandler icmpHandler;
-
-	/**
 	 * Getter for Cisco commands.
 	 * @return
 	 */
@@ -88,7 +83,6 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
-		this.icmpHandler = netMod.transportLayer.icmphandler;
 		this.worker = new WorkerThread(this);
 	}
 	/**
@@ -111,6 +105,10 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	public Collection<NetworkInterface> getNetworkIfaces() {
 		return networkIfaces.values();
+	}
+
+	public IcmpHandler getIcmpHandler() {
+		return netMod.transportLayer.icmphandler;
 	}
 
 	/**
@@ -193,7 +191,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
-				icmpHandler.sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
+				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
 			}
@@ -246,16 +244,20 @@ public class IPLayer implements SmartRunnable, Loggable {
 			// jestli je to ICMP, tak posli TTL expired
 			// zaloguj zahozeni paketu
 			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
-			icmpHandler.sendTimeToLiveExceeded(packet.src, packet);
+			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
 
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
-			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DNU vzdy??
-				icmpHandler.sendDestinationNetworkUnreachable(packet.src, packet);
-			}
+//			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DNU vzdy??
+//				if (packet.src == null) {
+//
+//				}
+//
+//				getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet);
+//			}
 			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
 		}
@@ -376,7 +378,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 */
 	private boolean isItMyIpAddress(IpAddress targetIpAddress) {
 		for (NetworkInterface iface : networkIfaces.values()) {
-			if (iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
+			if (iface.ipAddress != null && iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
 				return true;
 			}
 		}

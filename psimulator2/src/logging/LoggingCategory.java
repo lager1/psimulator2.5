@@ -72,6 +72,11 @@ public enum LoggingCategory {
 	GENERIC_APPLICATION,
 
 	/**
+	 * Zpravy z PingApplication, asi muze byt pro linux i pro cisco spolecne.
+	 */
+	PING_APPLICATION,
+
+	/**
 	 * Zpravy command parseru na linuxu.
 	 */
 	LINUX_COMMAND_PARSER,

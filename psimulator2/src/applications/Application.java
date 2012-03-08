@@ -72,6 +72,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 		transportLayer.unregisterApplication(port);
 		device.unregisterApplication(this);
 		worker.die();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" exit", null);
 	}
 
 	/**
@@ -82,6 +83,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 		transportLayer.unregisterApplication(port);
 		device.unregisterApplication(this);
 		worker.die();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" kill", null);
 	}
 
 	/**
@@ -105,6 +107,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	}
 
 	public void receivePacket(IpPacket packet) {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" prisel paket", packet);
 		buffer.add(packet);
 		worker.wake();
 	}
