@@ -244,10 +244,18 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	@Override
 	public void catchSignal(Signal sig) {
-		// tady bude pak reakce na Ctrl+Z
-		//		prechod do jinych modu
-
-		throw new UnsupportedOperationException("Not supported yet.");
+		switch (sig) {
+			case ENDZ:
+				switch (mode) {
+					case CISCO_CONFIG_IF_MODE:
+					case CISCO_CONFIG_MODE:
+						changeMode(CISCO_PRIVILEGED_MODE);
+						break;
+				}
+				break;
+			default:
+			// no reaction
+		}
 	}
 
 	@Override
