@@ -144,7 +144,6 @@ public class Route extends AbstractCommand {
      * Odchylka: Nezparsuje route -ven
      */
     private void parsujPrikaz() {
-		slovo=dalsiSlovo();	// posunuju se za nazev prikazu
         // prepinace:
         slovo = dalsiSlovo();
         while( slovo.length()>1 && slovo.charAt(0)=='-'){
@@ -215,8 +214,7 @@ public class Route extends AbstractCommand {
     }
 
     private void nastavFlush() {
-        printLine(Psimulator.getNameOfProgram()+": Flush normalne neni podporovano, ale v simulatoru se zaznam " +
-                "smazal.");
+        printService("Flush normalne neni podporovano, ale v simulatoru se zaznam smazal.");
         printLine("Spravny prikaz je: \"ip route flush all\"");
         akce=4;
     }

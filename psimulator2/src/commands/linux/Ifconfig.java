@@ -19,7 +19,7 @@ import utils.Util;
  */
 public class Ifconfig extends AbstractCommand {
 
-	boolean ladiciVypisovani=true; //jestli se maj vypisovat informace pro ladeni
+	boolean ladiciVypisovani=false; //jestli se maj vypisovat informace pro ladeni
 
 	private final IPLayer ipLayer = getNetMod().ipLayer;
 
@@ -82,7 +82,6 @@ public class Ifconfig extends AbstractCommand {
 
 
     protected void parsujPrikaz() {
-		dalsiSlovo();	// posunuju se v citaci za ifconfig
         String slovo;
         // prepinace:
         slovo=dalsiSlovo();

@@ -29,7 +29,8 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Samotny spusteni prikazu, nebude se to vsechno uz delat v konstruktoru.
+	 * Samotny spusteni prikazu, nebude se to vsechno uz delat v konstruktoru. Linuxovej prikaz pocita s tim, ze metoda
+	 * dalsi slovo vrati 1. slovo po nazvu prikazu.
 	 *
 	 * @return
 	 */

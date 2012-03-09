@@ -5,13 +5,19 @@ package commands.linux;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.cisco.CiscoCommand;
+import commands.cisco.PingCommand;
 import device.Device;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import logging.*;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
 
 /**
  *
@@ -19,7 +25,10 @@ import utils.Util;
  */
 public class LinuxCommandParser extends AbstractCommandParser implements Loggable{
 
-	private List<String> commands = new ArrayList<>();
+	/**
+	 * Mapa mezi nazvama prikazu a jejich tridou.
+	 */
+	private Map<String, Class> commands = new HashMap<>();
 
 	public LinuxCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
@@ -32,19 +41,21 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	 * stringu a rozhodovani o spusteni prikazu mam v metode getLinuxCommand.
 	 */
 	private void registerCommands() {
-		commands.add("ifconfig");
-		commands.add("exit");
-		commands.add("route");
+		commands.put("ifconfig", Ifconfig.class);
+		commands.put("exit", Exit.class);
+		commands.put("route", Route.class);
+		commands.put("ping", Ping.class);
+		commands.put("cping", PingCommand.class);	// zatim si pridavam cisco ping
 	}
 
 	@Override
 	public void catchSignal(Signal sig) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		shell.printLine("^C");	// TODO dodelat
 	}
 
 	@Override
 	public String[] getCommands(int mode) {
-		return (String[]) commands.toArray();
+		return (String[]) commands.values().toArray();
 	}
 
 	/**
@@ -55,7 +66,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	protected void processLineForParsers() {
 		try {	// nechci hazet pripadne hozeny vyjimky dal
 
-			String commandName = nextWordPeek();
+			String commandName = nextWord();
 			if (!commandName.isEmpty()) {	// kdyz je nejakej prikaz vubec poslanej, nejradsi bych posilani niceho zrusil
 
 				AbstractCommand command = getLinuxCommand(commandName);
@@ -68,20 +79,62 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			}
 
 		} catch (Exception ex) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.LINUX_COMMAND_PARSER, "Hozena vyjimka", ex);
+			log(Logger.WARNING, "Nejaka chyba v linuxovejch prikazech.", null);
+			log(0, "Byla vyhozena vyjimka.", ex);
 		}
 	}
 
-	private AbstractCommand getLinuxCommand(String name) {
+	/**
+	 * Tohle pravdepodobne prijde smazat.
+	 * @param name
+	 * @return
+	 */
+	private AbstractCommand getLinuxCommandStara(String name) {
 		if (name.equals("ifconfig")) {
 			return new Ifconfig(this);
 		} else if (name.equals("route")){
 			return new Route(this);
 		} else if (name.equals("exit")){
 			return new Exit(this);
+		} else if (name.equals("ping")){
+			return new Ping(this);
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Tahle metoda vrati instanci prikazu podle zadanyho jmena. Je to trochu hack, na druhou stranu se nemusi
+	 * registrovat prikaz na dvou mistech.
+	 *
+	 * @param name
+	 * @return
+	 */
+	private AbstractCommand getLinuxCommand(String name) {
+
+		Class tridaPrikazu = commands.get(name);
+		if (tridaPrikazu == null) {
+			return null;
+		} else if(CiscoCommand.class.isAssignableFrom(tridaPrikazu)) {
+			log(Logger.WARNING,"Na linuxu se pokousite zavolat ciscovej prikaz, coz nejde, protoze ten ocekava cisco parser prikazu.", null);
+			return null;
+		}else{
+
+			try {
+				Class[] ctorArgs1 = new Class[1];
+				ctorArgs1[0] = AbstractCommandParser.class;
+				Constructor konstruktor = tridaPrikazu.getConstructor(ctorArgs1);
+				//log(0, "Mam konstruktor pro nazev prikazu " + name, null);
+				Object novaInstance = konstruktor.newInstance((AbstractCommandParser) this);
+				//log(0, "Mam i vytvorenou novou instanci.", null);
+				return (AbstractCommand) novaInstance;
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+				log(Logger.WARNING, "Chyba privytvareni instance prikazu "+name, ex);
+				return null;
+			}
+		}
+
+
 	}
 
 	@Override
@@ -90,11 +143,11 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 
-	private void logDebug(int logLevel, String message){
+	private void log(int logLevel, String message, Object obj){
 		if (logLevel == 0) {
 			logLevel = Logger.DEBUG;
 		}
-		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMAND_PARSER, message, null);
+		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMAND_PARSER, message, obj);
 	}
 
 

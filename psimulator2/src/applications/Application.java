@@ -65,7 +65,6 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 	/**
 	 * Exit the application. <br />
-	 * Don't call this method from commands! Call device.exitApplication() instead.
 	 */
 	public void exit() {
 		atExit();
@@ -77,7 +76,6 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 	/**
 	 * Exit the application without calling atExit(). <br />
-	 * Don't call this method from commands! Call device.killApplication() instead.
 	 */
 	public void kill() {
 		transportLayer.unregisterApplication(port);
