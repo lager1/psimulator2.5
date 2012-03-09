@@ -34,9 +34,11 @@ public class CommandShell extends TerminalApplication {
 
 		switch (code) {
 			case TerminalIO.CTRL_C:
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
 				parser.catchSignal(AbstractCommandParser.Signal.INT);
 				break;
 			case TerminalIO.CTRL_Z:
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
 				parser.catchSignal(AbstractCommandParser.Signal.ENDZ);
 				break;
 
@@ -139,12 +141,13 @@ public class CommandShell extends TerminalApplication {
 	public int rawRead() throws IOException {
 		return this.terminalIO.read();
 	}
-	
+
 	/**
 	 * determine if there is something to read
-	 * @return 
+	 *
+	 * @return
 	 */
-	public boolean available(){
+	public boolean available() {
 		return this.terminalIO.avaiable();
 	}
 
@@ -165,8 +168,16 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void print(String text) {
 		try {
-			terminalIO.write(text);
-			terminalIO.flush();
+
+			for (int i = 0; i < text.length(); i++) {
+				char ch = text.charAt(i);
+				terminalIO.write(ch);
+				terminalIO.flush();
+				
+				if (terminalIO.avaiable()) {
+					this.handleUnexpectedInput(terminalIO.read());
+				}
+			}
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost.");
@@ -192,10 +203,6 @@ public class CommandShell extends TerminalApplication {
 				}
 
 				printLine(singleLine);
-
-				if (terminalIO.avaiable()) {
-					this.handleUnexpectedInput(terminalIO.read());
-				}
 
 			}
 		} catch (IOException ex) {
@@ -257,6 +264,7 @@ public class CommandShell extends TerminalApplication {
 				parser.processLine(line, mode);
 
 				terminalIO.flush();
+				
 			} catch (Exception ex) {
 
 				if (quit) // if there is a quit request, then it is ok
