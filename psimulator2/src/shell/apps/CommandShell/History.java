@@ -68,6 +68,9 @@ public class History {
 	 */
 	public void add(String command) {
 
+		if(command == null)
+			return;
+		
 		command = command.trim();
 
 		if (command.isEmpty() || command.equalsIgnoreCase("")) { // do not add empty command

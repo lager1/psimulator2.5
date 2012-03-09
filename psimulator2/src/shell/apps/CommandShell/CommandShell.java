@@ -6,7 +6,6 @@ package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
 import device.Device;
-import exceptions.TelnetConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -42,7 +41,7 @@ public class CommandShell extends TerminalApplication {
 
 	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
-		this.shellRenderer = new ShellRenderer(terminalIO, this);
+		this.shellRenderer = new ShellRenderer(this, terminalIO, "CommandLine");
 		this.parser = device.createParser(this);
 	}
 
@@ -78,8 +77,9 @@ public class CommandShell extends TerminalApplication {
 
 		String ret = null;
 		try {
-			ret = shellRenderer.handleInput();
-		} catch (TelnetConnectionException ex) {
+			 shellRenderer.run();
+			 ret = shellRenderer.getValue();
+		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
 		}
 
@@ -170,6 +170,12 @@ public class CommandShell extends TerminalApplication {
 		quit = true;
 	}
 
+	public AbstractCommandParser getParser() {
+		return parser;
+	}
+
+	
+	
 	public void setParser(AbstractCommandParser parser) {
 		this.parser = parser;
 	}

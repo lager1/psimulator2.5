@@ -639,6 +639,7 @@ public class TerminalIO
   public static final int CTRL_C = 3;
   public static final int CTRL_Z = 26;
   public static final int CTRL_W = 23;
+  public static final int CTRL_L = 12;
   
   
 }//class TerminalIO
