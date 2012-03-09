@@ -138,6 +138,7 @@ public class ShellRenderer extends ActiveComponent {
 					case TerminalIO.CTRL_C:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
 						konecCteni=true;
+						termIO.write(BasicTerminalIO.CRLF);
 						this.commandShell.getParser().catchSignal(AbstractCommandParser.Signal.INT);  // SEND CTRL_C SIGNAL 
 						break;
 					case TerminalIO.CTRL_Z:
