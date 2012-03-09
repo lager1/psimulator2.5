@@ -137,6 +137,7 @@ public class ShellRenderer extends ActiveComponent {
 						break; // break switch
 					case TerminalIO.CTRL_C:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
+						konecCteni=true;
 						this.commandShell.getParser().catchSignal(AbstractCommandParser.Signal.INT);  // SEND CTRL_C SIGNAL 
 						break;
 					case TerminalIO.CTRL_Z:
