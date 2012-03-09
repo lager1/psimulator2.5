@@ -44,7 +44,8 @@ import java.io.IOException;
  */
 public interface BasicTerminalIO {
 
-
+public boolean avaiable();
+	
   /**
    * Method that retrieves Input from the underlying
    * Stream, translating Terminal specific escape

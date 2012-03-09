@@ -27,7 +27,7 @@ import telnetd.io.toolkit.InputFilter;
  */
 public class ShellRenderer extends ActiveComponent {
 
-	private static Pattern printablePatter = Pattern.compile(ShellRenderer.getPrintableRegExp());
+	
 	private InputFilter inputFilter;
 	private CommandShell commandShell;
 	private BasicTerminalIO termIO;
@@ -61,7 +61,7 @@ public class ShellRenderer extends ActiveComponent {
 
 				int inputValue = termIO.read();
 
-				if (isPrintable(inputValue)) {  // is a regular character like abc...
+				if (CommandShell.isPrintable(inputValue)) {  // is a regular character like abc...
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
 					termIO.write(inputValue);
 					sb.insert(cursor, (char) inputValue);
@@ -139,11 +139,11 @@ public class ShellRenderer extends ActiveComponent {
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
 						konecCteni=true;
 						termIO.write(BasicTerminalIO.CRLF);
-						this.commandShell.getParser().catchSignal(AbstractCommandParser.Signal.INT);  // SEND CTRL_C SIGNAL 
+						CommandShell.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
 						break;
-					case TerminalIO.CTRL_Z:
+					case TerminalIO.CTRL_Z:  // @TODO konzultace -- asi zde zbytečné, ctrl+z je pro pozastavení procesu tj. k nicemu pri cteni prikazu z radky
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-						this.commandShell.getParser().catchSignal(AbstractCommandParser.Signal.ENDZ);  // SEND CTRL_Z SIGNAL
+						CommandShell.handleControlCodes(this.commandShell.getParser(), inputValue);  // SEND CTRL_Z SIGNAL
 						break;
 
 					case TerminalIO.CTRL_L:	// clean screen
@@ -182,25 +182,12 @@ public class ShellRenderer extends ActiveComponent {
 		return this.sb.toString();
 	}
 
-	private static boolean isPrintable(int znakInt) {
-
-		String s = String.valueOf((char) znakInt);
-
-		Matcher matcher = ShellRenderer.printablePatter.matcher(s);
-
-		return matcher.find();
-	}
-
-	private static String getPrintableRegExp() {
-		return "\\p{Print}";
-	}
-
 	/**
 	 * funkce která překreslí řádek od pozice kurzoru až do jeho konce dle čtecího bufferu
 	 *
 	 * @throws IOException
 	 */
-	@Override
+	
 	public void draw() throws IOException {
 
 		termIO.eraseToEndOfScreen();

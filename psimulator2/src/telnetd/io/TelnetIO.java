@@ -43,6 +43,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that represents the TelnetIO implementation. It contains
@@ -253,7 +255,22 @@ public class TelnetIO {
 
 
   /**** Implementation of InputStream ****************************************************/
-
+/**
+ * method for detection of incomming data
+ * @return true if new data arrived, else otherwise
+ * @throws IOException 
+ */
+  public boolean avaiable(){
+		try {
+			if(m_In.available()>0)
+				return true;
+			else return false;
+		} catch (IOException ex) {
+			return false;
+		}
+  
+  }
+  
   /**
    * Method to read a byte from the InputStream.
    * Invokes the IACHandler upon IAC (Byte=255).

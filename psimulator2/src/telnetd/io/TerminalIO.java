@@ -640,6 +640,11 @@ public class TerminalIO
   public static final int CTRL_Z = 26;
   public static final int CTRL_W = 23;
   public static final int CTRL_L = 12;
+
+	@Override
+	public boolean avaiable() {
+		return m_TelnetIO.avaiable();
+	}
   
   
 }//class TerminalIO

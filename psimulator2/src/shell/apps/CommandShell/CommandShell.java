@@ -9,12 +9,14 @@ import device.Device;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.regex.Pattern;
 import logging.Logger;
 import logging.LoggingCategory;
 
 
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
+import telnetd.io.TerminalIO;
 
 /**
  *
@@ -22,6 +24,29 @@ import telnetd.io.BasicTerminalIO;
  */
 public class CommandShell extends TerminalApplication {
 
+	public static Pattern printablePatter = Pattern.compile(CommandShell.getPrintableRegExp());
+
+	public static String getPrintableRegExp() {
+		return "\\p{Print}";
+	}
+
+	public static void handleControlCodes(AbstractCommandParser parser, int code) {
+
+		switch (code) {
+			case TerminalIO.CTRL_C:
+				parser.catchSignal(AbstractCommandParser.Signal.INT);
+				break;
+			case TerminalIO.CTRL_Z:
+				parser.catchSignal(AbstractCommandParser.Signal.ENDZ);
+				break;
+
+		}
+
+	}
+
+	public static boolean isPrintable(int znakInt) {
+		return CommandShell.printablePatter.matcher(String.valueOf((char) znakInt)).find();
+	}
 	public static final int DEFAULT_MODE = 0;
 	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
 	public static final int CISCO_PRIVILEGED_MODE = 1;
@@ -32,7 +57,6 @@ public class CommandShell extends TerminalApplication {
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
-	private Object locker = new Object();
 	/**
 	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
 	 * Dle stavu se bude resit napovidani a historie.
@@ -69,16 +93,16 @@ public class CommandShell extends TerminalApplication {
 //        return this.pocitac.getCommandList();
 //    }
 	/**
-	 * method that read till \r\n occured
+	 * method that read command from command line
 	 *
 	 * @return whole line without \r\n
 	 */
-	public String readLine() {
+	public String readCommand() {
 
 		String ret = null;
 		try {
-			 shellRenderer.run();
-			 ret = shellRenderer.getValue();
+			shellRenderer.run();
+			ret = shellRenderer.getValue();
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
 		}
@@ -86,14 +110,42 @@ public class CommandShell extends TerminalApplication {
 		return ret;
 	}
 
-	public String readCharacter() {
-		try {
-			return String.valueOf((char) this.terminalIO.read());
-		} catch (IOException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException, cannot read a single character from terminal");
-		}
+	/**
+	 * method that read a single printable character from telnet input and handle control codes properly
+	 *
+	 * @return
+	 */
+	public char readPrintableCharacter() throws IOException {
 
-		return "";
+		while (true) {
+
+			int input = this.terminalIO.read();
+
+			if (CommandShell.isPrintable(input)) {
+				return (char) input;
+			}
+
+			handleControlCodes(parser, input);
+		}
+	}
+
+	/**
+	 * method that read everything from telnet input like unprintable characters, control codes ... its up to you to
+	 * handle that that
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	public int rawRead() throws IOException {
+		return this.terminalIO.read();
+	}
+	
+	/**
+	 * determine if there is something to read
+	 * @return 
+	 */
+	public boolean available(){
+		return this.terminalIO.avaiable();
 	}
 
 	/**
@@ -102,11 +154,7 @@ public class CommandShell extends TerminalApplication {
 	 * @param text text to be printed to the terminal
 	 */
 	public void printLine(String text) {
-
 		this.print((text + "\r\n"));
-
-
-
 	}
 
 	/**
@@ -123,8 +171,6 @@ public class CommandShell extends TerminalApplication {
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost.");
 		}
-
-
 	}
 
 	/**
@@ -146,6 +192,11 @@ public class CommandShell extends TerminalApplication {
 				}
 
 				printLine(singleLine);
+
+				if (terminalIO.avaiable()) {
+					this.handleUnexpectedInput(terminalIO.read());
+				}
+
 			}
 		} catch (IOException ex) {
 			System.err.println("IO exception occured in printWithDelay method");
@@ -174,8 +225,6 @@ public class CommandShell extends TerminalApplication {
 		return parser;
 	}
 
-	
-	
 	public void setParser(AbstractCommandParser parser) {
 		this.parser = parser;
 	}
@@ -200,14 +249,12 @@ public class CommandShell extends TerminalApplication {
 			try {
 				printPrompt();
 
-				line = readLine();
+				line = readCommand();
 				this.history.add(line);
 
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM :" + line);
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
 
-				synchronized (locker) {
-						parser.processLine(line, mode);
-					}
+				parser.processLine(line, mode);
 
 				terminalIO.flush();
 			} catch (Exception ex) {
@@ -216,7 +263,6 @@ public class CommandShell extends TerminalApplication {
 				{
 					return 0;
 				} else {
-					ex.printStackTrace();
 					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "CommandShell");
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 					return -1;
@@ -232,5 +278,15 @@ public class CommandShell extends TerminalApplication {
 	public int quit() {
 		this.quit = true;
 		return 0;
+	}
+
+	public void handleUnexpectedInput(int input) throws IOException {
+
+		if (isPrintable(input)) {
+			terminalIO.write((char) input);
+		} else {
+			handleControlCodes(parser, input);
+		}
+
 	}
 }
