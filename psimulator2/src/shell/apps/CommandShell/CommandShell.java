@@ -169,21 +169,22 @@ public class CommandShell extends TerminalApplication {
 	public void print(String text) {
 		try {
 
+			this.handleUnexpectedInput();  // just for sure, for example if text.lenght==0
+			
 			for (int i = 0; i < text.length(); i++) {
 				char ch = text.charAt(i);
 				terminalIO.write(ch);
 				terminalIO.flush();
-				
-				if (terminalIO.avaiable()) {
-					this.handleUnexpectedInput(terminalIO.read());
-				}
+
+				this.handleUnexpectedInput();  // handle unexpected input between characters print
 			}
+
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost.");
 		}
 	}
-
+	
 	/**
 	 * method that print lines with delay
 	 *
@@ -262,9 +263,11 @@ public class CommandShell extends TerminalApplication {
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
 
 				parser.processLine(line, mode);
+				
+				// this.printWithDelay("aaa \n bbb \n ccc \n ddd \n eee \n fff", 2000);  //JUST FOR TESTING SIGNALS
 
 				terminalIO.flush();
-				
+
 			} catch (Exception ex) {
 
 				if (quit) // if there is a quit request, then it is ok
@@ -288,12 +291,18 @@ public class CommandShell extends TerminalApplication {
 		return 0;
 	}
 
-	public void handleUnexpectedInput(int input) throws IOException {
+	public void handleUnexpectedInput() throws IOException {
 
-		if (isPrintable(input)) {
-			terminalIO.write((char) input);
-		} else {
-			handleControlCodes(parser, input);
+		while (terminalIO.avaiable()) {  // there is unexpected input to be handled
+
+			int input = terminalIO.read();
+			
+			if (isPrintable(input)) {
+				terminalIO.write((char) input);
+			} else {
+				handleControlCodes(parser, input);
+			}
+
 		}
 
 	}
