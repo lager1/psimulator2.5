@@ -1,10 +1,9 @@
 package shell;
 
-import commands.AbstractCommandParser;
 import java.util.regex.Pattern;
 import logging.Logger;
 import logging.LoggingCategory;
-import shell.apps.CommandShell.CommandShell;
+import shell.SignalCatchAble.Signal;
 import telnetd.io.TerminalIO;
 
 /**
@@ -24,15 +23,15 @@ public class ShellUtils {
 		switch (code) {
 			case TerminalIO.CTRL_C:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				catchAble.catchSignal(AbstractCommandParser.Signal.CTRL_C);
+				catchAble.catchSignal(Signal.CTRL_C);
 				break;
 			case TerminalIO.CTRL_Z:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				catchAble.catchSignal(AbstractCommandParser.Signal.CTRL_Z);
+				catchAble.catchSignal(Signal.CTRL_Z);
 				break;
 			case TerminalIO.CTRL_D:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");
-				catchAble.catchSignal(SignalCatchAble.Signal.CTRL_D);
+				catchAble.catchSignal(Signal.CTRL_D);
 				break;
 
 		}
