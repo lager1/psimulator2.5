@@ -24,11 +24,11 @@ public class ShellUtils {
 		switch (code) {
 			case TerminalIO.CTRL_C:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				catchAble.catchSignal(AbstractCommandParser.Signal.INT);
+				catchAble.catchSignal(AbstractCommandParser.Signal.CTRL_C);
 				break;
 			case TerminalIO.CTRL_Z:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				catchAble.catchSignal(AbstractCommandParser.Signal.ENDZ);
+				catchAble.catchSignal(AbstractCommandParser.Signal.CTRL_Z);
 				break;
 			case TerminalIO.CTRL_D:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");

@@ -260,7 +260,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public void catchSignal(Signal sig) {
 		switch (sig) {
-			case ENDZ:
+			case CTRL_Z:
+			case CTRL_C:
 				switch (mode) {
 					case CISCO_CONFIG_IF_MODE:
 					case CISCO_CONFIG_MODE:

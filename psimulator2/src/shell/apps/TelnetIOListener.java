@@ -37,7 +37,7 @@ public class TelnetIOListener extends Thread {
 			Logger.getLogger(TelnetIOListener.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-	
+
 	@Override
 	public void run() {
 
@@ -77,11 +77,11 @@ public class TelnetIOListener extends Thread {
 		switch (input) {
 			case TerminalIO.CTRL_C:
 				logging.Logger.log(logging.Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				signal = Signal.INT;
+				signal = Signal.CTRL_C;
 				break;
 			case TerminalIO.CTRL_Z:
 				logging.Logger.log(logging.Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				signal = Signal.ENDZ;
+				signal = Signal.CTRL_Z;
 				break;
 			default:
 				return;

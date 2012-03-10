@@ -9,24 +9,24 @@ package shell;
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public interface SignalCatchAble {
-	
+
 	public enum Signal {
 		/**
 		 * Ctrl+C
 		 */
-		INT,
+		CTRL_C,
 		/**
 		 * Ctrl+Z
 		 */
-		ENDZ,
+		CTRL_Z,
 		/**
-		 * CTRL_D
+		 * CTRL+D
 		 */
 		CTRL_D
-		
+
 	}
-	
-	
+
+
 	public void catchSignal(Signal signal);
-	
+
 }
