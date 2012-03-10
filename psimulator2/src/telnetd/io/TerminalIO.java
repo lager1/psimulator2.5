@@ -640,6 +640,7 @@ public class TerminalIO
   public static final int CTRL_Z = 26;
   public static final int CTRL_W = 23;
   public static final int CTRL_L = 12;
+  public static final int CTRL_D = 1305;
 
 	@Override
 	public boolean avaiable() {

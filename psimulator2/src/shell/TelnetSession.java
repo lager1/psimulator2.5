@@ -100,11 +100,11 @@ public class TelnetSession implements Shell {
 	public void connectionLogoutRequest(ConnectionEvent ce) {
 		try {
 			this.rootApplication.quit();
-			m_IO.write("CONNECTION_LOGOUTREQUEST");
+			m_IO.write(" BYE! ");
 			m_IO.flush();
 			this.m_Connection.close();
 		} catch (Exception ex) {
-			Logger.log(Logger.INFO, LoggingCategory.TELNET, "CONNECTION_LOGOUTREQUEST");
+			Logger.log(Logger.INFO, LoggingCategory.TELNET, "CONNECTION_LOGOUTREQUEST EXCEPTION");
 		}
 	}//connectionLogout
 

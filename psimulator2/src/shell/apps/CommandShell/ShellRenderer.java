@@ -4,40 +4,41 @@
  */
 package shell.apps.CommandShell;
 
-import commands.AbstractCommandParser;
 import exceptions.TelnetConnectionException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import logging.Logger;
 
 import logging.LoggingCategory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import shell.ShellUtils;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 import telnetd.io.toolkit.ActiveComponent;
-import telnetd.io.toolkit.InputFilter;
 
 /**
  *
  * @author Martin Lukáš
  */
-public class ShellRenderer extends ActiveComponent {
+public class ShellRenderer {
 
-	
-	private InputFilter inputFilter;
 	private CommandShell commandShell;
 	private BasicTerminalIO termIO;
 	private int cursor = 0;
 	private StringBuilder sb = new StringBuilder(50); //buffer načítaného řádku, čtecí buffer
+	private History history = new History();
 
-	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
-		super(termIO, name);
+	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO) {
 		this.commandShell = commandShell;
 		this.termIO = termIO;
+	}
+
+	public History getHistory() {
+		return history;
+	}
+
+	public void setHistory(History history) {
+		this.history = history;
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class ShellRenderer extends ActiveComponent {
 
 				int inputValue = termIO.read();
 
-				if (CommandShell.isPrintable(inputValue)) {  // is a regular character like abc...
+				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
 					termIO.write(inputValue);
 					sb.insert(cursor, (char) inputValue);
@@ -136,12 +137,17 @@ public class ShellRenderer extends ActiveComponent {
 						}
 						break; // break switch
 					case TerminalIO.CTRL_C:
-						konecCteni=true;
+						konecCteni = true;
 						termIO.write(BasicTerminalIO.CRLF);
-						CommandShell.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
 						break;
-					case TerminalIO.CTRL_Z:  // @TODO konzultace -- asi zde zbytečné, ctrl+z je pro pozastavení procesu tj. k nicemu pri cteni prikazu z radky
-						CommandShell.handleControlCodes(this.commandShell.getParser(), inputValue);  // SEND CTRL_Z SIGNAL
+					case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
+						konecCteni = true;
+						termIO.write("BYE");
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);
+						break;
+					case TerminalIO.CTRL_Z: 
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  // SEND CTRL_Z SIGNAL
 						break;
 
 					case TerminalIO.CTRL_L:	// clean screen
@@ -151,6 +157,7 @@ public class ShellRenderer extends ActiveComponent {
 
 					case TerminalIO.ENTER:
 						konecCteni = true;
+						history.add(this.getValue());
 						termIO.write(BasicTerminalIO.CRLF);
 						break;
 
@@ -165,7 +172,9 @@ public class ShellRenderer extends ActiveComponent {
 
 
 			} catch (IOException ex) {
+				konecCteni = true;
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
+				ShellUtils.handleControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
 			} catch (UnsupportedOperationException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unsuported exception catched in ShellRenderer: " + ex.toString());
 			}
@@ -185,8 +194,7 @@ public class ShellRenderer extends ActiveComponent {
 	 *
 	 * @throws IOException
 	 */
-	
-	public void draw() throws IOException {
+	private void draw() throws IOException {
 
 		termIO.eraseToEndOfScreen();
 		termIO.write(sb.substring(cursor, sb.length()));
@@ -227,10 +235,10 @@ public class ShellRenderer extends ActiveComponent {
 
 		if (key == TerminalIO.UP) {
 			//  this.sb.setLength(0);
-			this.commandShell.getHistory().handlePrevious(this.sb);
+			this.history.handlePrevious(this.sb);
 		} else if (key == TerminalIO.DOWN) {
 			//  this.sb.setLength(0);
-			this.commandShell.getHistory().handleNext(this.sb);
+			this.history.handleNext(this.sb);
 		}
 
 		termIO.write(this.sb.toString());

@@ -11,6 +11,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
+import shell.SignalCatchAble;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -21,7 +22,7 @@ import shell.apps.CommandShell.CommandShell;
  *
  * @author Stanislav Rehak
  */
-public abstract class AbstractCommandParser implements Loggable {
+public abstract class AbstractCommandParser implements Loggable, SignalCatchAble {
 
 	protected CommandShell shell;
 	protected Device device;
@@ -55,6 +56,14 @@ public abstract class AbstractCommandParser implements Loggable {
 		this.shell = shell;
 	}
 
+	/**
+	 * 
+	 * @param signal
+	 */
+	@Override
+	public abstract void catchSignal(Signal signal);
+	
+	
 	/**
 	 * Zpracuje radek.
 	 * Tuto metodu bude volat CommandShell
@@ -90,13 +99,7 @@ public abstract class AbstractCommandParser implements Loggable {
 		}
 	}
 
-	/**
-	 * Zavola parser se signalem od uzivatele. napr.: Ctrl+C, Ctrl+Z, ..
-	 *
-	 * @param sig
-	 */
-	public abstract void catchSignal(Signal sig);
-
+	
 	/**
 	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.
 	 *
@@ -258,14 +261,5 @@ public abstract class AbstractCommandParser implements Loggable {
 		return device.getName()+": AbstractCommandParser";
 	}
 
-	public enum Signal {
-		/**
-		 * Ctrl+C
-		 */
-		INT,
-		/**
-		 * Ctrl+Z
-		 */
-		ENDZ,
-	}
+	
 }

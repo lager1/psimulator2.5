@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.util.regex.Pattern;
 import logging.Logger;
 import logging.LoggingCategory;
+import shell.ShellUtils;
 
 
 import shell.apps.TerminalApplication;
@@ -24,38 +25,14 @@ import telnetd.io.TerminalIO;
  */
 public class CommandShell extends TerminalApplication {
 
-	public static Pattern printablePatter = Pattern.compile(CommandShell.getPrintableRegExp());
-
-	public static String getPrintableRegExp() {
-		return "\\p{Print}";
-	}
-
-	public static void handleControlCodes(AbstractCommandParser parser, int code) {
-
-		switch (code) {
-			case TerminalIO.CTRL_C:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				parser.catchSignal(AbstractCommandParser.Signal.INT);
-				break;
-			case TerminalIO.CTRL_Z:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				parser.catchSignal(AbstractCommandParser.Signal.ENDZ);
-				break;
-
-		}
-
-	}
-
-	public static boolean isPrintable(int znakInt) {
-		return CommandShell.printablePatter.matcher(String.valueOf((char) znakInt)).find();
-	}
+	
 	public static final int DEFAULT_MODE = 0;
 	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
 	public static final int CISCO_PRIVILEGED_MODE = 1;
 	public static final int CISCO_CONFIG_MODE = 2;
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
-	private History history = new History();
+	
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
@@ -67,17 +44,11 @@ public class CommandShell extends TerminalApplication {
 
 	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
-		this.shellRenderer = new ShellRenderer(this, terminalIO, "CommandLine");
+		this.shellRenderer = new ShellRenderer(this, terminalIO);
 		this.parser = device.createParser(this);
 	}
 
-	public History getHistory() {
-		return history;
-	}
 
-	public void setHistory(History history) {
-		this.history = history;
-	}
 
 	public void setPrompt(String prompt) {
 		this.prompt = prompt;
@@ -112,6 +83,12 @@ public class CommandShell extends TerminalApplication {
 		return ret;
 	}
 
+	public ShellRenderer getShellRenderer() {
+		return shellRenderer;
+	}
+	
+	
+
 	/**
 	 * method that read a single printable character from telnet input and handle control codes properly
 	 *
@@ -123,11 +100,11 @@ public class CommandShell extends TerminalApplication {
 
 			int input = this.terminalIO.read();
 
-			if (CommandShell.isPrintable(input)) {
+			if (ShellUtils.isPrintable(input)) {
 				return (char) input;
 			}
 
-			handleControlCodes(parser, input);
+			ShellUtils.handleControlCodes(parser, input);
 		}
 	}
 
@@ -258,7 +235,6 @@ public class CommandShell extends TerminalApplication {
 				printPrompt();
 
 				line = readCommand();
-				this.history.add(line);
 
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
 
@@ -297,10 +273,10 @@ public class CommandShell extends TerminalApplication {
 
 			int input = terminalIO.read();
 			
-			if (isPrintable(input)) {
+			if (ShellUtils.isPrintable(input)) {
 				terminalIO.write((char) input);
 			} else {
-				handleControlCodes(parser, input);
+				ShellUtils.handleControlCodes(parser, input);
 			}
 
 		}
