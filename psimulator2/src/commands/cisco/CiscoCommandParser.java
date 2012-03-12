@@ -260,6 +260,15 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	@Override
+	public void catchUserInput(String line) {
+		if (runningCommand != null) {
+			runningCommand.catchUserInput(line);
+		} else {
+			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, "zavolan catchUserInput a pritom neni spusten zadny prikaz!!! Zahazuju vstup..", null);
+		}
+	}
+
+	@Override
 	public void catchSignal(Signal sig) {
 
 		if (runningCommand != null) {
@@ -507,10 +516,5 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public String getDescription() {
 		return device.getName()+": CiscoCommandParser: ";
-	}
-
-	@Override
-	public void catchUserInput(String line) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
