@@ -141,7 +141,7 @@ public class ShellRenderer {
 					case TerminalIO.CTRL_C:
 						konecCteni = true;
 
-						termIO.write(BasicTerminalIO.CRLF);
+						//termIO.write(BasicTerminalIO.CRLF);
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
 						break;
 					case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
