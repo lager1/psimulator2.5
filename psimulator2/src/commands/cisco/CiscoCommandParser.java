@@ -292,6 +292,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 
 			case CTRL_C:
+				shell.printLine("");
 				switch (mode) {
 					case CISCO_CONFIG_IF_MODE:
 					case CISCO_CONFIG_MODE:

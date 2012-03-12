@@ -74,7 +74,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		} else if (navratovyKod!=0){
 			// nejaka chyba pri parsovani, nic se nedela.
 		} else {
-			parser.runningCommand = this;	// musim se zaregistrovat u parseru
+			parser.setRunningCommand(this);	// musim se zaregistrovat u parseru
 			LinuxPingApplication app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
 			app.run();
 		}
@@ -267,7 +267,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 
 	@Override
 	public void applicationFinished() {
-		parser.runningCommand = null;
+		parser.deleteRunningCommand();
 	}
 
 	@Override

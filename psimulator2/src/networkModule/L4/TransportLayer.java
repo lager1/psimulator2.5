@@ -80,7 +80,12 @@ public class TransportLayer implements Loggable {
 	 * @param port
 	 */
 	protected void forwardPacketToApplication(IpPacket packet, int port) {
-		applications.get(port).receivePacket(packet);
+		Application app = applications.get(port);
+		if (app != null) {
+			app.receivePacket(packet);
+		} else {
+			Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Zahazuju paket, protoze neni tu zaregistrovana zadna aplikace, ktera by ho obslouzila. Neobsluhovany port: "+port, packet);
+		}
 	}
 
 	/**

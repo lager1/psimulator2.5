@@ -13,6 +13,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
+import shell.apps.CommandShell.ShellMode;
 
 /**
  * Abstraktni parser prikazu spolecnej pro linux i pro cisco.
@@ -49,7 +50,7 @@ public abstract class AbstractCommandParser implements Loggable {
 	 * Kvuli prikazum, ktere bezi dlouho, ty budou muset bezet ve vlastnim vlakne a zde bude na ne odkaz.
 	 * Az prikaz skonci, tak tohle bude null.
 	 */
-	public LongTermCommand runningCommand = null;
+	protected LongTermCommand runningCommand = null;
 
 	public AbstractCommandParser(Device networkDevice, CommandShell shell) {
 		this.device = networkDevice;
@@ -98,7 +99,7 @@ public abstract class AbstractCommandParser implements Loggable {
 			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_COMMANDS, "zavolan catchUserInput a pritom neni spusten zadny prikaz!!! Zahazuju vstup..", null);
 		}
 	}
-	
+
 	public abstract void catchSignal(Signal signal);
 
 	/**
@@ -111,6 +112,20 @@ public abstract class AbstractCommandParser implements Loggable {
 
 	public CommandShell getShell() {
 		return shell;
+	}
+
+	public LongTermCommand getRunningCommand() {
+		return runningCommand;
+	}
+
+	public void setRunningCommand(LongTermCommand runningCommand) {
+		this.runningCommand = runningCommand;
+		shell.setShellMode(ShellMode.INPUT_FIELD);
+	}
+
+	public void deleteRunningCommand() {
+		this.runningCommand = null;
+		shell.setShellMode(ShellMode.COMMAND_READ);
 	}
 
 	/**

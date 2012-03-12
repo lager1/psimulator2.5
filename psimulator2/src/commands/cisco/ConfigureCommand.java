@@ -7,6 +7,7 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand;
 import static shell.apps.CommandShell.CommandShell.CISCO_CONFIG_MODE;
+import shell.apps.CommandShell.ShellMode;
 
 /**
  * ConfigureCommand command on Cisco IOS.
@@ -25,8 +26,10 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 		String nextWord = nextWord();
 
 		if (nextWord.isEmpty()) {
-			parser.runningCommand = this;
-			print("Configuring from terminal, memory, or network [terminal]? ");
+			parser.setRunningCommand(this);
+//			System.out.println("Nastaven INPUT_FIELD");
+			print("Configuring from terminal, memory, or network [terminal]? "); // TODO: otestovat radnou funkcnost az to bude mit Martin L hotovy pres ty ENUMy
+//			parser.getShell().setShellMode(ShellMode.INPUT_FIELD);
 			return;
 		}
 
@@ -46,9 +49,10 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 
 	@Override
 	public void catchUserInput(String nextWord) {
-		parser.runningCommand = null;
+		parser.deleteRunningCommand();
 		if ("terminal".startsWith(nextWord) || nextWord.isEmpty()) {
 			// zmen rovnou do CONFIGURE_MODE
+			parser.getShell().setShellMode(ShellMode.COMMAND_READ);
 			parser.changeMode(CISCO_CONFIG_MODE);
 			return;
 		}
@@ -64,6 +68,11 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 
 	@Override
 	public void catchSignal(Signal signal) {
-//		TODO:
+		switch (signal) {
+			case CTRL_C:
+				parser.getShell().setShellMode(ShellMode.COMMAND_READ);
+				parser.changeMode(CISCO_CONFIG_MODE);
+				break;
+		}
 	}
 }

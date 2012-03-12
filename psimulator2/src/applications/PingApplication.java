@@ -33,6 +33,10 @@ public abstract class PingApplication extends Application {
 	protected final ApplicationNotifiable command;
 	protected transient boolean allPacketArrived = false;
 	/**
+	 * Exit called from other thread.
+	 */
+	private transient boolean exitCalled = false;
+	/**
 	 * kdyz nebude zadan, tak se pouzije vychozi systemova hodnota ze sitoveho modulu
 	 */
 	protected Integer ttl = null;
@@ -90,10 +94,12 @@ public abstract class PingApplication extends Application {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
 		startMessage();
 		sendPings();
-		if (! allPacketArrived) {
+		if (!allPacketArrived) { // budik, pak smazat
 			Util.sleep(timeout);
 		}
-		exit();
+		if (!exitCalled) {
+			exit();
+		}
 	}
 
 	/**
@@ -112,6 +118,10 @@ public abstract class PingApplication extends Application {
 			transportLayer.icmphandler.sendRequest(target, ttl, seq++, port);
 			stats.odeslane++;
 
+			if (exitCalled) {
+				return;
+			}
+
 			if (i != count-1 || !allPacketArrived) {
 				Util.sleep(waitTime);
 			}
@@ -120,6 +130,7 @@ public abstract class PingApplication extends Application {
 
 	@Override
 	public void atExit() {
+		this.exitCalled = true;
 		stats.countStats();
 		printStats();
 		command.applicationFinished();
@@ -133,7 +144,7 @@ public abstract class PingApplication extends Application {
 		while (!buffer.isEmpty()) {
 			IpPacket p = buffer.remove(0);
 			if (! (p.data instanceof IcmpPacket)) {
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet, because PingApplication recieved non ICMP packet", p);
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication recieved non ICMP packet", p);
 				continue;
 			}
 
@@ -143,7 +154,7 @@ public abstract class PingApplication extends Application {
 			// TODO: resit duplikace prichozich paketu - kdyz mi prijde v poradku paket, tak ho napr. ulozim do Map<seq, packet>, kdyz zjistim, ze prisel podruhy, tak vypisu duplikacni hlasku
 
 			if (sendTime == null) {
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet, because PingApplication doesn't expect such a PING reply "
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication doesn't expect such a PING reply "
 						+ "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
 				continue;
 			}

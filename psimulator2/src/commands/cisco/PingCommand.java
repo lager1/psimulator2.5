@@ -27,9 +27,15 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 	@Override
 	public void catchSignal(Signal signal) {
 		switch (signal) {
-			case CTRL_C:
+			case CTRL_SHIFT_6:
 				app.exit();
 				break;
+			case CTRL_C:
+				if (debug) {
+					app.exit();
+				}
+				break;
+
 			default:
 				// ok
 		}
@@ -42,14 +48,14 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
 	@Override
 	public void run() {
-		parser.runningCommand = this;
+		parser.setRunningCommand(this);
 
 		boolean conti = zpracujRadek();
 		if (conti) {
 			// vytvor aplikaci
 			app.run();
 		} else {
-			parser.runningCommand = null;
+			parser.deleteRunningCommand();
 		}
 	}
 
@@ -167,7 +173,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
 	@Override
 	public void applicationFinished() {
-		parser.runningCommand = null;
+		parser.deleteRunningCommand();
 	}
 
 }
