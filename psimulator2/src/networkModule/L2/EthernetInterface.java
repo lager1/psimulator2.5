@@ -26,7 +26,11 @@ public class EthernetInterface {
 	public final String name;
 	protected MacAddress mac;
 	private final Map<MacAddress, SwitchTableItem> switchingTable = new HashMap<MacAddress, SwitchTableItem>();
-	private final Map<Integer,SwitchportSettings> switchpors = new HashMap<Integer, SwitchportSettings>();
+	/**
+	 * Seznam prirazenejch switchportu. Je dulezity, aby to bylo private, pridavat se musi jen v metode
+	 * addSwitchportSettings, aby se v tom SwitchportSettings nastavilo assignedInterface.
+	 */
+	private final Map<Integer, SwitchportSettings> switchpors = new HashMap<Integer, SwitchportSettings>();
 	/**
 	 * Je-li povoleno switchovani, napr. u routeru defualtne zakazano.
 	 */
@@ -41,7 +45,12 @@ public class EthernetInterface {
 		this.etherLayer = etherLayer;
 	}
 
+	/**
+	 * Prida switchport.
+	 * @param s
+	 */
 	public void addSwitchportSettings(SwitchportSettings s){
+		s.assignedInterface = this;
 		switchpors.put(s.switchportNumber, s);
 	}
 

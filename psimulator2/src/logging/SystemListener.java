@@ -3,6 +3,7 @@
  */
 package logging;
 
+import dataStructures.L2Packet;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -27,12 +28,19 @@ public class SystemListener implements LoggerListener {
 	@Override
 	public void listen(Loggable caller, int logLevel, LoggingCategory category, String message, Object object) {
 		try {
+
 			if (logLevel <= configuration.get(category)) {
-				System.out.println("[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": " + message);
+				String vypsat = "";
+				vypsat+="[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": " + message;
 				if (object instanceof Exception) {
 					((Exception) object).printStackTrace();
 				}
+				if(object instanceof L2Packet){
+					vypsat+=object.toString();
+				}
+				System.out.println(vypsat);
 			}
+
 		} catch (NullPointerException e) {
 			System.out.println("An error occured during logging:-) \n"
 					+ "LoggingCategory was null.");

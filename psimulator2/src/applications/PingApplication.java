@@ -53,6 +53,8 @@ public abstract class PingApplication extends Application {
 		this.command = command;
 	}
 
+
+
 	public void setCount(int count) {
 		this.count = count;
 	}

@@ -55,4 +55,10 @@ public class EthernetPacket extends L2Packet {
 	public L2PacketType getType() {
 		return L2PacketType.ethernetII;
 	}
+
+	@Override
+	public String toString(){
+		String vratit = "EthernetPacket: src: "+src+ " dst: "+dst+" L3type: "+type;
+		return vratit;
+	}
 }

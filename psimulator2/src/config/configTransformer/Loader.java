@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import networkModule.L2.EthernetInterface;
+import networkModule.L2.SwitchportSettings;
 import networkModule.L3.NetworkInterface;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
@@ -138,7 +139,7 @@ public class Loader {
 		DeviceSettings.NetworkModuleType netModType;
 
 		if (model.getDevSettings() != null) {
-			netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu
+			netModType = model.getDevSettings().getNetModType();	// zjisteni typu modulu z konfiguraku
 		} else { // neni ulozeno v konfiguraci, o jaky typ modulu se jedna
 			switch (pc.type) {
 				case cisco_router:
@@ -153,9 +154,9 @@ public class Loader {
 			}
 		}
 
-		if (netModType == shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType.tcp_ip_netmod) {	// modul je pro router
+		if (netModType == DeviceSettings.NetworkModuleType.tcp_ip_netmod) {	// modul je pro router
 			return createTcpIpNetMod(model, pc);
-		} else if (netModType == shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType.simple_switch_netMod) {
+		} else if (netModType == DeviceSettings.NetworkModuleType.simple_switch_netMod) {
 			return createSimpleSwitchNetMod(model, pc);
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network module.");
@@ -226,8 +227,9 @@ public class Loader {
 	 */
 	private NetMod createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
 		SimpleSwitchNetMod nm = new SimpleSwitchNetMod(pc);
-		nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
-		// -> switchi se priradi jedno rozhrani a da se mu mac prvniho switchportu
+		EthernetInterface ethIface=nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
+			// -> switchi se priradi jedno rozhrani a da se mu nahodna mac
+		nm.ethernetLayer.addAllSwitchportsToGivenInterface(ethIface);
 		return nm;
 	}
 

@@ -20,7 +20,7 @@ import psimulator2.Psimulator;
  */
 public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 
-	public final EthernetLayer ethernetLayer = new EthernetLayer(this);
+	public final EthernetLayer ethernetLayer;
 
 	/**
 	 * Konstruktor sitovyho modulu predpoklada uz hotovej fysickej modul, protoze zkouma jeho nastaveni.
@@ -28,6 +28,7 @@ public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 	 */
     public SimpleSwitchNetMod(Device device) {
 		super(device);
+		ethernetLayer = new EthernetLayer(this);
 	}
 
 	/**

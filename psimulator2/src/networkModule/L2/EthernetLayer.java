@@ -12,7 +12,6 @@ import networkModule.Layer;
 import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
 import physicalModule.PhysicMod;
-import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -27,11 +26,59 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<>();
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
-	public final PhysicMod physicMod;	// zkratka na fusickej modul
+	public final PhysicMod physicMod;	// zkratka na fysickej modul
+
+
+
+// Konstruktory a nastavovani pri startu: -------------------------------------------------------------------------------------------------
+
+	public EthernetLayer(NetMod netMod) {
+		super(netMod);
+		exploreHardware();
+		this.physicMod=netMod.getPhysicMod();
+		this.worker = new WorkerThread(this);
+	}
+
+	/**
+	 * Prida novy interface.
+	 * @param name
+	 * @param mac
+	 * @return to pridany interface - loader s tim potrebuje jeste neco delat
+	 */
+	public EthernetInterface addInterface(String name, MacAddress mac){
+		EthernetInterface iface = new EthernetInterface(name, mac, this);
+		this.ifaces.add(iface);
+		return iface;
+	}
+
+	/**
+	 * Explores hardware. Pri startu projde vsechny switchporty fysickyho modulu a nacte si je.
+	 */
+	private void exploreHardware() {
+		for (int i : netMod.getPhysicMod().getNumbersOfPorts()) {
+			switchports.put(i, new SwitchportSettings(i));
+		}
+	}
+
+	/**
+	 * Metoda, ktera prida vsechny switchporty na zadany interface. Pouziva ji loader pro jenodussi nastaveni sitovyho
+	 * modulu u switche, u normalniho tcpnetmodu by to nemelo smysl.
+	 *
+	 * @param iface
+	 */
+	public void addAllSwitchportsToGivenInterface(EthernetInterface iface) {
+		for (SwitchportSettings swport : switchports.values()) {
+			iface.addSwitchportSettings(swport);
+			debug("Pridavam na interface "+iface.name+" switchport c. "+ swport.switchportNumber, null);
+		}
+	}
+
+
 
 
 
 // Verejny metody pro sitovou komunikaci: ----------------------------------------------------------------------------------------------------
+
 	public void receivePacket(EthernetPacket packet, int switchportNumber) {
 		receiveBuffer.add(new ReceiveItem(packet, switchportNumber));
 		worker.wake();
@@ -91,6 +138,8 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * @param switchportNumber
 	 */
 	private void handleReceivePacket(EthernetPacket packet, int switchportNumber) {
+
+		Logger.log(this, Logger.DEBUG, LoggingCategory.LINK, "Prijal jsem paket na switchportu "+ switchportNumber+". ", packet);
 
 		//kontrola existence switchportu:
 		SwitchportSettings swport = switchports.get(switchportNumber);
@@ -160,6 +209,13 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 // ostatni privatni metody: -----------------------------------------------------------------------------------------------------------
 
+	private void debug(String message,Object obj){
+		Logger.log(this, Logger.DEBUG, LoggingCategory.ETHERNET_LAYER, message, obj);
+	}
+
+	private void paketInfo(String message,Object obj){
+		Logger.log(this, Logger.INFO, LoggingCategory.LINK, message, obj);
+	}
 
 
 
@@ -186,36 +242,6 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		public ReceiveItem(EthernetPacket packet, int switchportNumber) {
 			this.packet = packet;
 			this.switchportNumber = switchportNumber;
-		}
-	}
-
-// Konstruktory a nastavovani pri startu: -------------------------------------------------------------------------------------------------
-
-	public EthernetLayer(NetMod netMod) {
-		super(netMod);
-		exploreHardware();
-		this.physicMod=netMod.getPhysicMod();
-		this.worker = new WorkerThread(this);
-	}
-
-	/**
-	 * Prida novy interface.
-	 * @param name
-	 * @param mac
-	 * @return to pridany interface - loader s tim potrebuje jeste neco delat
-	 */
-	public EthernetInterface addInterface(String name, MacAddress mac){
-		EthernetInterface iface = new EthernetInterface(name, mac, this);
-		this.ifaces.add(iface);
-		return iface;
-	}
-
-	/**
-	 * Explores hardware. Pri startu projde vsechny switchporty fysickyho modulu a nacte si je.
-	 */
-	private void exploreHardware() {
-		for (int i : netMod.getPhysicMod().getNumbersOfPorts()) {
-			switchports.put(i, new SwitchportSettings(i));
 		}
 	}
 
