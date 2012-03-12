@@ -3,6 +3,7 @@
  */
 package commands;
 
+import commands.LongTermCommand.Signal;
 import device.Device;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,7 @@ import shell.apps.CommandShell.CommandShell;
  *
  * @author Stanislav Rehak
  */
-public abstract class AbstractCommandParser implements Loggable, LongTermCommand {
+public abstract class AbstractCommandParser implements Loggable {
 
 	protected CommandShell shell;
 	protected Device device;
@@ -90,6 +91,15 @@ public abstract class AbstractCommandParser implements Loggable, LongTermCommand
 		}
 	}
 
+	public void catchUserInput(String line) {
+		if (runningCommand != null) {
+			runningCommand.catchUserInput(line);
+		} else {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_COMMANDS, "zavolan catchUserInput a pritom neni spusten zadny prikaz!!! Zahazuju vstup..", null);
+		}
+	}
+	
+	public abstract void catchSignal(Signal signal);
 
 	/**
 	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.

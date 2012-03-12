@@ -5,6 +5,7 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.LongTermCommand.Signal;
 import commands.linux.Ifconfig;
 import commands.linux.Route;
 import device.Device;
@@ -260,20 +261,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	@Override
-	public void catchUserInput(String line) {
-		if (runningCommand != null) {
-			runningCommand.catchUserInput(line);
-		} else {
-			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, "zavolan catchUserInput a pritom neni spusten zadny prikaz!!! Zahazuju vstup..", null);
-		}
-	}
-
-	@Override
 	public void catchSignal(Signal sig) {
 
 		if (runningCommand != null) {
-			shell.print("^Z");
-			shell.printLine("");
+//			shell.print("^Z");
+//			shell.printLine("");
 			runningCommand.catchSignal(sig);
 			return;
 		}
