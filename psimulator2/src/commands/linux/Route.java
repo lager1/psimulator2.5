@@ -94,11 +94,6 @@ public class Route extends AbstractCommand {
         vykonejPrikaz();
 	}
 
-	@Override
-	public void catchUserInput(String input) {
-		// nic se nedela
-	}
-
 
 	/**
 	 * Samotny provedeni uz hotovyho prikazu.

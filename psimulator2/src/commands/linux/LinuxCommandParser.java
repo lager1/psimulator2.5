@@ -5,16 +5,14 @@ package commands.linux;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.LongTermCommand.Signal;
 import commands.cisco.CiscoCommand;
 import commands.cisco.PingCommand;
 import device.Device;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import logging.*;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
@@ -50,7 +48,10 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	@Override
 	public void catchSignal(Signal sig) {
-		shell.printLine("^C");	// TODO dodelat
+		if(sig==Signal.CTRL_C){
+			shell.printLine("^C");	// TODO dodelat chytani ctrl+C
+		}
+		// TODO: jeste nejake dalsi signaly?
 	}
 
 	@Override
@@ -89,6 +90,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	 * @param name
 	 * @return
 	 */
+	@Deprecated
 	private AbstractCommand getLinuxCommandStara(String name) {
 		if (name.equals("ifconfig")) {
 			return new Ifconfig(this);

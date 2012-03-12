@@ -4,9 +4,11 @@
 
 package commands.linux;
 
+import applications.LinuxPingApplication;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
+import commands.LongTermCommand;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
 
@@ -14,7 +16,7 @@ import dataStructures.ipAddresses.IpAddress;
  *
  * @author Tomas Pitrinec
  */
-public class Ping extends AbstractCommand implements ApplicationNotifiable{
+public class Ping extends AbstractCommand implements LongTermCommand, ApplicationNotifiable{
 
 	private boolean ladeni = true;
 
@@ -29,6 +31,7 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
     boolean minus_b=false; //dovoluje pingat na broadcastovou adresu
     boolean minus_h=false;
     //dalsi prepinace, ktery bych mel minimalne akceptovat: -a, -v
+	int timeout = 10_000;	// timeout v milisekundach
 
     //parametry parseru:
     private String slovo; //slovo parseru, se kterym se zrovna pracuje
@@ -54,6 +57,7 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
 		if(ladeni){
 			printLine(toString());
 		}
+		vykonejPrikaz();
 	}
 
 	@Override
@@ -61,9 +65,24 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
 		// nic nedela
 	}
 
+	/**
+	 * Vykonavani, tedy predevsim spousteni pingovaci aplikace.
+	 */
+	private void vykonejPrikaz() {
+		if(minus_h){
+			vypisNapovedu();
+		} else if (navratovyKod!=0){
+			// nejaka chyba pri parsovani, nic se nedela.
+		} else {
+			parser.runningCommand = this;	// musim se zaregistrovat u parseru
+			LinuxPingApplication app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
+			app.run();
+		}
+	}
 
 
     /**
+	 * Parsovani.
      * Cte prikaz, zatim cte jenom IP adresu a nic nekontroluje.
      */
     private void parsujPrikaz(){
@@ -93,6 +112,7 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
     }
 
     /**
+	 * Parsovani.
      * Zpracovava prepinace z jednoho slova. Predpoklada, ze krome minusu bude mit jeste aspon jeden dalsi znak.
      * Ty hlasky, co to vraci, nejsou vzdycky uplne verny
      */
@@ -154,6 +174,7 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
     }
 
     /**
+	 * Parsovani.
      * Tahleta metoda parsuje ciselne hodnoty prepinace, podle podminek, podle jakych funguje ping
      * (poznamky v mym sesite).
      * @param uk ukazatel na pismeno toho prepinace ve slove
@@ -181,6 +202,11 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
         }
     }
 
+	/**
+	 * Parsovani.
+	 * @param uk
+	 * @return
+	 */
     private double zpracujDoublePrepinac(int uk){
         slovo=dalsiSlovo();
         try{
@@ -191,8 +217,9 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
     }
 
 
-
-
+	/**
+	 * Vykonavani.
+	 */
     private void vypisNapovedu() {
         printLine("Usage: ping [-LRUbdfnqrvVaA] [-c count] [-i interval] [-w deadline]");
         printLine("            [-p pattern] [-s packetsize] [-t ttl] [-I interface or address]");
@@ -230,6 +257,7 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
 	}
 
 	/**
+	 * Parsovani.
 	 * Zkratka pro starou verzi simulatoru.
 	 * @return
 	 */
@@ -239,7 +267,14 @@ public class Ping extends AbstractCommand implements ApplicationNotifiable{
 
 	@Override
 	public void applicationFinished() {
+		parser.runningCommand = null;
+	}
+
+	@Override
+	public void catchSignal(Signal signal) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+
 
 }

@@ -102,16 +102,16 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu.
+	 * Zkratka pro vypisovani do shellu. Vypise radku pres shell svyho parseru.
 	 */
-	protected void printLine(String s) {
+	public void printLine(String s) {
 		parser.getShell().printLine(s);
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu.
+	 * Zkratka pro vypisovani do shellu. Vypise text pres shell svyho parseru.
 	 */
-	protected void print(String s) {
+	public void print(String s) {
 		parser.getShell().print(s);
 	}
 

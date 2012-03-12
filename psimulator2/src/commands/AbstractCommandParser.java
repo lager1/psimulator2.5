@@ -25,7 +25,7 @@ import shell.apps.CommandShell.CommandShell;
 public abstract class AbstractCommandParser implements Loggable {
 
 	protected CommandShell shell;
-	protected Device device;
+	public final Device device;
 	/**
 	 * Seznam slov v prijatem radku.
 	 */
@@ -120,14 +120,6 @@ public abstract class AbstractCommandParser implements Loggable {
 	 */
 	protected abstract void processLineForParsers();
 
-//	@Override
-//	public void catchSignal(Signal signal) {
-//		if (runningCommand != null) {
-//			runningCommand.catchSignal(signal);
-//		} else {
-//			this.catchSignal(signal);
-//		}
-//	}
 
 	/**
 	 * Prikaz notifikuje parser o svym skonceni.
