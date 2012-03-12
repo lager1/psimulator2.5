@@ -25,14 +25,12 @@ import telnetd.io.TerminalIO;
  */
 public class CommandShell extends TerminalApplication {
 
-
 	public static final int DEFAULT_MODE = 0;
 	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
 	public static final int CISCO_PRIVILEGED_MODE = 1;
 	public static final int CISCO_CONFIG_MODE = 2;
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
-
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
@@ -47,8 +45,6 @@ public class CommandShell extends TerminalApplication {
 		this.shellRenderer = new ShellRenderer(this, terminalIO);
 		this.parser = device.createParser(this);
 	}
-
-
 
 	public void setPrompt(String prompt) {
 		this.prompt = prompt;
@@ -86,8 +82,6 @@ public class CommandShell extends TerminalApplication {
 	public ShellRenderer getShellRenderer() {
 		return shellRenderer;
 	}
-
-
 
 	/**
 	 * method that read a single printable character from telnet input and handle control codes properly
@@ -232,15 +226,14 @@ public class CommandShell extends TerminalApplication {
 
 		while (!quit) {
 			try {
+				
 				printPrompt();
 				line = readCommand();
 
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
-
-				if(line !=null)
-				 parser.processLine(line, mode);
-
-				// this.printWithDelay("aaa \n bbb \n ccc \n ddd \n eee \n fff", 2000);  //JUST FOR TESTING SIGNALS
+				if (line != null) {
+					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
+					parser.processLine(line, mode);
+				}
 
 				terminalIO.flush();
 
