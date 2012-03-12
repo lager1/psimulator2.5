@@ -22,7 +22,12 @@ public interface LongTermCommand {
 		/**
 		 * CTRL+D
 		 */
-		CTRL_D
+		CTRL_D,
+		/**
+		 * CTRL_SHIFT_6
+		 */
+		CTRL_SHIFT_6,
+		
 
 	}
 

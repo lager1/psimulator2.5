@@ -145,7 +145,7 @@ public class ShellRenderer {
 						konecCteni = true;
 						returnValue = false;
 						//termIO.write(BasicTerminalIO.CRLF);
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); 
 						break;
 					case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
 						// @TODO neposilat ctrl_d pokud nacitam nejaky prikaz... poslat pouze pokud je radka prazdna
@@ -155,14 +155,16 @@ public class ShellRenderer {
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);
 						break;
 					case TerminalIO.CTRL_Z:
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  // SEND CTRL_Z SIGNAL
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  
 						break;
 
 					case TerminalIO.CTRL_L:	// clean screen
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+L");
 						this.clearScreen();
 						break;
-
+					case TerminalIO.CTRL_SHIFT_6: 
+						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  
+						break;
 					case TerminalIO.ENTER:
 						konecCteni = true;
 						history.add(this.getValue());

@@ -34,6 +34,9 @@ public class ShellUtils {
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");
 				catchAble.catchSignal(Signal.CTRL_D);
 				break;
+			case TerminalIO.CTRL_SHIFT_6:
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+SHIFT+6");
+				catchAble.catchSignal(Signal.CTRL_SHIFT_6);
 
 		}
 

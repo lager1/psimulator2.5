@@ -650,6 +650,8 @@ public class TerminalIO
   public static final int END_KEY = 1070;
   public static final int PAGE_DOWN = 1054;
   public static final int PAGE_UP = 1053;
+  public static final int CTRL_SHIFT_6 = 30;
+  
   
 
 	@Override
