@@ -233,12 +233,12 @@ public class CommandShell extends TerminalApplication {
 		while (!quit) {
 			try {
 				printPrompt();
-
 				line = readCommand();
 
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
 
-				parser.processLine(line, mode);
+				if(line !=null)
+				 parser.processLine(line, mode);
 				
 				// this.printWithDelay("aaa \n bbb \n ccc \n ddd \n eee \n fff", 2000);  //JUST FOR TESTING SIGNALS
 

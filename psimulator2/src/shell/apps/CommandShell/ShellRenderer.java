@@ -27,6 +27,10 @@ public class ShellRenderer {
 	private int cursor = 0;
 	private StringBuilder sb = new StringBuilder(50); //buffer načítaného řádku, čtecí buffer
 	private History history = new History();
+	/**
+	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
+	 */
+	private boolean returnValue = true;
 
 	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO) {
 		this.commandShell = commandShell;
@@ -50,6 +54,7 @@ public class ShellRenderer {
 	public void run() throws Exception {
 
 		this.sb.setLength(0); // clear string builder
+		returnValue=true;
 		boolean konecCteni = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
 		List<String> nalezenePrikazy = new LinkedList<String>(); // seznam nalezenych příkazů po zmáčknutí tabu
 		this.cursor = 0;
@@ -73,8 +78,6 @@ public class ShellRenderer {
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
 					continue; // continue while
 				}
-
-
 
 				if (inputValue != TerminalIO.TABULATOR) {
 					nalezenePrikazy = new LinkedList<String>(); // vyčistím pro další hledání
@@ -113,7 +116,7 @@ public class ShellRenderer {
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "DELETE upravil pozici kurzoru na: " + cursor);
 						}
 						break;
-						
+
 					case TerminalIO.BACKSPACE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno BACKSPACE");
 						if (cursor != 0) {
@@ -140,12 +143,14 @@ public class ShellRenderer {
 						break; // break switch
 					case TerminalIO.CTRL_C:
 						konecCteni = true;
-
+						returnValue = false;
 						//termIO.write(BasicTerminalIO.CRLF);
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
 						break;
 					case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
+						// @TODO neposilat ctrl_d pokud nacitam nejaky prikaz... poslat pouze pokud je radka prazdna
 						konecCteni = true;
+						returnValue = false;
 						termIO.write("BYE");
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);
 						break;
@@ -188,8 +193,17 @@ public class ShellRenderer {
 
 	}
 
+	/**
+	 * method that return readed line
+	 *
+	 * @return readed line or null if ctrl+c catched
+	 */
 	public String getValue() {
-		return this.sb.toString();
+		if (returnValue) {
+			return this.sb.toString();
+		} else {
+			return null;
+		}
 	}
 
 	/**

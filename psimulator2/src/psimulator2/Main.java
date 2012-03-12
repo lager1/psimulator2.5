@@ -74,6 +74,7 @@ public class Main {
 		try {
 
 			telnetDaemon = TelnetD.createTelnetD(TelnetProperties.getProperties());
+			// @TODO pridat metodu na kontrolu obsazení portů
 			telnetDaemon.start();
 
 			Logger.log(Logger.INFO, LoggingCategory.TELNET, "Telnet listeners successfully started");
