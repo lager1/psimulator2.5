@@ -1,5 +1,6 @@
 package shell;
 
+import commands.AbstractCommandParser;
 import commands.LongTermCommand;
 import commands.LongTermCommand.Signal;
 import java.util.regex.Pattern;
@@ -19,24 +20,24 @@ public class ShellUtils {
 		return "\\p{Print}";
 	}
 
-	public static void handleControlCodes(LongTermCommand catchAble, int code) {
+	public static void handleControlCodes(AbstractCommandParser parser, int code) {
 
 		switch (code) {
 			case TerminalIO.CTRL_C:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				catchAble.catchSignal(Signal.CTRL_C);
+				parser.catchSignal(Signal.CTRL_C);
 				break;
 			case TerminalIO.CTRL_Z:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				catchAble.catchSignal(Signal.CTRL_Z);
+				parser.catchSignal(Signal.CTRL_Z);
 				break;
 			case TerminalIO.CTRL_D:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");
-				catchAble.catchSignal(Signal.CTRL_D);
+				parser.catchSignal(Signal.CTRL_D);
 				break;
 			case TerminalIO.CTRL_SHIFT_6:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+SHIFT+6");
-				catchAble.catchSignal(Signal.CTRL_SHIFT_6);
+				parser.catchSignal(Signal.CTRL_SHIFT_6);
 
 		}
 

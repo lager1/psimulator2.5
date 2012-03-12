@@ -34,6 +34,7 @@ public class CommandShell extends TerminalApplication {
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
+	private ShellMode shellMode = ShellMode.COMMAND_READ;
 	/**
 	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
 	 * Dle stavu se bude resit napovidani a historie.
@@ -44,6 +45,24 @@ public class CommandShell extends TerminalApplication {
 		super(terminalIO, device);
 		this.shellRenderer = new ShellRenderer(this, terminalIO);
 		this.parser = device.createParser(this);
+	}
+
+	/**
+	 * get active shell mode
+	 *
+	 * @return
+	 */
+	public ShellMode getShellMode() {
+		return shellMode;
+	}
+
+	/**
+	 * set active shell mode
+	 *
+	 * @param shellMode
+	 */
+	public void setShellMode(ShellMode shellMode) {
+		this.shellMode = shellMode;
 	}
 
 	public void setPrompt(String prompt) {
@@ -223,17 +242,30 @@ public class CommandShell extends TerminalApplication {
 
 		String line;
 
+		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
 
 		while (!quit) {
 			try {
-				
-				printPrompt();
-				line = readCommand();
 
-				if (line != null) {
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
-					parser.processLine(line, mode);
+				switch (this.shellMode) {
+
+					case COMMAND_READ:
+						printPrompt();
+						line = readCommand();
+
+						if (line != null) {
+							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
+							parser.processLine(line, mode);
+						}
+						break;
+					case NORMAL_READ:
+						break;
+					case INPUT_FIELD:
+						break;
+
 				}
+
+
 
 				terminalIO.flush();
 
