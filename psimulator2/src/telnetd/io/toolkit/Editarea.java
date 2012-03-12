@@ -38,6 +38,7 @@ import telnetd.io.BasicTerminalIO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
+import logging.LoggingCategory;
 import telnetd.io.TerminalIO;
 
 /**
@@ -100,7 +101,7 @@ public class Editarea
     }//getSoftwrapString
 
     public String getValue() {
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         //iterate over buffers and accumulate size
         Editline el = null;
         for (int i = 0; i < lines.size(); i++) {
@@ -116,6 +117,11 @@ public class Editarea
      */
     public void setValue(ArrayList<String> textLines) {
 
+		if(textLines == null || textLines.isEmpty())
+			return;
+		
+		m_Firstrun = false;  // next call run() method will not be the first one
+		
         //buffers
         lines.removeAllElements();
         //cursor
@@ -186,8 +192,10 @@ public class Editarea
             //reset flag
             m_Firstrun = false;
             //make a new editline
-            line = createLine();
-            appendLine(line);
+			if(lines.isEmpty()){
+				line = createLine();
+				appendLine(line);
+			}
         }
 
         do {

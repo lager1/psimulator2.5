@@ -3,6 +3,7 @@ package shell;
 import device.Device;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
@@ -52,9 +53,11 @@ public class TelnetSession implements Shell {
 		}
 
 		Logger.log(Logger.INFO, LoggingCategory.TELNET, "TelnetSession sucessfuly created for device:" + device.getName() + " on port: " + this.port+ " using:" + con.getConnectionData().getNegotiatedTerminalType());
+		
+		
 
 
-
+//
 		CommandShell cmd = new CommandShell(m_IO, this.device);  // create command shell
 		this.rootApplication = cmd;
 

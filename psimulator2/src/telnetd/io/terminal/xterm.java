@@ -61,9 +61,7 @@ public class xterm extends BasicTerminal {
         switch (c) {
             case 10:
                 return TerminalIO.ENTER;
-            case 126:
-                return TerminalIO.DELETE;
-            case 127:
+            case TerminalIO.DEL:
                 return TerminalIO.BACKSPACE;
             case 9:
                 return TerminalIO.TABULATOR;

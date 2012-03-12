@@ -412,8 +412,12 @@ public class TerminalIO
       //FIXME: ensure CAN, broken Escapes etc.
       for (int m = 0; m < bytebuf.length; m++) {
         bytebuf[m] = m_TelnetIO.read();
+		
+		if(bytebuf[m] == Terminal.ESC)
+			return ESCAPE;  // double escape read
+		
       }
-      return m_Terminal.translateEscapeSequence(bytebuf);
+      return m_Terminal.translateEscapeSequence(bytebuf, m_TelnetIO);
     }
     if (i == BYTEMISSING) {
       //FIXME:longer escapes etc...
@@ -641,6 +645,12 @@ public class TerminalIO
   public static final int CTRL_W = 23;
   public static final int CTRL_L = 12;
   public static final int CTRL_D = 1305;
+  public static final int CTRL_S = 19;
+  public static final int HOME_KEY = 1072;
+  public static final int END_KEY = 1070;
+  public static final int PAGE_DOWN = 1054;
+  public static final int PAGE_UP = 1053;
+  
 
 	@Override
 	public boolean avaiable() {

@@ -62,6 +62,8 @@ public class ShellRenderer {
 
 				int inputValue = termIO.read();
 
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
+
 				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
 					termIO.write(inputValue);
@@ -85,16 +87,6 @@ public class ShellRenderer {
 						this.handleTabulator(nalezenePrikazy);
 						break;
 
-					case TerminalIO.DEL:
-					case TerminalIO.DELETE:
-						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno DEL/DELETE");
-						termIO.eraseLine();
-						termIO.moveLeft(termIO.getColumns());  // kdyby byla lepsi cesta jak smazat řádku, nenašel jsem
-						this.cursor = 0;
-						this.sb.setLength(0);
-						this.commandShell.printPrompt();
-						break;
-
 					case TerminalIO.LEFT:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno LEFT");
 						moveCursorLeft(1);
@@ -112,6 +104,16 @@ public class ShellRenderer {
 						this.handleHistory(TerminalIO.DOWN);
 						break;
 
+					case TerminalIO.DEL:
+					case TerminalIO.DELETE:
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno DEL/DELETE");
+						if (cursor != sb.length()) {
+							sb.deleteCharAt(cursor);
+							draw();
+							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "DELETE upravil pozici kurzoru na: " + cursor);
+						}
+						break;
+						
 					case TerminalIO.BACKSPACE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno BACKSPACE");
 						if (cursor != 0) {
@@ -122,7 +124,7 @@ public class ShellRenderer {
 						}
 						break;
 					case TerminalIO.CTRL_W:
-						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+W");
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+W");	// @TODO vyladit smazání slova tak aby odpovídalo konvencím na linuxu
 						while (cursor != 0) {
 							sb.deleteCharAt(cursor - 1);
 							moveCursorLeft(1);
@@ -138,6 +140,7 @@ public class ShellRenderer {
 						break; // break switch
 					case TerminalIO.CTRL_C:
 						konecCteni = true;
+
 						termIO.write(BasicTerminalIO.CRLF);
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); // SEND CTRL_C SIGNAL 
 						break;
@@ -146,7 +149,7 @@ public class ShellRenderer {
 						termIO.write("BYE");
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);
 						break;
-					case TerminalIO.CTRL_Z: 
+					case TerminalIO.CTRL_Z:
 						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  // SEND CTRL_Z SIGNAL
 						break;
 

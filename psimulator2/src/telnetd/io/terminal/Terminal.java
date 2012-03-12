@@ -32,6 +32,8 @@
 
 package telnetd.io.terminal;
 
+import telnetd.io.TelnetIO;
+
 /**
  * On top of the telnet protocol communication layer
  * there is a layer for terminal communication. This layer
@@ -63,7 +65,7 @@ public interface Terminal {
    * @param buffer array of integers containing a escape sequence.
    * @return the terminal independent representation.
    */
-  public int translateEscapeSequence(int[] buffer);
+  public int translateEscapeSequence(int[] buffer, TelnetIO telnetIO);
 
 
   /**
