@@ -73,11 +73,6 @@ public class ShowCommand extends CiscoCommand {
 
 	}
 
-	@Override
-	public void catchUserInput(String input) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
     enum State {
 
         RUN,

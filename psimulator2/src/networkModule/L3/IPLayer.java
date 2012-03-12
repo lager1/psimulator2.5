@@ -232,7 +232,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	private void handleSendIpPacket(IpPacket packet, EthernetInterface iface) {
 
 		// je pro me?
-		if (isItMyIpAddress(packet.dst)) {
+		if (isItMyIpAddress(packet.dst) || packet.dst == null) { // TODO: zatim hack: packet.dst == null
 			netMod.transportLayer.receivePacket(packet);
 			return;
 		}
@@ -335,6 +335,8 @@ public class IPLayer implements SmartRunnable, Loggable {
 				ReceiveItem m = receiveBuffer.remove(0);
 				handleReceivePacket(m.packet, m.iface);
 			}
+
+
 
 			if (!sendBuffer.isEmpty()) {
 				SendItem m = sendBuffer.remove(0);

@@ -25,14 +25,14 @@ import telnetd.io.TerminalIO;
  */
 public class CommandShell extends TerminalApplication {
 
-	
+
 	public static final int DEFAULT_MODE = 0;
 	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
 	public static final int CISCO_PRIVILEGED_MODE = 1;
 	public static final int CISCO_CONFIG_MODE = 2;
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
-	
+
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
@@ -86,8 +86,8 @@ public class CommandShell extends TerminalApplication {
 	public ShellRenderer getShellRenderer() {
 		return shellRenderer;
 	}
-	
-	
+
+
 
 	/**
 	 * method that read a single printable character from telnet input and handle control codes properly
@@ -147,7 +147,7 @@ public class CommandShell extends TerminalApplication {
 		try {
 
 			this.handleUnexpectedInput();  // just for sure, for example if text.lenght==0
-			
+
 			for (int i = 0; i < text.length(); i++) {
 				char ch = text.charAt(i);
 				terminalIO.write(ch);
@@ -161,7 +161,7 @@ public class CommandShell extends TerminalApplication {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost.");
 		}
 	}
-	
+
 	/**
 	 * method that print lines with delay
 	 *
@@ -193,7 +193,7 @@ public class CommandShell extends TerminalApplication {
 	 * just print prompt
 	 */
 	public void printPrompt() {
-		if (parser.writePrompt()) {
+		if (parser.isCommandRunning()) {
 			print(prompt);
 		}
 	}
@@ -239,7 +239,7 @@ public class CommandShell extends TerminalApplication {
 
 				if(line !=null)
 				 parser.processLine(line, mode);
-				
+
 				// this.printWithDelay("aaa \n bbb \n ccc \n ddd \n eee \n fff", 2000);  //JUST FOR TESTING SIGNALS
 
 				terminalIO.flush();
@@ -272,7 +272,7 @@ public class CommandShell extends TerminalApplication {
 		while (terminalIO.avaiable()) {  // there is unexpected input to be handled
 
 			int input = terminalIO.read();
-			
+
 			if (ShellUtils.isPrintable(input)) {
 				terminalIO.write((char) input);
 			} else {

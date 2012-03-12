@@ -7,13 +7,14 @@ package commands.cisco;
 import applications.CiscoPingApplication;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
+import commands.LongTermCommand;
 import dataStructures.ipAddresses.IpAddress;
 
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class PingCommand extends CiscoCommand implements ApplicationNotifiable {
+public class PingCommand extends CiscoCommand implements ApplicationNotifiable, LongTermCommand {
 
 	private final CiscoPingApplication app;
 
@@ -22,9 +23,21 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable {
 		this.app = new CiscoPingApplication(getDevice(), this.parser, this);
 	}
 
+
+	@Override
+	public void catchSignal(Signal signal) {
+		switch (signal) {
+			case CTRL_C:
+				app.exit();
+				break;
+			default:
+				// ok
+		}
+	}
+
 	@Override
 	public void catchUserInput(String input) {
-		throw new UnsupportedOperationException("Not supported yet.");
+//		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override

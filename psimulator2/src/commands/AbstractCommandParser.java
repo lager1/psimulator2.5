@@ -11,7 +11,6 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
-import shell.SignalCatchAble;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -22,7 +21,7 @@ import shell.apps.CommandShell.CommandShell;
  *
  * @author Stanislav Rehak
  */
-public abstract class AbstractCommandParser implements Loggable, SignalCatchAble {
+public abstract class AbstractCommandParser implements Loggable, LongTermCommand {
 
 	protected CommandShell shell;
 	protected Device device;
@@ -49,21 +48,13 @@ public abstract class AbstractCommandParser implements Loggable, SignalCatchAble
 	 * Kvuli prikazum, ktere bezi dlouho, ty budou muset bezet ve vlastnim vlakne a zde bude na ne odkaz.
 	 * Az prikaz skonci, tak tohle bude null.
 	 */
-	public AbstractCommand runningCommand = null;
+	public LongTermCommand runningCommand = null;
 
 	public AbstractCommandParser(Device networkDevice, CommandShell shell) {
 		this.device = networkDevice;
 		this.shell = shell;
 	}
 
-	/**
-	 * 
-	 * @param signal
-	 */
-	@Override
-	public abstract void catchSignal(Signal signal);
-	
-	
 	/**
 	 * Zpracuje radek.
 	 * Tuto metodu bude volat CommandShell
@@ -99,7 +90,7 @@ public abstract class AbstractCommandParser implements Loggable, SignalCatchAble
 		}
 	}
 
-	
+
 	/**
 	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.
 	 *
@@ -119,6 +110,15 @@ public abstract class AbstractCommandParser implements Loggable, SignalCatchAble
 	 */
 	protected abstract void processLineForParsers();
 
+//	@Override
+//	public void catchSignal(Signal signal) {
+//		if (runningCommand != null) {
+//			runningCommand.catchSignal(signal);
+//		} else {
+//			this.catchSignal(signal);
+//		}
+//	}
+
 	/**
 	 * Prikaz notifikuje parser o svym skonceni.
 	 * @param exitCode
@@ -131,7 +131,7 @@ public abstract class AbstractCommandParser implements Loggable, SignalCatchAble
 	 * Vrati shellu informaci, zda ma vypisovat prompt.
 	 * @return
 	 */
-	public boolean writePrompt() {
+	public boolean isCommandRunning() {
 		if (runningCommand == null) {
 			return true;
 		}
@@ -261,5 +261,5 @@ public abstract class AbstractCommandParser implements Loggable, SignalCatchAble
 		return device.getName()+": AbstractCommandParser";
 	}
 
-	
+
 }

@@ -26,10 +26,10 @@ public class PsimulatorSave extends AbstractCommand {
 		}
 	}
 
-	@Override
-	public void catchUserInput(String input) {
-		// zatim nic nedela, v budoucnu mozna dotaz na prepsani souboru?
-	}
+//	@Override
+//	public void catchUserInput(String input) {
+//		// zatim nic nedela, v budoucnu mozna dotaz na prepsani souboru?
+//	}
 
 	@Override
 	public String toString() {

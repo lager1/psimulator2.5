@@ -5,14 +5,15 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.LongTermCommand;
 import static shell.apps.CommandShell.CommandShell.CISCO_CONFIG_MODE;
 
 /**
- * Configure command on Cisco IOS.
+ * ConfigureCommand command on Cisco IOS.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class ConfigureCommand extends CiscoCommand {
+public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 
 	public ConfigureCommand(AbstractCommandParser parser) {
 		super(parser);
@@ -59,5 +60,10 @@ public class ConfigureCommand extends CiscoCommand {
 		}
 
 		parser.invalidInputDetected();
+	}
+
+	@Override
+	public void catchSignal(Signal signal) {
+//		TODO:
 	}
 }

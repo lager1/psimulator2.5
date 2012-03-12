@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Properties;
 import logging.Logger;
 import logging.LoggingCategory;
+import utils.Util;
 
 /**
  * x
@@ -82,7 +83,7 @@ public class TelnetProperties {
 
 		device.setTelnetPort(port);
 
-		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + device.getName() + " listening port: " + device.getTelnetPort());
+		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort()+" ("+device.getName()+")");
 
 		listenerNames.add(name);
 

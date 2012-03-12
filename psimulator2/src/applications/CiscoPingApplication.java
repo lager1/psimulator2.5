@@ -4,7 +4,6 @@
 
 package applications;
 
-import commands.AbstractCommand;
 import commands.ApplicationNotifiable;
 import commands.cisco.CiscoCommandParser;
 import dataStructures.IcmpPacket;
@@ -29,6 +28,7 @@ public class CiscoPingApplication extends PingApplication {
 		this.shell = parser.getShell();
 		this.count = 5;
 		this.timeout = 1_000; // default is 2_000
+		this.waitTime = 50;
 	}
 
 	@Override
@@ -48,6 +48,8 @@ public class CiscoPingApplication extends PingApplication {
 	@Override
 	protected void handleIncommingPacket(IcmpPacket packet) {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
+
+		areAllAtHome(packet);
 
 		switch (packet.type) {
 			case REPLY:
@@ -90,5 +92,15 @@ public class CiscoPingApplication extends PingApplication {
             s += ", round-trip min/avg/max = " + Math.round(stats.min) + "/" + Math.round(stats.avg) + "/" + Math.round(stats.max) + " ms";
         }
         shell.printWithDelay(s, 10);
+	}
+
+	private void areAllAtHome(IcmpPacket packet) {
+		recieved[packet.seq - 1] = true;
+		for (int i = 0; i < recieved.length; i++) {
+			if (recieved[i] == false) {
+				return;
+			}
+		}
+		this.allPacketArrived = true;
 	}
 }

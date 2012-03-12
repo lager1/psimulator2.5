@@ -31,10 +31,4 @@ public class Exit extends AbstractCommand{
         }
         parser.getShell().closeSession();
     }
-
-	@Override
-	public void catchUserInput(String input) {
-		// nic se nedela
-	}
-
 }

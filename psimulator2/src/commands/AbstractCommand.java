@@ -36,12 +36,12 @@ public abstract class AbstractCommand implements Loggable {
 	 */
 	public abstract void run();
 
-	/**
-	 * Predavani uzivatelskyho vstupu prave bezicimu commandu.
-	 *
-	 * @param input
-	 */
-	public abstract void catchUserInput(String input);
+//	/**
+//	 * Predavani uzivatelskyho vstupu prave bezicimu commandu.
+//	 *
+//	 * @param input
+//	 */
+//	public abstract void catchUserInput(String input);
 
 	public String nextWord() {
 		return parser.nextWord();

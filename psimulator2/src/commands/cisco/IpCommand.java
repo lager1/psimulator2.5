@@ -41,15 +41,17 @@ public class IpCommand extends CiscoCommand {
             return;
         }
 
-        if (state == CommandShell.CISCO_CONFIG_MODE || (debug && state == CommandShell.CISCO_PRIVILEGED_MODE)) {
+        if (state == CommandShell.CISCO_CONFIG_MODE || debug) {
 
             if (kontrolaBezVypisu("route", dalsi, 5)) {
 //                command = new CiscoIpRoute(pc, kon, slova, no);
+//				command.run();
                 return;
             }
 
             if (kontrolaBezVypisu("nat", dalsi, 3)) {
 //                command = new CiscoIpNat(pc, kon, slova, no);
+//				command.run();
                 return;
             }
 
@@ -72,6 +74,7 @@ public class IpCommand extends CiscoCommand {
 
             if (kontrolaBezVypisu("nat", dalsi, 2)) {
 //                command = new CiscoIpNatRozhrani(pc, kon, slova, no, rozhrani);
+//				command.run();
                 return;
             }
         }
@@ -79,10 +82,5 @@ public class IpCommand extends CiscoCommand {
         if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise kontrolaBezVypisu
             invalidInputDetected();
         }
-	}
-
-	@Override
-	public void catchUserInput(String input) {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

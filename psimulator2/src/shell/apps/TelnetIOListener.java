@@ -8,8 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
-import shell.SignalCatchAble;
-import shell.SignalCatchAble.Signal;
+import commands.LongTermCommand;
+import commands.LongTermCommand.Signal;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 
@@ -20,7 +20,7 @@ import telnetd.io.TerminalIO;
 public class TelnetIOListener extends Thread {
 
 	final BasicTerminalIO terminalIO;
-	List<SignalCatchAble> listeners;
+	List<LongTermCommand> listeners;
 	Integer lastInput;
 	private boolean shutdown = false;
 
@@ -62,11 +62,11 @@ public class TelnetIOListener extends Thread {
 
 	}
 
-	public void registerListener(SignalCatchAble catchable) {
+	public void registerListener(LongTermCommand catchable) {
 		this.listeners.add(catchable);
 	}
 
-	public void removeListener(SignalCatchAble catchable) {
+	public void removeListener(LongTermCommand catchable) {
 		this.listeners.remove(catchable);
 	}
 
@@ -87,7 +87,7 @@ public class TelnetIOListener extends Thread {
 				return;
 		}
 
-		for (SignalCatchAble signalCatchAble : listeners) {
+		for (LongTermCommand signalCatchAble : listeners) {
 			if (signalCatchAble != null) {
 				signalCatchAble.catchSignal(signal);
 			}

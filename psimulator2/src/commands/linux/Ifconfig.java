@@ -581,11 +581,6 @@ public class Ifconfig extends AbstractCommand {
 
 
 
-	@Override
-	public void catchUserInput(String input) {
-		//nic se nedeje
-	}
-
 	private void debug(String s){
 		if(ladiciVypisovani){
 			printLine(s);

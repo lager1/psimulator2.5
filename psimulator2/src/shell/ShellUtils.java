@@ -1,9 +1,10 @@
 package shell;
 
+import commands.LongTermCommand;
+import commands.LongTermCommand.Signal;
 import java.util.regex.Pattern;
 import logging.Logger;
 import logging.LoggingCategory;
-import shell.SignalCatchAble.Signal;
 import telnetd.io.TerminalIO;
 
 /**
@@ -18,7 +19,7 @@ public class ShellUtils {
 		return "\\p{Print}";
 	}
 
-	public static void handleControlCodes(SignalCatchAble catchAble, int code) {
+	public static void handleControlCodes(LongTermCommand catchAble, int code) {
 
 		switch (code) {
 			case TerminalIO.CTRL_C:

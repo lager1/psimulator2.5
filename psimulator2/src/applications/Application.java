@@ -88,13 +88,13 @@ public abstract class Application implements SmartRunnable, Loggable {
 	 * Implement this function to run some commands right before application start. <br />
 	 * (treba pro nejake kontroly atd.)
 	 */
-	public abstract void atStart();
+	protected abstract void atStart();
 
 	/**
 	 * Implement this function to run some commands right before application exit. <br />
 	 * (treba pro nejake vypisy pri ukonceni aplikace)
 	 */
-	public abstract void atExit();
+	protected abstract void atExit();
 
 	public String getName() {
 		return name;

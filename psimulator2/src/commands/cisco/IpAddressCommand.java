@@ -150,9 +150,4 @@ public class IpAddressCommand extends CiscoCommand {
 
         ipLayer.changeIpAddressOnInterface(iface, pomocna);
     }
-
-	@Override
-	public void catchUserInput(String input) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 }

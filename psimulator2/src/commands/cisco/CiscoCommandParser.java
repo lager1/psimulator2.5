@@ -38,9 +38,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	/**
      * Pomocna promenna pro zachazeni s '% Ambiguous command: '
-	 *
-	 * TODO: nezrusit tohle?
-	 *
      */
     private boolean isAmbiguousCommand = false;
 	/**
@@ -76,6 +73,18 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 		String first = nextWord();
 
+		if (first.equals("help")) {
+            command = new HelpCommand(this);
+			command.run();
+            return;
+        }
+
+        if (first.equals("?")) {
+            command = new QuestionCommand(this);
+			command.run();
+            return;
+        }
+
 		try {
 			switch (mode) {
 				case CISCO_USER_MODE:
@@ -84,8 +93,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					if (isCommand("ping", first)) {
-//                    command = new CiscoPing(pc, kon, slova);
-//                    return;
+						command = new PingCommand(this);
+						command.run();
+						return;
 					}
 					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
@@ -120,7 +130,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 //                    return;
 					}
 					if (isCommand("configure", first)) {
-//                    configure();
 						command = new ConfigureCommand(this);
 						command.run();
 						return;
@@ -135,33 +144,22 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 
-					if (debug) {
-						if (first.equals("ifconfig")) {
-							AbstractCommand cmd = new Ifconfig(this);
-							cmd.run();
-							return;
-						}
-						if (first.equals("route")) {
-							AbstractCommand cmd = new Route(this);
-							cmd.run();
-							return;
-						}
-					}
-
-//                if (debug) {
-//                    if (isCommand("ip", first)) {
-//                        command = new CiscoIp(pc, kon, slova, false, mode);
+                if (debug) {
+                    if (isCommand("ip", first)) {
+                        command = new IpCommand(this, false);
+						command.run();
+						return;
+                    }
+                    if (isCommand("access-list", first)) {
+//                        command = new CiscoAccessListCommand(this, false);
+//						  command.run();
 //                        return;
-//                    }
-//                    if (isCommand("access-list", first)) {
-//                        command = new CiscoAccessList(pc, kon, slova, false);
-//                        return;
-//                    }
-//                    if (isCommand("no", first)) {
+                    }
+                    if (isCommand("no", first)) {
 //                        no();
 //                        return;
-//                    }
-//                }
+                    }
+                }
 					break;
 
 				case CISCO_CONFIG_MODE:
@@ -176,6 +174,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					}
 					if (isCommand("ip", first)) {
 						command = new IpCommand(this, false);
+						command.run();
 						return;
 					}
 					if (isCommand("interface", first)) {
@@ -227,15 +226,18 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					break;
 			}
 
-//        if (debug) {
-//            if (slova.get(0).equals("ifconfig")) { // pak smazat
-//                command = new LinuxIfconfig(pc, kon, slova);
-//                return;
-//            } else if (slova.get(0).equals("route")) {
-//                command = new LinuxRoute(pc, kon, slova);
-//                return;
-//            }
-//        }
+			if (debug) {
+				if (first.equals("ifconfig")) {
+					command = new Ifconfig(this);
+					command.run();
+					return;
+				}
+				if (first.equals("route")) {
+					command = new Route(this);
+					command.run();
+					return;
+				}
+			}
 //
 			if (isAmbiguousCommand) {
 				isAmbiguousCommand = false;
@@ -253,20 +255,52 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					shell.printLine("% Unknown command or computer name, or unable to find computer address");
 			}
 		} catch (Exception e) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, e.toString() + "\n" + Util.stackToString(e), e);
+			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, e.toString() + "\n", e);
 		}
 	}
 
 	@Override
 	public void catchSignal(Signal sig) {
+
+		if (runningCommand != null) {
+			shell.print("^Z");
+			shell.printLine("");
+			runningCommand.catchSignal(sig);
+			return;
+		}
+
+
+
 		switch (sig) {
+//			case CTRL_SHIFT_6:
+				// tady predat bezicimu prikazu a ten to preda bezici aplikaci
+//				break;
+
 			case CTRL_Z:
+				shell.print("^Z");
+				Util.sleep(100);
+				shell.printLine("");
+				switch (mode) {
+					case CISCO_CONFIG_IF_MODE:
+					case CISCO_CONFIG_MODE:
+						changeMode(CISCO_PRIVILEGED_MODE);
+						break;
+				}
+				shell.printPrompt();
+				break;
+
+
 			case CTRL_C:
 				switch (mode) {
 					case CISCO_CONFIG_IF_MODE:
 					case CISCO_CONFIG_MODE:
 						changeMode(CISCO_PRIVILEGED_MODE);
 						break;
+				}
+				break;
+			case CTRL_D:
+				if (debug) {
+					shell.closeSession();
 				}
 				break;
 			default:
@@ -473,5 +507,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public String getDescription() {
 		return device.getName()+": CiscoCommandParser: ";
+	}
+
+	@Override
+	public void catchUserInput(String line) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

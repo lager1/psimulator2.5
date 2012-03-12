@@ -4,7 +4,6 @@
 
 package applications;
 
-import commands.AbstractCommand;
 import commands.ApplicationNotifiable;
 import dataStructures.IcmpPacket;
 import dataStructures.IpPacket;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.L4.IcmpHandler;
 import utils.Util;
 
 /**
@@ -32,8 +30,8 @@ public abstract class PingApplication extends Application {
 	protected int timeout = 10_000;
 	protected Stats stats = new Stats();
 	protected int seq = 1;
-	protected final IcmpHandler icmpHandler;
 	protected final ApplicationNotifiable command;
+	protected transient boolean allPacketArrived = false;
 	/**
 	 * kdyz nebude zadan, tak se pouzije vychozi systemova hodnota ze sitoveho modulu
 	 */
@@ -47,10 +45,11 @@ public abstract class PingApplication extends Application {
 	 * Value - timestamp in ms
 	 */
 	protected Map<Integer, Long> timestamps = new HashMap<>();
+	protected boolean [] sent;
+	protected boolean [] recieved;
 
 	public PingApplication(Device device, ApplicationNotifiable command) {
 		super("ping", device);
-		this.icmpHandler = transportLayer.icmphandler;
 		this.command = command;
 	}
 
@@ -89,7 +88,9 @@ public abstract class PingApplication extends Application {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
 		startMessage();
 		sendPings();
-		Util.sleep(timeout);
+		if (! allPacketArrived) {
+			Util.sleep(timeout);
+		}
 		exit();
 	}
 
@@ -97,13 +98,21 @@ public abstract class PingApplication extends Application {
 	 * Sends #count pings.
 	 */
 	private void sendPings() {
+		if (count > 0) {
+			this.sent = new boolean[count];
+			this.recieved = new boolean[count];
+		}
+
 		for (int i = 0; i < count; i++) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" posilam ping seq="+seq, null);
 			timestamps.put(seq, System.currentTimeMillis());
-			icmpHandler.sendRequest(target, ttl, seq++, port);
+			sent[seq-1] = true;
+			transportLayer.icmphandler.sendRequest(target, ttl, seq++, port);
 			stats.odeslane++;
 
-			Util.sleep(waitTime);
+			if (i != count-1 || !allPacketArrived) {
+				Util.sleep(waitTime);
+			}
 		}
 	}
 

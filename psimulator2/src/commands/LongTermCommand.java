@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package shell;
+package commands;
 
 /**
  *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
-public interface SignalCatchAble {
+public interface LongTermCommand {
 
 	public enum Signal {
 		/**
@@ -26,7 +26,7 @@ public interface SignalCatchAble {
 
 	}
 
-
 	public void catchSignal(Signal signal);
 
+	public void catchUserInput(String line);
 }
