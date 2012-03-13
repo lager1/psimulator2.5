@@ -5,14 +5,12 @@ package networkModule.L4;
 
 import applications.Application;
 import dataStructures.IpPacket;
-import dataStructures.ipAddresses.IpAddress;
 import java.util.HashMap;
 import java.util.Map;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
-import networkModule.Layer;
 import networkModule.TcpIpNetMod;
 
 /**
@@ -58,6 +56,7 @@ public class TransportLayer implements Loggable {
 
 		switch (packet.data.getType()) {
 			case ICMP:
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Prisel ICMP paket", packet);
 				icmphandler.handleReceivedIcmpPacket(packet);
 				break;
 
@@ -127,7 +126,7 @@ public class TransportLayer implements Loggable {
 			portCounter = portCounter - portMAX + 1024;
 			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Resetting portCounter.", null);
 		}
-//		TODO: tady se to bude cyklit, pokud budou pouzivany vsechny porty
+//		TODO: ranna implementace! tady se to bude cyklit, pokud budou pouzivany vsechny porty
 		if (applications.containsKey(portCounter)) {
 			portCounter++;
 			return getFreePort();

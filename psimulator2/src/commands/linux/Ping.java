@@ -18,7 +18,7 @@ import dataStructures.ipAddresses.IpAddress;
  */
 public class Ping extends AbstractCommand implements LongTermCommand, ApplicationNotifiable{
 
-	private boolean ladeni = true;
+	private boolean ladeni = false;
 
 
 //parametry prikazu:

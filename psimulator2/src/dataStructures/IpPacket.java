@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.ipAddresses.IpAddress;
+import utils.Util;
 
 /**
  * Represents IPv4 packet.
@@ -35,4 +36,8 @@ public class IpPacket extends L3Packet {
 		return L3PacketType.IPv4;
 	}
 
+	@Override
+	public String toString() {
+		return "IpPacket: src: " + src + " dst: " + dst + " " + "ttl: " + ttl + " " + Util.zarovnej(getType().toString(), 4) + (data == null ? "" : " | " + data.toString());
+	}
 }

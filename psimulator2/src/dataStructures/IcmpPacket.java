@@ -3,6 +3,8 @@
  */
 package dataStructures;
 
+import utils.Util;
+
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
@@ -34,7 +36,8 @@ public class IcmpPacket extends L4Packet {
 		/**
 		 * Čas (ttl) vypršel
 		 */
-		TIME_EXCEEDED,}
+		TIME_EXCEEDED,
+	}
 
 	/**
 	 * Podtypy icmp paketu, pro kazdej typ jinej vyznam, u nas to ma vyznam jen pro typ UNDELIVERED.
@@ -103,5 +106,10 @@ public class IcmpPacket extends L4Packet {
 		this.code = code;
 		this.id = id;
 		this.seq = seq;
+	}
+
+	@Override
+	public String toString(){
+		return "IcmpPacket: "+Util.zarovnej(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
 	}
 }

@@ -83,28 +83,6 @@ public class Device {
 	}
 
 	/**
-	 * Creates parser according to a DeviceType.
-	 * @param cmd
-	 * @return
-	 */
-	public AbstractCommandParser createParser(CommandShell cmd){
-
-		switch (type) {
-			case cisco_router:
-				return new CiscoCommandParser(this, cmd);
-
-			case linux_computer:
-				return new LinuxCommandParser(this, cmd);
-
-			case simple_switch:
-				return null; // no parser
-
-			default:
-				throw new AssertionError();
-		}
-	}
-
-	/**
 	 * Returns free PID for new applications.
 	 * @return
 	 */
@@ -126,6 +104,28 @@ public class Device {
 	 */
 	public void unregisterApplication(Application app) {
 		applications.remove(app.getPID());
+	}
+
+	/**
+	 * Creates parser according to a DeviceType.
+	 * @param cmd
+	 * @return
+	 */
+	public AbstractCommandParser createParser(CommandShell cmd){
+
+		switch (type) {
+			case cisco_router:
+				return new CiscoCommandParser(this, cmd);
+
+			case linux_computer:
+				return new LinuxCommandParser(this, cmd);
+
+			case simple_switch:
+				return null; // no parser
+
+			default:
+				throw new AssertionError();
+		}
 	}
 
 	public enum DeviceType {

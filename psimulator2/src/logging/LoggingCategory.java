@@ -44,6 +44,7 @@ public enum LoggingCategory {
 	 * zpravy z ip layer
 	 */
 	IP_LAYER,
+	ARP,
 	TELNET,
 	/**
 	 * nacitani a ukladani ukladacich struktur do xml souboru (povetsinou balicek psimulator2)

@@ -161,12 +161,12 @@ public abstract class PingApplication extends Application {
 
 			long delay = System.currentTimeMillis() - sendTime;
 			if (delay <= timeout) { // ok, paket dorazil vcas
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil ping s seq="+seq, packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil ping s seq="+packet.seq, packet);
 				stats.odezvy.add(delay);
 				stats.prijate++;
 				handleIncommingPacket(packet);
 			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil, ale mezitim vyprsel timeout, packet seq="+seq, packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil, ale mezitim vyprsel timeout, packet seq="+packet.seq, packet);
 			}
 		}
 	}

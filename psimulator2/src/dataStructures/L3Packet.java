@@ -29,4 +29,8 @@ public abstract class L3Packet {
 
 	public abstract L3PacketType getType();
 
+	@Override
+	public String toString(){
+		return "L3Packet: generic packet on Layer 3.";
+	}
 }

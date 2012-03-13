@@ -15,6 +15,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
+import utils.Util;
 
 /**
  * Handles creating and sending ICMP packets.
@@ -37,17 +38,18 @@ public class IcmpHandler implements Loggable {
 			case REQUEST:
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.DEFAULT, p.id, p.seq);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Odesilam ARP odpoved.", packet);
 				getIpLayer().handleSendPacket(reply, packet.src);
-
 				break;
 			case REPLY:
 			case TIME_EXCEEDED:
 			case UNDELIVERED:
 				// predat aplikacim
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Preposilam ARP odpoved aplikaci na port: "+p.id, packet);
 				transportLayer.forwardPacketToApplication(packet, p.id);
 				break;
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Neznamy typ ICMP paketu:", packet);
+				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Neznamy typ ICMP paketu, zahazuju..", packet);
 		}
 	}
 
@@ -84,7 +86,7 @@ public class IcmpHandler implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return "IcmpHandler";
+		return Util.zarovnej(transportLayer.netMod.getDevice().getName(), Util.deviceNameAlign)+" IcmpHandler";
 	}
 
 	/**
@@ -119,17 +121,6 @@ public class IcmpHandler implements Loggable {
 		getIpLayer().handleSendPacket(p, dst);
 	}
 
-//	protected void send(IpAddress target, Integer ttl, Integer port, int seq) {
-//		int sendTtl = this.ipLayer.ttl;
-//		if (ttl != null) {
-//			sendTtl = ttl;
-//		}
-//
-//		send(null, target, Type.REQUEST, Code.DEFAULT);
-//
-//		TODO: ttl, port-> identifier
-//	}
-
 	/**
 	 * Sends ICMP echo request to given target.
 	 * @param target
@@ -138,9 +129,11 @@ public class IcmpHandler implements Loggable {
 	 * @param id application identifier (port)
 	 */
 	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id) {
-		int sendTtl = this.getIpLayer().ttl;
+		int sendTtl;
 		if (ttl != null) {
 			sendTtl = ttl;
+		} else {
+			sendTtl = this.getIpLayer().ttl;
 		}
 
 		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq);

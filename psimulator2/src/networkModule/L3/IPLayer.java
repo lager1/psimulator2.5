@@ -5,7 +5,6 @@
  * doresit drobnosti (potreba vyzkoumat)
  * doresit logovani
  * doresit budik
- * dopsat tridu starajici se o ICMP - IcmpHandler
  *
  */
 package networkModule.L3;
@@ -13,7 +12,6 @@ package networkModule.L3;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import exceptions.UnsupportedL3TypeException;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
@@ -23,6 +21,7 @@ import networkModule.L3.RoutingTable.Record;
 import networkModule.L4.IcmpHandler;
 import networkModule.TcpIpNetMod;
 import utils.SmartRunnable;
+import utils.Util;
 import utils.WorkerThread;
 
 /**
@@ -30,17 +29,17 @@ import utils.WorkerThread;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class IPLayer implements SmartRunnable, Loggable {
+public abstract class IPLayer implements SmartRunnable, Loggable {
 
 	protected final WorkerThread worker;
 	/**
 	 * ARP cache table.
 	 */
-	private final ArpCache arpCache = new ArpCache();
+	protected final ArpCache arpCache = new ArpCache();
 	/**
 	 * Packet filter. Controls NAT, packet dropping, ..
 	 */
-	private final PacketFilter packetFilter = new PacketFilter(this);
+	protected final PacketFilter packetFilter = new PacketFilter(this);
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
@@ -48,7 +47,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * nemam odpoved. Obsluhovat me bude doMyWork(). Neni potreba miti synchronizaci, protoze sem leze jen vlakno z
 	 * doMyWork().
 	 */
-	private final List<StoreItem> storeBuffer = new LinkedList<>();
+	protected final List<StoreItem> storeBuffer = new LinkedList<>();
 	/**
 	 * Routing table with record.
 	 */
@@ -56,25 +55,21 @@ public class IPLayer implements SmartRunnable, Loggable {
 	/**
 	 * Link to network module.
 	 */
-	private final TcpIpNetMod netMod;
+	protected final TcpIpNetMod netMod;
 	/**
 	 * When some ARP reply arrives this is set to true so doMyWork() can process storeBuffer. After processing
 	 * storeBuffer it is set to false.
 	 */
-	private boolean newArpReply = false;
+	private transient boolean newArpReply = false;
 	private final Map<String, NetworkInterface> networkIfaces = new HashMap<>();
 	/**
 	 * Waiting time [ms] for ARP requests.
 	 */
 	private long arpTTL = 10_000;
-
 	/**
-	 * Getter for Cisco commands.
-	 * @return
+	 * Default TTL values.
 	 */
-	public NatTable getNatTable() {
-		return packetFilter.getNatTable();
-	}
+	public int ttl = 255;
 
 	/**
 	 * Constructor of IP layer.
@@ -85,10 +80,6 @@ public class IPLayer implements SmartRunnable, Loggable {
 		this.netMod = netMod;
 		this.worker = new WorkerThread(this);
 	}
-	/**
-	 * Default TTL values.
-	 */
-	public int ttl = 255;
 
 	/**
 	 * Getter for cisco & linux listing.
@@ -100,26 +91,15 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
-	 * Getter for Saver.
+	 * Getter for Cisco commands.
 	 * @return
 	 */
-	public Collection<NetworkInterface> getNetworkIfaces() {
-		return networkIfaces.values();
+	public NatTable getNatTable() {
+		return packetFilter.getNatTable();
 	}
 
 	public IcmpHandler getIcmpHandler() {
 		return netMod.transportLayer.icmphandler;
-	}
-
-	/**
-	 * Returns interfaces as collection sorted by interfaces name.
-	 * Uzitecny pro vypisy u prikazu.
-	 * @return
-	 */
-	public Collection<NetworkInterface> getSortedNetworkIfaces() {
-		List<NetworkInterface> ifaces = new ArrayList<>(networkIfaces.values());
-		Collections.sort(ifaces);
-		return ifaces;
 	}
 
 	/**
@@ -133,7 +113,13 @@ public class IPLayer implements SmartRunnable, Loggable {
 		worker.wake();
 	}
 
-	private void handleReceivePacket(L3Packet packet, EthernetInterface iface) {
+	/**
+	 * Called from doMyWork() and from plaform-specific IPLayeres.
+	 *
+	 * @param packet
+	 * @param iface incomming ethernet interface
+	 */
+	protected void handleReceivePacket(L3Packet packet, EthernetInterface iface) {
 		switch (packet.getType()) {
 			case ARP:
 				ArpPacket arp = (ArpPacket) packet;
@@ -146,7 +132,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 				break;
 
 			default:
-				throw new UnsupportedL3TypeException("Unsupported L3 type: " + packet.getType());
+				Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type: " + packet.getType()+", zahazuji packet: ", packet);
 		}
 	}
 
@@ -157,23 +143,31 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param iface incomming EthernetInterface
 	 */
 	private void handleReceiveArpPacket(ArpPacket packet, EthernetInterface iface) {
+
 		// tady se bude resit update cache + reakce
 		switch (packet.operation) {
 			case ARP_REQUEST:
+				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP request", packet);
+
 				// ulozit si odesilatele
 				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
 				// jsem ja target? Ano -> poslat ARP reply
 				if (isItMyIpAddress(packet.targetIpAddress)) { //poslat ARP reply
 					ArpPacket arpPacket = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, packet.targetIpAddress, iface.getMac());
+					Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Reaguji na ARP request a posilam REPLY na "+packet.senderIpAddress, arpPacket);
 					netMod.ethernetLayer.sendPacket(arpPacket, iface, packet.senderMacAddress);
+				} else {
+					Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Prisel mi ARP request, ale nejsem cilem, takze nic nedelam. Cilem je: "+packet.targetIpAddress, packet);
 				}
 				break;
 
 			case ARP_REPLY:
+				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP reply - ukladam ji tez do cache.", packet);
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me (protoze odpoved se posila jen odesilateli a ne na broadcast), takze si ji muzu ulozit a je to ok
 				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
 				newArpReply = true;
+				worker.wake();
 				break;
 		}
 	}
@@ -191,6 +185,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
+				Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket.", m.packet);
 				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
@@ -199,6 +194,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 			MacAddress mac = arpCache.getMacAdress(m.nextHop);
 			if (mac != null) {
 				// obslouzit
+				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", m.packet);
 				netMod.ethernetLayer.sendPacket(m.packet, m.out, mac);
 
 				// vyndat z bufferu
@@ -214,30 +210,23 @@ public class IPLayer implements SmartRunnable, Loggable {
 		newArpReply = false;
 	}
 
-	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
-		// odnatovat
-		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
-		packet = packetFilter.preRouting(packet, ifaceIn);
-
-		// zpracovat paket
-		handleSendIpPacket(packet, iface);
-	}
-
 	/**
 	 * Handles packet: is it for me?, routing, decrementing TTL, postrouting, MAC address finding.
 	 *
 	 * @param packet
 	 * @param iface incomming EthernetInterface, can be null
 	 */
-	private void handleSendIpPacket(IpPacket packet, EthernetInterface iface) {
+	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
+		// odnatovat
+		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
+		packet = packetFilter.preRouting(packet, ifaceIn);
 
 		// je pro me?
-		if (isItMyIpAddress(packet.dst) || packet.dst == null) { // TODO: zatim hack: packet.dst == null
+		if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ktery je pro me, z rozhrani: "+ (ifaceIn != null ? ifaceIn.name : "null") , packet);
 			netMod.transportLayer.receivePacket(packet);
 			return;
 		}
-
-		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// osetri TTL
 		if (packet.ttl == 1) {
@@ -251,28 +240,34 @@ public class IPLayer implements SmartRunnable, Loggable {
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
-//			if (isPacketIcmpRequest(packet)) { // nema to nahodou vracet DNU vzdy??
-//				if (packet.src == null) {
-//
-//				}
-//
-//				getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet);
-//			}
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
+			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
+			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet); // TODO: nema to vracet DNU jen kdyz to byl IMCP packet?? vyzkoumat
 			return;
 		}
 
 		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
 		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
-		IpPacket p = new IpPacket(packet.src == null ? record.rozhrani.ipAddress.getIp() : packet.src, packet.dst, packet.ttl - 1, packet.data);
+		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prisel IP paket z rozhrani: "+ifaceIn.name, packet);
+		processPacket(p, record, ifaceIn);
+	}
+
+	/**
+	 * Vezme packet, pusti se na nej postRouting, zjisti MAC cile a preda ethernetovy vrstve.
+	 *
+	 * @param packet co chci odeslaat
+	 * @param record zaznam z RT
+	 * @param ifaceIn prichozi rozhrani, null pokud odesilam novy paket
+	 */
+	protected void processPacket(IpPacket packet, Record record, NetworkInterface ifaceIn) {
 		// zanatuj
-		p = packetFilter.postRouting(p, ifaceIn, record.rozhrani);
+		packet = packetFilter.postRouting(packet, ifaceIn, record.rozhrani); // prichozi rozhrani je null, protoze zadne takove neni
 
 		// zjistit nexHopIp
 		// kdyz RT vrati record s branou, tak je nextHopIp record.brana
 		// kdyz je record bez brany, tak je nextHopIp uz ta hledana IP adresa
-		IpAddress nextHopIp = p.dst;
+		IpAddress nextHopIp = packet.dst;
 		if (record.brana != null) {
 			nextHopIp = record.brana;
 		}
@@ -281,18 +276,22 @@ public class IPLayer implements SmartRunnable, Loggable {
 		MacAddress nextHopMac = arpCache.getMacAdress(nextHopIp);
 		if (nextHopMac == null) { // posli ARP request a dej do fronty
 			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), nextHopIp);
+
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Nemohu odeslat IpPacket na adresu "+packet.dst+", protoze neznam MAC adresu nextHopu, takze posilam ARP request", arpPacket); // packet tu nemsi by
 			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast()); // TODO: odeslat ARP req na vsechny rozhrani v dany siti?, asi NE
 
-			storeBuffer.add(new StoreItem(p, record.rozhrani.ethernetInterface, nextHopIp));
+			storeBuffer.add(new IPLayer.StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
 			return;
 		}
 
 		// kdyz to doslo az sem, tak muzu odeslat..
-		netMod.ethernetLayer.sendPacket(p, record.rozhrani.ethernetInterface, nextHopMac);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam paket.", packet);
+		netMod.ethernetLayer.sendPacket(packet, record.rozhrani.ethernetInterface, nextHopMac);
+
 	}
 
 	/**
-	 * Method for sending packet from layer 4.
+	 * Method for sending packet from layer 4 with system default TTL.
 	 *
 	 * @param packet data to be sent
 	 * @param dst destination address
@@ -321,10 +320,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param packet data to be sent
 	 * @param dst destination address
 	 */
-	public void handleSendPacket(L4Packet packet, IpAddress dst) {
-		IpPacket p = new IpPacket(null, dst, ttl, packet); // src IP je null, pac v tuto chvili se jeste nevi, z jakeho rozhrani to pujde ven
-		handleSendIpPacket(p, null); // prichozi rozhrani je null, pac zadne takove neni
-	}
+	public abstract void handleSendPacket(L4Packet packet, IpAddress dst);
 
 	@Override
 	public void doMyWork() {
@@ -336,12 +332,9 @@ public class IPLayer implements SmartRunnable, Loggable {
 				handleReceivePacket(m.packet, m.iface);
 			}
 
-
-
 			if (!sendBuffer.isEmpty()) {
 				SendItem m = sendBuffer.remove(0);
-				IpPacket p = new IpPacket(null, m.dst, ttl, m.packet);
-				handleSendIpPacket(p, null); // prichozi je null, pac zadne takove neni
+				handleSendPacket(m.packet, m.dst); // bude se obsluhovat platform-specific
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) {
@@ -378,7 +371,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 	 * @param targetIpAddress
 	 * @return
 	 */
-	private boolean isItMyIpAddress(IpAddress targetIpAddress) {
+	protected boolean isItMyIpAddress(IpAddress targetIpAddress) {
 		for (NetworkInterface iface : networkIfaces.values()) {
 			if (iface.ipAddress != null && iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
 				return true;
@@ -389,7 +382,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 	/**
 	 * Returns true if packet is ICMP REQUEST.
-	 *
+	 * zatim nemazat!s
 	 * @param packet
 	 * @return
 	 */
@@ -406,7 +399,7 @@ public class IPLayer implements SmartRunnable, Loggable {
 
 	@Override
 	public String getDescription() {
-		return netMod.getDevice().getName() + ": IpLayer";
+		return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign) + " IPLayer";
 	}
 
 	/**
@@ -421,23 +414,14 @@ public class IPLayer implements SmartRunnable, Loggable {
 		}
 		NetworkInterface iface = getNetworkInteface(inc.name);
 		if (iface == null) {
-			throw new RuntimeException("Nenazeleno NetworkIface, ktere by bylo spojeno s EthernetInterface, ze ktereho prave prisel packet!");
+			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Nenazeleno NetworkIface, ktere by bylo spojeno s EthernetInterface, ze ktereho prave prisel packet!!!", null);
 		}
 		return iface;
 	}
 
 	/**
-	 * Return interface with name or null iff there is no such interface.
-	 * @param name
-	 * @return
-	 */
-	public NetworkInterface getNetworkInteface(String name) {
-		return networkIfaces.get(name);
-	}
-
-	/**
-	 * Fill the routing table during simulator routing from addresses on interfaces.
-	 * Has be called only if in the configuration file does'n exist any routing table configuration.
+	 * Fill the routing table during simulator loading from addresses on interfaces.
+	 * It should be called only if in the configuration file does'n exist any routing table configuration.
 	 *
 	 * Naplni routovaci tabulku dle adres na rozhranich, tak jak to dela linux.
 	 * Volat jenom pri konfiguraci, nebyla-li routovaci tabulka ulozena.
@@ -456,6 +440,23 @@ public class IPLayer implements SmartRunnable, Loggable {
 	}
 
 	/**
+	 * Getter for Saver.
+	 * @return
+	 */
+	public Collection<NetworkInterface> getNetworkIfaces() {
+		return networkIfaces.values();
+	}
+
+	/**
+	 * Return interface with name or null iff there is no such interface.
+	 * @param name
+	 * @return
+	 */
+	public NetworkInterface getNetworkInteface(String name) {
+		return networkIfaces.get(name);
+	}
+
+	/**
 	 * Return interface with name (ignores case) or null iff there is no such interface.
 	 * @param name
 	 * @return
@@ -467,6 +468,17 @@ public class IPLayer implements SmartRunnable, Loggable {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns interfaces as collection sorted by interfaces name.
+	 * Uzitecny pro vypisy u prikazu.
+	 * @return
+	 */
+	public Collection<NetworkInterface> getSortedNetworkIfaces() {
+		List<NetworkInterface> ifaces = new ArrayList<>(networkIfaces.values());
+		Collections.sort(ifaces);
+		return ifaces;
 	}
 
 	private class SendItem {

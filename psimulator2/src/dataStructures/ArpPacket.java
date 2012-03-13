@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.ipAddresses.IpAddress;
+import utils.Util;
 
 /**
  * Represents ARP packet.
@@ -95,4 +96,8 @@ public class ArpPacket extends L3Packet {
 		return L3PacketType.ARP;
 	}
 
+	@Override
+	public String toString(){
+		return "ArpPacket: "+ operation +" sender: "+senderIpAddress + " " + senderMacAddress + " target: "+ targetIpAddress + " " + targetMacAddress;
+	}
 }
