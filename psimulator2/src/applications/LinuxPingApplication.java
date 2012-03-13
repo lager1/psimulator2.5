@@ -64,7 +64,7 @@ public class LinuxPingApplication extends PingApplication {
 
 	@Override
 	protected void startMessage() {
-		ping.printLine("Nejaka pocatecni zprava.");
+		ping.printLine("PING "+target+" ("+target+") "+size+"("+(size+28)+") bytes of data.");
 	}
 
 	@Override

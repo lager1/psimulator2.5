@@ -7,6 +7,7 @@ import dataStructures.EthernetPacket;
 import dataStructures.MacAddress;
 import java.util.HashMap;
 import java.util.Map;
+import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import physicalModule.Switchport;
@@ -21,7 +22,7 @@ import physicalModule.Switchport;
  *
  * @author neiss
  */
-public class EthernetInterface {
+public class EthernetInterface implements Loggable {
 
 	public final String name;
 	protected MacAddress mac;
@@ -30,14 +31,17 @@ public class EthernetInterface {
 	 * Seznam prirazenejch switchportu. Je dulezity, aby to bylo private, pridavat se musi jen v metode
 	 * addSwitchportSettings, aby se v tom SwitchportSettings nastavilo assignedInterface.
 	 */
-	private final Map<Integer, SwitchportSettings> switchpors = new HashMap<Integer, SwitchportSettings>();
+	private final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>();
 	/**
 	 * Je-li povoleno switchovani, napr. u routeru defualtne zakazano.
 	 */
-	protected boolean switchingEnabled = false;
+	public boolean switchingEnabled = false;
 	private final EthernetLayer etherLayer;
 
-// Konstruktor a veci k nemu:
+
+
+
+// Konstruktor a veci pri buildeni: -------------------------------------------------------------------------
 
 	public EthernetInterface(String name, MacAddress mac, EthernetLayer etherLayer) {
 		this.name = name;
@@ -47,42 +51,20 @@ public class EthernetInterface {
 
 	/**
 	 * Prida switchport.
+	 *
 	 * @param s
 	 */
-	public void addSwitchportSettings(SwitchportSettings s){
+	public void addSwitchportSettings(SwitchportSettings s) {
 		s.assignedInterface = this;
-		switchpors.put(s.switchportNumber, s);
-	}
-
-	/**
-	 * Returns mac address of this interface.
-	 * @return
-	 */
-	public MacAddress getMac() {
-		return mac;
+		switchports.put(s.switchportNumber, s);
 	}
 
 
-	/**
-	 * Da switchport, pres kterej se smeruje na zadanou mac adresu.
-	 * @param mac
-	 * @return
-	 */
-	public SwitchportSettings getSwitchport(MacAddress mac) {
-		if (switchpors.size() == 1) {
-			return switchpors.get(0);
-		} else {
-			SwitchTableItem item = switchingTable.get(mac);
-			if (item != null) {
-				return item.swportSett;
-			} else {
-				return null;
-			}
-		}
-	}
+
+// funkce k sitovy komunikaci: ----------------------------------------------------------------------------------
 
 	public void addSwitchTableItem(MacAddress mac, SwitchportSettings swportSett) {
-		if (switchpors.size() == 1) {
+		if (switchports.size() == 1) {
 			// nic se nedela
 		} else {
 			if (switchingTable.containsKey(mac)) {	// kontrola staryho zaznamu
@@ -93,26 +75,32 @@ public class EthernetInterface {
 	}
 
 	/**
-	 * Returns true, if the interface is on the cable connected to some other interface.
+	 * Da switchport, pres kterej se smeruje na zadanou mac adresu. (smerovani)
+	 *
+	 * @param mac
 	 * @return
 	 */
-	public boolean isConnected(){
-		for(SwitchportSettings swportsett: switchpors.values()){
-			Switchport swport = etherLayer.physicMod.getSwitchports().get(swportsett.switchportNumber);
-			if(swport.isConnected()){	// swport by nemel bejt nikdy null, protoze na zacatku behu ethernetovy vrstvy se vola metoda exploreHardware
-				return true;
+	public SwitchportSettings getSwitchport(MacAddress mac) {
+		if (switchports.size() == 1) {
+			return switchports.get(0);
+		} else {
+			SwitchTableItem item = switchingTable.get(mac);
+			if (item != null) {
+				return item.swportSett;
+			} else {
+				return null;
 			}
 		}
-		return false;
 	}
 
 	/**
-	 * Odesle paket na vsechny switchporty rozhrani.
+	 * Odesle zadanej packet na vsechny switchporty rozhrani krome switchportu incoming.
 	 * @param p
+	 * @param incoming switchport, na nejz paket prisel, tam uz se znova neposila
 	 */
-	protected void transmitPacketOnAllSwitchports(EthernetPacket p){
-		for(SwitchportSettings switchport : switchpors.values()){
-			if(switchport.isUp){
+	void transmitPacketOnAllSwitchports(EthernetPacket p, SwitchportSettings incoming) {
+		for (SwitchportSettings switchport : switchports.values()) {
+			if (switchport.isUp && switchport != incoming) {
 				etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
 			}
 		}
@@ -121,13 +109,47 @@ public class EthernetInterface {
 
 
 
+// gettry a zjistovaci fce vetsinou mimo sitovou komunikaci ----------------------------------------------------------
+
+	@Override
+	public String getDescription() {
+		return etherLayer.getNetMod().getDevice().getName()+": EtherIface "+name;
+	}
+
+
+
+	/**
+	 * Returns mac address of this interface.
+	 *
+	 * @return
+	 */
+	public MacAddress getMac() {
+		return mac;
+	}
+
+
+
+	/**
+	 * Returns true, if the interface is on the cable connected to some other interface.
+	 *
+	 * @return
+	 */
+	public boolean isConnected() {
+		for (SwitchportSettings swportsett : switchports.values()) {
+			Switchport swport = etherLayer.physicMod.getSwitchports().get(swportsett.switchportNumber);
+			if (swport.isConnected()) {	// swport by nemel bejt nikdy null, protoze na zacatku behu ethernetovy vrstvy se vola metoda exploreHardware
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 
 
-
-// Polozka switchovaci tabulky:
+// Polozka switchovaci tabulky: ----------------------------------------------------------------------------------
 	private class SwitchTableItem {
+
 		public SwitchTableItem(SwitchportSettings swportSett, long time) {
 			this.swportSett = swportSett;
 			this.time = time;

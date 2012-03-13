@@ -227,9 +227,10 @@ public class Loader {
 	 */
 	private NetMod createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
 		SimpleSwitchNetMod nm = new SimpleSwitchNetMod(pc);
-		EthernetInterface ethIface=nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
+		EthernetInterface ethIface = nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
 			// -> switchi se priradi jedno rozhrani a da se mu nahodna mac
 		nm.ethernetLayer.addAllSwitchportsToGivenInterface(ethIface);
+		ethIface.switchingEnabled = true;
 		return nm;
 	}
 

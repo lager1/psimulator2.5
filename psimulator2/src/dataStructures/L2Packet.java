@@ -28,4 +28,9 @@ public abstract class L2Packet {
     public abstract int getSize();
 
 	public abstract L2PacketType getType();
+
+	@Override
+	public String toString(){
+		return "L2Packet: generic packet on Layer 2.";
+	}
 }
