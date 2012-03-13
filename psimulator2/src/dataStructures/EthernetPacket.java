@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.L3Packet.L3PacketType;
+import utils.Util;
 
 /**
  * Represents Ethernet II frames.
@@ -58,7 +59,7 @@ public class EthernetPacket extends L2Packet {
 
 	@Override
 	public String toString(){
-		String vratit = "EthernetPacket: src: "+src+ " dst: "+dst+" L3type: "+type;
+		String vratit = "EthPacket: src: "+src+ " dst: "+dst+" "+Util.zarovnej(type.toString(), 4);	// vypis minimalistickej, aby se to veslo na obrazovku
 		return vratit;
 	}
 }

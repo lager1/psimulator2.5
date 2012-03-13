@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  */
 public class Util {
 
+	public static final int deviceNameAlign = 8;
+
 	/**
 	 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
 	 *

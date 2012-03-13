@@ -23,7 +23,7 @@ import physicalModule.Switchport;
  * @author neiss
  */
 public class EthernetInterface implements Loggable {
-
+	
 	public final String name;
 	protected MacAddress mac;
 	private final Map<MacAddress, SwitchTableItem> switchingTable = new HashMap<MacAddress, SwitchTableItem>();
@@ -63,6 +63,7 @@ public class EthernetInterface implements Loggable {
 
 // funkce k sitovy komunikaci: ----------------------------------------------------------------------------------
 
+
 	public void addSwitchTableItem(MacAddress mac, SwitchportSettings swportSett) {
 		if (switchports.size() == 1) {
 			// nic se nedela
@@ -70,7 +71,7 @@ public class EthernetInterface implements Loggable {
 			if (switchingTable.containsKey(mac)) {	// kontrola staryho zaznamu
 				switchingTable.remove(mac);
 			}
-			switchingTable.put(mac, new SwitchTableItem(swportSett, System.nanoTime() / (10 ^ 9)));
+			switchingTable.put(mac, new SwitchTableItem(swportSett, System.currentTimeMillis()));
 		}
 	}
 

@@ -13,6 +13,7 @@ import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
 import physicalModule.PhysicMod;
 import utils.SmartRunnable;
+import utils.Util;
 import utils.WorkerThread;
 
 /**
@@ -69,7 +70,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	public void addAllSwitchportsToGivenInterface(EthernetInterface iface) {
 		for (SwitchportSettings swport : switchports.values()) {
 			iface.addSwitchportSettings(swport);
-			debug("Pridavam na interface "+iface.name+" switchport c. "+ swport.switchportNumber, null);
+			etherDebug("Pridavam na interface "+iface.name+" switchport c. "+ swport.switchportNumber, null);
 		}
 	}
 
@@ -108,7 +109,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 	@Override
 	public String getDescription() {
-		return netMod.getDevice().getName()+": EthernetLayer";
+		return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign)+" EthLayer";
 	}
 
 	public SwitchportSettings getSwitchport(int i){
@@ -127,7 +128,14 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 */
 	private void handleSendPacket(L3Packet packet, EthernetInterface iface, MacAddress target) {
 		EthernetPacket p = new EthernetPacket(iface.getMac(), target, packet.getType(), packet);
-		transmitPacket(iface, p, null);
+
+		if (target.equals(MacAddress.broadcast())) {
+			linkInfo("Odesilam novej broadcast paket od vyssi vrstvy na rozhrani "+iface.name+" na vsechny switchporty. ", p);
+			iface.transmitPacketOnAllSwitchports(p, null);
+		} else {
+			linkInfo("Jdu odeslat novej paket na rozhrani "+iface.name+". ", p);
+			transmitPacket(iface, p, null);
+		}
 	}
 
 	/**
@@ -152,27 +160,29 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			return;
 		}
 
-		debug("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". ", packet);
+		//linkDebug("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". ", packet);
 
 		//pridani do switchovaci tabulky:
 		iface.addSwitchTableItem(packet.src, swport);
 
 		//samotny vyrizovani paketu:
 		if (packet.dst.equals(iface.getMac())) {	//pokud je paket pro me
+			linkInfo("Prijal jsem paket pro me na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". ", packet);
 			handlePacketForMe(packet, iface, swport);
 		} else if (packet.dst.equals(MacAddress.broadcast())) { //paket je broadcastovej
 			handlePacketForMe(packet, iface, swport);
 			if (iface.switchingEnabled) {
-				debug("Jdu preposlat broadcastovej paket. ", packet);
+				linkInfo("Prijal jsem broadcast paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". Jdu ho dal preposlat. ", packet);
 				iface.transmitPacketOnAllSwitchports(packet,swport);	// interface to odesle na vsechny porty
 			} else {
-				debug("Mel bych preposlat broadcastovej paket, ale nic nedelam, protoze nemam povoleny switchovani. ", packet);
+				linkInfo("Prijal jsem broadcast paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". Nepreposilam ho, protoze nemam povoleny switchovani. ", packet);
 			}
 		} else { //paket neni pro me, musim ho odeslat dal
 			if (iface.switchingEnabled) { //odesila se, kdyz je to dovoleny
+				linkInfo("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+", kterej neni pro me. Jdu ho preposlat. ", packet);
 				transmitPacket(iface, packet, swport);
 			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.ETHERNET_LAYER, "Nemam povoleno switchovat, zahazuju paket. ", packet);
+				linkInfo("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+", kterej neni pro me. Nemam ale povoleny switchovani, tak ho zahazuju. ", packet);
 			}
 		}
 
@@ -186,25 +196,28 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	 * @param incoming pokud paket preposilam, je to switchport, ze kteryho prisel, abych to pripadne neposilal zpatky
 	 */
 	private void transmitPacket(EthernetInterface iface, EthernetPacket packet, SwitchportSettings incoming) {
-		SwitchportSettings swport = iface.getSwitchport(packet.dst);
-		if (swport == null) { // switchport nenalezen
-			debug("Jdu odeslat paket na interface " + iface.name + " na vsechny switchporty, prootze zatim nemam zaznam ve switchovaci tabulce. ", packet);
+		SwitchportSettings swport = iface.getSwitchport(packet.dst);	// kam se to ma poslat.
+
+		if (packet.dst.equals(MacAddress.broadcast())) {	// je to broadcast, odesila se to vsude
+			linkDebug("Jdu odeslat paket na interface " + iface.name + " na vsechny switchporty, protoze je to broadcast. ", packet);
 			iface.transmitPacketOnAllSwitchports(packet, incoming);	// interface to odesle na vsechny porty
-		} else if (packet.dst.equals(MacAddress.broadcast())) {	// je to broadcast, odesila se to vsude
-			debug("Jdu odeslat paket na interface " + iface.name + " na vsechny switchporty, protoze je to broadcast. ", packet);
+
+		} else if (swport == null) { // switchport nenalezen
+			linkDebug("Odesilam paket na vsechny switchporty, protoze zatim nemam zaznam ve switchovaci tabulce. ", packet);
 			iface.transmitPacketOnAllSwitchports(packet, incoming);	// interface to odesle na vsechny porty
-		} else {
-			debug("Jdu odeslat paket na interface " + iface.name + " na switchport " + swport.switchportNumber + ". ", packet);
+
+		} else {	// switchport nalezen, posilam to na nej
+			linkDebug("Jdu odeslat paket na interface " + iface.name + " na switchport " + swport.switchportNumber + ". ", packet);
 			netMod.getPhysicMod().sendPacket(packet, swport.switchportNumber); //odeslu to po tom najitym switchportu
 		}
 	}
 
 	private void handlePacketForMe(EthernetPacket packet, EthernetInterface iface, SwitchportSettings swport) {
 		if (netMod.isSwitch()) {
-			debug("Prijal jsem paket pro me (nebo broadcast), nic s nim ale nedelam, protoze jsem switch. ", packet);
+			linkDebug("Prijal jsem paket pro me (nebo broadcast), nic s nim ale nedelam, protoze jsem switch. ", packet);
 			//TODO: Jedina vec, kdy se budou posilat pakety primo switchi je spanning tree protocol - tady bude jeho implementace.
 		} else {
-			debug("Prijal jsem paket pro me a jdu ho predat vyssi vrstve. ", packet);
+			linkDebug("Prijal jsem paket pro me a jdu ho predat vyssi vrstve. ", packet);
 			((TcpIpNetMod) netMod).ipLayer.receivePacket(packet.data, iface);
 		}
 	}
@@ -213,12 +226,16 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 // ostatni privatni metody: -----------------------------------------------------------------------------------------------------------
 
-	private void debug(String message,Object obj){
-		Logger.log(this, Logger.DEBUG, LoggingCategory.ETHERNET_LAYER, message, obj);
+	private void linkDebug(String message,Object obj){
+		Logger.log(this, Logger.DEBUG, LoggingCategory.LINK, message, obj);
 	}
 
-	private void paketInfo(String message,Object obj){
+	private void linkInfo(String message,Object obj){
 		Logger.log(this, Logger.INFO, LoggingCategory.LINK, message, obj);
+	}
+
+	private void etherDebug(String message,Object obj){
+		Logger.log(this, Logger.DEBUG, LoggingCategory.LINK, message, obj);
 	}
 
 

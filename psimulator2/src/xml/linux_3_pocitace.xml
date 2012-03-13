@@ -2,6 +2,18 @@
 <networkModel>
     <cablesMap>
         <entry>
+            <key>35</key>
+            <value idAsString="35">
+                <component1>33</component1>
+                <component2>5</component2>
+                <delay>10</delay>
+                <hwType>CABLE_ETHERNET</hwType>
+                <id>35</id>
+                <interface1>34</interface1>
+                <interface2>9</interface2>
+            </value>
+        </entry>
+        <entry>
             <key>21</key>
             <value idAsString="21">
                 <component1>1</component1>
@@ -144,6 +156,34 @@
             </value>
         </entry>
         <entry>
+            <key>33</key>
+            <value idAsString="33">
+                <defaultZoomXPos>26</defaultZoomXPos>
+                <defaultZoomYPos>355</defaultZoomYPos>
+                <devSettings>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig>
+                        <routingTableItem>
+                            <destination>192.168.1.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                    </routingTabConfig>
+                </devSettings>
+                <hwType>END_DEVICE_PC</hwType>
+                <id>33</id>
+                <interface hwComponent="33" idAsString="34">
+                    <cable>35</cable>
+                    <hwType>END_DEVICE_PC</hwType>
+                    <id>34</id>
+                    <ipAddress>192.168.1.3/24</ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-0A</macAddress>
+                    <name>eth0</name>
+                </interface>
+                <name>pc2</name>
+            </value>
+        </entry>
+        <entry>
             <key>5</key>
             <value idAsString="5">
                 <defaultZoomXPos>350</defaultZoomXPos>
@@ -181,6 +221,7 @@
                     <name>eth2</name>
                 </interface>
                 <interface hwComponent="5" idAsString="9">
+                    <cable>35</cable>
                     <hwType>LINUX_SWITCH</hwType>
                     <id>9</id>
                     <ipAddress></ipAddress>
@@ -200,12 +241,12 @@
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
-                            <destination>192.168.1.0/24</destination>
-                            <interfaceName>eth0</interfaceName>
-                        </routingTableItem>
-                        <routingTableItem>
                             <destination>192.168.2.0/24</destination>
                             <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>192.168.1.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
@@ -250,33 +291,17 @@
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1331202388843</lastEditTimestamp>
+    <lastEditTimestamp>1331628397218</lastEditTimestamp>
     <counter>
-        <nextId>33</nextId>
-        <nextMacAddress>10</nextMacAddress>
+        <nextId>36</nextId>
+        <nextMacAddress>11</nextMacAddress>
         <nextNumberMap>
-            <entry>
-                <key>CISCO_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>0</value>
-            </entry>
             <entry>
                 <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_PC</key>
-                <value>2</value>
-            </entry>
-            <entry>
-                <key>LINUX_ROUTER</key>
-                <value>3</value>
-            </entry>
-            <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>END_DEVICE_WORKSTATION</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -284,7 +309,19 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_ETHERNET</key>
+                <key>END_DEVICE_PC</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>REAL_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -292,11 +329,15 @@
                 <value>2</value>
             </entry>
             <entry>
-                <key>CISCO_ROUTER</key>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_WORKSTATION</key>
+                <key>LINUX_ROUTER</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>CISCO_ROUTER</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

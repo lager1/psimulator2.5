@@ -23,7 +23,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 
 //parametry prikazu:
     IpAddress cil; //adresa, na kterou ping posilam
-    int count=4; //pocet paketu k poslani, zadava se prepinacem -c
+    int count=1; //pocet paketu k poslani, zadava se prepinacem -c
     int size=56; //velikost paketu k poslani, zadava se -s
     double interval=1; //interval mezi odesilanim paketu v sekundach, zadava se -i, narozdil od vrchnich je dulezitej
     int ttl=64; //zadava se prepinacem -t

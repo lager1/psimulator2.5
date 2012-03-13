@@ -4,6 +4,7 @@
 package logging;
 
 import dataStructures.L2Packet;
+import dataStructures.L3Packet;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -31,13 +32,14 @@ public class SystemListener implements LoggerListener {
 
 			if (logLevel <= configuration.get(category)) {
 				String vypsat = "";
-				vypsat+="[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": " + message;
+				vypsat+="[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
 				if (object instanceof Exception) {
 					((Exception) object).printStackTrace();
+				} else if (object != null) {
+					vypsat+=object.toString()+" | ";
+
 				}
-				if(object instanceof L2Packet){
-					vypsat+=object.toString();
-				}
+				vypsat+=message;
 				System.out.println(vypsat);
 			}
 
