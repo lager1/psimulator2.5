@@ -18,6 +18,7 @@ import shell.ShellUtils;
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
+import telnetd.io.toolkit.Editfield;
 
 /**
  *
@@ -31,10 +32,12 @@ public class CommandShell extends TerminalApplication {
 	public static final int CISCO_CONFIG_MODE = 2;
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
+	private NormalRead normalRead;
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
 	private ShellMode shellMode = ShellMode.COMMAND_READ;
+	private Thread thread;  // thread running blocking IO operations
 	/**
 	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
 	 * Dle stavu se bude resit napovidani a historie.
@@ -43,8 +46,7 @@ public class CommandShell extends TerminalApplication {
 
 	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
-		this.shellRenderer = new ShellRenderer(this, terminalIO);
-		this.parser = device.createParser(this);
+		this.thread = Thread.currentThread();
 	}
 
 	/**
@@ -63,6 +65,8 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void setShellMode(ShellMode shellMode) {
 		this.shellMode = shellMode;
+		this.thread.interrupt();  // wake up possibly IO waiting thread
+
 	}
 
 	public void setPrompt(String prompt) {
@@ -89,8 +93,10 @@ public class CommandShell extends TerminalApplication {
 
 		String ret = null;
 		try {
-			shellRenderer.run();
-			ret = shellRenderer.getValue();
+			this.getShellRenderer().run();
+			ret = this.getShellRenderer().getValue();
+		} catch (InterruptedException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
 		}
@@ -99,6 +105,9 @@ public class CommandShell extends TerminalApplication {
 	}
 
 	public ShellRenderer getShellRenderer() {
+		if (this.shellRenderer == null) {
+			this.shellRenderer = new ShellRenderer(this, terminalIO, "ShellRenderer");
+		}
 		return shellRenderer;
 	}
 
@@ -117,7 +126,7 @@ public class CommandShell extends TerminalApplication {
 				return (char) input;
 			}
 
-			ShellUtils.handleControlCodes(parser, input);
+			ShellUtils.handleSignalControlCodes(this.getParser(), input);
 		}
 	}
 
@@ -206,7 +215,7 @@ public class CommandShell extends TerminalApplication {
 	 * just print prompt
 	 */
 	public void printPrompt() {
-		if (parser.isCommandRunning()) {
+		if (this.getParser().isCommandRunning()) {
 			print(prompt);
 		}
 	}
@@ -220,11 +229,22 @@ public class CommandShell extends TerminalApplication {
 	}
 
 	public AbstractCommandParser getParser() {
+		if (this.parser == null) {
+			this.parser = this.device.createParser(this);
+		}
 		return parser;
 	}
 
 	public void setParser(AbstractCommandParser parser) {
 		this.parser = parser;
+	}
+
+	private NormalRead getNormalRead() {
+		if (this.normalRead == null) {
+			this.normalRead = new NormalRead(terminalIO, "NormalRead", this.getParser(), this);
+		}
+		return this.normalRead;
+
 	}
 
 	@Override
@@ -242,7 +262,9 @@ public class CommandShell extends TerminalApplication {
 
 		String line;
 
-		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
+		//this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
+		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
+		this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
 
 		while (!quit) {
 			try {
@@ -255,12 +277,17 @@ public class CommandShell extends TerminalApplication {
 
 						if (line != null) {
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
-							parser.processLine(line, mode);
+							this.getParser().processLine(line, mode);
 						}
 						break;
 					case NORMAL_READ:
+						try {
+							this.normalRead.run();
+						} catch (InterruptedException ex) {
+							Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
+						}
 						break;
-					case INPUT_FIELD:
+					case INPUT_FIELD:	// @TODO not handled yet
 						break;
 
 				}
@@ -301,7 +328,7 @@ public class CommandShell extends TerminalApplication {
 			if (ShellUtils.isPrintable(input)) {
 				terminalIO.write((char) input);
 			} else {
-				ShellUtils.handleControlCodes(parser, input);
+				ShellUtils.handleSignalControlCodes(this.getParser(), input);
 			}
 
 		}

@@ -20,10 +20,10 @@ import telnetd.io.toolkit.ActiveComponent;
  *
  * @author Martin Lukáš
  */
-public class ShellRenderer {
+public class ShellRenderer extends ActiveComponent {
 
 	private CommandShell commandShell;
-	private BasicTerminalIO termIO;
+	// private BasicTerminalIO m_IO;   // no need for this. Parent class Component has same protected member
 	private int cursor = 0;
 	private StringBuilder sb = new StringBuilder(50); //buffer načítaného řádku, čtecí buffer
 	private History history = new History();
@@ -32,9 +32,10 @@ public class ShellRenderer {
 	 */
 	private boolean returnValue = true;
 
-	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO) {
+	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
+		super(termIO, name);
 		this.commandShell = commandShell;
-		this.termIO = termIO;
+		// this.termIO = termIO;  // no need for this. Parent class Component has same protected member
 	}
 
 	public History getHistory() {
@@ -54,24 +55,24 @@ public class ShellRenderer {
 	public void run() throws Exception {
 
 		this.sb.setLength(0); // clear string builder
-		returnValue=true;
-		boolean konecCteni = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
+		returnValue = true;
+		boolean stop = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
 		List<String> nalezenePrikazy = new LinkedList<String>(); // seznam nalezenych příkazů po zmáčknutí tabu
 		this.cursor = 0;
 
 
 
-		while (!konecCteni) {
+		while (!stop) {
 
 			try {
 
-				int inputValue = termIO.read();
+				int inputValue = m_IO.read();
 
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 
 				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
-					termIO.write(inputValue);
+					m_IO.write(inputValue);
 					sb.insert(cursor, (char) inputValue);
 					cursor++;
 					draw();
@@ -83,7 +84,26 @@ public class ShellRenderer {
 					nalezenePrikazy = new LinkedList<String>(); // vyčistím pro další hledání
 				}
 
-				switch (inputValue) { // HANDLE CONTROL CODE
+				if (ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), inputValue)) // if input was signaling control code && handled
+				{
+					switch (inputValue) {
+						case TerminalIO.CTRL_C:
+							stop = true;
+							returnValue = false;
+							//termIO.write(BasicTerminalIO.CRLF);
+							break;
+						case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
+							stop = true;
+							returnValue = false;
+							m_IO.write("BYE");
+							break;
+
+					}
+
+					continue;  // continue while cycle
+				}
+
+				switch (inputValue) { // HANDLE CONTROL CODES for text manipulation
 
 					case TerminalIO.TABULATOR:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno TABULATOR");
@@ -141,40 +161,22 @@ public class ShellRenderer {
 
 						}
 						break; // break switch
-					case TerminalIO.CTRL_C:
-						konecCteni = true;
-						returnValue = false;
-						//termIO.write(BasicTerminalIO.CRLF);
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue); 
-						break;
-					case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
-						// @TODO neposilat ctrl_d pokud nacitam nejaky prikaz... poslat pouze pokud je radka prazdna
-						konecCteni = true;
-						returnValue = false;
-						termIO.write("BYE");
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);
-						break;
-					case TerminalIO.CTRL_Z:
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  
-						break;
 
 					case TerminalIO.CTRL_L:	// clean screen
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+L");
 						this.clearScreen();
 						break;
-					case TerminalIO.CTRL_SHIFT_6: 
-						ShellUtils.handleControlCodes(this.commandShell.getParser(), inputValue);  
-						break;
+
 					case TerminalIO.ENTER:
-						konecCteni = true;
+						stop = true;
 						history.add(this.getValue());
-						termIO.write(BasicTerminalIO.CRLF);
+						m_IO.write(BasicTerminalIO.CRLF);
 						break;
 
 					case -1:
 					case -2:
 						Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Shell renderer read Input(Code):" + inputValue);
-						konecCteni = true;
+						stop = true;
 						break;
 				}
 
@@ -182,9 +184,9 @@ public class ShellRenderer {
 
 
 			} catch (IOException ex) {
-				konecCteni = true;
+				stop = true;
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
-				ShellUtils.handleControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
+				ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
 			} catch (UnsupportedOperationException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unsuported exception catched in ShellRenderer: " + ex.toString());
 			}
@@ -213,11 +215,12 @@ public class ShellRenderer {
 	 *
 	 * @throws IOException
 	 */
-	private void draw() throws IOException {
+	@Override
+	public void draw() throws IOException {
 
-		termIO.eraseToEndOfScreen();
-		termIO.write(sb.substring(cursor, sb.length()));
-		termIO.moveLeft(sb.length() - cursor);
+		m_IO.eraseToEndOfScreen();
+		m_IO.write(sb.substring(cursor, sb.length()));
+		m_IO.moveLeft(sb.length() - cursor);
 	}
 
 	/**
@@ -228,9 +231,9 @@ public class ShellRenderer {
 	private void drawLine() throws IOException {
 
 		moveCursorLeft(cursor);
-		termIO.eraseToEndOfScreen();
+		m_IO.eraseToEndOfScreen();
 		this.cursor = 0;
-		termIO.write(sb.toString());
+		m_IO.write(sb.toString());
 		this.cursor = sb.length();
 
 	}
@@ -247,8 +250,8 @@ public class ShellRenderer {
 			return;
 		}
 
-		termIO.eraseLine();
-		termIO.moveLeft(100);  // kdyby byla lepsi cesta jak smazat řádku, nenašel jsem
+		m_IO.eraseLine();
+		m_IO.moveLeft(100);  // kdyby byla lepsi cesta jak smazat řádku, nenašel jsem
 
 		this.commandShell.printPrompt();
 
@@ -260,9 +263,9 @@ public class ShellRenderer {
 			this.history.handleNext(this.sb);
 		}
 
-		termIO.write(this.sb.toString());
-		termIO.moveLeft(100);
-		termIO.moveRight(sb.length() + this.commandShell.prompt.length());
+		m_IO.write(this.sb.toString());
+		m_IO.moveLeft(100);
+		m_IO.moveRight(sb.length() + this.commandShell.prompt.length());
 		this.cursor = sb.length();
 
 	}
@@ -278,7 +281,7 @@ public class ShellRenderer {
 				return;
 			} else {
 				try {
-					termIO.moveLeft(1);
+					m_IO.moveLeft(1);
 					cursor--;
 				} catch (IOException ex) {
 					Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
@@ -306,7 +309,7 @@ public class ShellRenderer {
 				return;
 			} else {
 				try {
-					termIO.moveRight(1);
+					m_IO.moveRight(1);
 					cursor++;
 				} catch (IOException ex) {
 					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "VPRAVO, pozice: " + cursor);
@@ -330,15 +333,15 @@ public class ShellRenderer {
 
 		if (!nalezenePrikazy.isEmpty() && nalezenePrikazy.size() > 1) { // dvakrat zmacknuty tab a mám více než jeden výsledek
 
-			termIO.write(TerminalIO.CRLF); // nový řádek
+			m_IO.write(TerminalIO.CRLF); // nový řádek
 
 			for (String nalezeny : nalezenePrikazy) {
-				termIO.write(nalezeny + "  ");
+				m_IO.write(nalezeny + "  ");
 			}
 
-			termIO.write(TerminalIO.CRLF); // nový řádek
+			m_IO.write(TerminalIO.CRLF); // nový řádek
 			this.commandShell.printPrompt();
-			termIO.write(this.sb.toString());
+			m_IO.write(this.sb.toString());
 
 
 			return;
@@ -383,8 +386,8 @@ public class ShellRenderer {
 	}
 
 	private void clearScreen() throws IOException, TelnetConnectionException {
-		this.termIO.eraseScreen();
-		termIO.setCursor(0, 0);
+		this.m_IO.eraseScreen();
+		m_IO.setCursor(0, 0);
 		this.commandShell.printPrompt();
 		this.cursor = 0;
 		drawLine();

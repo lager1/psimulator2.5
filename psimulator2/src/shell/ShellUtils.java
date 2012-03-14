@@ -20,7 +20,9 @@ public class ShellUtils {
 		return "\\p{Print}";
 	}
 
-	public static void handleControlCodes(AbstractCommandParser parser, int code) {
+	public static boolean handleSignalControlCodes(AbstractCommandParser parser, int code) {
+
+		boolean handled = true;
 
 		switch (code) {
 			case TerminalIO.CTRL_C:
@@ -38,8 +40,13 @@ public class ShellUtils {
 			case TerminalIO.CTRL_SHIFT_6:
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+SHIFT+6");
 				parser.catchSignal(Signal.CTRL_SHIFT_6);
+				break;
+			default:  // if no control code was handled
+				handled = false;
 
 		}
+		
+		return handled;
 
 	}
 
