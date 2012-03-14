@@ -262,9 +262,9 @@ public class CommandShell extends TerminalApplication {
 
 		String line;
 
-		//this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
+		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
 		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
-		this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
+		//this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
 
 		while (!quit) {
 			try {
