@@ -4,6 +4,7 @@
 package physicalModule;
 
 import dataStructures.L2Packet;
+import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import utils.SmartRunnable;
@@ -14,7 +15,7 @@ import utils.WorkerThread;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class Cable implements SmartRunnable {
+public class Cable implements SmartRunnable, Loggable {
 
 	public final int configID;	// id z konfiguraku
 	/**
@@ -93,6 +94,7 @@ public class Cable implements SmartRunnable {
 				packet = first.popPacket();
 				if (second != null) {
 					makeDelay();
+					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, idFirstDevice, idSecondDevice, configID));
 					second.receivePacket(packet);
 				}
 				firstIsEmpty = first.isEmptyBuffer();
@@ -102,6 +104,7 @@ public class Cable implements SmartRunnable {
 				packet = second.popPacket();
 				if (first != null) {
 					makeDelay();
+					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, idSecondDevice, idFirstDevice, configID));
 					first.receivePacket(packet);
 				}
 				secondIsEmpty = second.isEmptyBuffer();
@@ -140,6 +143,25 @@ public class Cable implements SmartRunnable {
 		} else {
 			Logger.log(Logger.ERROR, LoggingCategory.PHYSICAL, "Byla spatne zavolana metoda getTheOtherSwitchport na kabelu s configID " + configID);
 			return null;
+		}
+	}
+
+	@Override
+	public String getDescription() {
+		return "Cable: device1_ID=" + idFirstDevice + " " + "device2_ID=" + idSecondDevice;
+	}
+
+	public class CableItem {
+		public final L2Packet packet;
+		public final int device1_ID;
+		public final int device2_ID;
+		public final int cabel_ID;
+
+		public CableItem(L2Packet packet, int device1_ID, int device2_ID, int cabel_ID) {
+			this.packet = packet;
+			this.device1_ID = device1_ID;
+			this.device2_ID = device2_ID;
+			this.cabel_ID = cabel_ID;
 		}
 	}
 }
