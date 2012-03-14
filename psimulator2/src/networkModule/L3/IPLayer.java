@@ -1,11 +1,5 @@
 /*
  * created 31.1.2012
- *
- * TODO:
- * doresit drobnosti (potreba vyzkoumat)
- * doresit logovani
- * doresit budik
- *
  */
 package networkModule.L3;
 
@@ -186,7 +180,9 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
 				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket.", m.packet);
-				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
+				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet);
+
+
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
 			}
@@ -241,7 +237,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
-			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet); // TODO: nema to vracet DNU jen kdyz to byl IMCP packet?? vyzkoumat
+			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet);
 			return;
 		}
 
@@ -279,7 +275,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 
 			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Nemohu odeslat IpPacket na adresu " + packet.dst + ", protoze neznam MAC adresu nextHopu, takze posilam ARP request na rozhrani "
 					+ record.rozhrani.name, arpPacket); // packet tu nemsi by
-			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast()); // TODO: odeslat ARP req na vsechny rozhrani v dany siti?, asi NE
+			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast());
 
 			storeBuffer.add(new IPLayer.StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
 			return;

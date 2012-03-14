@@ -16,12 +16,6 @@ import java.util.List;
  */
 public class SimulatorSwitchport extends Switchport {
 
-//	/**
-//	 * Link to cable's connector.
-//	 * Until cable is not connected ti is null.
-//	 */
-//	protected Connector connector;
-
 	protected Cable cabel;
 
 	/**
@@ -36,7 +30,7 @@ public class SimulatorSwitchport extends Switchport {
 	/**
 	 * Capacity of buffer in bytes.
 	 */
-	private int capacity = 150000; // zatim: 100 x max velikost ethernetovyho pakatu
+	private int capacity = 150_000; // zatim: 100 x max velikost ethernetovyho pakatu
 	/**
 	 * Count of dropped packets.
 	 *
@@ -76,6 +70,7 @@ public class SimulatorSwitchport extends Switchport {
 	 *
 	 * @return
 	 */
+	@Override
 	public L2Packet popPacket() {
 		L2Packet packet;
 		packet = buffer.remove(0);
@@ -86,6 +81,7 @@ public class SimulatorSwitchport extends Switchport {
 	/**
 	 * Return true if buffer is empty.
 	 */
+	@Override
 	public boolean isEmptyBuffer() {
 		return buffer.isEmpty();
 	}

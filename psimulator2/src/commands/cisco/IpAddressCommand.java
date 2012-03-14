@@ -45,12 +45,6 @@ public class IpAddressCommand extends CiscoCommand {
      */
     protected boolean zpracujRadek() {
         //ip address 192.168.2.129 255.255.255.128
-        if (no) { // vim, ze ve slova je 'no ip address'
-            nextWord();
-        }
-
-        nextWord(); // address
-//        ladici("po address");
 
         String ip = nextWord();
 

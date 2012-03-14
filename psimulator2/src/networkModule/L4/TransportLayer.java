@@ -68,7 +68,7 @@ public class TransportLayer implements Loggable {
 				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "UDP handler neni implementovan! Zahazuji packet:", packet);
 				break;
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Prisel mi sem paket neznameho L4 typu: Zahazuji packet:", packet);
+				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Prisel mi sem paket neznameho L4 typu. Zahazuji packet:", packet);
 		}
 	}
 
@@ -126,7 +126,6 @@ public class TransportLayer implements Loggable {
 			portCounter = portCounter - portMAX + 1024;
 			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Resetting portCounter.", null);
 		}
-//		TODO: ranna implementace! tady se to bude cyklit, pokud budou pouzivany vsechny porty
 		if (applications.containsKey(portCounter)) {
 			portCounter++;
 			return getFreePort();

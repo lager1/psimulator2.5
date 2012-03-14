@@ -55,7 +55,7 @@ public enum LoggingCategory {
 	 */
 	NETWORK_MODEL_LOAD_SAVE,
 
-	
+
 	FILE_SYSTEM,
 	/**
 	 * Zpravy ze simulatoru pro tridu, kterou sem nechci pridavat.
@@ -89,6 +89,10 @@ public enum LoggingCategory {
 	 * Zpravy z budiku.
 	 */
 	ALARM,
+	/**
+	 * Zpravy z wrapperu RT pro cisco.
+	 */
+	WRAPPER_CISCO,
 
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 

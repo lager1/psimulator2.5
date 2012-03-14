@@ -6,7 +6,6 @@ package physicalModule;
 import dataStructures.L2Packet;
 import device.Device;
 import java.util.*;
-import networkModule.L3.NetworkInterface;
 import networkModule.NetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;

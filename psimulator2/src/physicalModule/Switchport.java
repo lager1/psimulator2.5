@@ -5,8 +5,6 @@ package physicalModule;
 
 import dataStructures.L2Packet;
 
-
-
 /**
  * Represents abstract physical switchport.
  * Sends and receives packet through cable.
@@ -66,41 +64,4 @@ public abstract class Switchport {
 	 * @return
 	 */
 	public abstract boolean isConnected();
-
-
-// ----------------------------- zatim neni treba -----------------------------
-//	/**
-//	 * For comparison of two interfaces
-//	 * porovnavani rozhrani podle tohodlec divnyho UUID, asi nejjednodussi metoda, co me napadla
-//	 */
-//	protected UUID hash = UUID.randomUUID();
-//	/**
-//	 * Uniq UUID (something like hash, randomly generated)
-//	 * @return
-//	 */
-//	public UUID getHash() {
-//		return hash;
-//	}
-//	/**
-//	 * Compare ifaces by hash
-//	 * @param obj
-//	 * @return true if both interfaces has the same UUID (= the are the same interfaces on the same netw. device)
-//	 */
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof Switchport) {
-//			Switchport iface = (Switchport) obj;
-//			if (this.getHash().equals(iface.getHash())) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		int mhash = 3;
-//		mhash = 71 * mhash + (this.hash != null ? this.hash.hashCode() : 0);
-//		return mhash;
-//	}
 }

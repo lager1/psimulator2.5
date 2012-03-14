@@ -23,12 +23,12 @@ public class EthernetInterface implements Loggable {
 
 	public final String name;
 	protected MacAddress mac;
-	private final Map<MacAddress, SwitchTableItem> switchingTable = new HashMap<MacAddress, SwitchTableItem>();
+	private final Map<MacAddress, SwitchTableItem> switchingTable = new HashMap<>();
 	/**
 	 * Seznam prirazenejch switchportu. Je dulezity, aby to bylo private, pridavat se musi jen v metode
 	 * addSwitchportSettings, aby se v tom SwitchportSettings nastavilo assignedInterface.
 	 */
-	private final Map<Integer, SwitchportSettings> switchports = new HashMap<Integer, SwitchportSettings>();
+	private final Map<Integer, SwitchportSettings> switchports = new HashMap<>();
 	/**
 	 * Je-li povoleno switchovani, napr. u routeru defualtne zakazano.
 	 */

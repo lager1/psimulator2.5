@@ -156,6 +156,9 @@ public class WrapperOfRoutingTable implements Loggable {
      * Tato metoda bude aktualizovat RoutovaciTabulku dle tohoto wrapperu.
      */
     public void update() {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: "+radky.size(), null);
+
+
         // smazu RT
         routingTable.flushAllRecords();
 
@@ -164,7 +167,8 @@ public class WrapperOfRoutingTable implements Loggable {
 
         // pridam routy na nahozena rozhrani
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
-            if (iface.isUp && iface.getIpAddress() != null) { // prvni IP je null, kdyz tam neni zadna nastavena
+            if (iface.isUp && iface.getIpAddress() != null) {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress(), iface, true);
             }
         }
@@ -173,16 +177,20 @@ public class WrapperOfRoutingTable implements Loggable {
         for (CiscoRecord zaznam : radky) {
             if (zaznam.rozhrani != null) { // kdyz to je na rozhrani
                 if (zaznam.rozhrani.isUp) {
+					Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam zaznam na rozhrani.", zaznam);
                     routingTable.addRecord(zaznam.adresat, zaznam.rozhrani);
                 }
             } else { // kdyz to je na branu
                 NetworkInterface odeslat = najdiRozhraniProBranu(zaznam.brana);
                 if (odeslat != null) {
                     if (odeslat.isUp) {
-//                    System.out.println("nasel jsem pro "+zaznam.adresat.vypisAdresu() + " rozhrani "+odeslat.jmeno);
+						Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+zaznam.adresat.toString() + " rozhrani "+odeslat.name, null);
                         routingTable.addRecordWithoutControl(zaznam.adresat, zaznam.brana, odeslat);
-                    }
+                    } else {
+						Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+zaznam.adresat.toString() + " rozhrani "+odeslat.name+", ale je zhozene!!!", null);
+					}
                 } else {
+					Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Nenasel jsem pro tento zaznam zadne rozhrani, po kterem by to mohlo odejit..", zaznam);
 //                    System.out.println("nenasel jsem pro "+ zaznam);
                 }
             }
@@ -196,23 +204,23 @@ public class WrapperOfRoutingTable implements Loggable {
      * @return kdyz nelze nalezt zadne rozhrani, tak vrati null
      */
     NetworkInterface najdiRozhraniProBranu(IpAddress brana) {
-        NetworkInterface iface = null;
 
         citac++;
         if (citac >= 101) {
             return null; // ochrana proti smyckam
         }
-        for (int i = radky.size() - 1; i >= 0; i--) { // prochazim opacne (tedy vybiram s nevyssim poctem jednicek)
+        for (int i = radky.size() - 1; i >= 0; i--) { // prochazim opacne (tedy vybiram s nejvyssim poctem jednicek)
 
             // kdyz to je na rozsah vlastniho rozhrani
-            //mrknout se jestli to tady vadi!
-//            iface
 			Record record = routingTable.findRoute(brana);
             if (record.rozhrani != null) {
-                return iface;
-            }
+				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: nalezeno rozhrani.. ok", brana);
+                return record.rozhrani;
+            } else {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro "+brana, null);
+			}
 
-            // kdyz to je na branu
+            // kdyz to je na branu jako v retezu
             CiscoRecord zaznam = radky.get(i);
             if (zaznam.adresat.isInMyNetwork(brana)) {
                 if (zaznam.rozhrani != null) { // 172.18.1.0 255.255.255.0 FastEthernet0/0
@@ -253,7 +261,7 @@ public class WrapperOfRoutingTable implements Loggable {
 
         if (!zaznam.getAdresat().isNetworkNumber()) { // vyjimka pro nacitani z konfiguraku, jinak to je osetreno v parserech
 //            throw new RuntimeException("Adresa " + zaznam.getAdresat().getIp() + " neni cislem site!");
-			Logger.log(this, Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, "Adresa " + zaznam.getAdresat().getIp() + " neni cislem site! Nepridano!", zaznam);
+			Logger.log(this, Logger.WARNING, LoggingCategory.WRAPPER_CISCO, "Adresa " + zaznam.getAdresat().getIp() + " neni cislem site! Nepridano!", zaznam);
 			return;
         }
 

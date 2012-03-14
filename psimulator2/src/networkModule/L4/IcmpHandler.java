@@ -1,7 +1,6 @@
 /*
  * created 5.3.2012
  *
- * TODO: dodelat seq
  */
 
 package networkModule.L4;

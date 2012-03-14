@@ -198,23 +198,15 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 				case CISCO_CONFIG_IF_MODE:
 					if (isCommand("exit", first)) {
 						changeMode(CISCO_CONFIG_MODE);
-
-//                    mode = CONFIG;
-//                    kon.prompt = pc.jmeno + "(config)#";
-//                    aktualni = null; // zrusime odkaz na menene rozhrani
 						return;
 					}
 					if (first.equals("end")) {
 						changeMode(CISCO_PRIVILEGED_MODE);
-//                    mode = ROOT;
-//                    kon.prompt = pc.jmeno + "#";
-//                    Date d = new Date();
-//                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
 						return;
 					}
 //                }
 					if (isCommand("ip", first)) {
-						command = new IpAddressCommand(this, false);
+						command = new IpCommand(this, false);
 						command.run();
 						return;
 					}
@@ -237,6 +229,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 				}
 				if (first.equals("route")) {
 					command = new Route(this);
+					command.run();
+					return;
+				}
+				if (isCommand("show", first)) {
+					command = new ShowCommand(this);
 					command.run();
 					return;
 				}
@@ -520,7 +517,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
      */
     private void no() {
 
-        String dalsi = words.size() == 1 ? "" : words.get(1);
+        String dalsi = nextWord(); // sezere se ip, shutdown, access-list
         if (dalsi.isEmpty()) {
             incompleteCommand();
             return;

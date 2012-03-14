@@ -30,11 +30,10 @@ public class IpCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		String dalsi = nextWord();
 
-        if (no) {
-            dalsi = nextWord();
-        }
+		String dalsi;
+
+		dalsi = nextWord(); // route, classless, nat, address
 
         if(dalsi.isEmpty()) {
             incompleteCommand();

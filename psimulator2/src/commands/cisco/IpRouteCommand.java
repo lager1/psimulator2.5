@@ -7,10 +7,10 @@ package commands.cisco;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.BadIpException;
+import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import networkModule.L3.CiscoIPLayer;
-import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import utils.Util;
 
@@ -21,7 +21,6 @@ import utils.Util;
 public class IpRouteCommand extends CiscoCommand {
 
 	private final boolean no;
-	private AbstractCommand command;
 
 	private IPwithNetmask adresat;
     private IpAddress brana;
@@ -36,26 +35,30 @@ public class IpRouteCommand extends CiscoCommand {
 
 	protected boolean zpracujRadek() {
 
-        if (no == true) {
-//            if (debug) pc.vypis("prikaz no, pridej="+no);
-            nextWord();
-        }
-
-        nextWord(); // route
-
+		String adr = "";
+		String maska = "";
         try {
-            String adr = nextWord();
-            String maska = nextWord();
+            adr = nextWord();
+            maska = nextWord();
 
             if (adr.isEmpty() || maska.isEmpty()) {
                 incompleteCommand();
                 return false;
             }
             adresat = new IPwithNetmask(adr, maska);
-        } catch (Exception e) { // SpatnaMaskaException, SpatnaAdresaException
+        } catch (BadNetmaskException e) {
+			System.out.println("spatna maska: "+maska);
+			invalidInputDetected();
+			return false;
+		} catch (BadIpException e) { // SpatnaMaskaException, SpatnaAdresaException
+			System.out.println("spatna adresa: "+adr);
             invalidInputDetected();
             return false;
-        }
+        } catch (Exception e) {
+			System.out.println(e);
+            invalidInputDetected();
+            return false;
+		}
 
         if (!adresat.isNetworkNumber()) {
             printLine("%Inconsistent address and mask");

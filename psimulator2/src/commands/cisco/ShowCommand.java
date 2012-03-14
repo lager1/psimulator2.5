@@ -195,7 +195,7 @@ public class ShowCommand extends CiscoCommand {
     /**
      * TODO: Posle vypis pro prikaz 'show ip nat translations.
      */
-    private void ipNatTranslations() {
+    private void ipNatTranslations() {// TODO ipNatTranslations
 //        String s = "";
 //		ipLayer.
 //        s += pc.natTabulka.vypisZaznamyCisco();
@@ -203,7 +203,7 @@ public class ShowCommand extends CiscoCommand {
     }
 
     /**
-     * TODO: Posle vypis pro prikaz 'show ip route'.
+     * Posle vypis pro prikaz 'show ip route'.
      */
     private void ipRoute() {
         String s = "";
@@ -264,7 +264,7 @@ public class ShowCommand extends CiscoCommand {
 //                }
 //            }
 //
-//            if (pc.natTabulka.vratInside() != null) { TODO: vypisovat NAT
+//            if (pc.natTabulka.vratInside() != null) {
 //                for (SitoveRozhrani iface0 : pc.natTabulka.vratInside()) {
 //                    if (iface0.jmeno.equals(sr.jmeno)) {
 //                        s += " ip nat inside" + "\n";
@@ -282,7 +282,7 @@ public class ShowCommand extends CiscoCommand {
         if (ipLayer.routingTable.classless) {
             s += "ip classless\n";
         }
-//        s += ((CiscoPocitac) pc).getWrapper().vypisRunningConfig(); // TODO: vypis routovaci tabulky pro Cisco
+        s += ipLayer.wrapper.vypisRunningConfig();
 
         s += "!\n";
         s += "ip http server\n";
