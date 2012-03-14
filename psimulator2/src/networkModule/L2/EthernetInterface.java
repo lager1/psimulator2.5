@@ -8,22 +8,19 @@ import dataStructures.MacAddress;
 import java.util.HashMap;
 import java.util.Map;
 import logging.Loggable;
-import logging.Logger;
-import logging.LoggingCategory;
 import physicalModule.Switchport;
 
 /**
  * Representace ethernetovyho interface (sitovy karty) se switchovaci tabulkou. Spolecny pro switch i router. Ma jmeno,
  * mac adresu, muze mit vic switchportu, ma ethernetovou switchovaci tabulku.
  *
- * TODO: U switchovaci tabulky se zatim neresi vyprseni zaznamu.
- *
+ * TODO: Zjistit, jak dlouho je platnej zaznam ve switchovaci tabulce, zatim nastaveno na 20 s.
  * Switchovaci tabulka nic nedela, kdyz ma interface jen jeden switchport (kvuli zrychleni).
  *
  * @author neiss
  */
 public class EthernetInterface implements Loggable {
-	
+
 	public final String name;
 	protected MacAddress mac;
 	private final Map<MacAddress, SwitchTableItem> switchingTable = new HashMap<MacAddress, SwitchTableItem>();
@@ -37,6 +34,8 @@ public class EthernetInterface implements Loggable {
 	 */
 	public boolean switchingEnabled = false;
 	private final EthernetLayer etherLayer;
+
+	private static int switchTableTimeout = 20;
 
 
 
@@ -86,10 +85,10 @@ public class EthernetInterface implements Loggable {
 			return switchports.get(0);
 		} else {
 			SwitchTableItem item = switchingTable.get(mac);
-			if (item != null) {
-				return item.swportSett;
-			} else {
+			if (item == null || item.isOutdated()) {
 				return null;
+			} else {
+				return item.swportSett;
 			}
 		}
 	}
@@ -151,14 +150,24 @@ public class EthernetInterface implements Loggable {
 // Polozka switchovaci tabulky: ----------------------------------------------------------------------------------
 	private class SwitchTableItem {
 
+		public SwitchportSettings swportSett;
+
+		/**
+		 * Systemovej cas (v ms), kdy byl zaznam pridan. Slouzi jako casove razitko pro vyprseni zaznamu.
+		 */
+		public long time;
+
 		public SwitchTableItem(SwitchportSettings swportSett, long time) {
 			this.swportSett = swportSett;
 			this.time = time;
 		}
-		public SwitchportSettings swportSett;
-		/**
-		 * Systemovej cas (ve vterinach), kdy byl zaznam pridan. Slouzi jako casove razitko pro vyprseni zaznamu.
-		 */
-		public long time;
+
+		public boolean isOutdated(){
+			if(System.currentTimeMillis() > time+switchTableTimeout*1000){
+				return true;
+			}
+			return false;
+		}
+
 	}
 }
