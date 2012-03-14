@@ -86,7 +86,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			log(Logger.WARNING, "Nejaka chyba v linuxovejch prikazech.", null);
 			log(Logger.DEBUG, "Byla vyhozena vyjimka.", ex);
 		}
-		log(Logger.DEBUG,"konec metody processLineForParsers",null);
+		//log(Logger.DEBUG,"konec metody processLineForParsers",null);
 
 	}
 

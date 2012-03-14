@@ -7,6 +7,7 @@ package applications;
 import commands.ApplicationNotifiable;
 import commands.cisco.CiscoCommandParser;
 import dataStructures.IcmpPacket;
+import dataStructures.IpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -47,7 +48,9 @@ public class CiscoPingApplication extends PingApplication {
 	}
 
 	@Override
-	protected void handleIncommingPacket(IcmpPacket packet) {
+	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay) {
+
+
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
 
 		areAllAtHome(packet);

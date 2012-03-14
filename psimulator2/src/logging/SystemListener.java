@@ -5,6 +5,7 @@ package logging;
 
 import dataStructures.L2Packet;
 import dataStructures.L3Packet;
+import dataStructures.L4Packet;
 import java.util.EnumMap;
 import java.util.Map;
 import psimulator2.Psimulator;
@@ -32,18 +33,19 @@ public class SystemListener implements LoggerListener {
 		try {
 
 			if (logLevel <= configuration.get(category)) {
-				String vypsat = "[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
+				String zacatek = "[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
 
-				if (object instanceof Exception) {
-					// vypisuje se to az potom.
-				} else if (object != null) {
-					vypsat+=object.toString()+" | ";
-
-				}
-				vypsat+=message;
-				System.out.println(vypsat);
-				if (object instanceof Exception) {
+				if (object instanceof Exception) {	// vyjimka
+					System.out.println(zacatek + message);
 					((Exception) object).printStackTrace();
+
+				} else if (object instanceof L2Packet || object instanceof L3Packet || object instanceof L4Packet) {	// paket
+					System.out.println(zacatek + object.toString() + " | " + message);
+
+				} else if (object != null) {	// nejakej jinej object, ten se vypisuje na konec
+					System.out.println(zacatek + message+" (" + object.toString()+")");
+				} else {
+					System.out.println(zacatek + message);
 				}
 			}
 

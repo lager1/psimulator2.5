@@ -114,13 +114,13 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			// vsechno v poradku, paket se zpracuje:
 			long delay = System.currentTimeMillis() - sendTime;
 			if (delay <= timeout) { // ok, paket dorazil vcas
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " v poradku dorazil ping s seq=" + packet.seq, packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi ping.", packet);
 				stats.odezvy.add(delay);
 				stats.prijate++;
-				handleIncommingPacket(packet);
+				handleIncommingPacket(p, packet, delay);
 				recieved[packet.seq - 1] = true;	// prida se do prijatejch
 			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " v poradku dorazil, ale mezitim vyprsel timeout, packet seq=" + packet.seq, packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi ping, ale vyprsel timeout.", packet);
 			}
 
 			// reseni posledniho paketu:
@@ -148,6 +148,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	 */
 	@Override
 	public void run() {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run.", null);
 		int i = 0;
 		while (i < count && !die) {	// jakmile bylo die nastaveno na true, tak uz se nic dalsiho neodesle
 			int seq = i + 1;
@@ -165,6 +166,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			}
 			i++;
 		}
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Konci metoda run.", null);
 	}
 
 // abstraktni metody, ktery je potreba doimplementovat v konkretnich pingach: ----------------------------------------
@@ -176,11 +178,11 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	/**
 	 * Handles incomming packet: REPLY, TIME_EXCEEDED, UNDELIVERED.
-	 * Ma vypsat informace o
 	 *
 	 * @param packet
+	 * @param delay delay in miliseconds
 	 */
-	protected abstract void handleIncommingPacket(IcmpPacket packet);
+	protected abstract void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay);
 
 	/**
 	 * Slouzi na hlasku o tom kolik ceho a kam posilam..
@@ -253,7 +255,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	@Override
 	public String toString(){
-		return "LinPingApp "+PID;
+		return "ping_app "+PID;
 	}
 
 

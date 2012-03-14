@@ -13,6 +13,8 @@ import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.L3.NetworkInterface;
+import psimulator2.Psimulator;
 
 /**
  *
@@ -55,6 +57,9 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 
 	public Ping(AbstractCommandParser parser) {
 		super(parser);
+		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
+			ladeni = true;
+		}
 	}
 
 	@Override
@@ -68,7 +73,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		if (!applicationStarted) {
 			parser.deleteRunningCommand();	// odregistrovani, kdyz nebyla aplikace spustena
 		}
-		Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Konec metody run. ", null);
+		//Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Konec metody run. ", null);
 	}
 
 	@Override
@@ -94,7 +99,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 	}
 
 
-// privatni metody pro parsovani a vykonavani: -----------------------------------------------------------------
+// privatni metody pro  vykonavani: ------------------------------------------------------------------------------
 
 	/**
 	 * Vykonavani, tedy predevsim spousteni pingovaci aplikace.
@@ -105,6 +110,8 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 			vypisNapovedu();
 		} else if (navratovyKod!=0){
 			// nejaka chyba pri parsovani, nic se nedela.
+		} else if (!jeRouta()) {
+			printLine("connect: Network is unreachable");
 		} else {
 			app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
 			app.start();
@@ -114,6 +121,27 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		return false;
 	}
 
+	/**
+	 * Overuje, jestli bude mozne na cilovou adresu pingovat. Tahle metoda je trochu hack, spravne by tu nemela bejt.
+	 * Delat to ale v samotny aplikaci je ale pozde, protoze to by se nejdriv musela vypsat ta uvodni hlaska.
+	 *
+	 * @return
+	 */
+	private boolean jeRouta() {
+		for (NetworkInterface iface : getNetMod().ipLayer.getNetworkIfaces()) {
+			if (iface.getIpAddress() != null && iface.getIpAddress().equals(cil)) {
+				return true;
+			}
+		}
+		if (getNetMod().ipLayer.routingTable.findRoute(cil) != null) {
+			return true;
+		}
+		return false;
+	}
+
+
+
+// privatni metody pro  parsovani: ------------------------------------------------------------------------------
 
     /**
 	 * Parsovani.
