@@ -5,6 +5,7 @@ package logging;
 
 import java.util.LinkedList;
 import java.util.List;
+import psimulator2.Psimulator;
 
 /**
  * Cela trida bude jen staticka - lip se pak loguje.
@@ -41,7 +42,9 @@ public class Logger {
 	 * Setting up logger. Replacement for constructor.
 	 */
 	public static void setLogger() {
-		listeners.add(new SystemListener());
+		SystemListener systemListener = new SystemListener();
+		Psimulator.getPsimulator().systemListener = systemListener;
+		listeners.add(systemListener);
 	}
 
 	/**

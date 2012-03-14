@@ -102,6 +102,5 @@ public class CiscoPingApplication extends PingApplication {
 				return;
 			}
 		}
-		this.allPacketArrived = true;
 	}
 }

@@ -15,27 +15,25 @@ import java.util.List;
 import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
+import psimulator2.Psimulator;
 import utils.Util;
+import utils.Wakeable;
 
 /**
  * Represents abstract Ping application. <br />
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ * @author Tomas Pitrinec
  */
-public abstract class PingApplication extends Application {
+public abstract class PingApplication extends TwoThreadApplication implements Wakeable{
 
 	protected IpAddress target;
 	protected int count = 0;
 	protected int size = 56; // default linux size (without header)
-	protected int timeout = 10_000;
+	protected int timeout = 10_000; // zrejme tedy v milisekundach
 	protected Stats stats = new Stats();
-	protected int seq = 1;
 	protected final ApplicationNotifiable command;
-	protected transient boolean allPacketArrived = false;
-	/**
-	 * Exit called from other thread.
-	 */
-	private transient boolean exitCalled = false;
+
 	/**
 	 * kdyz nebude zadan, tak se pouzije vychozi systemova hodnota ze sitoveho modulu
 	 */
@@ -49,15 +47,193 @@ public abstract class PingApplication extends Application {
 	 * Value - timestamp in ms
 	 */
 	protected Map<Integer, Long> timestamps = new HashMap<>();
+
 	protected boolean [] sent;
 	protected boolean [] recieved;
+
+	private boolean cekaSeNaBudik = false;	// mezi odeslanim a prijetim posledniho paketu je to true, jinak false
+
+
+
+
+
 
 	public PingApplication(Device device, ApplicationNotifiable command) {
 		super("ping", device);
 		this.command = command;
 	}
 
+// metody pro predavani informaci z jinejch vlaken -------------------------------------------------------------------
 
+	@Override
+	public void wake() {
+		if (!die) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Byl jsem probuzen budikem a jdu zavolat svuj worker.", null);
+			worker.wake();
+		} else {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Byl jsem probuzen budikem ale nevolam svuj worker, protoze mam bejt mrtvej.", null);
+		}
+	}
+
+	//pak je tady jeste receivePacket, ktera je podedena od Application
+
+
+
+// metody na vyrizovani sitovejch pozadavku: --------------------------------------------------------------------------
+
+	/**
+	 * Dela totez co jinde u ruznejch modulu, tzn kontroluje buffery a vyrizuje je. Poprve je spustena k vyrizeni prvniho pozadavku nejakym jinym vlaknem.
+	 */
+	@Override
+	public void doMyWork() {
+
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda doMyWork.", null);
+
+		IcmpPacket packet;
+
+		while (!buffer.isEmpty()) {
+			IpPacket p = buffer.remove(0);
+
+			// zkouseni, jestli je ten paket spravnej:
+			if (! (p.data instanceof IcmpPacket)) {
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication recieved non ICMP packet", p);
+				continue;
+			}
+
+			// parovani k odeslanymu paketu, reseni duplikaci:
+			packet = (IcmpPacket) p.data;
+			Long sendTime = timestamps.get(packet.seq);
+			timestamps.remove(packet.seq); // odstranim uz ulozeny
+			// TODO: resit nejak lip duplikace paketu, zatim se to loguje:
+			if (sendTime == null) {
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication doesn't expect such a PING reply "
+						+ "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
+				continue;
+			}
+
+			// vsechno v poradku, paket se zpracuje:
+			long delay = System.currentTimeMillis() - sendTime;
+			if (delay <= timeout) { // ok, paket dorazil vcas
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " v poradku dorazil ping s seq=" + packet.seq, packet);
+				stats.odezvy.add(delay);
+				stats.prijate++;
+				handleIncommingPacket(packet);
+				recieved[packet.seq - 1] = true;	// prida se do prijatejch
+			} else {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " v poradku dorazil, ale mezitim vyprsel timeout, packet seq=" + packet.seq, packet);
+			}
+
+			// reseni posledniho paketu:
+			if(recieved[recieved.length - 1]){
+				exit();
+				cekaSeNaBudik = false;	// po prijmuti posledniho paketu se na budik neceka
+			}
+		}
+
+		//
+		if(cekaSeNaBudik){
+			exit();
+			cekaSeNaBudik = false;
+		}
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork.", null);
+
+	}
+
+
+
+// metody na delani vlastni prace: ------------------------------------------------------------------------------------
+
+	/**
+	 * Tahleta metoda bezi ve vlastnim javovskym vlakne ty aplikace. Posila pingy.
+	 */
+	@Override
+	public void run() {
+		int i = 0;
+		while (i < count && !die) {	// jakmile bylo die nastaveno na true, tak uz se nic dalsiho neodesle
+			int seq = i + 1;
+			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
+			timestamps.put(seq, System.currentTimeMillis());
+			sent[i] = true;
+			transportLayer.icmphandler.sendRequest(target, ttl, seq, port);
+			stats.odeslane++;
+
+			if (seq != count) {	// po poslednim odeslanym paketu uz se neceka
+				Util.sleep(waitTime);	// cekani
+			} else {	// ale nastavi se budik:
+				Psimulator.getPsimulator().budik.registerWake(this, timeout);
+				cekaSeNaBudik = true;
+			}
+			i++;
+		}
+	}
+
+// abstraktni metody, ktery je potreba doimplementovat v konkretnich pingach: ----------------------------------------
+
+	/**
+	 * Print stats and exits application.
+	 */
+	public abstract void printStats();
+
+	/**
+	 * Handles incomming packet: REPLY, TIME_EXCEEDED, UNDELIVERED.
+	 * Ma vypsat informace o
+	 *
+	 * @param packet
+	 */
+	protected abstract void handleIncommingPacket(IcmpPacket packet);
+
+	/**
+	 * Slouzi na hlasku o tom kolik ceho a kam posilam..
+	 */
+	protected abstract void startMessage();
+
+
+
+
+
+
+// metody spousteny pri startovani a ukoncovani aplikace: -------------------------------------------------------------
+
+
+	@Override
+	protected void atExit() {
+		stats.countStats();
+		printStats();
+	}
+
+	@Override
+	protected void atKill(){
+		command.applicationFinished();
+	}
+
+
+	@Override
+	protected void atStart() {
+		//kontrola cilovy adresy:
+		if (target == null) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no target! Exiting..", null);
+			kill();
+		}
+
+		//kontrola, jestli mam port:
+		if (getPort() == null) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no port assigned! Exiting..", null);
+			kill();
+		}
+
+		// inicialisovani poli (nemuze bejt v konstruktoru, protoze Standa nastavuje count az dyl):
+		if (count > 0) {
+			this.sent = new boolean[count];
+			this.recieved = new boolean[count];
+		}
+
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
+		startMessage();
+
+	}
+
+
+// ostatni public metody, povetsinou gettry a settry: ----------------------------------------------------------------
 
 	public void setCount(int count) {
 		this.count = count;
@@ -75,114 +251,15 @@ public abstract class PingApplication extends Application {
 		this.timeout = timeout;
 	}
 
-	/**
-	 * Print stats and exits application.
-	 */
-	public abstract void printStats();
-
 	@Override
-	public void atStart() {
-		if (target == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no target! Exiting..", null);
-			kill();
-		}
-		if (getPort() == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no port assigned! Exiting..", null);
-			kill();
-		}
-
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
-		startMessage();
-		sendPings();
-		if (!allPacketArrived) { // budik, pak smazat
-			Util.sleep(timeout);
-		}
-		if (!exitCalled) {
-			exit();
-		}
+	public String toString(){
+		return "LinPingApp "+PID;
 	}
 
-	/**
-	 * Sends #count pings.
-	 */
-	private void sendPings() {
-		if (count > 0) {
-			this.sent = new boolean[count];
-			this.recieved = new boolean[count];
-		}
 
-		for (int i = 0; i < count; i++) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" posilam ping seq="+seq, null);
-			timestamps.put(seq, System.currentTimeMillis());
-			sent[seq-1] = true;
-			transportLayer.icmphandler.sendRequest(target, ttl, seq++, port);
-			stats.odeslane++;
 
-			if (exitCalled) {
-				return;
-			}
 
-			if (i != count-1 || !allPacketArrived) {
-				Util.sleep(waitTime);
-			}
-		}
-	}
-
-	@Override
-	public void atExit() {
-		this.exitCalled = true;
-		stats.countStats();
-		printStats();
-		command.applicationFinished();
-	}
-
-	@Override
-	public void doMyWork() {
-
-		IcmpPacket packet;
-
-		while (!buffer.isEmpty()) {
-			IpPacket p = buffer.remove(0);
-			if (! (p.data instanceof IcmpPacket)) {
-				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication recieved non ICMP packet", p);
-				continue;
-			}
-
-			packet = (IcmpPacket) p.data;
-			Long sendTime = timestamps.get(packet.seq);
-			timestamps.remove(packet.seq); // odstranim uz ulozeny
-			// TODO: resit duplikace prichozich paketu - kdyz mi prijde v poradku paket, tak ho napr. ulozim do Map<seq, packet>, kdyz zjistim, ze prisel podruhy, tak vypisu duplikacni hlasku
-
-			if (sendTime == null) {
-				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication doesn't expect such a PING reply "
-						+ "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
-				continue;
-			}
-
-			long delay = System.currentTimeMillis() - sendTime;
-			if (delay <= timeout) { // ok, paket dorazil vcas
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil ping s seq="+packet.seq, packet);
-				stats.odezvy.add(delay);
-				stats.prijate++;
-				handleIncommingPacket(packet);
-			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" v poradku dorazil, ale mezitim vyprsel timeout, packet seq="+packet.seq, packet);
-			}
-		}
-	}
-
-	/**
-	 * Handles incomming packet: REPLY, TIME_EXCEEDED, UNDELIVERED.
-	 * Ma vypsat informace o
-	 *
-	 * @param packet
-	 */
-	protected abstract void handleIncommingPacket(IcmpPacket packet);
-
-	/**
-	 * Slouzi na hlasku o tom kolik ceho a kam posilam..
-	 */
-	protected abstract void startMessage();
+// statistiky: -------------------------------------------------------------------------------------------------------
 
 	/**
 	 * Class encapsulating packets statistics.

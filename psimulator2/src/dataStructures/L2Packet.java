@@ -24,7 +24,10 @@ public abstract class L2Packet {
 		ethernetII;
 	}
 
-    // TODO: getSize() cachovat, jinak bude pekne narocnej
+    /**
+	 * Returns size of this packet, count the size of data, too.
+	 * Cachovat, jinak bude pekne narocnej
+	 */
     public abstract int getSize();
 
 	public abstract L2PacketType getType();

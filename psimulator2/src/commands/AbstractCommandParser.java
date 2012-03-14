@@ -90,6 +90,8 @@ public abstract class AbstractCommandParser implements Loggable {
 		} catch (Exception ex) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_COMMANDS, "Nekde byla hozena vyjimka.", ex);
 		}
+
+		Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Ukoncena metoda processLine u abstraktniho parseru, tim se vraci rizeni behu programu shellu.", null); // mam to pro linux
 	}
 
 	public void catchUserInput(String line) {
@@ -118,9 +120,18 @@ public abstract class AbstractCommandParser implements Loggable {
 		return runningCommand;
 	}
 
-	public void setRunningCommand(LongTermCommand runningCommand) {
+	/**
+	 * Zaregistruje dele bezici prikaz.
+	 * @param runningCommand
+	 * @param inputExpected Jestli prikaz ocekava vstup, podle tyhle promenny se nastavuje mod shellu.
+	 */
+	public void setRunningCommand(LongTermCommand runningCommand, boolean inputExpected) {
 		this.runningCommand = runningCommand;
-		shell.setShellMode(ShellMode.INPUT_FIELD);
+		if (inputExpected) {
+			shell.setShellMode(ShellMode.INPUT_FIELD);
+		} else {
+			shell.setShellMode(ShellMode.NORMAL_READ); //jen pokus
+		}
 	}
 
 	public void deleteRunningCommand() {
@@ -213,30 +224,6 @@ public abstract class AbstractCommandParser implements Loggable {
 			vratit+="^"+s+"^ ";
 		}
 		return vratit;
-	}
-
-	/**
-	 * V teto metode je se kontroluje, zda neprisel nejaky spolecny prikaz, jako napr. save ci v budoucnu jeste jine.
-	 *
-	 * @return vrati true, kdyz konkretni parser uz nema pokracovat dal v parsovani (tj. jednalo se o spolecny prikaz)
-	 * @autor Stanislav Řehák
-	 */
-	protected boolean spolecnePrikazy(boolean debug) {
-//        AbstraktniPrikaz prikaz;
-//
-//        if (slova.get(0).equals("uloz") || slova.get(0).equals("save")) {
-//            prikaz = new Uloz(pc, kon, slova);
-//            return true;
-//        }
-//        if (debug) {
-//            if (slova.get(0).equals("nat")) {
-//                kon.posliPoRadcich(pc.natTabulka.vypisZaznamyDynamicky(), 10);
-//                kon.posliRadek("______________________________________________");
-//                kon.posliPoRadcich(pc.natTabulka.vypisZaznamyCisco(), 10);
-//                return true;
-//            }
-//        }
-		return false;
 	}
 
 	/**

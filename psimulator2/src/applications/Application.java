@@ -17,18 +17,27 @@ import utils.SmartRunnable;
 import utils.WorkerThread;
 
 /**
- * Represents network application which listens on specified port.
+ * Represents network application which listens on specified port. Aplikace bezi v jednom vlakne, posloucha a obsluhuje
+ * pozadavky. Pro aplikaci, ktera sama od sebe neco dela (nejen obsluhuje pozadavky), bude jeste jina abstraktni trida
+ * od tyhle podedena.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ * @author Tomas Pitrinec
  */
 public abstract class Application implements SmartRunnable, Loggable {
+
+// parametry aplikace:
+
 	public final int PID;
 	public final String name;
 	protected final Device device;
-	private WorkerThread worker;
-	protected Integer port = null; // TODO: doresit, zda sem nedat seznam portu
+	protected WorkerThread worker;
+	protected Integer port = null; // nebude potreba seznam portu?
 	protected final TransportLayer transportLayer;
 
+	/**
+	 * buffer prichozich paketu ze site
+	 */
 	protected final List<IpPacket> buffer = Collections.synchronizedList(new LinkedList<IpPacket>());
 
 
@@ -46,14 +55,82 @@ public abstract class Application implements SmartRunnable, Loggable {
 	}
 
 	/**
+	 * Predavani paketu ze site aplikaci.
+	 * @param packet
+	 */
+	public void receivePacket(IpPacket packet) {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" prisel paket", packet);
+		buffer.add(packet);
+		worker.wake();
+	}
+
+
+
+
+
+// abstraktni metody, ktery bude nutno implementovat v potomcich: ----------------------------------------------------
+
+	/**
+	 * Implement this function to run some commands right before application start. <br />
+	 * (treba pro nejake kontroly, vypisy atd.)
+	 */
+	protected abstract void atStart();
+
+	/**
+	 * Implement this function to run some commands right after application exit. <br />
+	 * (treba pro nejake vypisy pri ukonceni aplikace)
+	 */
+	protected abstract void atExit();
+
+	/**
+	 * Sem se davaj veci, ktery musi konkretni aplikace udelat v kazdym pripade, tj. i kdyz je zabita.
+	 */
+	protected abstract void atKill();
+
+
+
+// verejny metody na startovani a ukoncovani: ----------------------------------------------------------------------
+
+	/**
 	 * Starts aplication by turning on listening on port.
 	 */
-	public final void run() {
+	public void start() {
+		this.worker = new WorkerThread(this);
 		device.registerApplication(this);
 		this.port = transportLayer.registerApplication(this, port);
-		this.worker = new WorkerThread(this);
 		atStart();
 	}
+
+	/**
+	 * Exit the application. <br />
+	 */
+	public void exit() {
+		priUkonceni();
+		atExit();
+		atKill();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " exit", null);
+	}
+
+	/**
+	 * Exit the application without calling atExit(). <br />
+	 */
+	public void kill() {
+		priUkonceni();
+		atKill();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" kill", null);
+	}
+
+	/**
+	 * Jen vytazeny spolecny veci ze dvou predchozich metod.
+	 */
+	private void priUkonceni(){
+		transportLayer.unregisterApplication(port);
+		worker.die();
+		device.unregisterApplication(this);
+	}
+
+
+//gettry a settry: --------------------------------------------------------------------------------------------------
 
 	public void setPort(int port) {
 		this.port = port;
@@ -63,39 +140,6 @@ public abstract class Application implements SmartRunnable, Loggable {
 		return port;
 	}
 
-	/**
-	 * Exit the application. <br />
-	 */
-	public void exit() {
-		atExit();
-		transportLayer.unregisterApplication(port);
-		device.unregisterApplication(this);
-		worker.die();
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" exit", null);
-	}
-
-	/**
-	 * Exit the application without calling atExit(). <br />
-	 */
-	public void kill() {
-		transportLayer.unregisterApplication(port);
-		device.unregisterApplication(this);
-		worker.die();
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" kill", null);
-	}
-
-	/**
-	 * Implement this function to run some commands right before application start. <br />
-	 * (treba pro nejake kontroly atd.)
-	 */
-	protected abstract void atStart();
-
-	/**
-	 * Implement this function to run some commands right before application exit. <br />
-	 * (treba pro nejake vypisy pri ukonceni aplikace)
-	 */
-	protected abstract void atExit();
-
 	public String getName() {
 		return name;
 	}
@@ -104,9 +148,4 @@ public abstract class Application implements SmartRunnable, Loggable {
 		return PID;
 	}
 
-	public void receivePacket(IpPacket packet) {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" prisel paket", packet);
-		buffer.add(packet);
-		worker.wake();
-	}
 }

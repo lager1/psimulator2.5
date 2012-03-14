@@ -12,6 +12,7 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import logging.SystemListener;
 import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
@@ -34,10 +35,12 @@ public class Psimulator implements Loggable{
 	public final List<Device> devices=new ArrayList<>();
 	public NetworkModel configModel;
 	public String lastConfigFile;
+	public Alarm budik;
+	public SystemListener systemListener;
 
 
 	private Psimulator() {
-
+		budik = new Alarm();
 	}
 
 	/**
@@ -82,10 +85,8 @@ public class Psimulator implements Loggable{
 
 // staticky veci:
 
-	private static String name="psimulator";
-
 	public static String getNameOfProgram(){
-		return name;
+		return "psimulator";
 	}
 
 	private static volatile Psimulator instance;

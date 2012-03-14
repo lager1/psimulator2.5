@@ -98,7 +98,7 @@ public abstract class AbstractCommand implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return getDevice().getName() + ": command " + getName() + ": ";
+		return getDevice().getName() + ": command " + this.getClass().getSimpleName().toLowerCase();
 	}
 
 	/**

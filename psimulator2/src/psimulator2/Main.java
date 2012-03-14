@@ -30,6 +30,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		// nejdriv se nastavi logger:
 		Logger.setLogger();
 
 		if (args.length < 1) {
@@ -37,8 +38,8 @@ public class Main {
 					"No configuration file attached, run again with configuration file as first argument.");
 		}
 
+		//parsovani parametru prikazovy radky:
 		configFileName = args[0];
-
 		int firstTelnetPort = 11000;
 		if (args.length >= 2) {
 			try {
@@ -48,8 +49,8 @@ public class Main {
 			}
 		}
 
+		// serializace xml do ukladacich struktur:
 		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
-
 		NetworkModel networkModel = null;
 		try {
 
@@ -60,16 +61,17 @@ public class Main {
 			Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Cannot load network model from: " + configFileName);
 		}
 
+		// nastaveni promennejch systemu pro telnet a pro ukladani:
 		TelnetProperties.setStartPort(firstTelnetPort);
-
 		Psimulator.getPsimulator().configModel = networkModel;
 		Psimulator.getPsimulator().lastConfigFile = configFileName;
+
+		// samotnej start systemu z ukladacich struktur
 		Loader loader = new Loader(networkModel);	// vytvari se simulator loader
 		loader.loadFromModel();	// simulator se startuje z tech ukladacich struktur
 
-
+		// startovani telnetu:
 		TelnetD telnetDaemon;
-
 		Logger.log(Logger.INFO, LoggingCategory.TELNET, "Starting telnet listeners");
 		try {
 

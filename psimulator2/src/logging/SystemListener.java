@@ -7,6 +7,7 @@ import dataStructures.L2Packet;
 import dataStructures.L3Packet;
 import java.util.EnumMap;
 import java.util.Map;
+import psimulator2.Psimulator;
 
 /**
  * Main server listener. Writes everything to server's console.
@@ -31,16 +32,19 @@ public class SystemListener implements LoggerListener {
 		try {
 
 			if (logLevel <= configuration.get(category)) {
-				String vypsat = "";
-				vypsat+="[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
+				String vypsat = "[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
+
 				if (object instanceof Exception) {
-					((Exception) object).printStackTrace();
+					// vypisuje se to az potom.
 				} else if (object != null) {
 					vypsat+=object.toString()+" | ";
 
 				}
 				vypsat+=message;
 				System.out.println(vypsat);
+				if (object instanceof Exception) {
+					((Exception) object).printStackTrace();
+				}
 			}
 
 		} catch (NullPointerException e) {

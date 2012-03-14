@@ -26,7 +26,7 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 		String nextWord = nextWord();
 
 		if (nextWord.isEmpty()) {
-			parser.setRunningCommand(this);
+			parser.setRunningCommand(this,true);
 //			System.out.println("Nastaven INPUT_FIELD");
 			print("Configuring from terminal, memory, or network [terminal]? "); // TODO: otestovat radnou funkcnost az to bude mit Martin L hotovy pres ty ENUMy
 //			parser.getShell().setShellMode(ShellMode.INPUT_FIELD);

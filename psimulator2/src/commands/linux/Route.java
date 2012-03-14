@@ -9,6 +9,8 @@ import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+import logging.Logger;
+import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.RoutingTable;
@@ -16,7 +18,8 @@ import psimulator2.Psimulator;
 import utils.Util;
 
 /**
- *
+ * Linuxovy prikaz route.
+ * 
  * @author Tomas Pitrinec
  */
 public class Route extends AbstractCommand {
@@ -84,9 +87,10 @@ public class Route extends AbstractCommand {
 
 	public Route(AbstractCommandParser parser) {
 		super(parser);
+		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
+			ladiciVypisovani = true;
+		}
 	}
-
-
 
 	@Override
 	public void run() {
@@ -179,18 +183,24 @@ public class Route extends AbstractCommand {
         }
     }
 
-
+	/**
+	 * Parsovani.
+	 */
     private void nastavAdd() { //i ukazuje na posici prvniho prvku za add
         akce |= 1;
         nastavAddNeboDel();
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavDel() {
         akce |= 2;
         nastavAddNeboDel();
     }
 
     /**
+	 * Parsovani.
      * Protoze add a del maji stejnou syntaxi, spolecnej kod z jejich metod jsem hodil do tyhle metody.
      */
     private void nastavAddNeboDel(){
@@ -214,6 +224,9 @@ public class Route extends AbstractCommand {
         akce=4;
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavMinus_net() {
         minusNet = true;
 		boolean bezChyby = true;
@@ -223,7 +236,7 @@ public class Route extends AbstractCommand {
 		} else if (slovo.contains("/")) { // slovo obsahuje lomitko -> mohla by to bejt adresa s maskou
 			bezChyby = parsujIpSMaskou(slovo);
 		} else { // slovo neobsahuje lomitko -> mohla by to bejt samotna IP adresa
-			if (IpAddress.isCorrectAddress(adr)) { //samotna IP je spravna
+			if (IpAddress.isCorrectAddress(slovo)) { //samotna IP je spravna
 				adr = slovo;
 			} else { //samotna IP neni spravna
 				printLine(adr + ": unknown host");
@@ -263,6 +276,9 @@ public class Route extends AbstractCommand {
 
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavMinus_host() { //predpokladam, ze ve slove je ulozena uz ta adresa
         minusHost=true;
         boolean chyba=false;
@@ -302,6 +318,9 @@ public class Route extends AbstractCommand {
         }
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavGw() {//ceka, ze ve slove je uz ta IP adresa
         if(nastavovanaBrana){ //kontroluje se, jestli se to necykli s nastavDev()
             vypisKratkouNapovedu();
@@ -334,6 +353,9 @@ public class Route extends AbstractCommand {
         }
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavDev() {
 		if (nastavovanoRozhrani) { //kontroluje se, jestli se to necykli s nastavGw()
 			vypisKratkouNapovedu();
@@ -342,7 +364,9 @@ public class Route extends AbstractCommand {
 		nastavovanoRozhrani = true;
 		rozhr = ipLayer.getNetworkInteface(slovo);
 		if (rozhr == null) { // rozhrani nebylo nalezeno
-			if (ladiciVypisovani) rozhr = new NetworkInterface(-1, slovo, null);
+			if (ladiciVypisovani) {
+				rozhr = new NetworkInterface(-1, slovo, null);
+			}
 			printLine("SIOCADDRT: No such device");
 			navratovyKod |= 32;
 		} else { //rozhrani je spravne a je jiz ulozeno v promenne rozhr
@@ -372,6 +396,9 @@ public class Route extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavNetmask(){
         if(minusHost){ // kontrola, jestli to vubec muzu nastavovat
             navratovyKod |= 256;
@@ -406,6 +433,9 @@ public class Route extends AbstractCommand {
         }
     }
 
+	/**
+	 * Parsovani.
+	 */
     private void nastavDefault() { //slouzi k nastavovani deafult
         adr="default";
         pocetBituMasky=0;

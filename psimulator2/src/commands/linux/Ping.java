@@ -11,19 +11,22 @@ import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  *
  * @author Tomas Pitrinec
  */
-public class Ping extends AbstractCommand implements LongTermCommand, ApplicationNotifiable{
+public class Ping extends AbstractCommand implements LongTermCommand, ApplicationNotifiable {
 
 	private boolean ladeni = false;
 
 
-//parametry prikazu:
+//parametry prikazu: -------------------------------------------------------------------------------------------
+
     IpAddress cil; //adresa, na kterou ping posilam
-    int count=1; //pocet paketu k poslani, zadava se prepinacem -c
+    int count=5; //pocet paketu k poslani, zadava se prepinacem -c
     int size=56; //velikost paketu k poslani, zadava se -s
     double interval=1; //interval mezi odesilanim paketu v sekundach, zadava se -i, narozdil od vrchnich je dulezitej
     int ttl=64; //zadava se prepinacem -t
@@ -44,20 +47,28 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
      */
     private int navratovyKod=0;
 
+	private LinuxPingApplication app;
+
+
+
+// konstruktor a ostatni nutny verejny metody: ------------------------------------------------------------------------
 
 	public Ping(AbstractCommandParser parser) {
 		super(parser);
 	}
 
-
-
 	@Override
 	public void run() {
+		parser.setRunningCommand(this, false);	// registrovani u parseru
 		parsujPrikaz();
-		if(ladeni){
+		if (ladeni) {
 			printLine(toString());
 		}
-		vykonejPrikaz();
+		boolean applicationStarted = vykonejPrikaz();
+		if (!applicationStarted) {
+			parser.deleteRunningCommand();	// odregistrovani, kdyz nebyla aplikace spustena
+		}
+		Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Konec metody run. ", null);
 	}
 
 	@Override
@@ -65,19 +76,42 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		// nic nedela
 	}
 
+
+	/**
+	 * Tuhle metodu vola aplikace tehdy, kdyz skoncila
+	 */
+	@Override
+	public void applicationFinished() {
+		parser.deleteRunningCommand();
+	}
+
+	@Override
+	public void catchSignal(Signal signal) {
+		if(signal==Signal.CTRL_C){
+
+			app.exit();
+		}
+	}
+
+
+// privatni metody pro parsovani a vykonavani: -----------------------------------------------------------------
+
 	/**
 	 * Vykonavani, tedy predevsim spousteni pingovaci aplikace.
+	 * @return true, kdyz byla spustena aplikace, jinak false
 	 */
-	private void vykonejPrikaz() {
+	private boolean vykonejPrikaz() {
 		if(minus_h){
 			vypisNapovedu();
 		} else if (navratovyKod!=0){
 			// nejaka chyba pri parsovani, nic se nedela.
 		} else {
-			parser.setRunningCommand(this);	// musim se zaregistrovat u parseru
-			LinuxPingApplication app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
-			app.run();
+			app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
+			app.start();
+			Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Spustil jsem pingovou aplikaci a mam zpatky rizeni.", null);
+			return true;
 		}
+		return false;
 	}
 
 
@@ -265,15 +299,6 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		return parser.nextWord();
 	}
 
-	@Override
-	public void applicationFinished() {
-		parser.deleteRunningCommand();
-	}
-
-	@Override
-	public void catchSignal(Signal signal) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 
 

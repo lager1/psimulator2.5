@@ -35,8 +35,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	/**
-	 * Metoda by mela na zacatku zaregistrovat spustitelny prikazy, zatim ale jeste nevim jak, tak tady plnim list
-	 * stringu a rozhodovani o spusteni prikazu mam v metode getLinuxCommand.
+	 * Metoda registrije spustitelny prikazy.
 	 */
 	private void registerCommands() {
 		commands.put("ifconfig", Ifconfig.class);
@@ -49,9 +48,13 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public void catchSignal(Signal sig) {
 		if(sig==Signal.CTRL_C){
-			shell.printLine("^C");	// TODO dodelat chytani ctrl+C
+			Logger.log(this,Logger.DEBUG,LoggingCategory.LINUX_COMMANDS,"Dostal jsem signal ctrl+C",null);
+			shell.printLine("^C");
+			if(runningCommand != null){
+				runningCommand.catchSignal(sig);
+			}
 		}
-		// TODO: jeste nejake dalsi signaly?
+		// TODO: [nedulezite] jeste nejake dalsi signaly nez ctrl+C?
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 				AbstractCommand command = getLinuxCommand(commandName);
 				if (command != null) {
-					command.run();	// TODO: doresit nastaveni prave spustenyho prikazu a navratovyho kodu
+					command.run();
 				} else {
 					shell.printLine("bash: " + commandName + ": command not found");
 				}
@@ -81,9 +84,58 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 		} catch (Exception ex) {
 			log(Logger.WARNING, "Nejaka chyba v linuxovejch prikazech.", null);
-			log(0, "Byla vyhozena vyjimka.", ex);
+			log(Logger.DEBUG, "Byla vyhozena vyjimka.", ex);
 		}
+		log(Logger.DEBUG,"konec metody processLineForParsers",null);
+
 	}
+
+
+	/**
+	 * Tahle metoda vrati instanci prikazu podle zadanyho jmena. Je to trochu hack, na druhou stranu se nemusi
+	 * registrovat prikaz na dvou mistech.
+	 *
+	 * @param name
+	 * @return
+	 */
+	private AbstractCommand getLinuxCommand(String name) {
+
+		Class tridaPrikazu = commands.get(name);
+		if (tridaPrikazu == null) {
+			return null;
+		} else if (CiscoCommand.class.isAssignableFrom(tridaPrikazu)) {
+			log(Logger.WARNING, "Na linuxu se pokousite zavolat ciscovej prikaz, coz nejde, protoze ten ocekava cisco parser prikazu.", null);
+			return null;
+		} else {
+
+			try {
+				Class[] ctorArgs1 = new Class[1];
+				ctorArgs1[0] = AbstractCommandParser.class;
+				Constructor konstruktor = tridaPrikazu.getConstructor(ctorArgs1);
+				//log(0, "Mam konstruktor pro nazev prikazu " + name, null);
+				Object novaInstance = konstruktor.newInstance((AbstractCommandParser) this);
+				//log(0, "Mam i vytvorenou novou instanci.", null);
+				return (AbstractCommand) novaInstance;
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+				log(Logger.WARNING, "Chyba privytvareni instance prikazu " + name, ex);
+				return null;
+			}
+		}
+
+
+	}
+
+	@Override
+	public String getDescription() {
+		return device.getName()+": LinuxCommandParser";
+	}
+
+
+	private void log(int logLevel, String message, Object obj){
+		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
+	}
+
+
 
 	/**
 	 * Tohle pravdepodobne prijde smazat.
@@ -104,53 +156,4 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			return null;
 		}
 	}
-
-	/**
-	 * Tahle metoda vrati instanci prikazu podle zadanyho jmena. Je to trochu hack, na druhou stranu se nemusi
-	 * registrovat prikaz na dvou mistech.
-	 *
-	 * @param name
-	 * @return
-	 */
-	private AbstractCommand getLinuxCommand(String name) {
-
-		Class tridaPrikazu = commands.get(name);
-		if (tridaPrikazu == null) {
-			return null;
-		} else if(CiscoCommand.class.isAssignableFrom(tridaPrikazu)) {
-			log(Logger.WARNING,"Na linuxu se pokousite zavolat ciscovej prikaz, coz nejde, protoze ten ocekava cisco parser prikazu.", null);
-			return null;
-		}else{
-
-			try {
-				Class[] ctorArgs1 = new Class[1];
-				ctorArgs1[0] = AbstractCommandParser.class;
-				Constructor konstruktor = tridaPrikazu.getConstructor(ctorArgs1);
-				//log(0, "Mam konstruktor pro nazev prikazu " + name, null);
-				Object novaInstance = konstruktor.newInstance((AbstractCommandParser) this);
-				//log(0, "Mam i vytvorenou novou instanci.", null);
-				return (AbstractCommand) novaInstance;
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-				log(Logger.WARNING, "Chyba privytvareni instance prikazu "+name, ex);
-				return null;
-			}
-		}
-
-
-	}
-
-	@Override
-	public String getDescription() {
-		return device.getName()+": LinuxCommandParser";
-	}
-
-
-	private void log(int logLevel, String message, Object obj){
-		if (logLevel == 0) {
-			logLevel = Logger.DEBUG;
-		}
-		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMAND_PARSER, message, obj);
-	}
-
-
 }

@@ -55,8 +55,8 @@ public class Saver {
 	 * @param device
 	 */
 	private void saveInterfaces(HwComponentModel hwComponentModel, Device device) {
-		if (!(device.getNetworkModule() instanceof TcpIpNetMod)) { // TODO: instanceof nahradit typem.
-					// -> Zatim se uklada sitovy modul jen tehdy, pokud to je TcpIpNetMod, navic se uklada zatim jen IPLayer.
+		if (!(device.getNetworkModule().isStandardTcpIpNetMod())) {
+				// -> Zatim se uklada sitovy modul jen tehdy, pokud to je TcpIpNetMod, navic se uklada zatim jen IPLayer.
 			hwComponentModel.getDevSettings().setNetModType(DeviceSettings.NetworkModuleType.simple_switch_netMod);
 			return;
 		}
