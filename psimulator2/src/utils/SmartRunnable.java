@@ -8,5 +8,7 @@ package utils;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public interface SmartRunnable {
+
 	public abstract void doMyWork();
+	
 }

@@ -103,11 +103,11 @@ public class Util {
 
 	/**
 	 * Uspi aktualni vlakno na pocet ms.
-	 * @param ns
+	 * @param ms
 	 */
-	public static void sleep(int ns) {
+	public static void sleep(int ms) {
 		try {
-			Thread.sleep(ns);
+			Thread.sleep(ms);
 		} catch (InterruptedException ex) {
 			Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
 		}
