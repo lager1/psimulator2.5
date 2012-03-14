@@ -282,7 +282,7 @@ public class CommandShell extends TerminalApplication {
 						break;
 					case NORMAL_READ:
 						try {
-							this.normalRead.run();
+							this.getNormalRead().run();
 						} catch (InterruptedException ex) {
 							Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 						}
