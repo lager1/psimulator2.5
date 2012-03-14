@@ -54,11 +54,9 @@ public enum LoggingCategory {
 	 * nacitani a ukladani nastaveni samotnyho simulatoru do ukladacich struktur (balicek config.configTransformer)
 	 */
 	NETWORK_MODEL_LOAD_SAVE,
+
+	
 	FILE_SYSTEM,
-	/**
-	 * zpravy z buildeni z Martinovy konfigurace
-	 */
-	LOADER_SAVER,
 	/**
 	 * Zpravy ze simulatoru pro tridu, kterou sem nechci pridavat.
 	 */
@@ -78,14 +76,19 @@ public enum LoggingCategory {
 	PING_APPLICATION,
 
 	/**
-	 * Zpravy command parseru na linuxu.
+	 * Zpravy command parseru na linuxu a dalsich linuxovejch prikazu.
 	 */
-	LINUX_COMMAND_PARSER,
+	LINUX_COMMANDS,
 
 	/**
 	 * Zpravy z jednotlivych cisco prikazu.
 	 */
 	CISCO_COMMAND_PARSER,
+
+	/**
+	 * Zpravy z budiku.
+	 */
+	ALARM,
 
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 
