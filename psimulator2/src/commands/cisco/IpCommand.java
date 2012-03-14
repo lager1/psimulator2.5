@@ -44,14 +44,14 @@ public class IpCommand extends CiscoCommand {
         if (state == CommandShell.CISCO_CONFIG_MODE || debug) {
 
             if (kontrolaBezVypisu("route", dalsi, 5)) {
-//                command = new CiscoIpRoute(pc, kon, slova, no);
-//				command.run();
+                command = new IpRouteCommand(parser, no);
+				command.run();
                 return;
             }
 
             if (kontrolaBezVypisu("nat", dalsi, 3)) {
 //                command = new CiscoIpNat(pc, kon, slova, no);
-//				command.run();
+//				command.run(); // TODO IpNatCommand
                 return;
             }
 

@@ -17,6 +17,7 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.NetMod;
@@ -50,7 +51,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	private final boolean debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
 
-	private final IPLayer ipLayer;
+	private final CiscoIPLayer ipLayer;
 
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
@@ -61,7 +62,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 		NetMod nm = device.getNetworkModule();
 		if (nm.isStandardTcpIpNetMod()) {
-			this.ipLayer = ((TcpIpNetMod) nm).ipLayer;
+			this.ipLayer = (CiscoIPLayer) ((TcpIpNetMod) nm).ipLayer;
 		} else {
 			this.ipLayer = null;
 		}
@@ -100,6 +101,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					}
 					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
+//					command.run();
 //                    return;
 					}
 					if (isCommand("show", first)) {
@@ -128,6 +130,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					}
 					if (isCommand("traceroute", first)) {
 //                    command = new CiscoTraceroute(pc, kon, slova);
+//					  command.run();
 //                    return;
 					}
 					if (isCommand("configure", first)) {
@@ -157,8 +160,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 //                        return;
                     }
                     if (isCommand("no", first)) {
-//                        no();
-//                        return;
+                        no();
+                        return;
                     }
                 }
 					break;
@@ -186,10 +189,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 //                    command = new CiscoAccessList(pc, kon, slova, false);
 //                    return;
 //                }
-//                if (isCommand("no", first)) {
-//                    no();
-//                    return;
-//                }
+					if (isCommand("no", first)) {
+						no();
+						return;
+					}
 					break;
 
 				case CISCO_CONFIG_IF_MODE:
@@ -215,15 +218,14 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						command.run();
 						return;
 					}
-//                if (isCommand("no", first)) {
-//                    no();
-//                    return;
-//                }
-//                if (isCommand("shutdown", first)) {
-//                    shutdown();
-//                    return;
-//                }
-//
+					if (isCommand("no", first)) {
+						no();
+						return;
+					}
+					if (isCommand("shutdown", first)) {
+						shutdown();
+						return;
+					}
 					break;
 			}
 
@@ -239,7 +241,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					return;
 				}
 			}
-//
+
 			if (isAmbiguousCommand) {
 				isAmbiguousCommand = false;
 				ambiguousCommand();
@@ -504,6 +506,87 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         }
 
 		changeMode(CommandShell.CISCO_CONFIG_IF_MODE);
+    }
+
+	/**
+     * Jednoduchy parser pro prikazy: <br />
+     * no ip nat inside<br />
+     * no ip route <br />
+     * no access-list <br />
+     *
+     * no ip address <br />
+     * no ip nat inside/outside <br />
+     * no shutdown
+     */
+    private void no() {
+
+        String dalsi = words.size() == 1 ? "" : words.get(1);
+        if (dalsi.isEmpty()) {
+            incompleteCommand();
+            return;
+        }
+        if (mode == CISCO_CONFIG_MODE || (debug && mode == CISCO_PRIVILEGED_MODE)) {
+            if (isCommand("access-list", dalsi)) {
+//                command = new CiscoAccessList(pc, kon, slova, true);
+//				command.run();
+                return;
+            }
+            if (isCommand("ip", dalsi)) {
+                command = new IpCommand(this, true);
+				command.run();
+                return;
+            }
+        }
+        if (mode == CISCO_CONFIG_IF_MODE) {
+            if (isCommand("shutdown", dalsi)) {
+                noshutdown();
+                return;
+            }
+            if (isCommand("ip", dalsi)) {
+                command = new IpCommand(this, true);
+				command.run();
+                return;
+            }
+        }
+
+        if (isAmbiguousCommand) {
+			ambiguousCommand();
+        } else {
+            invalidInputDetected();
+        }
+    }
+
+	/**
+     * Tento prikaz zapne rozhrani, ktere je definovano v aktualnim nastovacim rezimu (napr.: interface fastEthernet0/0)
+     * a aktualizuje routovaci tabulku.
+     *
+     * prislo 'no shutdown'
+     */
+    private void noshutdown() {
+        if (configuredInterface.isUp == false) { // kdyz nahazuju rozhrani
+            Util.sleep(500);
+            Date d = new Date();
+            shell.printLine(getFormattedTime() + ": %LINK-3-UPDOWN: Interface " + configuredInterface.name + ", changed state to up");
+            Util.sleep(100);
+            shell.printLine(getFormattedTime() + ": %LINEPROTO-5-UPDOWN: Line protocol on Interface " + configuredInterface.name + ", changed state to up");
+            configuredInterface.isUp = true;
+            ipLayer.wrapper.update();
+        }
+    }
+
+	/**
+     * Shodi rozhrani a zaktualizuje routovaci tabulku.
+     */
+    private void shutdown() {
+        if (configuredInterface.isUp) {
+            Util.sleep(250);
+            Date d = new Date();
+            shell.printLine(getFormattedTime() + ": %LINK-5-UPDOWN: Interface " + configuredInterface.name + ", changed state to down");
+            Util.sleep(100);
+            shell.printLine(getFormattedTime() + ": %LINEPROTO-5-UPDOWN: Line protocol on Interface " + configuredInterface.name + ", changed state to down");
+            configuredInterface.isUp = false;
+            ipLayer.wrapper.update();
+        }
     }
 
 	@Override

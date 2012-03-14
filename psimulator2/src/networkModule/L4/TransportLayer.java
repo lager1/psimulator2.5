@@ -83,7 +83,7 @@ public class TransportLayer implements Loggable {
 		if (app != null) {
 			app.receivePacket(packet);
 		} else {
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Zahazuju paket, protoze neni tu zaregistrovana zadna aplikace, ktera by ho obslouzila. Neobsluhovany port: "+port, packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Zahazuju paket, protoze neni tu zaregistrovana zadna aplikace, ktera by ho obslouzila. Neobsluhovany port: "+port, packet);
 		}
 	}
 

@@ -183,6 +183,10 @@
                             <interfaceName>eth0</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
+                            <destination>192.168.3.0/24</destination>
+                            <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
                             <destination>0.0.0.0/0</destination>
                             <gateway>192.168.2.1</gateway>
                             <interfaceName>eth0</interfaceName>
@@ -278,16 +282,17 @@
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
-                            <destination>192.168.3.0/24</destination>
-                            <interfaceName>eth1</interfaceName>
-                        </routingTableItem>
-                        <routingTableItem>
                             <destination>192.168.2.0/24</destination>
                             <interfaceName>eth1</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>192.168.1.0/24</destination>
                             <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>192.168.2.2</gateway>
+                            <interfaceName>eth1</interfaceName>
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
@@ -374,15 +379,11 @@
     <id>-1</id>
     <lastEditTimestamp>1331649934615</lastEditTimestamp>
     <counter>
-        <nextId>49</nextId>
+        <nextId>50</nextId>
         <nextMacAddress>16</nextMacAddress>
         <nextNumberMap>
             <entry>
                 <key>CISCO_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -394,15 +395,11 @@
                 <value>1</value>
             </entry>
             <entry>
-                <key>CABLE_ETHERNET</key>
-                <value>0</value>
+                <key>END_DEVICE_PC</key>
+                <value>4</value>
             </entry>
             <entry>
-                <key>REAL_PC</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>CISCO_ROUTER</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -410,16 +407,24 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>LINUX_ROUTER</key>
-                <value>3</value>
-            </entry>
-            <entry>
-                <key>CISCO_ROUTER</key>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_PC</key>
-                <value>4</value>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>REAL_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_ETHERNET</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_ROUTER</key>
+                <value>3</value>
             </entry>
         </nextNumberMap>
     </counter>

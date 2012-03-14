@@ -5,6 +5,7 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import shell.apps.CommandShell.CommandShell;
@@ -18,7 +19,7 @@ public class ShowCommand extends CiscoCommand {
 
     private State stavShow = null;
     private int stavCisco;
-	private final IPLayer ipLayer;
+	private final CiscoIPLayer ipLayer;
 
     /**
      * Pomocne rozhrani pro prikaz 'show interfaces FastEthernet0/0'
@@ -28,7 +29,7 @@ public class ShowCommand extends CiscoCommand {
 	public ShowCommand(AbstractCommandParser parser) {
 		super(parser);
 		this.stavCisco = parser.getShell().getMode();
-		this.ipLayer = getNetMod().ipLayer;
+		this.ipLayer = (CiscoIPLayer) getNetMod().ipLayer;
 	}
 
 
@@ -205,9 +206,9 @@ public class ShowCommand extends CiscoCommand {
      * TODO: Posle vypis pro prikaz 'show ip route'.
      */
     private void ipRoute() {
-//        String s = "";
-//        s += ((CiscoPocitac) pc).getWrapper().vypisRT();
-//        printWithDelay(s, 80);
+        String s = "";
+        s += ipLayer.wrapper.vypisRT();
+        printWithDelay(s, 50);
     }
 
     /**

@@ -4,8 +4,10 @@
 
 package networkModule.L3;
 
+import commands.cisco.WrapperOfRoutingTable;
 import dataStructures.IpPacket;
 import dataStructures.L4Packet;
+import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -19,9 +21,12 @@ import networkModule.TcpIpNetMod;
  */
 public class CiscoIPLayer extends IPLayer {
 
+	public final WrapperOfRoutingTable wrapper;
+
 	public CiscoIPLayer(TcpIpNetMod netMod) {
 		super(netMod);
 		this.ttl = 255;
+		wrapper = new WrapperOfRoutingTable(netMod.getDevice(), this);
 	}
 
 	/**
@@ -35,7 +40,7 @@ public class CiscoIPLayer extends IPLayer {
 
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
 		}
 
@@ -47,5 +52,11 @@ public class CiscoIPLayer extends IPLayer {
 		}
 
 		processPacket(p, record, null);
+	}
+
+	@Override
+	public void changeIpAddressOnInterface(NetworkInterface iface, IPwithNetmask ipAddress) {
+		super.changeIpAddressOnInterface(iface, ipAddress);
+		wrapper.update();
 	}
 }

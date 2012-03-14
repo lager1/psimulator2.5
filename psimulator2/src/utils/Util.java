@@ -129,4 +129,20 @@ public class Util {
 		}
 		return ret;
 	}
+
+	/**
+     * Zjistuje, zda dany retezec zacina cislem.
+     * Nesmi byt static, jinak to hazi java.lang.IncompatibleClassChangeError: Expecting non-static method
+     * @param s
+     * @return
+     */
+    public static boolean zacinaCislem(String s) {
+        if (s.length() == 0) return false;
+
+        if (Character.isDigit(s.charAt(0))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

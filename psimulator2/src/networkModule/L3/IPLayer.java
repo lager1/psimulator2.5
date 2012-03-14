@@ -185,7 +185,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 
 			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket.", m.packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket.", m.packet);
 				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet); // TODO: poslat zpatky DHU jen pokud je to ICMP REQ ?
 				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
@@ -223,7 +223,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ktery je pro me, z rozhrani: "+ (ifaceIn != null ? ifaceIn.name : "null") , packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ktery je pro me.", packet);
 			netMod.transportLayer.receivePacket(packet);
 			return;
 		}
@@ -232,7 +232,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 		if (packet.ttl == 1) {
 			// jestli je to ICMP, tak posli TTL expired
 			// zaloguj zahozeni paketu
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
 			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
@@ -240,7 +240,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
 			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet); // TODO: nema to vracet DNU jen kdyz to byl IMCP packet?? vyzkoumat
 			return;
 		}
@@ -277,7 +277,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 		if (nextHopMac == null) { // posli ARP request a dej do fronty
 			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), nextHopIp);
 
-			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Nemohu odeslat IpPacket na adresu "+packet.dst+", protoze neznam MAC adresu nextHopu, takze posilam ARP request", arpPacket); // packet tu nemsi by
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Nemohu odeslat IpPacket na adresu " + packet.dst + ", protoze neznam MAC adresu nextHopu, takze posilam ARP request na rozhrani "
+					+ record.rozhrani.name, arpPacket); // packet tu nemsi by
 			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast()); // TODO: odeslat ARP req na vsechny rozhrani v dany siti?, asi NE
 
 			storeBuffer.add(new IPLayer.StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));

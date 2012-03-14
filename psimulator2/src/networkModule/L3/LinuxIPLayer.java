@@ -35,7 +35,7 @@ public class LinuxIPLayer extends IPLayer {
 
 		RoutingTable.Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
-			Logger.log(this, Logger.IMPORTANT, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
 			return;
 		}
 
