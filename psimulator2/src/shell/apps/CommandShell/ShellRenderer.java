@@ -6,6 +6,7 @@ package shell.apps.CommandShell;
 
 import exceptions.TelnetConnectionException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 import logging.Logger;
@@ -66,7 +67,17 @@ public class ShellRenderer extends ActiveComponent {
 
 			try {
 
-				int inputValue = m_IO.read();
+				int inputValue = 0;
+
+				try {
+					inputValue = this.m_IO.read();
+				} catch (SocketTimeoutException ex) {
+					inputValue = 0;
+				}
+
+				if (inputValue == 0) {
+					continue;
+				}
 
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 

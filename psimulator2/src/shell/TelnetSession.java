@@ -2,8 +2,10 @@ package shell;
 
 import device.Device;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
@@ -33,6 +35,12 @@ public class TelnetSession implements Shell {
 
 		this.port = con.getConnectionData().getSocket().getLocalPort();
 		this.m_Connection = con;
+		try {
+			this.m_Connection.getConnectionData().getSocket().setSoTimeout(500);
+		} catch (SocketException ex) {
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "cannot setup socket timeout");
+		}
+		
 		this.m_IO = m_Connection.getTerminalIO();
 		this.m_Connection.addConnectionListener(this); //dont forget to register listener
 

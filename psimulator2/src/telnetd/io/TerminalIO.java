@@ -114,7 +114,7 @@ public class TerminalIO
    *         <li>UP,DOWN,LEFT,RIGHT
    *         </ul>
    */
-  public synchronized int read() throws IOException {
+  public  int read() throws IOException {
     int i = m_TelnetIO.read();
    // System.out.print("Opravdu přečtena hodnota:"+i);
     //translate possible control sequences
@@ -134,14 +134,14 @@ public class TerminalIO
     return i;
   }//read
 
-  public synchronized void write(byte b) throws IOException {
+  public  void write(byte b) throws IOException {
     m_TelnetIO.write(b);
     if (m_Autoflush) {
       flush();
     }
   }//write
 
-    public synchronized void write(int i) throws IOException {
+    public void write(int i) throws IOException {
     m_TelnetIO.write(i);
     if (m_Autoflush) {
       flush();
@@ -149,14 +149,14 @@ public class TerminalIO
   }//write
 
 
-  public synchronized void write(char ch) throws IOException {
+  public  void write(char ch) throws IOException {
     m_TelnetIO.write(ch);
     if (m_Autoflush) {
       flush();
     }
   }//write(char)
 
-  public synchronized void write(String str) throws IOException {
+  public  void write(String str) throws IOException {
     if (m_ForceBold) {
       m_TelnetIO.write(m_Terminal.formatBold(str));
     } else {
@@ -178,31 +178,31 @@ public class TerminalIO
    * **********************************************************************
    */
 
-  public synchronized void eraseToEndOfLine() throws IOException {
+  public  void eraseToEndOfLine() throws IOException {
     doErase(EEOL);
   }//eraseToEndOfLine
 
-  public synchronized void eraseToBeginOfLine() throws IOException {
+  public  void eraseToBeginOfLine() throws IOException {
     doErase(EBOL);
   }//eraseToBeginOfLine
 
-  public synchronized void eraseLine() throws IOException {
+  public  void eraseLine() throws IOException {
     doErase(EEL);
   }//eraseLine
 
-  public synchronized void eraseToEndOfScreen() throws IOException {
+  public  void eraseToEndOfScreen() throws IOException {
     doErase(EEOS);
   }//eraseToEndOfScreen
 
-  public synchronized void eraseToBeginOfScreen() throws IOException {
+  public  void eraseToBeginOfScreen() throws IOException {
     doErase(EBOS);
   }//eraseToBeginOfScreen
 
-  public synchronized void eraseScreen() throws IOException {
+  public  void eraseScreen() throws IOException {
     doErase(EES);
   }//eraseScreen
 
-  private synchronized void doErase(int funcConst) throws IOException {
+  private  void doErase(int funcConst) throws IOException {
 
     m_TelnetIO.write(m_Terminal.getEraseSequence(funcConst));
     if (m_Autoflush) {
@@ -218,7 +218,7 @@ public class TerminalIO
    * **********************************************************************
    */
 
-  public synchronized void moveCursor(int direction, int times) throws IOException {
+  public  void moveCursor(int direction, int times) throws IOException {
 
     m_TelnetIO.write(m_Terminal.getCursorMoveSequence(direction, times));
     if (m_Autoflush) {
@@ -226,23 +226,23 @@ public class TerminalIO
     }
   }//moveCursor
 
-  public synchronized void moveLeft(int times) throws IOException {
+  public void moveLeft(int times) throws IOException {
     moveCursor(LEFT, times);
   }//moveLeft
 
-  public synchronized void moveRight(int times) throws IOException {
+  public  void moveRight(int times) throws IOException {
     moveCursor(RIGHT, times);
   }//moveRight
 
-  public synchronized void moveUp(int times) throws IOException {
+  public  void moveUp(int times) throws IOException {
     moveCursor(UP, times);
   }//moveUp
 
-  public synchronized void moveDown(int times) throws IOException {
+  public  void moveDown(int times) throws IOException {
     moveCursor(DOWN, times);
   }//moveDown
 
-  public synchronized void setCursor(int row, int col) throws IOException {
+  public  void setCursor(int row, int col) throws IOException {
     int[] pos = new int[2];
     pos[0] = row;
     pos[1] = col;
@@ -252,18 +252,18 @@ public class TerminalIO
     }
   }//setCursor
 
-  public synchronized void homeCursor() throws IOException {
+  public void homeCursor() throws IOException {
     m_TelnetIO.write(m_Terminal.getCursorPositioningSequence(HOME));
     if (m_Autoflush) {
       flush();
     }
   }//homeCursor
 
-  public synchronized void storeCursor() throws IOException {
+  public void storeCursor() throws IOException {
     m_TelnetIO.write(m_Terminal.getSpecialSequence(STORECURSOR));
   }//store Cursor
 
-  public synchronized void restoreCursor() throws IOException {
+  public  void restoreCursor() throws IOException {
     m_TelnetIO.write(m_Terminal.getSpecialSequence(RESTORECURSOR));
   }//restore Cursor
 
@@ -277,12 +277,12 @@ public class TerminalIO
    */
 
 
-  public synchronized void setSignalling(boolean bool) {
+  public  void setSignalling(boolean bool) {
     m_AcousticSignalling = bool;
   }//setAcousticSignalling
 
 
-  public synchronized boolean isSignalling() {
+  public  boolean isSignalling() {
     return m_AcousticSignalling;
   }//isAcousticSignalling
 
@@ -291,7 +291,7 @@ public class TerminalIO
    * If signalling is off, the method simply returns, without
    * any action.
    */
-  public synchronized void bell() throws IOException {
+  public  void bell() throws IOException {
     if (m_AcousticSignalling) {
       m_TelnetIO.write(BEL);
     }
@@ -303,7 +303,7 @@ public class TerminalIO
   /**
    * EXPERIMENTAL, not defined in the interface.
    */
-  public synchronized boolean defineScrollRegion(int topmargin, int bottommargin) throws IOException {
+  public  boolean defineScrollRegion(int topmargin, int bottommargin) throws IOException {
     if (m_Terminal.supportsScrolling()) {
       m_TelnetIO.write(m_Terminal.getScrollMarginsSequence(topmargin, bottommargin));
       flush();
@@ -313,7 +313,7 @@ public class TerminalIO
     }
   }//defineScrollRegion
 
-  public synchronized void setForegroundColor(int color) throws IOException {
+  public  void setForegroundColor(int color) throws IOException {
     if (m_Terminal.supportsSGR()) {
       m_TelnetIO.write(m_Terminal.getGRSequence(FCOLOR, color));
       if (m_Autoflush) {
@@ -322,7 +322,7 @@ public class TerminalIO
     }
   }//setForegroundColor
 
-  public synchronized void setBackgroundColor(int color) throws IOException {
+  public  void setBackgroundColor(int color) throws IOException {
     if (m_Terminal.supportsSGR()) {
       //this method adds the offset to the fg color by itself
       m_TelnetIO.write(m_Terminal.getGRSequence(BCOLOR, color + 10));
@@ -332,7 +332,7 @@ public class TerminalIO
     }
   }//setBackgroundColor
 
-  public synchronized void setBold(boolean b) throws IOException {
+  public  void setBold(boolean b) throws IOException {
     if (m_Terminal.supportsSGR()) {
       if (b) {
         m_TelnetIO.write(m_Terminal.getGRSequence(STYLE, BOLD));
@@ -345,11 +345,11 @@ public class TerminalIO
     }
   }//setBold
 
-  public synchronized void forceBold(boolean b) {
+  public  void forceBold(boolean b) {
     m_ForceBold = b;
   }//forceBold
 
-  public synchronized void setUnderlined(boolean b) throws IOException {
+  public  void setUnderlined(boolean b) throws IOException {
     if (m_Terminal.supportsSGR()) {
       if (b) {
         m_TelnetIO.write(m_Terminal.getGRSequence(STYLE, UNDERLINED));
@@ -363,7 +363,7 @@ public class TerminalIO
     }
   }//setUnderlined
 
-  public synchronized void setItalic(boolean b) throws IOException {
+  public  void setItalic(boolean b) throws IOException {
     if (m_Terminal.supportsSGR()) {
       if (b) {
         m_TelnetIO.write(m_Terminal.getGRSequence(STYLE, ITALIC));
@@ -377,7 +377,7 @@ public class TerminalIO
   }//setItalic
 
 
-  public synchronized void setBlink(boolean b) throws IOException {
+  public  void setBlink(boolean b) throws IOException {
     if (m_Terminal.supportsSGR()) {
       if (b) {
         m_TelnetIO.write(m_Terminal.getGRSequence(STYLE, BLINK));
@@ -390,7 +390,7 @@ public class TerminalIO
     }
   }//setItalic
 
-  public synchronized void resetAttributes() throws IOException {
+  public  void resetAttributes() throws IOException {
     if (m_Terminal.supportsSGR()) {
       m_TelnetIO.write(m_Terminal.getGRSequence(RESET, 0));
     }
@@ -433,11 +433,11 @@ public class TerminalIO
     return m_Autoflush;
   }//isAutoflushing
 
-  public synchronized void resetTerminal() throws IOException {
+  public  void resetTerminal() throws IOException {
     m_TelnetIO.write(m_Terminal.getSpecialSequence(DEVICERESET));
   }
 
-  public synchronized void setLinewrapping(boolean b) throws IOException {
+  public  void setLinewrapping(boolean b) throws IOException {
     if (b && !m_LineWrapping) {
       m_TelnetIO.write(m_Terminal.getSpecialSequence(LINEWRAP));
       m_LineWrapping = true;
@@ -457,7 +457,7 @@ public class TerminalIO
   /**
    * Mutator method for the autoflushing mechanism.
    */
-  public synchronized void setAutoflushing(boolean b) {
+  public  void setAutoflushing(boolean b) {
     m_Autoflush = b;
   }//setAutoflushing
 
@@ -465,12 +465,12 @@ public class TerminalIO
   /**
    * Method to flush the Low-Level Buffer
    */
-  public synchronized void flush() throws IOException {
+  public  void flush() throws IOException {
     m_TelnetIO.flush();
   }//flush (implements the famous iToilet)
 
 
-  public synchronized void close() {
+  public  void close() {
     m_TelnetIO.closeOutput();
     m_TelnetIO.closeInput();
   }//close
@@ -522,7 +522,7 @@ public class TerminalIO
   /**
    * Terminal initialization
    */
-  private synchronized void initTerminal() throws IOException {
+  private  void initTerminal() throws IOException {
     m_TelnetIO.write(m_Terminal.getInitSequence());
     flush();
   }//initTerminal
