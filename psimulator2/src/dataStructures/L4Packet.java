@@ -10,10 +10,16 @@ package dataStructures;
  */
 public abstract class L4Packet {
 
+	protected int size;
+
+	public final Object data;
+
+	public L4Packet(Object data) {
+		this.data = data;
+	}
+
 	int getSize() {
-		int sum = 0;
-		// TODO: pridat velikost tohoto paketu
-		return sum;
+		return size;
 	}
 
 	public enum L4PacketType{

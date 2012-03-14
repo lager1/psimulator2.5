@@ -5,7 +5,6 @@
 package dataStructures;
 
 import dataStructures.ipAddresses.IpAddress;
-import utils.Util;
 
 /**
  * Represents ARP packet.
@@ -56,6 +55,7 @@ public class ArpPacket extends L3Packet {
 		this.targetIpAddress = targetIpAddress;
 		this.targetMacAddress = targetMacAddress;
 		this.operation = ArpOperation.ARP_REPLY;
+		countSize();
 	}
 
 	/**
@@ -73,6 +73,7 @@ public class ArpPacket extends L3Packet {
 		this.targetIpAddress = targetIpAddress;
 		this.targetMacAddress = new MacAddress("00:00:00:00:00:00");
 		this.operation = ArpOperation.ARP_REQUEST;
+		countSize();
 	}
 
 	/**
@@ -89,6 +90,7 @@ public class ArpPacket extends L3Packet {
 		this.targetIpAddress = new IpAddress("0.0.0.0"); // asi k nicemu
 		this.targetMacAddress = new MacAddress("00:00:00:00:00:00");
 		this.operation = ArpOperation.ARP_REQUEST;
+		countSize();
 	}
 
 	@Override
@@ -99,5 +101,10 @@ public class ArpPacket extends L3Packet {
 	@Override
 	public String toString(){
 		return "ArpPacket: "+ operation +" sender: "+senderIpAddress + " " + senderMacAddress + " target: "+ targetIpAddress + " " + targetMacAddress;
+	}
+
+	@Override
+	protected final void countSize() {
+		this.size = 28;
 	}
 }

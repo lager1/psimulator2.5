@@ -6,6 +6,7 @@ package dataStructures;
 import utils.Util;
 
 /**
+ * Represents ICMP packet.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
@@ -87,10 +88,12 @@ public class IcmpPacket extends L4Packet {
 	 * @param code
 	 */
 	public IcmpPacket(Type type, Code code) {
+		super(null);
 		this.type = type;
 		this.code = code;
 		this.id = 0;
 		this.seq = 0;
+		countSize();
 	}
 
 	/**
@@ -102,14 +105,20 @@ public class IcmpPacket extends L4Packet {
 	 * @param seq
 	 */
 	public IcmpPacket(Type type, Code code, int id, int seq) {
+		super(null);
 		this.type = type;
 		this.code = code;
 		this.id = id;
 		this.seq = seq;
+		countSize();
 	}
 
 	@Override
 	public String toString(){
 		return "IcmpPacket: "+Util.zarovnej(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
+	}
+
+	private void countSize() { // ICMP packet has 24 bytes + data (http://en.wikipedia.org/wiki/Ping)
+		this.size = 24;
 	}
 }

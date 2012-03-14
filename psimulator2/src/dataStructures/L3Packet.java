@@ -11,6 +11,7 @@ package dataStructures;
 public abstract class L3Packet {
 
     public final L4Packet data;
+	protected int size;
 
 	public L3Packet(L4Packet data) {
 		this.data = data;
@@ -21,10 +22,18 @@ public abstract class L3Packet {
 		ARP;
 	}
 
-	int getSize() {
-		int sum = 0;
-		// TODO: pridat velikost tohoto paketu
-		return sum + (data != null ? data.getSize() : 0);
+	protected int getDataSize() {
+		return (data != null ? data.getSize() : 0);
+	}
+
+	/**
+	 * Call in constructor in your classes.
+	 * @return
+	 */
+	protected abstract void countSize();
+
+	public int getSize() {
+		return size;
 	}
 
 	public abstract L3PacketType getType();
