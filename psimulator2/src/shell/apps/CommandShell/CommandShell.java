@@ -233,8 +233,8 @@ public class CommandShell extends TerminalApplication {
 		try {
 			terminalIO.setLinewrapping(true);
 			terminalIO.setAutoflushing(true);
-			terminalIO.eraseScreen();
-			terminalIO.homeCursor();
+			//terminalIO.eraseScreen();
+			//terminalIO.homeCursor();
 		} catch (IOException ex) {
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 		}
