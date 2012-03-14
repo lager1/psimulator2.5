@@ -13,7 +13,12 @@ import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L2.SwitchportSettings;
 import networkModule.L3.NetworkInterface;
@@ -33,7 +38,7 @@ import shared.Components.simulatorConfig.Record;
  * @author Tomas Pitrinec
  * @author Stanislav Rehak
  */
-public class Loader {
+public class Loader implements Loggable {
 
 	Psimulator s = Psimulator.getPsimulator();
 	/**
@@ -43,6 +48,16 @@ public class Loader {
 	 */
 	private Map<Integer, Integer> switchporty = new HashMap<>();	// odkladaci mapa mezi ID a cislama switchportu
 	private final NetworkModel networkModel;
+
+	/**
+	 * Mnozina idecek, slouzi ke kontrolovani, je-li kazdy ID unikatni (kdyby se nejak rozbil konfigurak, treba pres svnko.
+	 */
+	private Set<Integer> idecka = new HashSet<>();
+
+
+
+
+
 
 	public Loader(NetworkModel networkModel) {
 		this.networkModel = networkModel;
@@ -54,23 +69,24 @@ public class Loader {
 	 */
 	public void loadFromModel() {
 
-		for (HwComponentModel device : networkModel.getHwComponents()) {
-			if (device.getHwType() == shared.Components.HwTypeEnum.REAL_PC) {
-				continue;
+		try {	// chytaji se tady vsechny vyjimky vyhozeny z konfigurace
+
+			for (HwComponentModel device : networkModel.getHwComponents()) {
+				registerID(device.getId());
+				if (device.getHwType() == shared.Components.HwTypeEnum.REAL_PC) {
+					continue;
+				}
+
+				s.devices.add(createDevice(device));
 			}
 
-			s.devices.add(createDevice(device));
+
+			connectCables();
+
+		} catch (Exception ex) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatna konfigurace, byla hozena vyjimka: ", ex);
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatny konfiguracni soubor. Koncim. " + ex.toString(), null);
 		}
-
-//		for (Device device : s.devices) { // TODO: tohle pap smaznou
-//			System.out.println("device id="+device.configID);
-//			for (Switchport swp : device.physicalModule.getSwitchports().values()) {
-//				System.out.print(" "+swp.configID);
-//			}
-//			System.out.println("\n");
-//		}
-
-		connectCables();
 	}
 
 	/**
@@ -92,6 +108,7 @@ public class Loader {
 //		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
 //		System.out.println("  "+model.getInterfacesMap().toString());
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
+			registerID(ifaceModel.getId());
 //			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
@@ -241,6 +258,7 @@ public class Loader {
 	 */
 	private void connectCables() {
 		for (CableModel cableModel : networkModel.getCables()) {
+			registerID(cableModel.getId());
 			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
 
 			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
@@ -272,5 +290,17 @@ public class Loader {
 		}
 
 		throw new LoaderException(String.format("Nepodarilo se najit Device s id=%d a k nemu SimulatorSwichport s id=%d", component1.getId(), interface1.getId()));
+	}
+
+	@Override
+	public String getDescription() {
+		return getClass().getName();
+	}
+
+	private void registerID(int id){
+		if(idecka.contains(id)){
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 objekty se stejnym id = "+id, null);
+		}
+		idecka.add(id);
 	}
 }
