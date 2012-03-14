@@ -74,7 +74,6 @@ public class IpAddressCommand extends CiscoCommand {
 
 		IPwithNetmask entireIp = null;
         try {
-//            ladici("vytvarim IP");
             entireIp = new IPwithNetmask(ip, maska);
         } catch (BadNetmaskException e) {
             String[] pole = maska.split("\\.");

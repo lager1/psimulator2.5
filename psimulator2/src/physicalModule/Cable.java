@@ -40,16 +40,6 @@ public class Cable implements SmartRunnable, Loggable {
 	private long delay;
 
 	/**
-	 * Creates cable with random delay time.
-	 * @param configID
-	 */
-	public Cable(int configID) {
-		this.configID = configID;
-		this.delay = (long) Math.random() * 10;
-		this.delay=0;	// TODO: pak to bude z konfiguraku
-	}
-
-	/**
 	 * Creates cable with given delay time.
 	 * @param id
 	 * @param delay
@@ -57,7 +47,6 @@ public class Cable implements SmartRunnable, Loggable {
 	public Cable(int id, long delay) {
 		this.configID = id;
 		this.delay = delay;
-		this.delay=0;	// TODO: pak to bude z konfiguraku
 	}
 
 	/*

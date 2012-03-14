@@ -8,7 +8,6 @@ import dataStructures.L3Packet;
 import dataStructures.L4Packet;
 import java.util.EnumMap;
 import java.util.Map;
-import psimulator2.Psimulator;
 
 /**
  * Main server listener. Writes everything to server's console.

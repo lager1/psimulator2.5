@@ -28,7 +28,7 @@ public class ArpCache {
 			this.iface = iface;
 		}
 	}
-	private HashMap<IpAddress, ArpRecord> cache = new HashMap<IpAddress, ArpRecord>();
+	private HashMap<IpAddress, ArpRecord> cache = new HashMap<>();
 
 	/**
 	 * For platform formatted output only.
@@ -81,7 +81,10 @@ public class ArpCache {
 		}
 
 		long now = System.currentTimeMillis();
-		if ((now - record.timeStamp) > 14400000) { // cisco default is 14400s
+		if ((now - record.timeStamp) > 10_000) {
+			// cisco default is 14400s, here it has to be much smaller,
+			// because when someone change his IP address a his neighbour begins to send packets to him, he should ask again
+			// with ARP req
 			cache.remove(ip);
 			return null;
 		}

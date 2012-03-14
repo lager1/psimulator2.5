@@ -12,6 +12,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.TcpIpNetMod;
+import utils.Util;
 
 /**
  * Implementace transportni vrstvy sitovyho modulu. <br />
@@ -113,7 +114,7 @@ public class TransportLayer implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return netMod.getDevice().getName() + ": TcpIpLayer";
+		return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign) + "TcpIpLayer";
 	}
 
 	/**

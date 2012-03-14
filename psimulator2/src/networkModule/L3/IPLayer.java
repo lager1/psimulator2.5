@@ -14,8 +14,10 @@ import networkModule.L2.EthernetInterface;
 import networkModule.L3.RoutingTable.Record;
 import networkModule.L4.IcmpHandler;
 import networkModule.TcpIpNetMod;
+import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.Util;
+import utils.Wakeable;
 import utils.WorkerThread;
 
 /**
@@ -23,7 +25,7 @@ import utils.WorkerThread;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public abstract class IPLayer implements SmartRunnable, Loggable {
+public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 	protected final WorkerThread worker;
 	/**
@@ -64,7 +66,11 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 	 * Default TTL values.
 	 */
 	public int ttl = 255;
-
+	/**
+	 * Packet forwarding flag. <br />
+	 * TODO: port_forward ulozit do filesystemu a nacitat od tam tud
+	 */
+	protected boolean ip_forward = true;
 	/**
 	 * Constructor of IP layer.
 	 * Empty routing table is also created.
@@ -170,6 +176,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 	 * Process storeBuffer which is for packets without known MAC nextHop.
 	 */
 	private void handleStoreBuffer() {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "handleStoreBuffer(), size: "+storeBuffer.size(), null);
 
 		long now = System.currentTimeMillis();
 
@@ -177,13 +184,10 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 
 		for (StoreItem m : storeBuffer) {
 
-			if (now - m.timeStamp > arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
+			if (now - m.timeStamp >= arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
 				remove.add(m);
-				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket.", m.packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", m.packet);
 				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet);
-
-
-				// TODO: kdyz mi neprijde zadna odpoved, tak se NIKDY neodesle 'destination host unreachable', takze budem muset implementovat asi nejakej budik, kterej me zbudi za 5s.
 				continue;
 			}
 
@@ -196,6 +200,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 				// vyndat z bufferu
 				remove.add(m);
 			}
+
+			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: "+(now - m.timeStamp)+", maze se az: "+arpTTL, null);
 		}
 
 		// vymazani proslych ci obslouzenych zaznamu
@@ -224,10 +230,15 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 			return;
 		}
 
+		if (!ip_forward) {
+			// Jestli se nepletu, tak paket proste zahodi. Chce to ale jeste overit.
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze neni nastaven ip_forward.", packet);
+			return;
+		}
+
 		// osetri TTL
 		if (packet.ttl == 1) {
-			// jestli je to ICMP, tak posli TTL expired
-			// zaloguj zahozeni paketu
+			// posli TTL expired a zaloguj zahozeni paketu
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
 			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
@@ -278,6 +289,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast());
 
 			storeBuffer.add(new IPLayer.StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
+			Psimulator.getPsimulator().budik.registerWake(this, arpTTL);
 			return;
 		}
 
@@ -321,23 +333,31 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 
 	@Override
 	public void doMyWork() {
+//		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork()", null);
 
 		// prochazet jednotlivy buffery a vyrizovat jednotlivy pakety
 		while (!sendBuffer.isEmpty() || !receiveBuffer.isEmpty()) {
 			if (!receiveBuffer.isEmpty()) {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() cyklus receiveBuffer", null);
 				ReceiveItem m = receiveBuffer.remove(0);
 				handleReceivePacket(m.packet, m.iface);
 			}
 
 			if (!sendBuffer.isEmpty()) {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() cyklus sendBuffer", null);
 				SendItem m = sendBuffer.remove(0);
 				handleSendPacket(m.packet, m.dst); // bude se obsluhovat platform-specific
 			}
 
-			if (newArpReply && !storeBuffer.isEmpty()) {
+			if (newArpReply && !storeBuffer.isEmpty()) { // ten boolean tam je proto, aby se to neprochazelo v kazdym cyklu
 				// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
 				handleStoreBuffer();
 			}
+		}
+
+		if (!storeBuffer.isEmpty()) { // ?
+			// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
+			handleStoreBuffer();
 		}
 	}
 
@@ -476,6 +496,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable {
 		List<NetworkInterface> ifaces = new ArrayList<>(networkIfaces.values());
 		Collections.sort(ifaces);
 		return ifaces;
+	}
+
+	@Override
+	public void wake() {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "vzbudil me Budik", null);
+		newArpReply = true;
+		this.worker.wake();
 	}
 
 	private class SendItem {
