@@ -36,7 +36,7 @@ public class TelnetSession implements Shell {
 		this.port = con.getConnectionData().getSocket().getLocalPort();
 		this.m_Connection = con;
 		try {
-			this.m_Connection.getConnectionData().getSocket().setSoTimeout(500);
+			this.m_Connection.getConnectionData().getSocket().setSoTimeout(1000);
 		} catch (SocketException ex) {
 		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "cannot setup socket timeout");
 		}
