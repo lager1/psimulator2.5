@@ -128,13 +128,15 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return "SimulatorSwitchport";
+		return "SimulatorSwitchport number: "+number + ", configID: "+configID;
 	}
 
 	private void handleSourceQuench(L2Packet packet) {
 		if (packet.data != null && packet.data instanceof IpPacket) {
 			IpPacket p = (IpPacket) packet.data;
 			icmpHandler.sendSourceQuench(p.src, p);
+		} else {
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Na rozhrani se uz nevejde zadny paket a chci poslat source-quench, ale paket neni IP, takze ho jen zahodim.", packet.toStringWithData());
 		}
 	}
 }
