@@ -3,10 +3,16 @@
  */
 package physicalModule;
 
+import dataStructures.IpPacket;
 import dataStructures.L2Packet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
+import networkModule.L4.IcmpHandler;
+import networkModule.TcpIpNetMod;
 
 /**
  * Represents "interface" on L2.
@@ -14,7 +20,7 @@ import java.util.List;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class SimulatorSwitchport extends Switchport {
+public class SimulatorSwitchport extends Switchport implements Loggable {
 
 	protected Cable cabel;
 
@@ -38,16 +44,32 @@ public class SimulatorSwitchport extends Switchport {
 	 * @return
 	 */
 	private int dropped = 0;
+	private IcmpHandler icmpHandler = null;
+	private boolean hasL3module;
 
 
 	public SimulatorSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
+		this.hasL3module = physicMod.device.getNetworkModule().isStandardTcpIpNetMod();
 	}
 
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
-		if ((size + packetSize > capacity) || cabel == null) { // (drop packet, run out of capacity) || (no cable is connected)
+		if (size + packetSize > capacity) { // run out of capacity
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Odesilaci fronta je plna, proto zahazuji paket.", packet.toStringWithData());
+			dropped++;
+
+			if (hasL3module && icmpHandler == null) {
+				this.icmpHandler = ((TcpIpNetMod) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
+			}
+
+			if (hasL3module) {
+				handleSourceQuench(packet);
+			}
+
+		} else if (cabel == null) { // no cabel attached
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Neni pripojen zadny kabel, proto zahazuji paket.", packet.toStringWithData());
 			dropped++;
 		} else {
 			size += packetSize;
@@ -99,5 +121,17 @@ public class SimulatorSwitchport extends Switchport {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String getDescription() {
+		return "SimulatorSwitchport";
+	}
+
+	private void handleSourceQuench(L2Packet packet) {
+		if (packet.data != null && packet.data instanceof IpPacket) {
+			IpPacket p = (IpPacket) packet.data;
+			icmpHandler.sendSourceQuench(p.src, p);
+		}
 	}
 }

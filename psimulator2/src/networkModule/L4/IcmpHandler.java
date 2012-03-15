@@ -43,6 +43,7 @@ public class IcmpHandler implements Loggable {
 			case REPLY:
 			case TIME_EXCEEDED:
 			case UNDELIVERED:
+			case SOURCE_QUENCH:
 				// predat aplikacim
 				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Preposilam ARP odpoved aplikaci na port: "+p.id, packet);
 				transportLayer.forwardPacketToApplication(packet, p.id);
@@ -81,6 +82,15 @@ public class IcmpHandler implements Loggable {
 	 */
 	public void sendDestinationNetworkUnreachable(IpAddress dst, IpPacket packet) {
 		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE);
+	}
+
+	/**
+	 * Sends ICMP Source Quench message to a given IpAddress.
+	 * @param dst message target
+	 * @param packet for some additional information only.
+	 */
+	public void sendSourceQuench(IpAddress dst, IpPacket packet) {
+		send(packet, dst, IcmpPacket.Type.SOURCE_QUENCH, IcmpPacket.Code.DEFAULT);
 	}
 
 	@Override
@@ -127,7 +137,7 @@ public class IcmpHandler implements Loggable {
 	 * @param seq sequence number
 	 * @param id application identifier (port)
 	 */
-	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id) {
+	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id, int size) {
 		int sendTtl;
 		if (ttl != null) {
 			sendTtl = ttl;
@@ -135,7 +145,7 @@ public class IcmpHandler implements Loggable {
 			sendTtl = this.getIpLayer().ttl;
 		}
 
-		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq);
+		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq, size);
 		getIpLayer().sendPacket(packet, target, sendTtl);
 	}
 }
