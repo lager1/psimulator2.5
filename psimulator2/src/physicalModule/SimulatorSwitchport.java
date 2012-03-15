@@ -46,11 +46,10 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	private int dropped = 0;
 	private IcmpHandler icmpHandler = null;
 	private boolean hasL3module;
-
+	private boolean firstTime =  true;
 
 	public SimulatorSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
-		this.hasL3module = physicMod.device.getNetworkModule().isStandardTcpIpNetMod();
 	}
 
 	@Override
@@ -60,8 +59,12 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Odesilaci fronta je plna, proto zahazuji paket.", packet.toStringWithData());
 			dropped++;
 
-			if (hasL3module && icmpHandler == null) {
-				this.icmpHandler = ((TcpIpNetMod) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
+			if (firstTime) {
+				firstTime = false;
+				hasL3module = physicMod.device.getNetworkModule().isStandardTcpIpNetMod();
+				if (hasL3module) {
+					icmpHandler = ((TcpIpNetMod) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
+				}
 			}
 
 			if (hasL3module) {

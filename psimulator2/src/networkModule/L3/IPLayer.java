@@ -65,7 +65,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	/**
 	 * Default TTL values.
 	 */
-	public int ttl = 255;
+	public int ttl; // different for particular IPLayers
 	/**
 	 * Constructor of IP layer.
 	 * Empty routing table is also created.

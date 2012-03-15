@@ -118,12 +118,30 @@ public class IcmpPacket extends L4Packet {
 		countSize();
 	}
 
+	/**
+	 * Creates IcmpPacket with given type, code, id, seq.
+	 *
+	 * @param type
+	 * @param code
+	 * @param id
+	 * @param seq
+	 * @param size payload size
+	 */
+	public IcmpPacket(Type type, Code code, int id, int seq, int size) {
+		super(null);
+		this.type = type;
+		this.code = code;
+		this.id = id;
+		this.seq = seq;
+		this.size = 8 + size;
+	}
+
 	@Override
 	public String toString(){
 		return "IcmpPacket: "+Util.zarovnej(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
 	}
 
-	private void countSize() { // ICMP packet has 24 bytes + data (http://en.wikipedia.org/wiki/Ping)
-		this.size = 24;
+	private void countSize() { // ICMP packet has 8 bytes + data (http://en.wikipedia.org/wiki/Ping)
+		this.size = 8 + 56;
 	}
 }

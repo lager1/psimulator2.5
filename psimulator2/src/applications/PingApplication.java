@@ -155,7 +155,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
 			timestamps.put(seq, (double)System.nanoTime()/1_000_000);
 			sent[i] = true;
-			transportLayer.icmphandler.sendRequest(target, ttl, seq, port);
+			transportLayer.icmphandler.sendRequest(target, ttl, seq, port, size);
 			stats.odeslane++;
 
 			if (seq != count) {	// po poslednim odeslanym paketu uz se neceka

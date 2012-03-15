@@ -36,4 +36,8 @@ public abstract class L2Packet {
 	public String toString(){
 		return "L2Packet: generic packet on Layer 2.";
 	}
+
+	public String toStringWithData() {
+		return toString() + " " + (data == null ? "" : data.toString());
+	}
 }

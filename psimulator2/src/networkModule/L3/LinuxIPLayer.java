@@ -28,7 +28,7 @@ public class LinuxIPLayer extends IPLayer {
 
 	public LinuxIPLayer(TcpIpNetMod netMod) {
 		super(netMod);
-		this.ttl = 60;
+		this.ttl = 64;
 	}
 
 	@Override
