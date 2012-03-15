@@ -40,6 +40,11 @@ public abstract class Application implements SmartRunnable, Loggable {
 	 */
 	protected final List<IpPacket> buffer = Collections.synchronizedList(new LinkedList<IpPacket>());
 
+	/**
+	 * Jestli aplikace prave bezi
+	 */
+	private boolean running = false;
+
 
 	public Application(String name, Device device) {
 		this.name = name;
@@ -94,30 +99,43 @@ public abstract class Application implements SmartRunnable, Loggable {
 	/**
 	 * Starts aplication by turning on listening on port.
 	 */
-	public void start() {
-		this.worker = new WorkerThread(this);
-		device.registerApplication(this);
-		this.port = transportLayer.registerApplication(this, port);
-		atStart();
+	public synchronized void start() {
+		if (running) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Znovu spustena jiz bezici aplikace, to by nemelo nikdy nastat.", null);
+		} else {
+			running = true;
+			this.worker = new WorkerThread(this);
+			device.registerApplication(this);
+			this.port = transportLayer.registerApplication(this, port);
+			atStart();
+		}
 	}
 
 	/**
 	 * Exit the application. <br />
+	 * Muze to zavolat jak sama ta aplikace (predevsim dvouvlaknova), tak nekdo zvenku, proto synchronized.
 	 */
-	public void exit() {
-		priUkonceni();
-		atExit();
-		atKill();
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " exit", null);
+	public synchronized void exit() {
+		if (running) {
+			running = false;
+			priUkonceni();
+			atExit();
+			atKill();
+			Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " exit", null);
+		}
 	}
 
 	/**
 	 * Exit the application without calling atExit(). <br />
+	 * Muze to zavolat jak sama ta aplikace (predevsim dvouvlaknova), tak nekdo zvenku, proto synchronized.
 	 */
-	public void kill() {
-		priUkonceni();
-		atKill();
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" kill", null);
+	public synchronized void kill() {
+		if (running) {
+			running = false;
+			priUkonceni();
+			atKill();
+			Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " kill", null);
+		}
 	}
 
 	/**

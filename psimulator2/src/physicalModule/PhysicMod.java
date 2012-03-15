@@ -137,6 +137,11 @@ public class PhysicMod implements SmartRunnable {
 		return switchports;
 	}
 
+	@Override
+	public String getDescription() {
+		return device.getName()+": PhysicMod";
+	}
+
 
 
 // Privatni veci: --------------------------------------------------------------------------------------------------

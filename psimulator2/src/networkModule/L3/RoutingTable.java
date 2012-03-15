@@ -8,6 +8,9 @@ import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.LinkedList;
 import java.util.List;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Implementation of Routing Table.
@@ -15,7 +18,7 @@ import java.util.List;
  * Z velky casti prekopirovana ze stary routovaci tabulky, public metody prejmenovany do anglictiny.
  * @author neiss
  */
-public class RoutingTable {
+public class RoutingTable implements Loggable{
 
 
 	private List<Record> records = new LinkedList<>();
@@ -60,7 +63,7 @@ public class RoutingTable {
 		boolean rozhraniNalezeno = false;
 		for (Record z : records) { //hledani spravnyho rozhrani
 			if (z.brana == null) { //tohle by moh bejt zaznam potrebnej zaznam priznaku U
-				if (!rozhraniNalezeno && adresat.isInMyNetwork(brana)) { //nalezl se adresat brane odpovidajici
+				if (!rozhraniNalezeno && z.adresat.isInMyNetwork(brana)) { //nalezl se adresat brane odpovidajici
 					if (rozhr == null) { //rozhrani neni zadano a je potreba ho priradit
 						rozhr = z.rozhrani; //takhle to opravdu funguje, 1. polozka se pocita
 						rozhraniNalezeno = true;
@@ -226,6 +229,11 @@ public class RoutingTable {
         Record z = new Record(adresat,brana,rozhr);
         records.add(najdiSpravnouPosici(z), z);
     }
+
+	@Override
+	public String getDescription() {
+		return "RoutingTable";
+	}
 
 
 

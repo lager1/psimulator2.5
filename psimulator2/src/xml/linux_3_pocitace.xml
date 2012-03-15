@@ -189,6 +189,11 @@
                             <destination>192.168.1.0/24</destination>
                             <interfaceName>eth0</interfaceName>
                         </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>192.168.1.20</gateway>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
                 <hwType>END_DEVICE_PC</hwType>
@@ -301,7 +306,7 @@
                     <hwType>LINUX_ROUTER</hwType>
                     <id>28</id>
                     <ipAddress></ipAddress>
-                    <isUp>true</isUp>
+                    <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-08</macAddress>
                     <name>eth2</name>
                 </interface>
@@ -309,7 +314,7 @@
                     <hwType>LINUX_ROUTER</hwType>
                     <id>29</id>
                     <ipAddress></ipAddress>
-                    <isUp>true</isUp>
+                    <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-09</macAddress>
                     <name>eth3</name>
                 </interface>
@@ -357,7 +362,7 @@
         <nextMacAddress>16</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>CISCO_SWITCH</key>
+                <key>REAL_PC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -369,11 +374,19 @@
                 <value>0</value>
             </entry>
             <entry>
+                <key>BUNDLE_OF_CABLES</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_ETHERNET</key>
+                <value>0</value>
+            </entry>
+            <entry>
                 <key>LINUX_SWITCH</key>
                 <value>2</value>
             </entry>
             <entry>
-                <key>CABLE_ETHERNET</key>
+                <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -381,19 +394,11 @@
                 <value>1</value>
             </entry>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>BUNDLE_OF_CABLES</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>CABLE_OPTIC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>

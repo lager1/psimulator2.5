@@ -25,7 +25,7 @@ public final class WorkerThread implements Runnable, Loggable {
     public WorkerThread(SmartRunnable smartRunnable) {
 		assert smartRunnable != null;
 		this.smartRunnable = smartRunnable;
-        myThread = new Thread(this);
+        myThread = new Thread(this,smartRunnable.getDescription());
         myThread.start();
     }
 
@@ -86,5 +86,9 @@ public final class WorkerThread implements Runnable, Loggable {
 	@Override
 	public String getDescription() {
 		return "WorkerThread";
+	}
+
+	public String getThreadName(){
+		return myThread.getName();
 	}
 }

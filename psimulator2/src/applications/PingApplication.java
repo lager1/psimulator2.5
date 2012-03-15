@@ -52,6 +52,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	protected boolean [] recieved;
 
 	private boolean cekaSeNaBudik = false;	// mezi odeslanim a prijetim posledniho paketu je to true, jinak false
+	private boolean atExitSkoncilo = false;
 
 
 
@@ -198,9 +199,11 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 
 	@Override
-	protected void atExit() {
+	protected synchronized void atExit() {
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Zavolana metoda atExit. ", null);
 		stats.countStats();
 		printStats();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Ukoncena metoda atExit. ", null);
 	}
 
 	@Override

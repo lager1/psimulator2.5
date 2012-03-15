@@ -19,7 +19,7 @@ import utils.Util;
 
 /**
  * Linuxovy prikaz route.
- * 
+ *
  * @author Tomas Pitrinec
  */
 public class Route extends AbstractCommand {
@@ -124,6 +124,8 @@ public class Route extends AbstractCommand {
 					printLine("SIOCADDRT: File exists");
 				} else if (navratovyKodProvedeni == 2) {
 					printLine("SIOCADDRT: No such process");
+//					Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Nemuzu pridat zaznam do tabulky "
+//							+navratovyKodProvedeni, null);
 				}
 			} else if (akce == 2) {
 				if (!ipLayer.routingTable.deleteRecord(ipAdresa, brana, rozhr)) {

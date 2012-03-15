@@ -124,6 +124,13 @@ public class MacAddress {
 	}
 
 // staticky metody ----------------------------------------------------------------------------------------
+
+	/**
+	 * cashovana mac adresa
+	 */
+	private static MacAddress broadcast;
+
+
 	/**
 	 * Returns true, if given mac address is broadcast
 	 *
@@ -140,7 +147,14 @@ public class MacAddress {
 	}
 
 	public static MacAddress broadcast() {
-		return new MacAddress("ff:ff:ff:ff:ff:ff");
+		if (broadcast == null) {
+			int[] pole = new int[6];
+			for (int i = 0; i < 6; i++) {
+				pole[i] = 255;
+			}
+			broadcast = new MacAddress(pole);
+		}
+		return broadcast;
 	}
 
 	public static MacAddress getRandomMac() {

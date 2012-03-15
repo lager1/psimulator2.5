@@ -79,10 +79,37 @@ public class LinuxPingApplication extends PingApplication {
 
 	@Override
 	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay) {
-
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi paket, jdu ho vypsat.", null);
 
-		ping.printLine("XX bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+" time="+delay+" ms");
+		switch (packet.type) {
+			case REPLY:
+				ping.printLine("XX bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+" time="+delay+" ms");
+				break;
+			case TIME_EXCEEDED:
+				// TODO: Time To Live Exceeded
+				ping.printLine("From " + p.src.toString()+ " icmp_seq=" + packet.seq+ " Time to live exceeded");
+				break;
+			case UNDELIVERED:
+				switch (packet.code) {
+					case NETWORK_UNREACHABLE:
+						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+                        packet.seq + " Destination Net Unreachable");
+						break;
+					case HOST_UNREACHABLE:
+						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+                        packet.seq + " Destination Host Unreachable");
+						break;
+					default:
+						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+                        packet.seq + " Destination Host Unreachable");
+				}
+				break;
+
+			default:
+			// jeste tu je REQUEST, ten se sem ale nikdy nedostane
+			// zalogovat neznamy typ ICMP ?
+		}
+
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Vypsal jsem paket.", null);
 	}
 
