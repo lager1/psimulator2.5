@@ -169,15 +169,8 @@ public class CommandShell extends TerminalApplication {
 	public void print(String text) {
 		try {
 
-			this.handleUnexpectedInput();  // just for sure, for example if text.lenght==0
-
-			for (int i = 0; i < text.length(); i++) {
-				char ch = text.charAt(i);
-				terminalIO.write(ch);
-				terminalIO.flush();
-
-				this.handleUnexpectedInput();  // handle unexpected input between characters print
-			}
+			terminalIO.write(text);
+			terminalIO.flush();
 
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
 		} catch (IOException ex) {
@@ -320,19 +313,5 @@ public class CommandShell extends TerminalApplication {
 		return 0;
 	}
 
-	public void handleUnexpectedInput() throws IOException {
-
-		while (terminalIO.avaiable()) {  // there is unexpected input to be handled
-
-			int input = terminalIO.read();
-
-			if (ShellUtils.isPrintable(input)) {
-				terminalIO.write((char) input);
-			} else {
-				ShellUtils.handleSignalControlCodes(this.getParser(), input);
-			}
-
-		}
-
-	}
+	
 }
