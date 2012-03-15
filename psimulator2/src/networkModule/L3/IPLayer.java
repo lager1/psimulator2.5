@@ -61,7 +61,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	/**
 	 * Waiting time [ms] for ARP requests.
 	 */
-	private long arpTTL = 10_000;
+	private long arpTTL = 3_000;
 	/**
 	 * Default TTL values.
 	 */

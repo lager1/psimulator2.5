@@ -23,21 +23,26 @@ public class IcmpPacket extends L4Packet {
 	public enum Type {
 
 		/**
-		 * Ozvěna
+		 * Ozvěna.
 		 */
 		REPLY,
 		/**
-		 * Žádost o ozvěnu
+		 * Žádost o ozvěnu.
 		 */
 		REQUEST,
 		/**
-		 * Signalizace nedoručení IP paketu
+		 * Signalizace nedoručení IP paketu.
 		 */
 		UNDELIVERED,
 		/**
-		 * Čas (ttl) vypršel
+		 * Čas (ttl) vypršel.
 		 */
 		TIME_EXCEEDED,
+		/**
+		 * This message may be generated if a router or host does not have sufficient buffer space to process the request, or may occur if the router or host buffer is approaching its limit.
+		 */
+		SOURCE_QUENCH,
+
 	}
 
 	/**
@@ -49,19 +54,19 @@ public class IcmpPacket extends L4Packet {
 		 * kdyz se odesila REPLY
 		 */
 		DEFAULT,
-		//	   * 0 – nedosažitelná síť (network unreachable)<br />
+		//	   * 0 – nedosažitelná síť (network unreachable)
 		NETWORK_UNREACHABLE,
-		//     * 1 - nedosažitelný uzel (host unreachable)<br />
+		//     * 1 - nedosažitelný uzel (host unreachable)
 		HOST_UNREACHABLE,
-		//     * 2 - nedosažitelný protokol (protocol unreachable)<br />
+		//     * 2 - nedosažitelný protokol (protocol unreachable)
 		PROTOCOL_UNREACHABLE,
-		//     * 3 – nedosažitelný port (port unreachable)<br />
+		//     * 3 – nedosažitelný port (port unreachable)
 		PORT_UNREACHABLE,
-		//     * 4 - nedosažitelná síť (network unreachable)<br />
+		//     * 4 - nedosažitelná síť (network unreachable)
 
-		//     * 5 – nutná fragmentace, ale není povolena<br />
+		//     * 5 – nutná fragmentace, ale není povolena
 		FRAGMENTAION_REQUIRED,
-		//     * 6 – neznámá cílová síť (destination network unknown) <br />
+		//     * 6 – neznámá cílová síť (destination network unknown)
 		DESTINATION_NETWORK_UNKNOWN,}
 	/**
 	 * REPLY, REQUEST, UNDELIVERED, TIME_EXCEEDED.

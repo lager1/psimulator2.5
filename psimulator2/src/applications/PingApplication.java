@@ -50,14 +50,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	protected boolean [] sent;
 	protected boolean [] recieved;
-
-	private boolean cekaSeNaBudik = false;	// mezi odeslanim a prijetim posledniho paketu je to true, jinak false
-	private boolean atExitSkoncilo = false;
-
-
-
-
-
+	private boolean zavolanoBudikem = false;
 
 	public PingApplication(Device device, ApplicationNotifiable command) {
 		super("ping", device);
@@ -70,6 +63,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	public void wake() {
 		if (!die) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Byl jsem probuzen budikem a jdu zavolat svuj worker.", null);
+			zavolanoBudikem = true;
 			worker.wake();
 		} else {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Byl jsem probuzen budikem ale nevolam svuj worker, protoze mam bejt mrtvej.", null);
@@ -112,29 +106,34 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 				continue;
 			}
 
-			// vsechno v poradku, paket se zpracuje:
 			long delay = System.currentTimeMillis() - sendTime;
+
+			// vsechno v poradku, paket se zpracuje:
 			if (delay <= timeout) { // ok, paket dorazil vcas
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi ping.", packet);
-				stats.odezvy.add(delay);
-				stats.prijate++;
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi nejaky ping.", packet);
+
+				if (packet.type != IcmpPacket.Type.REPLY) {
+					stats.errors++;
+				} else {
+					stats.odezvy.add(delay);
+					stats.prijate++;
+				}
 				handleIncommingPacket(p, packet, delay);
 				recieved[packet.seq - 1] = true;	// prida se do prijatejch
+
 			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi ping, ale vyprsel timeout.", packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout.", packet);
 			}
 
 			// reseni posledniho paketu:
 			if(recieved[recieved.length - 1]){
+				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi posledni paket. Koncim.", packet);
 				exit();
-				cekaSeNaBudik = false;	// po prijmuti posledniho paketu se na budik neceka
 			}
 		}
 
-		//
-		if(cekaSeNaBudik){
+		if(zavolanoBudikem){
 			exit();
-			cekaSeNaBudik = false;
 		}
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork.", null);
 
@@ -163,7 +162,6 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 				Util.sleep(waitTime);	// cekani
 			} else {	// ale nastavi se budik:
 				Psimulator.getPsimulator().budik.registerWake(this, timeout);
-				cekaSeNaBudik = true;
 			}
 			i++;
 		}

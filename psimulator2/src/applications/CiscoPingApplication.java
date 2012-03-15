@@ -53,15 +53,15 @@ public class CiscoPingApplication extends PingApplication {
 
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
 
-		areAllAtHome(packet);
+//		areAllAtHome(packet);
+		// http://www.cisco.com/en/US/products/sw/iosswrel/ps1831/products_tech_note09186a00800a6057.shtml
 
 		switch (packet.type) {
 			case REPLY:
 				shell.print("!"); // ok
 				break;
 			case TIME_EXCEEDED:
-				// TODO: Time To Live Exceeded
-				shell.print(".");
+				shell.print("&");
 				break;
 			case UNDELIVERED:
 				switch (packet.code) {
@@ -76,15 +76,18 @@ public class CiscoPingApplication extends PingApplication {
 					case HOST_UNREACHABLE:
 						shell.print(".");
 						break;
+					case FRAGMENTAION_REQUIRED:
+						shell.print("M");
+						break;
 					default:
 						shell.print(".");
-						// TODO: jeste pridat na ostatni code reakci
 				}
 				break;
-
+			case SOURCE_QUENCH:
+				shell.printLine("Q");
+				break;
 			default:
-			// jeste tu je REQUEST, ten se sem ale nikdy nedostane
-			// zalogovat neznamy typ ICMP ?
+				shell.printLine("?");
 		}
 	}
 
@@ -98,12 +101,12 @@ public class CiscoPingApplication extends PingApplication {
         shell.printWithDelay(s, 10);
 	}
 
-	private void areAllAtHome(IcmpPacket packet) {
-		recieved[packet.seq - 1] = true;
-		for (int i = 0; i < recieved.length; i++) {
-			if (recieved[i] == false) {
-				return;
-			}
-		}
-	}
+//	private void areAllAtHome(IcmpPacket packet) {
+//		recieved[packet.seq - 1] = true;
+//		for (int i = 0; i < recieved.length; i++) {
+//			if (recieved[i] == false) {
+//				return;
+//			}
+//		}
+//	}
 }

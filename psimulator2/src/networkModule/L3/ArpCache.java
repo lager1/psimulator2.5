@@ -81,7 +81,7 @@ public class ArpCache {
 		}
 
 		long now = System.currentTimeMillis();
-		if ((now - record.timeStamp) > 10_000) {
+		if ((now - record.timeStamp) > 20_000) {
 			// cisco default is 14400s, here it has to be much smaller,
 			// because when someone change his IP address a his neighbour begins to send packets to him, he should ask again
 			// with ARP req
