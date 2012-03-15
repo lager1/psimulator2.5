@@ -32,7 +32,7 @@ public class Cable implements SmartRunnable, Loggable {
 	private SimulatorSwitchport firstCon;
 	private SimulatorSwitchport secondCon;
 
-	WorkerThread worker = new WorkerThread(this);
+	protected final WorkerThread worker;
 
 	/**
 	 * Delay in milliseconds
@@ -47,6 +47,7 @@ public class Cable implements SmartRunnable, Loggable {
 	public Cable(int id, long delay) {
 		this.configID = id;
 		this.delay = delay;
+		this.worker = new WorkerThread(this);
 	}
 
 	/*

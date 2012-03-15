@@ -36,7 +36,7 @@ public class PhysicMod implements SmartRunnable {
 	/**
 	 * Working thread.
 	 */
-	private WorkerThread worker = new WorkerThread(this);
+	private WorkerThread worker;
 
 	/**
 	 * Odkaz na PC.
@@ -50,6 +50,7 @@ public class PhysicMod implements SmartRunnable {
 
 	public PhysicMod(Device device) {
 		this.device = device;
+		this.worker = new WorkerThread(this);
 	}
 
 
