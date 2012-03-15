@@ -81,9 +81,22 @@ public class TelnetProperties {
 		int port = lastPort;
 		lastPort += 1;
 
+		int maxTestedPort = 10;
+		int testedPort = 0;
+
+		while (!utils.Util.availablePort(port)) {
+			port++;
+			lastPort++;
+			testedPort++;
+			if (testedPort > maxTestedPort) {
+				Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot start telnet server for device "+name+" . I have tried 10 port, but none one is available");
+				return;
+			}
+		}
+
 		device.setTelnetPort(port);
 
-		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort()+" ("+device.getName()+")");
+		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
 
 		listenerNames.add(name);
 

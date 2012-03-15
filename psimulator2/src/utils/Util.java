@@ -3,8 +3,11 @@
  */
 package utils;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,12 +19,48 @@ public class Util {
 
 	public static final int deviceNameAlign = 8;
 
-	/**
-	 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
-	 *
-	 * @param e
-	 * @return
-	 */
+	public static boolean availablePort(int port) {
+		if (port < 1 || port > 65535) {
+			throw new IllegalArgumentException("Invalid start port: " + port);
+		}
+
+		ServerSocket ss = null;
+		DatagramSocket ds = null;
+		try {
+			ss = new ServerSocket(port);
+			ss.setReuseAddress(true);
+			ds = new DatagramSocket(port);
+			ds.setReuseAddress(true);
+			return true;
+		} catch (IOException e) {
+		} finally {
+			if (ds != null) {
+				ds.close();
+			}
+
+			if (ss != null) {
+				try {
+					ss.close();
+				} catch (IOException e) {
+					/*
+					 * should not be thrown
+					 */
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+		/**
+		 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
+		 *
+		 * @param e
+		 * @return
+		 */
+	
+
 	public static String stackToString(Exception e) {
 		try {
 			StringWriter sw = new StringWriter();
@@ -93,16 +132,17 @@ public class Util {
 	}
 
 	public static boolean jeInteger(String ret) {
-        try {
-            int a = Integer.parseInt(ret);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
+		try {
+			int a = Integer.parseInt(ret);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Uspi aktualni vlakno na pocet ms.
+	 *
 	 * @param ms
 	 */
 	public static void sleep(int ms) {
@@ -131,18 +171,21 @@ public class Util {
 	}
 
 	/**
-     * Zjistuje, zda dany retezec zacina cislem.
-     * Nesmi byt static, jinak to hazi java.lang.IncompatibleClassChangeError: Expecting non-static method
-     * @param s
-     * @return
-     */
-    public static boolean zacinaCislem(String s) {
-        if (s.length() == 0) return false;
+	 * Zjistuje, zda dany retezec zacina cislem. Nesmi byt static, jinak to hazi java.lang.IncompatibleClassChangeError:
+	 * Expecting non-static method
+	 *
+	 * @param s
+	 * @return
+	 */
+	public static boolean zacinaCislem(String s) {
+		if (s.length() == 0) {
+			return false;
+		}
 
-        if (Character.isDigit(s.charAt(0))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+		if (Character.isDigit(s.charAt(0))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

@@ -47,6 +47,7 @@ public class CommandShell extends TerminalApplication {
 	public CommandShell(BasicTerminalIO terminalIO, Device device) {
 		super(terminalIO, device);
 		this.thread = Thread.currentThread();
+		this.thread.setName("CommandShell/Parser thread");
 	}
 
 	/**
