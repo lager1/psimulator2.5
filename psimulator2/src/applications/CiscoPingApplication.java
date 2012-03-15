@@ -12,7 +12,6 @@ import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
 
 /**
  *
@@ -29,8 +28,11 @@ public class CiscoPingApplication extends PingApplication {
 		this.parser = parser;
 		this.shell = parser.getShell();
 		this.count = 5;
-		this.timeout = 1_000; // default is 2_000
-		this.waitTime = 50;
+		this.timeout = 2_000;
+		if (Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER)) {
+			this.timeout = 1_000;
+		}
+		this.waitTime = 50; // cisco sends it right away
 	}
 
 	@Override

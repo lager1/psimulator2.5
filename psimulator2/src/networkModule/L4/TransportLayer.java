@@ -46,7 +46,7 @@ public class TransportLayer implements Loggable {
 	}
 
 	/**
-	 * This method should be called from L4.
+	 * This method should be called from L3.
 	 * @param packet
 	 */
 	public void receivePacket(IpPacket packet) {

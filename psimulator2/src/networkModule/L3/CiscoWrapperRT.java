@@ -2,7 +2,7 @@
  * created 13.3.2012
  */
 
-package commands.cisco;
+package networkModule.L3;
 
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -26,7 +26,7 @@ import utils.Util;
  *      2. vypocitane routy z tabulky c. 1 (trida RoutovaciTabulka)
  * @author Stanislav Řehák <rehaksta@fit.cvut.cz>
  */
-public class WrapperOfRoutingTable implements Loggable {
+public class CiscoWrapperRT implements Loggable {
 
 	/**
      * Jednotlive radky wrapperu.
@@ -45,7 +45,7 @@ public class WrapperOfRoutingTable implements Loggable {
     int citac = 0;
     private boolean debug = false;
 
-    public WrapperOfRoutingTable(Device device, IPLayer ipLayer) {
+    public CiscoWrapperRT(Device device, IPLayer ipLayer) {
         radky = new ArrayList<>();
 		this.ipLayer = ipLayer;
         this.routingTable = ipLayer.routingTable;
@@ -167,7 +167,7 @@ public class WrapperOfRoutingTable implements Loggable {
 
         // pridam routy na nahozena rozhrani
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
-            if (iface.isUp && iface.getIpAddress() != null) {
+            if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress(), iface, true);
             }
@@ -448,7 +448,7 @@ public class WrapperOfRoutingTable implements Loggable {
                     + "       o - ODR, P - periodic downloaded static route\n\n";
         }
 
-//        WrapperOfRoutingTable wrapper = ((CiscoPocitac) pc).getWrapper();
+//        CiscoWrapperRT wrapper = ((CiscoPocitac) pc).getWrapper();
         boolean defaultGW = false;
         String brana = null;
         for (int i = 0; i < size(); i++) {
@@ -473,7 +473,7 @@ public class WrapperOfRoutingTable implements Loggable {
         }
 
         // vytvarim novy wrapperu kvuli zabudovanemu razeni
-        WrapperOfRoutingTable wrapper_pro_razeni = new WrapperOfRoutingTable(device, ipLayer);
+        CiscoWrapperRT wrapper_pro_razeni = new CiscoWrapperRT(device, ipLayer);
         for (int i = 0; i < routingTable.size(); i++) {
             wrapper_pro_razeni.pridejRTZaznamJenProVypis(routingTable.getRecord(i));
         }

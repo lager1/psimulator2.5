@@ -56,7 +56,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * When some ARP reply arrives this is set to true so doMyWork() can process storeBuffer. After processing
 	 * storeBuffer it is set to false.
 	 */
-	private transient boolean newArpReply = false;
+	protected transient boolean newArpReply = false;
 	private final Map<String, NetworkInterface> networkIfaces = new HashMap<>();
 	/**
 	 * Waiting time [ms] for ARP requests.
@@ -66,11 +66,6 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * Default TTL values.
 	 */
 	public int ttl = 255;
-	/**
-	 * Packet forwarding flag. <br />
-	 * TODO: port_forward ulozit do filesystemu a nacitat od tam tud
-	 */
-	protected boolean ip_forward = true;
 	/**
 	 * Constructor of IP layer.
 	 * Empty routing table is also created.
@@ -142,35 +137,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * @param packet
 	 * @param iface incomming EthernetInterface
 	 */
-	private void handleReceiveArpPacket(ArpPacket packet, EthernetInterface iface) {
-
-		// tady se bude resit update cache + reakce
-		switch (packet.operation) {
-			case ARP_REQUEST:
-				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP request", packet);
-
-				// ulozit si odesilatele
-				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
-				// jsem ja target? Ano -> poslat ARP reply
-				if (isItMyIpAddress(packet.targetIpAddress)) { //poslat ARP reply
-					ArpPacket arpPacket = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, packet.targetIpAddress, iface.getMac());
-					Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Reaguji na ARP request a posilam REPLY na "+packet.senderIpAddress, arpPacket);
-					netMod.ethernetLayer.sendPacket(arpPacket, iface, packet.senderMacAddress);
-				} else {
-					Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Prisel mi ARP request, ale nejsem cilem, takze nic nedelam. Cilem je: "+packet.targetIpAddress, packet);
-				}
-				break;
-
-			case ARP_REPLY:
-				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP reply - ukladam ji tez do cache.", packet);
-				// ulozit si target
-				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me (protoze odpoved se posila jen odesilateli a ne na broadcast), takze si ji muzu ulozit a je to ok
-				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
-				newArpReply = true;
-				worker.wake();
-				break;
-		}
-	}
+	protected abstract void handleReceiveArpPacket(ArpPacket packet, EthernetInterface iface);
 
 	/**
 	 * Process storeBuffer which is for packets without known MAC nextHop.
@@ -218,47 +185,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * @param packet
 	 * @param iface incomming EthernetInterface, can be null
 	 */
-	private void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
-		// odnatovat
-		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
-		packet = packetFilter.preRouting(packet, ifaceIn);
-
-		// je pro me?
-		if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ktery je pro me.", packet);
-			netMod.transportLayer.receivePacket(packet);
-			return;
-		}
-
-		if (!ip_forward) {
-			// Jestli se nepletu, tak paket proste zahodi. Chce to ale jeste overit.
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze neni nastaven ip_forward.", packet);
-			return;
-		}
-
-		// osetri TTL
-		if (packet.ttl == 1) {
-			// posli TTL expired a zaloguj zahozeni paketu
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
-			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
-			return;
-		}
-
-		// zaroutuj
-		Record record = routingTable.findRoute(packet.dst);
-		if (record == null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
-			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet);
-			return;
-		}
-
-		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
-		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
-		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
-
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prisel IP paket z rozhrani: "+ifaceIn.name, packet);
-		processPacket(p, record, ifaceIn);
-	}
+	protected abstract void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface);
 
 	/**
 	 * Vezme packet, pusti se na nej postRouting, zjisti MAC cile a preda ethernetovy vrstve.
@@ -425,7 +352,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * @param inc
 	 * @return
 	 */
-	private NetworkInterface findIncommingNetworkIface(EthernetInterface inc) {
+	protected NetworkInterface findIncommingNetworkIface(EthernetInterface inc) {
 		if (inc == null) {
 			return null;
 		}
@@ -557,10 +484,6 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			this.packet = packet;
 			this.nextHop = nextHop;
 			this.out = out;
-			this.timeStamp = System.currentTimeMillis();
-		}
-
-		public void touch() {
 			this.timeStamp = System.currentTimeMillis();
 		}
 	}
