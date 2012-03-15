@@ -59,7 +59,7 @@ public class Util {
 		 * @param e
 		 * @return
 		 */
-	
+
 
 	public static String stackToString(Exception e) {
 		try {
@@ -187,5 +187,9 @@ public class Util {
 		} else {
 			return false;
 		}
+	}
+
+	public static String threadName() {
+		return Thread.currentThread().getName();
 	}
 }

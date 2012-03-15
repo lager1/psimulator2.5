@@ -46,7 +46,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	 * Key - seq <br />
 	 * Value - timestamp in ms
 	 */
-	protected Map<Integer, Long> timestamps = new HashMap<>();
+	protected Map<Integer, Double> timestamps = new HashMap<>();
 
 	protected boolean [] sent;
 	protected boolean [] recieved;
@@ -61,7 +61,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	@Override
 	public void wake() {
-		if (!die) {
+		if (isRunning()) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Byl jsem probuzen budikem a jdu zavolat svuj worker.", null);
 			zavolanoBudikem = true;
 			worker.wake();
@@ -82,7 +82,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	@Override
 	public void doMyWork() {
 
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda doMyWork.", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda doMyWork vlaknem "+Util.threadName(), null);
 
 		IcmpPacket packet;
 
@@ -97,7 +97,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 			// parovani k odeslanymu paketu, reseni duplikaci:
 			packet = (IcmpPacket) p.data;
-			Long sendTime = timestamps.get(packet.seq);
+			Double sendTime = timestamps.get(packet.seq);
 			timestamps.remove(packet.seq); // odstranim uz ulozeny
 			// TODO: resit nejak lip duplikace paketu, zatim se to loguje:
 			if (sendTime == null) {
@@ -106,7 +106,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 				continue;
 			}
 
-			long delay = System.currentTimeMillis() - sendTime;
+			double delay = ((double)System.nanoTime())/1_000_000 - sendTime;
 
 			// vsechno v poradku, paket se zpracuje:
 			if (delay <= timeout) { // ok, paket dorazil vcas
@@ -135,7 +135,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 		if(zavolanoBudikem){
 			exit();
 		}
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork.", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork vlaknem "+Util.threadName(), null);
 
 	}
 
@@ -148,12 +148,12 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	 */
 	@Override
 	public void run() {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run.", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
 		int i = 0;
-		while (i < count && !die) {	// jakmile bylo die nastaveno na true, tak uz se nic dalsiho neodesle
+		while (i < count && isRunning()) {	// jakmile bylo die nastaveno na true, tak uz se nic dalsiho neodesle
 			int seq = i + 1;
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
-			timestamps.put(seq, System.currentTimeMillis());
+			timestamps.put(seq, (double)System.nanoTime()/1_000_000);
 			sent[i] = true;
 			transportLayer.icmphandler.sendRequest(target, ttl, seq, port);
 			stats.odeslane++;
@@ -165,7 +165,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			}
 			i++;
 		}
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Konci metoda run.", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Konci metoda run. Opustena vlaknem "+Util.threadName(), null);
 	}
 
 // abstraktni metody, ktery je potreba doimplementovat v konkretnich pingach: ----------------------------------------
@@ -181,7 +181,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	 * @param packet
 	 * @param delay delay in miliseconds
 	 */
-	protected abstract void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay);
+	protected abstract void handleIncommingPacket(IpPacket p, IcmpPacket packet, double delay);
 
 	/**
 	 * Slouzi na hlasku o tom kolik ceho a kam posilam..
@@ -198,7 +198,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	@Override
 	protected synchronized void atExit() {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Zavolana metoda atExit. ", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Zavolana metoda atExit vlaknem "+Thread.currentThread().getName(), null);
 		stats.countStats();
 		printStats();
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Ukoncena metoda atExit. ", null);
@@ -280,7 +280,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 		/**
 		 * Seznam odezev vsech prijatych icmp_reply.
 		 */
-		protected List<Long> odezvy = new ArrayList<>();
+		protected List<Double> odezvy = new ArrayList<>();
 		/**
 		 * Ztrata v procentech.
 		 */

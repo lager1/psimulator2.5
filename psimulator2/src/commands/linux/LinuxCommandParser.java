@@ -16,6 +16,7 @@ import java.util.Map;
 import logging.*;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
+import utils.Util;
 
 /**
  *
@@ -48,7 +49,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public void catchSignal(Signal sig) {
 		if(sig==Signal.CTRL_C){
-			Logger.log(this,Logger.DEBUG,LoggingCategory.LINUX_COMMANDS,"Dostal jsem signal ctrl+C",null);
+			Logger.log(this,Logger.DEBUG,LoggingCategory.LINUX_COMMANDS,"Dostal jsem signal ctrl+C, vykonava me vlakno "+Util.threadName(),null);
 			shell.printLine("^C");
 			if(runningCommand != null){
 				runningCommand.catchSignal(sig);

@@ -50,7 +50,7 @@ public class CiscoPingApplication extends PingApplication {
 	}
 
 	@Override
-	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay) {
+	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, double delay) {
 
 
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);

@@ -19,31 +19,22 @@ public abstract class TwoThreadApplication extends Application implements Runnab
 	/**
 	 * Jestli se ma bezet nebo uz skoncit. Potomci si ho sami musi volat!
 	 */
-	protected boolean die = false;
 
 	public TwoThreadApplication(String name, Device device) {
 		super(name, device);
-		myThread = new Thread(this);
+		myThread = new Thread(this, device.getName()+": pingApp_vlakno_na_popredi");
 	}
 
 	/**
 	 * Prepisuju metodu zdedenou po aplikaci, aby se v ni spustilo to moje vlakno.
 	 */
 	@Override
-	public void start() {
+	public synchronized void start() {
 		super.start();
 		myThread.start();
 	}
 
-	@Override
-	public void exit() {
-		die = true;
-		super.exit();
-	}
-
-	@Override
-	public void kill() {
-		die = true;
-		super.kill();
+	public String getMyThreadName(){
+		return myThread.getName();
 	}
 }

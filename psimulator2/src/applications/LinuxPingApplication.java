@@ -47,10 +47,9 @@ public class LinuxPingApplication extends PingApplication {
 		}
 	}
 
-
-
-
-
+	/**
+	 * Vypisuje konecny statistiky.
+	 */
 	@Override
 	public void printStats() {
 		//ping.printLine("Tady se budou vypisovat statistiky pingu.");
@@ -77,13 +76,19 @@ public class LinuxPingApplication extends PingApplication {
 
 
 
+	/**
+	 * Print incoming packet. Velikost paketu se pouze vypisuje, jinak se posila furt stejna.
+	 * @param p
+	 * @param packet
+	 * @param delay
+	 */
 	@Override
-	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, long delay) {
+	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, double delay) {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi paket, jdu ho vypsat.", null);
 
 		switch (packet.type) {
 			case REPLY:
-				ping.printLine("XX bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+" time="+delay+" ms");
+				ping.printLine(size+8+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+" time="+Util.zaokrouhli(delay)+" ms");
 				break;
 			case TIME_EXCEEDED:
 				// TODO: Time To Live Exceeded

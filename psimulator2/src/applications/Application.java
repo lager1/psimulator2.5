@@ -64,9 +64,13 @@ public abstract class Application implements SmartRunnable, Loggable {
 	 * @param packet
 	 */
 	public void receivePacket(IpPacket packet) {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+" prisel paket", packet);
+		if(running){
+		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+"Prisel paket", packet);
 		buffer.add(packet);
 		worker.wake();
+		} else {
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName()+"Prisel paket, ackoliv aplikace jiz ", packet);
+		}
 	}
 
 
@@ -164,6 +168,10 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 	public int getPID() {
 		return PID;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 }

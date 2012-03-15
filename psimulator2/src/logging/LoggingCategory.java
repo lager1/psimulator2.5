@@ -94,6 +94,11 @@ public enum LoggingCategory {
 	 */
 	WRAPPER_CISCO,
 
+	/**
+	 * Predevsim zpravy z WorkerThread, ale pripadne i ladeni jinejch vlaken
+	 */
+	THREADS,
+
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 
 }

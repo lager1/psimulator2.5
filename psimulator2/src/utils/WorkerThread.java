@@ -9,12 +9,17 @@ import logging.LoggingCategory;
 
 /**
  * Thread implements wake and run functions. It sleeps itselfs.
- * @author neiss
+ * @author Tomas Pitrinec
+ * @author Stanislav Rehak
  */
 public final class WorkerThread implements Runnable, Loggable {
 
     private Thread myThread;
-    private volatile boolean isRunning = false;
+
+	/**
+	 * Ma-li vlakno spat v metode sleep. Na zacatku spi. Po umreni vlakna nespi, to uz je mrtvy.
+	 */
+    private volatile boolean isSleeping = true;
 	private SmartRunnable smartRunnable;
 
 	/**
@@ -34,8 +39,14 @@ public final class WorkerThread implements Runnable, Loggable {
 	 */
 	public synchronized void wake() {
 
-		if (!isRunning) {	//kdyz nebezi tak se zapne
-			isRunning = true;
+		// bylo-li uz narizeno umrit, nic se nedela
+		if (dieCalled) {
+			return;
+		}
+
+		// kdyz nebylo narizeno umrit, zkusi se to spustit:
+		if (isSleeping) {	//kdyz nebezi tak se zapne
+			isSleeping = false;
 			this.notifyAll();
 
 		} else if (smartRunnable.getClass() == Alarm.class) {	// specialni fce JEN PRO BUDIK !!!
@@ -49,9 +60,20 @@ public final class WorkerThread implements Runnable, Loggable {
 	/**
 	 * Wakes thread and dies.
 	 */
-	public void die() {
-		this.dieCalled = true;
-		wake();
+	public synchronized void die() {
+
+		if (!dieCalled) {	// kdyz uz ho nekdo neusmrtil
+			this.dieCalled = true;
+
+			if (isSleeping) {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.THREADS, "Vlaknem " + Thread.currentThread().getName() + " na me byla poprve zavolana metoda die a ja jdu notifikovat.", null);
+				isSleeping = false;
+				this.notifyAll();
+			} else {
+				Logger.log(this, Logger.DEBUG, LoggingCategory.THREADS, "Vlaknem " + Thread.currentThread().getName()
+						+ " na me byla poprve zavolana metoda die, ale vlakno bezi, takze neni potreba notifikovat.", null);
+			}
+		}
 	}
 
 	/**
@@ -61,31 +83,32 @@ public final class WorkerThread implements Runnable, Loggable {
 	public void run() {
 		while (!dieCalled) {	// ma-li se umrit kdyz zrovna nebezi doMyWork, umre se okamzite
 			smartRunnable.doMyWork();
-			if (dieCalled) {	// ma-li se umrit po metode doMyWork taky se hned umre
-				return;
+			if (! dieCalled) {	// ma-li se umrit po metode doMyWork nespousti se sleep, tzn. jde se na zacatek a skonci se
+				sleep();
 			}
-			sleep();
+
 		}
+		Logger.log(this, Logger.DEBUG, LoggingCategory.THREADS, "Moje vlakno se definitivne konci.", null);
 	}
 
 	/**
 	 * Synchronizovana metoda na spani. Pred 13.3. byla v synchronizovanym bloku v ramci metody run, ted jsem ji pro prehlednost vyclenil sem.
 	 */
 	private synchronized void sleep() {
-		isRunning = false;
-		while (!isRunning) {
+		isSleeping = true;
+		while (isSleeping) {
 			//tenhlecten cyklus je tady proti nejakejm falesnejm buzenim.
 			try {
 				wait();
 			} catch (InterruptedException ex) {
-				Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC, "InterruptedException in the sleep! Is it normal on not?", ex);
+				Logger.log(this, Logger.ERROR, LoggingCategory.THREADS, "InterruptedException in the sleep! Is it normal on not?", ex);
 			}
 		}
 	}
 
 	@Override
 	public String getDescription() {
-		return "WorkerThread";
+		return "WorkerThread ("+getThreadName()+")";
 	}
 
 	public String getThreadName(){
