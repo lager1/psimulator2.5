@@ -30,7 +30,7 @@ public class NormalRead extends ActiveComponent {
 
 	@Override
 	public void run() throws Exception {
-
+		this.stop = false;
 		while (!stop) {
 
 			int inputValue = 0;

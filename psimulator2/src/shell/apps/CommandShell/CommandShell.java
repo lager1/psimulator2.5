@@ -9,7 +9,6 @@ import device.Device;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.regex.Pattern;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -17,8 +16,6 @@ import shell.ShellUtils;
 
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
-import telnetd.io.TerminalIO;
-import telnetd.io.toolkit.Editfield;
 
 /**
  *
@@ -66,8 +63,6 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void setShellMode(ShellMode shellMode) {
 		this.shellMode = shellMode;
-		this.thread.interrupt();  // wake up possibly IO waiting thread
-
 	}
 
 	public void setPrompt(String prompt) {
@@ -285,10 +280,6 @@ public class CommandShell extends TerminalApplication {
 						break;
 
 				}
-
-
-
-				terminalIO.flush();
 
 			} catch (Exception ex) {
 
