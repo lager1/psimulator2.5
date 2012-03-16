@@ -31,13 +31,13 @@
  ***/
 package telnetd.io.toolkit;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import telnetd.io.BasicTerminalIO;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
+import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.io.TerminalIO;
 
@@ -155,12 +155,12 @@ public class Editarea
                 line.setCursorPosition(0);
                 m_IO.moveLeft(line.size());
             } catch (BufferOverflowException ex) {
-                Logger.getLogger(Editarea.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.log(Logger.WARNING, LoggingCategory.TELNET, "BufferOverFlow when setting value to EditArea component");
             } // think of a buffer filling strategy
             catch (IndexOutOfBoundsException ex) {
-                Logger.getLogger(Editarea.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IndexOutOfBoundsException when setting value to EditArea component");
             } catch (IOException ex) {
-                Logger.getLogger(Editarea.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException when setting value to EditArea component");
             }
 
 

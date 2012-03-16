@@ -23,8 +23,8 @@
 package telnetd.io.terminal;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+import logging.LoggingCategory;
 import telnetd.io.TelnetIO;
 import telnetd.io.TerminalIO;
 
@@ -91,7 +91,7 @@ public abstract class BasicTerminal implements Terminal {
 							try {
 								in = telnetIO.read();
 							} catch (IOException ex) {
-								Logger.getLogger(BasicTerminal.class.getName()).log(Level.SEVERE, null, ex);
+								Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException when reading possible DELETE key");
 							}
 							if (in == 126) {
 								return TerminalIO.DELETE;

@@ -32,19 +32,16 @@
 
 package telnetd.io;
 
-import telnetd.net.Connection;
-import telnetd.net.ConnectionData;
-import telnetd.net.ConnectionEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+import logging.LoggingCategory;
+import telnetd.net.Connection;
+import telnetd.net.ConnectionData;
+import telnetd.net.ConnectionEvent;
 
 /**
  * Class that represents the TelnetIO implementation. It contains
@@ -75,7 +72,7 @@ import java.util.logging.Logger;
  */
 public class TelnetIO {
 
-  private static Log log = LogFactory.getLog(TelnetIO.class);
+  
 
   private Connection m_Connection;			//a reference to the connection this instance works for
   private ConnectionData m_ConnectionData;	//holds all important information of the connection
@@ -236,7 +233,8 @@ public class TelnetIO {
 
       m_Out.close();
     } catch (IOException ex) {
-      log.error("closeOutput()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when closing output");
+      
       //handle?
     }
   }//close
@@ -406,10 +404,11 @@ public class TelnetIO {
       //start out, some clients just wait
       if (m_ConnectionData.isLineMode()) {
         m_IACHandler.doLineModeInit();
-        log.debug("Line mode initialized.");
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Line mode initialized.");
+        
       } else {
         m_IACHandler.doCharacterModeInit();
-        log.debug("Character mode initialized.");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Character mode initialized.");
       }
       //open for a defined timeout so we read incoming negotiation
       m_ConnectionData.getSocket().setSoTimeout(1000);
@@ -423,7 +422,7 @@ public class TelnetIO {
       try {
         m_ConnectionData.getSocket().setSoTimeout(0);
       } catch (Exception ex) {
-        log.error("initTelnetCommunication()",ex);
+		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "initTelnetCommunication failed");
       }
     }
     m_Initializing = false;
@@ -440,7 +439,7 @@ public class TelnetIO {
       write("[" + m_LocalAddress.toString() + ":Yes]");
       flush();
     } catch (Exception ex) {
-      log.error("IamHere()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "I am here method exception");
     }
   }//IamHere
 
@@ -764,7 +763,8 @@ public class TelnetIO {
       // specs. hmmm?
       rawread(); //that should be the is :)
       tmpstr = readIACSETerminatedString(40);
-      log.debug("Reported terminal name " + tmpstr);
+	  	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Reported terminal name " + tmpstr);
+      
       m_ConnectionData.setNegotiatedTerminalType(tmpstr);
     }//handleTTYPE
 
@@ -796,7 +796,8 @@ public class TelnetIO {
       if (WAIT_LM_MODE_ACK) {
         int mask = rawread();
         if (mask != (LM_EDIT | LM_TRAPSIG | LM_MODEACK)) {
-          log.debug("Client violates linemodeack sent: " + mask);
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Client violates linemodeack sent: " + mask);
+          
         }
         WAIT_LM_MODE_ACK = false;
       }
@@ -859,7 +860,8 @@ public class TelnetIO {
     }//handleLMForward
 
     public void handleNEWENV() throws IOException {
-      log.debug("handleNEWENV()");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "handleNEWENV()");
+      
       int c = rawread();
       switch (c) {
         case IS:
@@ -883,7 +885,8 @@ public class TelnetIO {
       undefined.
      */
     private int readNEVariableName(StringBuffer sbuf) throws IOException {
-      log.debug("readNEVariableName()");
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariableName()");
+      
       int i = -1;
       do {
         i = rawread();
@@ -934,7 +937,8 @@ public class TelnetIO {
       it must be sent as IAC IAC.
     */
     private int readNEVariableValue(StringBuffer sbuf) throws IOException {
-      log.debug("readNEVariableValue()");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariableValue()");
+      
       //check conditions for first character after VALUE
       int i = rawread();
       if (i == -1) {
@@ -1003,13 +1007,15 @@ public class TelnetIO {
 
 
     public void readNEVariables() throws IOException {
-      log.debug("readNEVariables()");
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()");
+      
       StringBuffer sbuf = new StringBuffer(50);
       int i = rawread();
       if (i == IAC) {
         //invalid or empty response
         skipToSE();
-        log.debug("readNEVariables()::INVALID VARIABLE");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::INVALID VARIABLE");
+        
         return;
       }
       boolean cont = true;
@@ -1017,35 +1023,43 @@ public class TelnetIO {
         do {
           switch (readNEVariableName(sbuf)) {
             case NE_IN_ERROR:
-              log.debug("readNEVariables()::NE_IN_ERROR");
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_IN_ERROR");
+              
               return;
             case NE_IN_END:
-              log.debug("readNEVariables()::NE_IN_END");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_IN_END");
+              
               return;
             case NE_VAR_DEFINED:
-              log.debug("readNEVariables()::NE_VAR_DEFINED");
+					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_VAR_DEFINED");
+              
               String str = sbuf.toString();
               sbuf.delete(0, sbuf.length());
               switch (readNEVariableValue(sbuf)) {
                 case NE_IN_ERROR:
-                  log.debug("readNEVariables()::NE_IN_ERROR");
+							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_IN_ERROR");
+                  
                   return;
                 case NE_IN_END:
-                  log.debug("readNEVariables()::NE_IN_END");
+								Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_IN_END");
+                  
                   return;
                 case NE_VAR_DEFINED_EMPTY:
-                  log.debug("readNEVariables()::NE_VAR_DEFINED_EMPTY");
+								Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_VAR_DEFINED_EMPTY");
+                  
                   break;
                 case NE_VAR_OK:
                   //add variable
-                  log.debug("readNEVariables()::NE_VAR_OK:VAR=" + str + " VAL=" + sbuf.toString());
+								Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_VAR_OK:VAR=" + str + " VAL=" + sbuf.toString());
+                  
                   TelnetIO.this.m_ConnectionData.getEnvironment().put(str, sbuf.toString());
                   sbuf.delete(0, sbuf.length());
                   break;
               }
               break;
             case NE_VAR_UNDEFINED:
-              log.debug("readNEVariables()::NE_VAR_UNDEFINED");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "readNEVariables()::NE_VAR_UNDEFINED");
+              
               break;
           }
         } while (cont);
@@ -1053,14 +1067,16 @@ public class TelnetIO {
     }//readVariables
 
     public void handleNEIs() throws IOException {
-      log.debug("handleNEIs()");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "handleNEIs()");
+      
       if (isEnabled(NEWENV)) {
         readNEVariables();
       }
     }//handleNEIs
 
     public void handleNEInfo() throws IOException {
-      log.debug("handleNEInfo()");
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "handleNEInfo()");
+      
       if (isEnabled(NEWENV)) {
         readNEVariables();
       }

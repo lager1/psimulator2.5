@@ -23,12 +23,12 @@
  */
 package telnetd.io.toolkit;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import telnetd.io.BasicTerminalIO;
 
 import java.io.IOException;
+import logging.Logger;
+import logging.LoggingCategory;
 import shell.ShellUtils;
+import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 
 /**
@@ -323,7 +323,7 @@ class Editline {
 					try {
 						this.append("   ");
 					} catch (BufferOverflowException ex) {
-						Logger.getLogger(Editline.class.getName()).log(Level.SEVERE, null, ex);
+						Logger.log(Logger.WARNING, LoggingCategory.TELNET, "BufferOverflowException occured when running EditLine component");
 					}
 
 				}

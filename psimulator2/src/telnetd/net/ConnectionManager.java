@@ -33,14 +33,15 @@
 package telnetd.net;
 
 import telnetd.BootException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.io.IOException;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.util.*;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Class that takes care for active and queued connection.
@@ -54,7 +55,7 @@ import java.util.*;
 public class ConnectionManager
     implements Runnable {
 
-  private static Log log = LogFactory.getLog(ConnectionManager.class);
+  
 
   private Thread m_Thread;
   private ThreadGroup m_ThreadGroup;	//ThreadGroup all connections run in
@@ -159,13 +160,15 @@ public class ConnectionManager
    * Stops this <tt>ConnectionManager</tt>.
    */
   public void stop() {
-    log.debug("stop()::" +  this.toString());
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()::" +  this.toString() );
+    
     m_Stopping = true;
     //wait for thread to die
     try {
       m_Thread.join();
     } catch (InterruptedException iex) {
-      log.error("stop()", iex);
+		Logger.log(Logger.ERROR, LoggingCategory.TELNET, "stop()" + iex );
+      
     }
     synchronized(m_OpenConnections) {
       for (Iterator iter = m_OpenConnections.iterator(); iter.hasNext();) {
@@ -174,12 +177,15 @@ public class ConnectionManager
           //maybe write a disgrace to the socket?
           tc.close();
         } catch (Exception exc) {
-          log.error("stop()", exc);
+			
+			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "stop()" + exc);
+          
         }
       }
       m_OpenConnections.clear();
     }
-    log.debug("stop():: Stopped " + this.toString());
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop():: Stopped " + this.toString() );
+    
   }//stop
 
   /**
@@ -189,7 +195,8 @@ public class ConnectionManager
    * @param insock Socket thats representing the incoming connection.
    */
   public void makeConnection(Socket insock) {
-    log.debug("makeConnection()::" + insock.toString());
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "makeConnection()::" + insock.toString());
+    
     if (m_Filter == null ||
         (m_Filter != null && m_Filter.isAllowed(insock.getInetAddress()))) {
       //we create the connection data object at this point to
@@ -202,7 +209,8 @@ public class ConnectionManager
         Connection con = new Connection(m_ThreadGroup, newCD);
         //log the newly created connection
         Object[] args = {new Integer(m_OpenConnections.size() + 1)};
-        log.info(MessageFormat.format("connection #{0,number,integer} made.", args));
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, MessageFormat.format("connection #{0,number,integer} made.", args));
+        
         //register it for being managed
         synchronized(m_OpenConnections) {
           m_OpenConnections.add(con);
@@ -211,7 +219,8 @@ public class ConnectionManager
         con.start();
       }
     } else {
-      log.info("makeConnection():: Active Filter blocked incoming connection.");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "makeConnection():: Active Filter blocked incoming connection.");
+      
       try {
         insock.close();
       } catch (IOException ex) {
@@ -244,9 +253,11 @@ public class ConnectionManager
       } while (!m_Stopping);
 
     } catch (Exception e) {
-      log.error("run()", e);
+		Logger.log(Logger.ERROR, LoggingCategory.TELNET, "run()" + e);
+      
     }
-    log.debug("run():: Ran out " + this.toString());
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "run():: Ran out " + this.toString() );
+    
   }//run
 
   /*
@@ -269,7 +280,8 @@ public class ConnectionManager
     //cleanup loop
     while (!m_ClosedConnections.isEmpty()) {
       Connection nextOne = (Connection) m_ClosedConnections.pop();
-      log.info("cleanupClosed():: Removing closed connection " + nextOne.toString());
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "cleanupClosed():: Removing closed connection " + nextOne.toString());
+      
       synchronized(m_OpenConnections) {
         m_OpenConnections.remove(nextOne);
       }
@@ -298,14 +310,16 @@ public class ConnectionManager
           //..and for disconnect
           if (inactivity > (m_DisconnectTimeout + m_WarningTimeout)) {
             //this connection needs to be disconnected :)
-            log.debug("checkOpenConnections():" + conn.toString() + " exceeded total timeout.");
+			  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "checkOpenConnections():" + conn.toString() + " exceeded total timeout.");
+            
             //fire logoff event for shell site cleanup , beware could hog the daemon thread
             conn.processConnectionEvent(new ConnectionEvent(conn, ConnectionEvent.CONNECTION_TIMEDOUT));
             //conn.close();
           } else {
             //this connection needs to be warned :)
             if (!cd.isWarned()) {
-              log.debug("checkOpenConnections():" + conn.toString() + " exceeded warning timeout.");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET,"checkOpenConnections():" + conn.toString() + " exceeded warning timeout." );
+              
               cd.setWarned(true);
               //warning event is fired but beware this could hog the daemon thread!!
               conn.processConnectionEvent(new ConnectionEvent(conn, ConnectionEvent.CONNECTION_IDLE));
@@ -336,7 +350,7 @@ public class ConnectionManager
       return;
     }
     if (!m_ClosedConnections.contains(con)) {
-      log.debug("registerClosedConnection()::" + con.toString());
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "registerClosedConnection()::" + con.toString());
       m_ClosedConnections.push(con);
     }
   }//unregister
@@ -366,12 +380,14 @@ public class ConnectionManager
       }
       loginshell = settings.getProperty(name + ".loginshell");
       if (loginshell == null || loginshell.length() == 0) {
-        log.error("Login shell not specified.");
+		  Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Login shell not specified.");
+        
         throw new BootException("Login shell must be specified.");
       }
       String inputmode = settings.getProperty(name + ".inputmode");
       if (inputmode == null || inputmode.length() == 0) {
-        log.info("Input mode not specified using character input as default.");
+		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Input mode not specified using character input as default.");
+        
         linemode = false;
       } else if (inputmode.toLowerCase().equals("line")) {
         linemode = true;
@@ -382,7 +398,8 @@ public class ConnectionManager
       //cm.setPriority(Thread.NORM_PRIORITY + 2);
       return cm;
     } catch (Exception ex) {
-      log.error("createConnectionManager():", ex);
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "createConnectionManager():" + ex);
+      
       throw new BootException("Failure while creating ConnectionManger instance:\n" + ex.getMessage());
     }
   }//createManager
