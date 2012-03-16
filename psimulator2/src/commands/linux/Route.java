@@ -22,11 +22,8 @@ import utils.Util;
  *
  * @author Tomas Pitrinec
  */
-public class Route extends AbstractCommand {
-
-	boolean ladiciVypisovani = false; //pro debug
-
-	private final IPLayer ipLayer = getNetMod().ipLayer;	// zkratka
+public class Route extends LinuxCommand {
+	
 
     // pomocny promenny pro parser prikazu:
     private String slovo; //drzi si slovo ke zpracovani
@@ -636,13 +633,6 @@ public class Route extends AbstractCommand {
 
     }
 
-	/**
-	 * Zkratka volani pro pro route ze stary verze psimulatoru.
-	 * @return
-	 */
-	private String dalsiSlovo() {
-		return parser.nextWord();
-	}
 
 
 }

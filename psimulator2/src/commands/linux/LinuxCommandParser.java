@@ -29,11 +29,15 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	 */
 	private Map<String, Class> commands = new HashMap<>();
 
+
+
 	public LinuxCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
 		registerCommands();
 		shell.prompt=device.getName()+": ~# ";
 	}
+
+
 
 	/**
 	 * Metoda registrije spustitelny prikazy.
@@ -44,7 +48,15 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("route", Route.class);
 		commands.put("ping", Ping.class);
 		commands.put("cping", PingCommand.class);	// zatim si pridavam cisco ping
+		commands.put("ip", Ip.class);
+		commands.put("help", Help.class);
+		commands.put("man", Man.class);
+		commands.put("traceroute", Traceroute.class);
+		commands.put("iptables", Iptables.class);
 	}
+
+
+// verejny metody konkretniho parseru: --------------------------------------------------------------------------------
 
 	@Override
 	public void catchSignal(Signal sig) {
@@ -56,11 +68,6 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			}
 		}
 		// TODO: [nedulezite] jeste nejake dalsi signaly nez ctrl+C?
-	}
-
-	@Override
-	public String[] getCommands(int mode) {
-		return (String[]) commands.values().toArray();
 	}
 
 	/**
@@ -91,6 +98,23 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	}
 
+	/**
+	 * Vrati pouzivany prikazy, podle toho shell napovida.
+	 * @param mode
+	 * @return
+	 */
+	@Override
+	public String[] getCommands(int mode) {
+		return (String[]) commands.values().toArray();
+	}
+
+		@Override
+	public String getDescription() {
+		return device.getName()+": LinuxCommandParser";
+	}
+
+
+// privatni metody: ---------------------------------------------------------------------------------------------------
 
 	/**
 	 * Tahle metoda vrati instanci prikazu podle zadanyho jmena. Je to trochu hack, na druhou stranu se nemusi
@@ -126,11 +150,6 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	}
 
-	@Override
-	public String getDescription() {
-		return device.getName()+": LinuxCommandParser";
-	}
-
 
 	private void log(int logLevel, String message, Object obj){
 		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
@@ -139,7 +158,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 
 	/**
-	 * Tohle pravdepodobne prijde smazat.
+	 * TODO: Tohle pravdepodobne prijde smazat.
 	 * @param name
 	 * @return
 	 */

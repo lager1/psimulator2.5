@@ -44,7 +44,7 @@ public class CiscoPingApplication extends PingApplication {
 	protected void startMessage() {
 		String s = "";
         s += "\nType escape sequence to abort.\n"
-                + "Sending " + count + ", " + size + "-byte ICMP Echos to " + target + ", timeout is " + timeout / 1000 + " seconds:";
+                + "Sending " + count + ", " + payload + "-byte ICMP Echos to " + target + ", timeout is " + timeout / 1000 + " seconds:";
 
         shell.printWithDelay(s, 20);
 	}

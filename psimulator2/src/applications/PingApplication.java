@@ -29,7 +29,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 	protected IpAddress target;
 	protected int count = 0;
-	protected int size = 56; // default linux size (without header)
+	protected int payload = 56; // default linux size (without header)
 	protected int timeout = 10_000; // zrejme tedy v milisekundach
 	protected Stats stats = new Stats();
 	protected final ApplicationNotifiable command;
@@ -155,7 +155,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
 			timestamps.put(seq, (double)System.nanoTime()/1_000_000);
 			sent[i] = true;
-			transportLayer.icmphandler.sendRequest(target, ttl, seq, port, size);
+			transportLayer.icmphandler.sendRequest(target, ttl, seq, port, payload);
 			stats.odeslane++;
 
 			if (seq != count) {	// po poslednim odeslanym paketu uz se neceka
@@ -243,7 +243,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	}
 
 	public void setSize(int size) {
-		this.size = size;
+		this.payload = size;
 	}
 
 	public void setTarget(IpAddress target) {

@@ -5,7 +5,6 @@
 package commands.linux;
 
 import applications.LinuxPingApplication;
-import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
@@ -14,21 +13,19 @@ import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.NetworkInterface;
-import psimulator2.Psimulator;
 
 /**
- *
+ * TODO: zmenit defaultni hodnoty counts a timeout
  * @author Tomas Pitrinec
  */
-public class Ping extends AbstractCommand implements LongTermCommand, ApplicationNotifiable {
+public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNotifiable {
 
-	private boolean ladeni = false;
 
 
 //parametry prikazu: -------------------------------------------------------------------------------------------
 
     IpAddress cil; //adresa, na kterou ping posilam
-    int count=10; //pocet paketu k poslani, zadava se prepinacem -c
+    int count=5; //pocet paketu k poslani, zadava se prepinacem -c
     int size=56; //velikost paketu k poslani, zadava se -s
     double interval=1; //interval mezi odesilanim paketu v sekundach, zadava se -i, narozdil od vrchnich je dulezitej
     int ttl=64; //zadava se prepinacem -t
@@ -36,7 +33,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
     boolean minus_b=false; //dovoluje pingat na broadcastovou adresu
     boolean minus_h=false;
     //dalsi prepinace, ktery bych mel minimalne akceptovat: -a, -v
-	int timeout = 10_000;	// timeout v milisekundach
+	int timeout = 1_000;	// timeout v milisekundach
 
     //parametry parseru:
     private String slovo; //slovo parseru, se kterym se zrovna pracuje
@@ -57,16 +54,13 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 
 	public Ping(AbstractCommandParser parser) {
 		super(parser);
-		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
-			ladeni = true;
-		}
 	}
 
 	@Override
 	public void run() {
 		parser.setRunningCommand(this, false);	// registrovani u parseru
 		parsujPrikaz();
-		if (ladeni) {
+		if (ladiciVypisovani) {
 			printLine(toString());
 		}
 		boolean applicationStarted = vykonejPrikaz();
@@ -129,7 +123,7 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 	 */
 	private boolean jeRouta() {
 		for (NetworkInterface iface : getNetMod().ipLayer.getNetworkIfaces()) {
-			if (iface.getIpAddress() != null && iface.getIpAddress().equals(cil)) {
+			if (iface.getIpAddress() != null && iface.getIpAddress().getIp().equals(cil)) {
 				return true;
 			}
 		}
@@ -316,15 +310,6 @@ public class Ping extends AbstractCommand implements LongTermCommand, Applicatio
 		}
 		vratit+="\n----------------------------------";
 		return vratit;
-	}
-
-	/**
-	 * Parsovani.
-	 * Zkratka pro starou verzi simulatoru.
-	 * @return
-	 */
-	private String dalsiSlovo() {
-		return parser.nextWord();
 	}
 
 

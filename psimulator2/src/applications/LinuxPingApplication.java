@@ -15,7 +15,7 @@ import logging.LoggingCategory;
 import utils.Util;
 
 /**
- *
+ * TODO" Standa by rad, abych tu vypisoval nejaky source quench
  * @author Tomas Pitrinec
  */
 public class LinuxPingApplication extends PingApplication {
@@ -39,7 +39,7 @@ public class LinuxPingApplication extends PingApplication {
 		ping = (Ping) command;	// je to jako parametr, takze to musi vzdy projit
 		this.target = target;
 		this.count = count;
-		this.size = size;
+		this.payload = size;
 		this.timeout = timeout;
 		this.waitTime = interval;
 		if (ttl != -1) {
@@ -88,7 +88,8 @@ public class LinuxPingApplication extends PingApplication {
 
 		switch (packet.type) {
 			case REPLY:
-				ping.printLine(size+8+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+" time="+Util.zaokrouhli(delay)+" ms");
+				ping.printLine(packet.getSize()+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+
+						" time="+Util.zaokrouhli(delay)+" ms");
 				break;
 			case TIME_EXCEEDED:
 				// TODO: Time To Live Exceeded
@@ -120,7 +121,7 @@ public class LinuxPingApplication extends PingApplication {
 
 	@Override
 	protected void startMessage() {
-		ping.printLine("PING "+target+" ("+target+") "+size+"("+(size+28)+") bytes of data.");
+		ping.printLine("PING "+target+" ("+target+") "+payload+"("+(payload+28)+") bytes of data.");
 	}
 
 	@Override

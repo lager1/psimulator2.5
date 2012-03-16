@@ -4,12 +4,10 @@
 
 package commands.linux;
 
-import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.*;
 import java.util.ArrayList;
 import java.util.List;
-import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import utils.Util;
 
@@ -17,11 +15,7 @@ import utils.Util;
  *
  * @author Tomas Pitrinec
  */
-public class Ifconfig extends AbstractCommand {
-
-	boolean ladiciVypisovani=false; //jestli se maj vypisovat informace pro ladeni
-
-	private final IPLayer ipLayer = getNetMod().ipLayer;
+public class Ifconfig extends LinuxCommand {
 
 
     String jmenoRozhrani; //jmeno rozhrani, jak bylo zadano
@@ -566,15 +560,6 @@ public class Ifconfig extends AbstractCommand {
         printLine("    ipx (Novell IPX) ddp (Appletalk DDP) ec (Econet)");
         printLine("    ash (Ash) x25 (CCITT X.25)");
     }
-
-	private String dalsiSlovo(){
-		String slovo=parser.nextWord();
-		//debug("slovo: "+slovo);
-		return slovo;
-	}
-
-
-
 
 
 

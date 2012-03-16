@@ -192,4 +192,21 @@ public class Util {
 	public static String threadName() {
 		return Thread.currentThread().getName();
 	}
+
+	/**
+     * Zarovnava zleva mezerami do maximalni dylky.
+     * Kdyz je ret delsi nez dylka, tak vrati nezmenenej retezec.
+     * @param ret
+     * @param dylka
+     * @return
+     */
+    public static String zarovnejZLeva(String ret, int dylka) {
+        //if (ret.length() >= dylka) return ret;
+        int dorovnat = dylka - ret.length();
+        String s = "";
+        for(int i=0;i<dorovnat;i++){
+            s += " ";
+        }
+        return s+ret;
+    }
 }

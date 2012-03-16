@@ -136,8 +136,9 @@ public class IcmpHandler implements Loggable {
 	 * @param ttl Time To Live - can be null, in that case default value of IPLayer is used
 	 * @param seq sequence number
 	 * @param id application identifier (port)
+	 * @param payload size of data after ICMP header (celikost vyplnovacich dat za ICMP hlavickou)
 	 */
-	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id, int size) {
+	public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id, int payload) {
 		int sendTtl;
 		if (ttl != null) {
 			sendTtl = ttl;
@@ -145,7 +146,7 @@ public class IcmpHandler implements Loggable {
 			sendTtl = this.getIpLayer().ttl;
 		}
 
-		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq, size);
+		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq, payload);
 		getIpLayer().sendPacket(packet, target, sendTtl);
 	}
 }

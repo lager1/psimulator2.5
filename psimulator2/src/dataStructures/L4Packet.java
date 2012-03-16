@@ -18,7 +18,7 @@ public abstract class L4Packet {
 		this.data = data;
 	}
 
-	int getSize() {
+	public int getSize() {
 		return size;
 	}
 
