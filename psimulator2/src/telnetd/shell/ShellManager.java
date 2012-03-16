@@ -106,12 +106,12 @@ public class ShellManager {
         return null;
       } else {
         Class shclass = (Class) m_Shells.get(key);
-        Method factory = shclass.getMethod("createShell", null);
+        Method factory = shclass.getMethod("createShell", (Class[]) null);
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "[Factory Method] " + factory.toString());
         
-        myShell = (Shell) factory.invoke(shclass, null);
+        myShell = (Shell) factory.invoke(shclass, (Object[]) null);
       }
-    } catch (Exception e) {
+    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "getShell() exception occured");
       
     }
@@ -129,8 +129,8 @@ public class ShellManager {
    * as used for Servlets.
    */
   private void setupShells(HashMap shells) {
-    String sh = "";
-    String shclassstr = "";
+    String sh;
+    String shclassstr;
     //temporary storage for fully qualified classnames,
     //serves the purpose of not loading classes twice.
     HashMap shellclasses = new HashMap(shells.size());
