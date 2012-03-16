@@ -34,12 +34,13 @@ package telnetd.io.terminal;
 
 import telnetd.BootException;
 import telnetd.util.StringUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Class that manages all available terminal implementations.<br>
@@ -51,7 +52,7 @@ import java.util.Properties;
  */
 public class TerminalManager {
 
-  private static Log log = LogFactory.getLog(TerminalManager.class);
+  
   private static TerminalManager c_Self;	//Singleton reference
   private HashMap m_Terminals;			//datastructure for terminals
   private boolean m_WindoofHack = false;
@@ -97,7 +98,8 @@ public class TerminalManager {
         }
       }
     } catch (Exception e) {
-      log.error("getTerminal()", e);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET,"getTerminal()"+e );
+    
     }
 
     return term;
@@ -139,7 +141,8 @@ public class TerminalManager {
 
         //then the fully qualified class string
         termclass = (String) entry[0];
-        log.debug("Preparing terminal [" + termname + "] " + termclass);
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Preparing terminal [" + termname + "] " + termclass);
+        
 
         //get a new class object instance (e.g. load class and instantiate it)
         term = (Terminal) Class.forName(termclass).newInstance();
@@ -155,15 +158,18 @@ public class TerminalManager {
         }
 
       } catch (Exception e) {
-        log.error("setupTerminals()", e);
+		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "setupTerminals()" + e);
+        
       }
 
     }
     //check if we got all
-    log.debug("Terminals:");
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Terminals:");
+    
     for (Iterator iter = m_Terminals.keySet().iterator(); iter.hasNext();) {
       String tn = (String) iter.next();
-      log.debug(tn + "=" + m_Terminals.get(tn));
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET,tn + "=" + m_Terminals.get(tn) );
+      
     }
   }//setupTerminals
 
@@ -188,13 +194,15 @@ public class TerminalManager {
 
     //Loading and applying settings
     try {
-      log.debug("Creating terminal manager.....");
+		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Creating terminal manager.....");
+      
       boolean winhack = new Boolean(settings.getProperty("terminals.windoof")).booleanValue();
 
       //Get the declared terminals
       String terms = settings.getProperty("terminals");
       if (terms == null) {
-        log.debug("No terminals declared.");
+		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "No terminals declared.");
+        
         throw new BootException("No terminals declared.");
       }
 
@@ -237,7 +245,7 @@ public class TerminalManager {
       return tmgr;
 
     } catch (Exception ex) {
-      log.error("createManager()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createManager()" + ex);
       throw new BootException("Creating TerminalManager Instance failed:\n" + ex.getMessage());
     }
   }//createManager

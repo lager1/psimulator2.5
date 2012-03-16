@@ -37,10 +37,11 @@ import telnetd.io.terminal.TerminalManager;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionData;
 import telnetd.net.ConnectionEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.io.IOException;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Class for Terminal specific I/O.
@@ -55,7 +56,7 @@ import java.io.IOException;
 public class TerminalIO
     implements BasicTerminalIO {
 
-  private static Log log = LogFactory.getLog(TerminalIO.class);
+
   private TelnetIO m_TelnetIO;					//low level I/O
 
   private Connection m_Connection;			//the connection this instance is working for
@@ -93,7 +94,8 @@ public class TerminalIO
     try {
       setDefaultTerminal();
     } catch (Exception ex) {
-      log.error("TerminalIO()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "TerminalIO()" + ex);
+      
       throw new RuntimeException();
     }
   }//constructor
@@ -515,7 +517,8 @@ public class TerminalIO
     //Terminal is set we init it....
     initTerminal();
     //debug message
-    log.debug("Set terminal to " + m_Terminal.toString());
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Set terminal to " + m_Terminal.toString());
+    
   }//setTerminal
 
 

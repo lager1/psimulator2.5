@@ -32,15 +32,17 @@
 
 package telnetd.shell;
 
+import java.lang.reflect.InvocationTargetException;
 import telnetd.BootException;
 import telnetd.util.StringUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import logging.Logger;
+import logging.LoggingCategory;
 
 
 /**
@@ -71,7 +73,7 @@ import java.util.Properties;
  */
 public class ShellManager {
 
-  private static Log log = LogFactory.getLog(ShellManager.class);
+  
   private static ShellManager c_Self;	//Singleton reference
   private HashMap m_Shells;			//datastructure for shells
 
@@ -105,11 +107,13 @@ public class ShellManager {
       } else {
         Class shclass = (Class) m_Shells.get(key);
         Method factory = shclass.getMethod("createShell", null);
-        log.debug("[Factory Method] " + factory.toString());
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "[Factory Method] " + factory.toString());
+        
         myShell = (Shell) factory.invoke(shclass, null);
       }
     } catch (Exception e) {
-      log.error("getShell()", e);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "getShell() exception occured");
+      
     }
 
     return myShell;
@@ -137,22 +141,24 @@ public class ShellManager {
         sh = (String) iter.next();
         //then the fully qualified shell class string
         shclassstr = (String) shells.get(sh);
-        log.debug("Preparing Shell [" + sh + "] " + shclassstr);
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Preparing Shell [" + sh + "] " + shclassstr);
+        
         //now we check if the class is already loaded.
         //If,then we reference the same class object and thats it
         if (shellclasses.containsKey(shclassstr)) {
           m_Shells.put(sh, shellclasses.get(shclassstr));
-          log.debug("Class [" + shclassstr + "] already loaded, using cached class object.");
+		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Class [" + shclassstr + "] already loaded, using cached class object.");
+          
         } else {
           //we get the class object (e.g. load it because its new)
           Class shclass = Class.forName(shclassstr);
           //and put it to the shells, plus our "class object cache"
           m_Shells.put(sh, shclass);
           shellclasses.put(shclassstr, shclass);
-          log.debug("Class [" + shclassstr + "] loaded and class object cached.");
+		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Class [" + shclassstr + "] loaded and class object cached.");
         }
       } catch (Exception e) {
-        log.error("setupShells()", e);
+		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "setupShells() exception occured");
       }
 
     }
@@ -174,7 +180,7 @@ public class ShellManager {
 
     //Loading and applying settings
     try {
-      log.debug("createShellManager()");
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "createShellManager()");
       HashMap shells = new HashMap();
       //Custom shell definitions
       String sh = settings.getProperty("shells");
@@ -184,7 +190,7 @@ public class ShellManager {
           //we get the shell
           sh = settings.getProperty("shell." + customshs[z] + ".class");
           if (sh == null) {
-            log.debug("Shell entry named " + customshs[z] + " not found.");
+			  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Shell entry named " + customshs[z] + " not found.");
             throw new BootException("Shell " + customshs[z] + " declared but not defined.");
           } else {
             shells.put(customshs[z], sh);
@@ -197,7 +203,7 @@ public class ShellManager {
       return shm;
 
     } catch (Exception ex) {
-      log.error("createManager()", ex);
+		Logger.log(Logger.ERROR, LoggingCategory.TELNET, "createManager method failed: " + ex );
       throw new BootException("Creating ShellManager Instance failed:\n" + ex.getMessage());
     }
   }//createManager

@@ -33,8 +33,7 @@
 package telnetd.net;
 
 import telnetd.BootException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -42,6 +41,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Properties;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Class that implements a <tt>PortListener</tt>.<br>
@@ -55,7 +56,7 @@ import java.util.Properties;
 public class PortListener
     implements Runnable {
 
-  private static Log log = LogFactory.getLog(PortListener.class);
+ 
 
   private String m_Name;
   private int m_Port;							            //port number running on
@@ -113,7 +114,8 @@ public class PortListener
    * Starts this <tt>PortListener</tt>.
    */
   public void start() {
-    log.debug("start()");
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
+    
     m_Thread = new Thread(this);
     m_Thread.start();
     m_Available = true;
@@ -124,7 +126,8 @@ public class PortListener
    * when everything was stopped successfully.
    */
   public void stop() {
-    log.debug("stop()::"+ this.toString());
+	    Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()" +  this.toString());
+    
     //flag stop
     m_Stopping = true;
     m_Available = false;
@@ -135,17 +138,18 @@ public class PortListener
     try {
       m_ServerSocket.close();
     } catch (IOException ex) {
-      log.error("stop()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() IOException occured: " + ex);
+      
     }
 
     //wait for thread to die
     try {
       m_Thread.join();
     } catch (InterruptedException iex) {
-      log.error("stop()", iex);
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() interrupt exception occured: " + iex);
+      
     }
-
-    log.info("stop()::Stopped " + this.toString());
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()::Stopped " + this.toString());
   }//stop
 
   /**
@@ -166,7 +170,8 @@ public class PortListener
 
       //log entry
       Object[] args = {new Integer(m_Port), new Integer(m_FloodProtection)};
-      log.info(MessageFormat.format(logmsg, args));
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, MessageFormat.format(logmsg, args));
+      
 
       do {
         try {
@@ -180,17 +185,20 @@ public class PortListener
         } catch (SocketException ex) {
           if (m_Stopping) {
             //server socket was closed blocked in accept
-            log.debug("run(): ServerSocket closed by stop()");
+	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "run(): ServerSocket closed by stop()");		  
+            
           } else {
-            log.error("run()", ex);
+	Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() Socket exception occured: " + ex);		  		  
+            
           }
         }
       } while (!m_Stopping);
 
     } catch (IOException e) {
-      log.error("run()", e);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() IO exception occured: " + e);		  		  
+      
     }
-    log.debug("run(): returning.");
+    
   }//run
 
 
@@ -226,7 +234,8 @@ public class PortListener
       }
       pl = new PortListener(name, port, floodprot);
     } catch (Exception ex) {
-      log.error("createPortListener()", ex);
+		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + ex);		  		  
+      
       throw new BootException("Failure while creating PortListener instance:\n" +
           ex.getMessage());
     }
@@ -237,7 +246,8 @@ public class PortListener
       try {
         pl.m_ConnectionManager.start();
       } catch (Exception exc) {
-        log.error("createPortListener()", exc);
+		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + exc);		  		  
+        
         throw new BootException("Failure while starting ConnectionManager watchdog thread:\n" +
             exc.getMessage());
       }

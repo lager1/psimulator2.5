@@ -37,14 +37,14 @@ import telnetd.net.PortListener;
 import telnetd.shell.ShellManager;
 import telnetd.util.PropertiesLoader;
 import telnetd.util.StringUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Iterator;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  * Class that implements a configurable and embeddable
@@ -55,9 +55,7 @@ import java.util.Iterator;
  */
 public class TelnetD {
 
-  private static Log log = LogFactory.getLog(TelnetD.class);
-  public static Log debuglog = log;
-  public static Log syslog = log;
+  
   private static TelnetD c_Self = null;	//reference of the running singleton
   private List m_Listeners;
   private ShellManager m_ShellManager;
@@ -78,7 +76,8 @@ public class TelnetD {
    * all configured listeners.<br>
    */
   public void start() {
-    log.debug("start()");
+	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
+    
     for (int i = 0; i < m_Listeners.size(); i++) {
       PortListener plis = (PortListener) m_Listeners.get(i);
       plis.start();
@@ -219,7 +218,8 @@ public class TelnetD {
     try {
       return createTelnetD(PropertiesLoader.loadProperties(urlprefix));
     } catch (IOException ex) {
-      log.error(ex);
+		Logger.log(Logger.ERROR, LoggingCategory.TELNET, ex.toString());
+      
       throw new BootException("Failed to load configuration from given URL.");
     }
   }//createTelnetD
