@@ -98,6 +98,11 @@ public enum LoggingCategory {
 	 * Predevsim zpravy z WorkerThread, ale pripadne i ladeni jinejch vlaken
 	 */
 	THREADS,
+	
+	/**
+	 * část aplikace sloužící pro odesílání eventů z loggeru do UI klienta
+	 */
+	EVENTS_SERVER
 
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 
