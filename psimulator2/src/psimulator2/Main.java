@@ -7,6 +7,7 @@ import config.configTransformer.Loader;
 import java.io.File;
 import logging.Logger;
 import logging.LoggingCategory;
+import logging.networkEvents.EventServer;
 import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
@@ -85,6 +86,10 @@ public class Main {
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Error occured when creating telnet servers.");
 		}
+		
+		EventServer eventServer = new EventServer(12000);
+		Psimulator.getPsimulator().eventServer=eventServer;
+		
 
 	}
 }

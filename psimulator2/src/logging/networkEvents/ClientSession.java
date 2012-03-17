@@ -7,6 +7,7 @@ import java.util.List;
 import logging.Logger;
 import logging.LoggingCategory;
 import shared.NetworkObject;
+import telnetd.pridaneTridy.TelnetProperties;
 
 /**
  *
@@ -28,6 +29,8 @@ public class ClientSession {
 	 *
 	 */
 	private List listReference;
+	
+	private boolean telnetConfigSend = false;
 
 	public ClientSession(Socket socket) {
 		this.socket = socket;
@@ -39,6 +42,11 @@ public class ClientSession {
 	 */
 	public void send(NetworkObject object) {
 
+		if(!this.telnetConfigSend){  // send only once... its probably not bad idea to move this code into constructor or some initiation method
+			this.telnetConfigSend = true;
+			this.send(TelnetProperties.getTelnetConfig());
+		}
+		
 		if (done) {
 			return;
 		}

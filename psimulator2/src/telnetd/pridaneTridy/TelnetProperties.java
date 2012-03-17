@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Properties;
 import logging.Logger;
 import logging.LoggingCategory;
+import shared.telnetConfig.ConfigRecord;
+import shared.telnetConfig.TelnetConfig;
 import utils.Util;
 
 /**
@@ -27,6 +29,7 @@ public class TelnetProperties {
 	private static int lastPort = 11000;
 	private static List<String> listenerNames = new LinkedList<String>();
 	private static boolean finalConfiguration = false;
+	private static TelnetConfig telnetConfig = new TelnetConfig();
 
 	/**
 	 * this method should be executed only once
@@ -73,6 +76,10 @@ public class TelnetProperties {
 		return properties;
 
 	}
+	
+	public static TelnetConfig getTelnetConfig(){
+		return telnetConfig;
+	}
 
 	public static void addListener(Device device) {
 
@@ -98,6 +105,13 @@ public class TelnetProperties {
 
 		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
 
+		// now add records for UI editor
+		ConfigRecord cfgr = new ConfigRecord();
+		cfgr.setComponentId(device.configID);
+		cfgr.setPort(device.getTelnetPort());
+		
+		telnetConfig.put(device.configID, cfgr);
+		
 		listenerNames.add(name);
 
 		properties.setProperty(name + ".loginshell", "std");

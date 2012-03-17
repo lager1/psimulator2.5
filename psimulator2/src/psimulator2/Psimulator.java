@@ -13,6 +13,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import logging.SystemListener;
+import logging.networkEvents.EventServer;
 import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
@@ -37,6 +38,7 @@ public class Psimulator implements Loggable{
 	public String lastConfigFile;
 	public Alarm budik;
 	public SystemListener systemListener;
+	public EventServer eventServer;
 
 
 	private Psimulator() {
