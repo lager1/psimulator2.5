@@ -43,7 +43,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * nemam odpoved. Obsluhovat me bude doMyWork(). Neni potreba miti synchronizaci, protoze sem leze jen vlakno z
 	 * doMyWork().
 	 */
-	protected final List<StoreItem> storeBuffer = new LinkedList<>();
+	protected final List<StoreItem> storeBuffer = Collections.synchronizedList(new LinkedList<StoreItem>());
 	/**
 	 * Routing table with record.
 	 */
