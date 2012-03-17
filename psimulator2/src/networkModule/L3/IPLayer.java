@@ -40,10 +40,9 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
 	 * Zde budou pakety, ktere je potreba odeslat, ale nemam ARP zaznam, takze byla odeslana ARP request, ale jeste
-	 * nemam odpoved. Obsluhovat me bude doMyWork(). Neni potreba miti synchronizaci, protoze sem leze jen vlakno z
-	 * doMyWork().
+	 * nemam odpoved.
 	 */
-	protected final List<StoreItem> storeBuffer = Collections.synchronizedList(new LinkedList<StoreItem>());
+	private final List<StoreItem> storeBuffer = Collections.synchronizedList(new LinkedList<StoreItem>());
 	/**
 	 * Routing table with record.
 	 */

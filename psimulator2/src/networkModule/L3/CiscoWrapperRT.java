@@ -12,9 +12,6 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.L3.IPLayer;
-import networkModule.L3.NetworkInterface;
-import networkModule.L3.RoutingTable;
 import networkModule.L3.RoutingTable.Record;
 import utils.Util;
 
@@ -157,7 +154,6 @@ public class CiscoWrapperRT implements Loggable {
      */
     public void update() {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: "+radky.size(), null);
-
 
         // smazu RT
         routingTable.flushAllRecords();

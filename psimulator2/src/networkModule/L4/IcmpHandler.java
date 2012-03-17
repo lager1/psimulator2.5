@@ -30,7 +30,6 @@ public class IcmpHandler implements Loggable {
 	}
 
 	public void handleReceivedIcmpPacket(IpPacket packet) {
-		// tady
 		IcmpPacket p = (IcmpPacket) packet.data;
 
 		switch (p.type) {
