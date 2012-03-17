@@ -7,7 +7,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
+ * server socket thread --- connection listener
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class EventServer implements Runnable {

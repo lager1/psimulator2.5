@@ -2,13 +2,8 @@ package logging.networkEvents;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-
+import java.util.List;
 import logging.Logger;
 import logging.LoggingCategory;
 import shared.NetworkObject;
@@ -19,15 +14,34 @@ import shared.NetworkObject;
  */
 public class ClientSession {
 
+	/**
+	 * socket reference
+	 */
 	private Socket socket;
+	/**
+	 * flag if quiting
+	 */
 	private boolean done = false;
 	private ObjectOutputStream outputStream;
+	/**
+	 * reference used for self removing from the list
+	 *
+	 */
+	private List listReference;
 
 	public ClientSession(Socket socket) {
 		this.socket = socket;
 	}
 
+	/**
+	 * transmission object throught connected socket and initialized outputstream
+	 * @param object 
+	 */
 	public void send(NetworkObject object) {
+
+		if (done) {
+			return;
+		}
 
 		if (this.outputStream == null) {
 
@@ -39,7 +53,8 @@ public class ClientSession {
 			try {
 				this.outputStream = new ObjectOutputStream(socket.getOutputStream());
 			} catch (IOException ex) {
-				java.util.logging.Logger.getLogger(ClientSession.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "IOException occured when creating clientSession outputStream");
+				return;
 			}
 
 		}
@@ -62,17 +77,30 @@ public class ClientSession {
 	}
 
 	public void closeSession() {
+		this.listReference.remove(this);
 		this.done = true;
 		if (this.socket == null || this.socket.isClosed()) // nothing to close
 		{
 			return;
 		}
-
+		
 		try {
 			socket.close();
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Unexpected IOException occured when closing client session thread. Socket may not be closed properly");
 		}
+	}
 
+	/**
+	 * Set {@see #listReference}.
+	 * 
+	 * @param list 
+	 */
+	public void setListReference(List list) {
+		this.listReference = list;
+	}
+
+	public boolean isActive() {
+		return !this.done;
 	}
 }
