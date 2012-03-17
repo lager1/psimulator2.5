@@ -52,25 +52,36 @@ public class LinuxPingApplication extends PingApplication {
 	 */
 	@Override
 	public void printStats() {
-		//ping.printLine("Tady se budou vypisovat statistiky pingu.");
 
-        int cas = (int) ((stats.odeslane - 1) * waitTime + Math.random() * 10); // celkovej cas se zas vymejsli =)
+		//vypocitani celkovyho casu do vypisu:
+		int cas;
+		if(stats.prijate>0){
+			 cas = (int) ((stats.odeslane - 1) * waitTime + Math.random() * 10); // celkovej cas se zas vymejsli =)
+		} else {
+			cas = 0;
+		}
+
+		// vypis nadpisu:
         ping.printLine("");
         ping.printLine("--- " + target.toString() + " ping statistics ---");
+
+		// vypis radku s vysledkama:
         if (stats.errors == 0) {//errory nebyly - tak se nevypisujou
             ping.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, " +
                     stats.ztrata + "% packet loss, time " + cas + "ms");
         } else { //vypis i s errorama
             ping.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, +" + stats.errors + " errors, " +
-                    stats.ztrata + "% packet loss, time " + cas + "ms");
+                    stats.ztrata + "% packet loss, time " + cas + "ms");	// cas pri errorech je vzdy 0ms
         }
+
+		// vypis radku se statistikama (pokud ovsem neco doslo)
         if (stats.prijate > 0) { //aspon jeden prijaty paket - vypisuji se statistiky
             double mdev = Util.zaokrouhli((((stats.avg - stats.min) + (stats.max - stats.avg)) / 2) * 0.666); //ma to bejt stredni odchylka,
             //je tam jen na okrasu, tak si ji pocitam po svym =)
             ping.printLine("rtt min/avg/max/mdev = " + Util.zaokrouhli(stats.min) + "/" + Util.zaokrouhli(stats.avg) + "/" +
                     Util.zaokrouhli(stats.max) + "/" + mdev + " ms");
         } else { // neprijat zadny paket, statistiky se nevypisuji
-            ping.printLine(", pipe 3");
+            // ping.printLine(", pipe 3");	// v dobe bakalarky vypisovala skolni laborka tenhle nesmysl, ted uz ne
         }
 	}
 

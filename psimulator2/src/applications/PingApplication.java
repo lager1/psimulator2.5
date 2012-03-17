@@ -28,7 +28,7 @@ import utils.Wakeable;
 public abstract class PingApplication extends TwoThreadApplication implements Wakeable{
 
 	protected IpAddress target;
-	protected int count = 0;
+	protected int count = -1;	// -1 znamena, ze se bude pingovat donekonecna
 	protected int payload = 56; // default linux size (without header)
 	protected int timeout = 10_000; // zrejme tedy v milisekundach
 	protected Stats stats = new Stats();
@@ -48,8 +48,11 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	 */
 	protected Map<Integer, Double> timestamps = new HashMap<>();
 
-	protected boolean [] sent;
-	protected boolean [] recieved;
+//	protected boolean [] sent;
+//	protected boolean [] recieved;
+	int lastSent = 0; // seq number of last sent packet
+	int lastReceived = 0;	// seq number of last received packet
+
 	private boolean zavolanoBudikem = false;
 
 	public PingApplication(Device device, ApplicationNotifiable command) {
@@ -119,14 +122,14 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 					stats.prijate++;
 				}
 				handleIncommingPacket(p, packet, delay);
-				recieved[packet.seq - 1] = true;	// prida se do prijatejch
+				lastReceived = packet.seq;
 
 			} else {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout.", packet);
 			}
 
 			// reseni posledniho paketu:
-			if(recieved[recieved.length - 1]){
+			if(lastReceived == count){
 				Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi posledni paket. Koncim.", packet);
 				exit();
 			}
@@ -150,11 +153,11 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	public void run() {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
 		int i = 0;
-		while (i < count && isRunning()) {	// jakmile bylo die nastaveno na true, tak uz se nic dalsiho neodesle
+		while ((i < count || count == -1) && isRunning()) {	// bezi se jen dokud je running
 			int seq = i + 1;
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
 			timestamps.put(seq, (double)System.nanoTime()/1_000_000);
-			sent[i] = true;
+			lastSent = seq;
 			transportLayer.icmphandler.sendRequest(target, ttl, seq, port, payload);
 			stats.odeslane++;
 
@@ -222,12 +225,6 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 		if (getPort() == null) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, "PingApplication has no port assigned! Exiting..", null);
 			kill();
-		}
-
-		// inicialisovani poli (nemuze bejt v konstruktoru, protoze Standa nastavuje count az dyl):
-		if (count > 0) {
-			this.sent = new boolean[count];
-			this.recieved = new boolean[count];
 		}
 
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);

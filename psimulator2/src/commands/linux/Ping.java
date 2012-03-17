@@ -25,7 +25,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 //parametry prikazu: -------------------------------------------------------------------------------------------
 
     IpAddress cil; //adresa, na kterou ping posilam
-    int count=5; //pocet paketu k poslani, zadava se prepinacem -c
+    int count= -1; //pocet paketu k poslani, zadava se prepinacem -c
     int size=56; //velikost paketu k poslani, zadava se -s
     double interval=1; //interval mezi odesilanim paketu v sekundach, zadava se -i, narozdil od vrchnich je dulezitej
     int ttl=64; //zadava se prepinacem -t
@@ -33,7 +33,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     boolean minus_b=false; //dovoluje pingat na broadcastovou adresu
     boolean minus_h=false;
     //dalsi prepinace, ktery bych mel minimalne akceptovat: -a, -v
-	int timeout = 1_000;	// timeout v milisekundach
+	int timeout = 10_000;	// timeout v milisekundach
 
     //parametry parseru:
     private String slovo; //slovo parseru, se kterym se zrovna pracuje

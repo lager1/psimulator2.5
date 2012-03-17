@@ -32,6 +32,20 @@
             <value idAsString="1">
                 <defaultZoomXPos>209</defaultZoomXPos>
                 <defaultZoomYPos>224</defaultZoomYPos>
+                <devSettings>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig>
+                        <routingTableItem>
+                            <destination>192.168.1.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>192.168.1.2</gateway>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                    </routingTabConfig>
+                </devSettings>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>1</id>
                 <interface hwComponent="1" idAsString="2">
@@ -59,6 +73,19 @@
             <value idAsString="4">
                 <defaultZoomXPos>928</defaultZoomXPos>
                 <defaultZoomYPos>225</defaultZoomYPos>
+                <devSettings>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig>
+                        <routingTableItem>
+                            <destination>192.168.1.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>192.168.2.0/24</destination>
+                            <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
+                    </routingTabConfig>
+                </devSettings>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>4</id>
                 <interface hwComponent="4" idAsString="5">
@@ -87,6 +114,15 @@
             <value idAsString="7">
                 <defaultZoomXPos>1650</defaultZoomXPos>
                 <defaultZoomYPos>222</defaultZoomYPos>
+                <devSettings>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig>
+                        <routingTableItem>
+                            <destination>192.168.2.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                    </routingTabConfig>
+                </devSettings>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>7</id>
                 <interface hwComponent="7" idAsString="8">
@@ -117,35 +153,7 @@
         <nextMacAddress>6</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>LINUX_ROUTER</key>
-                <value>3</value>
-            </entry>
-            <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>LINUX_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CISCO_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_PC</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>END_DEVICE_WORKSTATION</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -153,11 +161,39 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_OPTIC</key>
+                <key>REAL_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_ROUTER</key>
                 <value>0</value>
             </entry>
             <entry>
                 <key>BUNDLE_OF_CABLES</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_SWITCH</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_SWITCH</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_ROUTER</key>
+                <value>3</value>
+            </entry>
+            <entry>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>
