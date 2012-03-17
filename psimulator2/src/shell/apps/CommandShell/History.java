@@ -82,6 +82,7 @@ public class History {
 			String lastCommand = activeHistory.get(activeHistory.size() - 1).trim();
 
 			if (command.equalsIgnoreCase(lastCommand)) { // do not add two same commands
+				resetIterator();
 				return;
 			}
 		}
