@@ -198,6 +198,7 @@ public class ShellRenderer extends ActiveComponent {
 				stop = true;
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
 				ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
+				this.commandShell.quit();
 			} catch (UnsupportedOperationException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unsuported exception catched in ShellRenderer: " + ex.toString());
 			}

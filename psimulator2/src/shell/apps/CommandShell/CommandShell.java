@@ -95,6 +95,8 @@ public class CommandShell extends TerminalApplication {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
+			this.quit();
+			return null;
 		}
 
 		return ret;
@@ -300,6 +302,7 @@ public class CommandShell extends TerminalApplication {
 
 	@Override
 	public int quit() {
+		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;
 	}
