@@ -88,7 +88,11 @@ public class Main {
 		}
 		
 		EventServer eventServer = new EventServer(12000);
+		Thread thread = new Thread(eventServer);
+		thread.start();
+		
 		Psimulator.getPsimulator().eventServer=eventServer;
+		
 		
 
 	}

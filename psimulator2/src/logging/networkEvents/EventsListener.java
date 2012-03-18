@@ -3,6 +3,7 @@ package logging.networkEvents;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +20,7 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 /**
  * EventsListener is a LoggerListener running in own thread, because broadcasting events over remote transmission can be
  * time consuming operation.
+ *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class EventsListener implements Runnable, LoggerListener {
@@ -33,10 +35,19 @@ public class EventsListener implements Runnable, LoggerListener {
 	public EventsListener() {
 	}
 
+	private void sendNetworkObject(NetworkObject object) {
+		try {
+			this.objectsToBroadCast.offer(object, 1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");  // @TODO test if this exception occur only exceptionaly
+		}
+	}
+
 	@Override
 	public void run() {
-
+		Thread.currentThread().setName("EventsListener");
 		while (!done) {
+
 			NetworkObject ntwObject = null;
 			try {
 				// get new object from broadcast queue. 
@@ -47,6 +58,18 @@ public class EventsListener implements Runnable, LoggerListener {
 
 			if (ntwObject == null) // no object reached
 			{
+
+				// just for testing generate some random Events
+				// @TODO COMMENT THIS !!!
+//				int eventCount = new Random().nextInt(20);
+//				for (int i = 0; i < eventCount; i++) {
+//
+//					SimulatorEvent event = new SimulatorEvent(eventCount, eventCount, eventCount, eventCount, PacketType.TCP, "muhehe: " + i);
+//					this.sendNetworkObject(event);
+//				}
+				// END COMMENT !!!
+
+
 				continue;
 			}
 
@@ -85,11 +108,7 @@ public class EventsListener implements Runnable, LoggerListener {
 		event.setSourcceId(3);
 		event.setTimeStamp(1234);
 
-		try {
-			this.objectsToBroadCast.offer(event, 1000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");  // @TODO test if this exception occur only exceptionaly
-		}
+		this.sendNetworkObject(event);
 
 	}
 
