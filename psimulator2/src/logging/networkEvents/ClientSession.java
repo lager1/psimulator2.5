@@ -36,15 +36,23 @@ public class ClientSession {
 		this.socket = socket;
 	}
 
+	public boolean isTelnetConfigSend() {
+		return telnetConfigSend;
+	}
+	
+	public void sendTelnetConfig(){
+			this.send(TelnetProperties.getTelnetConfig());
+			this.telnetConfigSend = true;
+	}
+
 	/**
 	 * transmission object throught connected socket and initialized outputstream
 	 * @param object 
 	 */
 	public void send(NetworkObject object) {
 
-		if(!this.telnetConfigSend){  // send only once... its probably not bad idea to move this code into constructor or some initiation method
-			this.telnetConfigSend = true;
-			this.send(TelnetProperties.getTelnetConfig());
+		if(!this.telnetConfigSend){  // send only once... just for sure, if someone try to send object before telnetConfig is send
+			this.sendTelnetConfig();
 		}
 		
 		if (done) {
