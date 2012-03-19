@@ -41,8 +41,9 @@ public class ClientSession {
 	}
 	
 	public void sendTelnetConfig(){
-			this.send(TelnetProperties.getTelnetConfig());
-			this.telnetConfigSend = true;
+		this.telnetConfigSend = true;	
+		this.send(TelnetProperties.getTelnetConfig());
+			
 	}
 
 	/**
