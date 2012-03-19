@@ -4,6 +4,7 @@
 
 package networkModule.L3;
 
+import networkModule.L3.nat.NatTable;
 import dataStructures.IpPacket;
 
 /**
@@ -26,10 +27,17 @@ public class PacketFilter {
 	}
 
 	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
+
+		packet = natTable.backwardTranlate(packet, in);
+
+
 		return packet;
 	}
 
 	public IpPacket postRouting(IpPacket packet, NetworkInterface in, NetworkInterface out) {
+
+		packet = natTable.translate(packet, in, out);
+
 		return packet;
 	}
 

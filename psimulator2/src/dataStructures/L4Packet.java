@@ -29,4 +29,12 @@ public abstract class L4Packet {
 	}
 
 	public abstract L4PacketType getType();
+
+	/*
+	 * Veci pro NAT - je to pripraveno i pro TCP/UDP pakety.
+	 */
+	public abstract int getPortSrc();
+	public abstract int getPortDst();
+	public abstract L4Packet getCopyWithDifferentSrcPort(int port);
+	public abstract L4Packet getCopyWithDifferentDstPort(int port);
 }

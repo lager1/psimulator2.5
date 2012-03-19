@@ -3,16 +3,20 @@
  */
 package config.configTransformer;
 
+import networkModule.L3.nat.Pool;
+import networkModule.L3.nat.PoolAccess;
+import networkModule.L3.nat.NatTable;
+import networkModule.L3.nat.AccessList;
 import device.Device;
-import networkModule.L3.NetworkInterface;
-import networkModule.L3.RoutingTable;
+import java.util.ArrayList;
+import java.util.List;
+import networkModule.L3.*;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
 import shared.Components.EthInterfaceModel;
 import shared.Components.HwComponentModel;
 import shared.Components.NetworkModel;
-import shared.Components.simulatorConfig.DeviceSettings;
-import shared.Components.simulatorConfig.RoutingTableConfig;
+import shared.Components.simulatorConfig.*;
 
 /**
  *
@@ -42,9 +46,9 @@ public class Saver {
 
 			if (device.getNetworkModule().isStandardTcpIpNetMod()) {
 				saveRoutingTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
-			}
 
-			// TODO: saveNatTable();
+				saveNatTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
+			}
 		}
 	}
 
@@ -87,5 +91,52 @@ public class Saver {
 		}
 
 
+	}
+
+	private void saveNatTable(TcpIpNetMod netMod, HwComponentModel model) {
+		NatConfig config = new NatConfig();
+		model.getDevSettings().setNatConfig(config);
+
+		NatTable natTable = netMod.ipLayer.getNatTable();
+
+		// inside
+		List<String> insides = new ArrayList<>();
+		for (NetworkInterface iface : natTable.getInside()) {
+			insides.add(iface.name);
+		}
+		config.setInside(insides);
+
+		// outside
+		config.setOutside(natTable.getOutside() != null ? natTable.getOutside().name : null);
+
+		// pool
+		List<NatPoolConfig> poolConfig = new ArrayList<>();
+		for (Pool pool : natTable.lPool.getSortedPools()) {
+			poolConfig.add(new NatPoolConfig(pool.name, pool.posledni() != null ? pool.prvni().toString() : null, pool.prvni() != null ? pool.posledni().toString() : null, pool.prefix));
+		}
+		config.setPools(poolConfig);
+
+		// poolAccess
+		List<NatPoolAccessConfig> pac = new ArrayList<>();
+		for (PoolAccess pa : natTable.lPoolAccess.getSortedPoolAccess()) {
+			pac.add(new NatPoolAccessConfig(pa.access, pa.poolName, pa.overload));
+		}
+		config.setPoolAccesses(pac);
+
+		// accessList
+		List<NatAccessListConfig> alc = new ArrayList<>();
+		for (AccessList ac : natTable.lAccess.getList()) {
+			alc.add(new NatAccessListConfig(ac.cislo, ac.ip.getIp().toString(), ac.ip.getMask().getWildcardRepresentation()));
+		}
+		config.setAccessLists(alc);
+
+		// static rules
+		List<StaticRule> rules = new ArrayList<>();
+		for (NatTable.Record record : natTable.getRules()) {
+			if (record.isStatic) {
+				rules.add(new StaticRule(record.in.address.toString(), record.out.address.toString()));
+			}
+		}
+		config.setRules(rules);
 	}
 }

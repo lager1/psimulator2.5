@@ -6,9 +6,14 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import networkModule.L3.CiscoIPLayer;
-import networkModule.L3.IPLayer;
+import networkModule.L3.nat.NatTable;
+import networkModule.L3.nat.NatTable.Record;
 import networkModule.L3.NetworkInterface;
+import networkModule.L3.nat.AccessList;
+import networkModule.L3.nat.Pool;
+import networkModule.L3.nat.PoolAccess;
 import shell.apps.CommandShell.CommandShell;
+import utils.Util;
 
 /**
  * Trida pro zpracovani a obsluhu prikazu 'show'.
@@ -31,20 +36,6 @@ public class ShowCommand extends CiscoCommand {
 		this.stavCisco = parser.getShell().getMode();
 		this.ipLayer = (CiscoIPLayer) getNetMod().ipLayer;
 	}
-
-
-
-//    public ShowCommand(AbstraktniPocitac pc, Konsole kon, List<String> slova, CiscoStavy stavCisco) {
-//        super(pc, kon, slova);
-//        this.stavCisco = stavCisco;
-//        iface = null;
-//
-//        debug = false;
-//        boolean pokracovat = zpracujRadek();
-//        if (pokracovat) {
-//            vykonejPrikaz();
-//        }
-//    }
 
     // show interfaces (rozhrani 0/0)?
     private boolean zpracujInterfaces() {
@@ -82,7 +73,6 @@ public class ShowCommand extends CiscoCommand {
         QUESTION_MARK,
         INTERFACES,
     };
-
 
     private boolean zpracujRadek() {
         // show ip route
@@ -193,13 +183,43 @@ public class ShowCommand extends CiscoCommand {
     }
 
     /**
-     * TODO: Posle vypis pro prikaz 'show ip nat translations.
+     * Posle vypis pro prikaz 'show ip nat translations.
      */
-    private void ipNatTranslations() {// TODO ipNatTranslations
-//        String s = "";
-//		ipLayer.
-//        s += pc.natTabulka.vypisZaznamyCisco();
-//        printWithDelay(s, 50);
+    private void ipNatTranslations() {
+        String s = "";
+
+		NatTable table = ipLayer.getNatTable();
+		table.deleteOldDynamicRecords();
+
+		if (table.getRules().isEmpty()) {
+            s += "\n\n";
+			printWithDelay(s, 50);
+            return;
+        }
+
+		s += Util.zarovnej("Pro Inside global", 24) + Util.zarovnej("Inside local", 20);
+        s += Util.zarovnej("Outside local", 20) + Util.zarovnej("Outside global", 20);
+        s += "\n";
+
+        for (Record zaznam : table.getRules()) {
+            if (zaznam.isStatic == false) {
+                s += Util.zarovnej("icmp " + zaznam.out.getAddressWithPort(), 24)
+                        + Util.zarovnej(zaznam.in.getAddressWithPort(), 20)
+                        + Util.zarovnej(zaznam.target.toString(), 20)
+                        + Util.zarovnej(zaznam.target.toString(), 20)+"\n";
+            }
+        }
+
+        for (Record zaznam : table.getRules()) {
+            if (zaznam.isStatic) {
+                s += Util.zarovnej("--- " + zaznam.out.address, 24)
+                        + Util.zarovnej(zaznam.in.address.toString(), 20)
+                        + Util.zarovnej("---", 20)
+                        + Util.zarovnej("---", 20)+"\n";
+            }
+        }
+
+		printWithDelay(s, 50);
     }
 
     /**
@@ -228,8 +248,9 @@ public class ShowCommand extends CiscoCommand {
                 + "no service password-encryption\n"
                 + "!\n"
                 + "hostname " + getDevice().getName() + "\n"
-                + "!\n"
-                + "boot-start-marker\n"
+                + "!\n";
+		if (!debug) {
+			s += "boot-start-marker\n"
                 + "boot-end-marker\n"
                 + "!\n"
                 + "!\n"
@@ -249,31 +270,26 @@ public class ShowCommand extends CiscoCommand {
                 + "!\n"
                 + "!\n"
                 + "!\n";
-        for (NetworkInterface sr : ipLayer.getNetworkIfaces()) {
+		}
 
-            s += "interface " + sr.name + "\n";
-			if (sr.getIpAddress() == null) {
+        for (NetworkInterface singleIface : ipLayer.getNetworkIfaces()) {
+
+            s += "interface " + singleIface.name + "\n";
+			if (singleIface.getIpAddress() == null) {
 				s += " no ip address\n";
 			} else {
-				s += " ip address " + sr.getIpAddress().getIp() + " " + sr.getIpAddress().getMask() + "\n";
+				s += " ip address " + singleIface.getIpAddress().getIp() + " " + singleIface.getIpAddress().getMask() + "\n";
 			}
 
-//            if (pc.natTabulka.vratVerejne() != null) { // TODO: vypisovat NAT
-//                if (sr.jmeno.equals(pc.natTabulka.vratVerejne().jmeno)) {
-//                    s += " ip nat outside" + "\n";
-//                }
-//            }
-//
-//            if (pc.natTabulka.vratInside() != null) {
-//                for (SitoveRozhrani iface0 : pc.natTabulka.vratInside()) {
-//                    if (iface0.jmeno.equals(sr.jmeno)) {
-//                        s += " ip nat inside" + "\n";
-//                        break;
-//                    }
-//                }
-//            }
+            if (ipLayer.getNatTable().getOutside() != null && ipLayer.getNatTable().getOutside().name.equals(singleIface.name)) {
+				s += " ip nat outside" + "\n";
+            }
 
-            if (sr.isUp == false) {
+			if (ipLayer.getNatTable().getInside(singleIface.name) != null) {
+				s += " ip nat inside" + "\n";
+			}
+
+            if (singleIface.isUp == false) {
                 s += " shutdown" + "\n";
             }
             s += " duplex auto\n speed auto\n!\n";
@@ -287,37 +303,36 @@ public class ShowCommand extends CiscoCommand {
         s += "!\n";
         s += "ip http server\n";
 
-//        for (Pool pool : pc.natTabulka.lPool.seznam) {
-//            s += "ip nat pool " + pool.jmeno + " " + pool.prvni().vypisAdresu() + " " + pool.posledni().vypisAdresu()
-//                    + " prefix-length " + pool.prvni().pocetBituMasky() + "\n";
-//        }
-//
-//        for (PoolAccess pa : pc.natTabulka.lPoolAccess.seznam) {
-//            s += "ip nat inside source list " + pa.access + " pool " + pa.pool;
-//            if (pa.overload) {
-//                s += " overload";
-//            }
-//            s += "\n";
-//        }
-//
-//        for (NATzaznam zaznam : pc.natTabulka.vratTabulku()) {
-//            if (zaznam.jeStaticke()) {
-//                s += "ip nat inside source static " + zaznam.vratIn().vypisAdresu() + " " + zaznam.vratOut().vypisAdresu() + "\n";
-//            }
-//        }
-//
-//        s += "!\n";
-//
-//        for (AccessList access : pc.natTabulka.lAccess.seznam) {
-//            s += "access-list " + access.cislo + " permit " + access.ip.vypisAdresu() + " " + access.ip.vypisWildcard() + "\n";
-//        }
+        for (Pool pool : ipLayer.getNatTable().lPool.getSortedPools()) {
+            s += "ip nat pool " + pool.name + " " + pool.prvni() + " " + pool.posledni()
+                    + " prefix-length " + pool.prefix + "\n";
+        }
 
-//        if (!debug) {
-//            s += "!\n" + "!\n" + "control-plane\n"
-//                    + "!\n" + "!\n" + "line con 0\n"
-//                    + "line aux 0\n" + "line vty 0 4\n" + " login\n" + "!\n" + "end\n\n";
-//
-//        }
+        for (PoolAccess pa : ipLayer.getNatTable().lPoolAccess.getSortedPoolAccess()) {
+            s += "ip nat inside source list " + pa.access + " pool " + pa.poolName;
+            if (pa.overload) {
+                s += " overload";
+            }
+            s += "\n";
+        }
+
+        for (Record zaznam : ipLayer.getNatTable().getRules()) {
+            if (zaznam.isStatic) {
+                s += "ip nat inside source static " + zaznam.in.address + " " + zaznam.out.address + "\n";
+            }
+        }
+
+        s += "!\n";
+
+        for (AccessList access : ipLayer.getNatTable().lAccess.getList()) {
+            s += "access-list " + access.cislo + " permit " + access.ip.getIp() + " " + access.ip.getMask().getWildcardRepresentation() + "\n";
+        }
+
+        if (!debug) {
+            s += "!\n" + "!\n" + "control-plane\n"
+                    + "!\n" + "!\n" + "line con 0\n"
+                    + "line aux 0\n" + "line vty 0 4\n" + " login\n" + "!\n" + "end\n\n";
+        }
         printWithDelay(s, 10);
     }
 

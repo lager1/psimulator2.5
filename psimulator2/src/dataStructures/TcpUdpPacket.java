@@ -1,0 +1,32 @@
+/*
+ * created 17.3.2012
+ */
+
+package dataStructures;
+
+/**
+ * Represents TCP and UDP packet.
+ *
+ * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ */
+public abstract class TcpUdpPacket extends L4Packet {
+
+	public final int srcPort;
+	public final int dstPort;
+
+	public TcpUdpPacket(int srcPort, int dstPort, Object data) {
+		super(data);
+		this.srcPort = srcPort;
+		this.dstPort = dstPort;
+	}
+
+	@Override
+	public int getPortSrc() {
+		return srcPort;
+	}
+
+	@Override
+	public int getPortDst() {
+		return dstPort;
+	}
+}

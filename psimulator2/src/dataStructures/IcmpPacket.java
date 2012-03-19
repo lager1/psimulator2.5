@@ -12,6 +12,8 @@ import utils.Util;
  */
 public class IcmpPacket extends L4Packet {
 
+	private static int HEADER_LENGTH = 8;
+
 	@Override
 	public L4PacketType getType() {
 		return L4PacketType.ICMP;
@@ -133,7 +135,25 @@ public class IcmpPacket extends L4Packet {
 		this.code = code;
 		this.id = id;
 		this.seq = seq;
-		this.size = 8 + size;
+		this.size = HEADER_LENGTH + size;
+	}
+
+	/**
+	 * Creates IcmpPacket with given type, code, id, seq.
+	 *
+	 * @param type
+	 * @param code
+	 * @param id
+	 * @param seq
+	 * @param size payload size
+	 */
+	public IcmpPacket(Type type, Code code, int id, int seq, int size, Object data) {
+		super(null);
+		this.type = type;
+		this.code = code;
+		this.id = id;
+		this.seq = seq;
+		this.size = HEADER_LENGTH + size;
 	}
 
 	@Override
@@ -142,6 +162,26 @@ public class IcmpPacket extends L4Packet {
 	}
 
 	private void countSize() { // ICMP packet has 8 bytes + data (http://en.wikipedia.org/wiki/Ping)
-		this.size = 8 + 56;
+		this.size = HEADER_LENGTH + 56;
+	}
+
+	@Override
+	public int getPortSrc() {
+		return id;
+	}
+
+	@Override
+	public int getPortDst() {
+		return id;
+	}
+
+	@Override
+	public L4Packet getCopyWithDifferentSrcPort(int port) {
+		return new IcmpPacket(type, code, port, seq, size > HEADER_LENGTH ? size - HEADER_LENGTH : size, data);
+	}
+
+	@Override
+	public L4Packet getCopyWithDifferentDstPort(int port) {
+		return new IcmpPacket(type, code, port, seq, size > HEADER_LENGTH ? size - HEADER_LENGTH : size, data);
 	}
 }

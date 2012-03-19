@@ -94,6 +94,9 @@ public class LinuxIPLayer extends IPLayer {
 		// odnatovat
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 		packet = packetFilter.preRouting(packet, ifaceIn);
+		if (packet == null) { // packet dropped, ..
+			return;
+		}
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) {

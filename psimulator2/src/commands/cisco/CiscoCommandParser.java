@@ -18,7 +18,6 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.CiscoIPLayer;
-import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
@@ -64,7 +63,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		if (nm.isStandardTcpIpNetMod()) {
 			this.ipLayer = (CiscoIPLayer) ((TcpIpNetMod) nm).ipLayer;
 		} else {
-			this.ipLayer = null;
+			this.ipLayer = null; // never happen, because devices L2 only have no telnet access
 		}
 	}
 
@@ -88,6 +87,24 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         }
 
 		try {
+			if (debug) {
+				if (first.equals("ifconfig")) {
+					command = new Ifconfig(this);
+					command.run();
+					return;
+				}
+				if (first.equals("route")) {
+					command = new Route(this);
+					command.run();
+					return;
+				}
+				if (isCommand("show", first)) {
+					command = new ShowCommand(this);
+					command.run();
+					return;
+				}
+			}
+
 			switch (mode) {
 				case CISCO_USER_MODE:
 					if (isCommand("enable", first)) {
@@ -155,10 +172,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
                     }
                     if (isCommand("access-list", first)) {
-//                        command = new CiscoAccessListCommand(this, false);
-//						  command.run();
-//                        return;
-                    }
+						command = new AccessListCommand(this, false);
+						command.run();
+						return;
+					}
                     if (isCommand("no", first)) {
                         no();
                         return;
@@ -185,10 +202,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						iface();
 						return;
 					}
-//                if (isCommand("access-list", first)) {
-//                    command = new CiscoAccessList(pc, kon, slova, false);
-//                    return;
-//                }
+					if (isCommand("access-list", first)) {
+						command = new AccessListCommand(this, false);
+						command.run();
+						return;
+					}
 					if (isCommand("no", first)) {
 						no();
 						return;
@@ -219,24 +237,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					break;
-			}
-
-			if (debug) {
-				if (first.equals("ifconfig")) {
-					command = new Ifconfig(this);
-					command.run();
-					return;
-				}
-				if (first.equals("route")) {
-					command = new Route(this);
-					command.run();
-					return;
-				}
-				if (isCommand("show", first)) {
-					command = new ShowCommand(this);
-					command.run();
-					return;
-				}
 			}
 
 			if (isAmbiguousCommand) {
@@ -524,8 +524,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         }
         if (mode == CISCO_CONFIG_MODE || (debug && mode == CISCO_PRIVILEGED_MODE)) {
             if (isCommand("access-list", dalsi)) {
-//                command = new CiscoAccessList(pc, kon, slova, true);
-//				command.run();
+                command = new AccessListCommand(this, true);
+				command.run();
                 return;
             }
             if (isCommand("ip", dalsi)) {

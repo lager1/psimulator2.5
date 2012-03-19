@@ -66,6 +66,18 @@ public class IpNetmask extends IpAddress{
         return pocet;
     }
 
+	/**
+     * Spocita wildcard z masky a vrati ho jako retezec.
+     * @return
+     * @author Stanislav Řehák
+     */
+    public String getWildcardRepresentation() {
+        long broadcast = (long)(new IPwithNetmask("1.1.1.1").getBroadcast().getBits());
+        long mask = (long) bits;
+        long wc = broadcast - mask;
+        IpAddress wildcard = IpAddress.createIpFromBits((int)wc);
+        return wildcard.toString();
+    }
 
 // staticky metody:
 

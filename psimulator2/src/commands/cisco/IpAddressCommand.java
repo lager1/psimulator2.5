@@ -43,7 +43,7 @@ public class IpAddressCommand extends CiscoCommand {
      * Vim, ze mi prislo '(no) ip address'.
      * @return
      */
-    protected boolean zpracujRadek() {
+    private boolean zpracujRadek() {
         //ip address 192.168.2.129 255.255.255.128
 
         String ip = nextWord();
@@ -58,8 +58,7 @@ public class IpAddressCommand extends CiscoCommand {
             return false;
         }
 
-
-		IpAddress adr = null;
+		IpAddress adr;
 		try {
 			adr = new IpAddress(ip);
 		} catch (Exception e) {
@@ -72,7 +71,7 @@ public class IpAddressCommand extends CiscoCommand {
             return false;
         }
 
-		IPwithNetmask entireIp = null;
+		IPwithNetmask entireIp;
         try {
             entireIp = new IPwithNetmask(ip, maska);
         } catch (BadNetmaskException e) {
@@ -102,7 +101,6 @@ public class IpAddressCommand extends CiscoCommand {
             return false;
         }
 
-
         if (entireIp.isNetworkNumber() || entireIp.isBroadcast() || entireIp.getMask().getBits() == 0) {
             // Router(config-if)#ip address 147.32.120.0 255.255.255.0
             // Bad mask /24 for address 147.32.120.0
@@ -119,7 +117,7 @@ public class IpAddressCommand extends CiscoCommand {
         return true;
     }
 
-    protected void vykonejPrikaz() {
+    private void vykonejPrikaz() {
 		IPLayer ipLayer = getNetMod().ipLayer;
 
         if (no) {

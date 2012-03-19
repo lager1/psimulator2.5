@@ -1,8 +1,6 @@
-package networkModule.L3;
+package networkModule.L3.nat;
 
-import java.util.HashMap;
-import java.util.Map;
-import networkModule.L3.NatPool.Pool;
+import java.util.*;
 
 /**
  * Datova struktura pro seznam PoolAccess. Jednoznacny identifikator je cislo.
@@ -12,7 +10,7 @@ import networkModule.L3.NatPool.Pool;
  *
  * @author Stanislav Řehák
  */
-public class NatPoolAccess {
+public class HolderPoolAccess {
 
 	/**
 	 * Key - number of poolAccess <br />
@@ -22,6 +20,12 @@ public class NatPoolAccess {
 
 	public Map<Integer, PoolAccess> getPoolAccess() {
 		return poolAccess;
+	}
+
+	public List<PoolAccess> getSortedPoolAccess() {
+		List<PoolAccess> list = new ArrayList<>(poolAccess.values());
+		Collections.sort(list);
+		return list;
 	}
 
     /**
@@ -78,24 +82,5 @@ public class NatPoolAccess {
             }
         }
         return null;
-    }
-
-    public class PoolAccess {
-
-        /**
-         * Cislo 1-2699.
-         */
-        public final int access;
-        /**
-         * Unikatni name poolu.
-         */
-        public final String poolName;
-        public final boolean overload;
-
-        public PoolAccess(int access, String pool, boolean overload) {
-            this.access = access;
-            this.poolName = pool;
-            this.overload = overload;
-        }
     }
 }

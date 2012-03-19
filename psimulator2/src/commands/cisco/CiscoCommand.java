@@ -40,6 +40,12 @@ public abstract class CiscoCommand extends AbstractCommand {
 		parser.ambiguousCommand();
 	}
 
+	protected void debug(String s) {
+		if (debug) {
+			printLine(s);
+		}
+	}
+
 	 /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
      * Metoda se take stara o vypisy typu: IncompleteCommand, AmbigiousCommand, InvalidInputDetected.

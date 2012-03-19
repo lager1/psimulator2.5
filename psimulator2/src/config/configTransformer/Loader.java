@@ -11,6 +11,7 @@ import psimulator2.Psimulator;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+import dataStructures.ipAddresses.IpNetmask;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,18 +21,19 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
-import networkModule.L2.SwitchportSettings;
+import networkModule.L3.nat.NatTable;
 import networkModule.L3.NetworkInterface;
+import networkModule.L3.nat.Pool;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
 import physicalModule.Cable;
 import physicalModule.SimulatorSwitchport;
 import physicalModule.Switchport;
 import shared.Components.*;
-import shared.Components.simulatorConfig.DeviceSettings;
+import shared.Components.simulatorConfig.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
-import shared.Components.simulatorConfig.Record;
 
+// TODO: PC nemuze mit 2 rozhrani stejnyho jmena !!!
 
 /**
  *
@@ -53,7 +55,10 @@ public class Loader implements Loggable {
 	 * Mnozina idecek, slouzi ke kontrolovani, je-li kazdy ID unikatni (kdyby se nejak rozbil konfigurak, treba pres svnko.
 	 */
 	private Set<Integer> idecka = new HashSet<>();
-
+	/**
+	 * Mnozina jmen, slouzi ke kontrolovani, zda jeden Device ma unikatni jmena sitovych rozhrani.
+	 */
+	private Set<String> names = new HashSet<>();
 
 
 
@@ -107,8 +112,10 @@ public class Loader implements Loggable {
 		int cislovaniSwitchportu = 0;
 //		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
 //		System.out.println("  "+model.getInterfacesMap().toString());
+		names = new HashSet<>();
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
 			registerID(ifaceModel.getId());
+			registerName(ifaceModel.getName(), model);
 //			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
@@ -228,6 +235,54 @@ public class Loader implements Loggable {
 		}
 
 		//TODO dodelat nastaveni natu (paketovyho filtru)
+		if (model.getDevSettings() != null && model.getDevSettings().getNatConfig() != null) {
+			NatConfig config = model.getDevSettings().getNatConfig();
+			NatTable natTable = nm.ipLayer.getNatTable();
+
+			// inside
+			if (config.getInside() != null) {
+				for (NetworkInterface iface : nm.ipLayer.getSortedNetworkIfaces()) {
+					if (config.getInside().contains(iface.name)) {
+						natTable.pridejRozhraniInside(iface);
+					}
+				}
+			}
+
+			// outside
+			if (config.getOutside() != null) {
+				NetworkInterface iface = nm.ipLayer.getNetworkInteface(config.getOutside());
+				if (iface != null) {
+					natTable.nastavRozhraniOutside(iface);
+				}
+			}
+
+			// pool
+			for (NatPoolConfig pool : config.getPools()) {
+				IpAddress start = new IpAddress(pool.getStart());
+				IpAddress end = new IpAddress(pool.getEnd());
+				natTable.lPool.pridejPool(start, end, pool.getPrefix(), pool.getName());
+			}
+
+			// poolAccess
+			for (NatPoolAccessConfig poolAcc : config.getPoolAccesses()) {
+				natTable.lPoolAccess.pridejPoolAccess(poolAcc.getNumber(), poolAcc.getPoolName(), poolAcc.isOverload());
+			}
+
+			// accessList
+			for (NatAccessListConfig acc : config.getAccessLists()) {
+				IpNetmask mask = IpNetmask.maskFromWildcard(acc.getWildcard());
+				IpAddress adr = new IpAddress(acc.getAddress());
+
+				IPwithNetmask all =new IPwithNetmask(adr, mask);
+				natTable.lAccess.pridejAccessList(all, acc.getNumber());
+			}
+
+			// static rules
+			for (StaticRule rule : config.getRules()) {
+				natTable.pridejStatickePravidloLinux(new IpAddress(rule.getIn()), new IpAddress(rule.getOut()));
+			}
+
+		}
 
 		//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
 
@@ -302,5 +357,12 @@ public class Loader implements Loggable {
 			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 objekty se stejnym id = "+id, null);
 		}
 		idecka.add(id);
+	}
+
+	private void registerName(String name, HwComponentModel model){
+		if(names.contains(name)){
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 rozhrani na jednom prvku ("+model.getName()+") se stejnym jmenem: "+name, null);
+		}
+		names.add(name);
 	}
 }

@@ -6,7 +6,6 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
-import logging.Loggable;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -17,15 +16,12 @@ public class IpCommand extends CiscoCommand {
 
 	private final boolean no;
 	private AbstractCommand command;
-//	private final NetworkInterface iface;
 	private final int state;
 
 	public IpCommand(AbstractCommandParser parser, boolean no) {
 		super(parser);
 		this.no = no;
 		this.state = parser.getShell().getMode();
-//		this.debug = Logger.logg(getDescription(), )
-
 	}
 
 	@Override
@@ -40,17 +36,19 @@ public class IpCommand extends CiscoCommand {
             return;
         }
 
-        if (state == CommandShell.CISCO_CONFIG_MODE || debug) {
+        if (state == CommandShell.CISCO_CONFIG_MODE) {
 
-            if (kontrolaBezVypisu("route", dalsi, 5)) {
-                command = new IpRouteCommand(parser, no);
-				command.run();
-                return;
-            }
+			if (debug) {
+				if (kontrolaBezVypisu("route", dalsi, 5)) {
+					command = new IpRouteCommand(parser, no);
+					command.run();
+					return;
+				}
+			}
 
             if (kontrolaBezVypisu("nat", dalsi, 3)) {
-//                command = new CiscoIpNat(pc, kon, slova, no);
-//				command.run(); // TODO IpNatCommand
+                command = new IpNatCommand(parser, no);
+				command.run();
                 return;
             }
 
@@ -72,8 +70,8 @@ public class IpCommand extends CiscoCommand {
             }
 
             if (kontrolaBezVypisu("nat", dalsi, 2)) {
-//                command = new CiscoIpNatRozhrani(pc, kon, slova, no, rozhrani);
-//				command.run();
+				command = new IpNatInterfaceCommand(parser, no);
+				command.run();
                 return;
             }
         }

@@ -69,6 +69,7 @@
                 <defaultZoomXPos>70</defaultZoomXPos>
                 <defaultZoomYPos>503</defaultZoomYPos>
                 <devSettings>
+                    <natConfig/>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
@@ -77,14 +78,12 @@
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
-                <deviceName>pc1</deviceName>
                 <hwType>END_DEVICE_PC</hwType>
                 <id>0</id>
                 <interface hwComponent="0" idAsString="1">
                     <cable>26</cable>
                     <hwType>END_DEVICE_PC</hwType>
                     <id>1</id>
-                    <interfaceName>eth0</interfaceName>
                     <ipAddress>192.168.1.1/24</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-00</macAddress>
@@ -99,45 +98,65 @@
                 <defaultZoomXPos>70</defaultZoomXPos>
                 <defaultZoomYPos>18</defaultZoomYPos>
                 <devSettings>
+                    <natConfig>
+                        <accessLists>
+                            <address>192.168.2.1</address>
+                            <number>7</number>
+                            <wildcard>0.0.0.3</wildcard>
+                        </accessLists>
+                        <inside>FastEthernet0/0</inside>
+                        <outside>FastEthernet0/1</outside>
+                        <poolAccesses>
+                            <number>7</number>
+                            <overload>true</overload>
+                            <poolName>ovrld</poolName>
+                        </poolAccesses>
+                        <pools>
+                            <end>10.0.0.5</end>
+                            <name>ovrld</name>
+                            <prefix>24</prefix>
+                            <start>10.0.0.5</start>
+                        </pools>
+                        <rules>
+                            <in>192.168.1.1</in>
+                            <out>10.0.0.10</out>
+                        </rules>
+                    </natConfig>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
                             <destination>10.0.0.0/29</destination>
-                            <interfaceName>FastEthernet0/0</interfaceName>
+                            <interfaceName>FastEthernet0/1</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>192.168.2.0/26</destination>
-                            <interfaceName>FastEthernet0/1</interfaceName>
+                            <interfaceName>FastEthernet0/0</interfaceName>
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
-                <deviceName>cisco1</deviceName>
                 <hwType>CISCO_ROUTER</hwType>
                 <id>16</id>
                 <interface hwComponent="16" idAsString="17">
                     <cable>29</cable>
                     <hwType>CISCO_ROUTER</hwType>
                     <id>17</id>
-                    <interfaceName>FastEthernet0/0</interfaceName>
                     <ipAddress>10.0.0.1/29</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-09</macAddress>
-                    <name>FastEthernet0/0</name>
+                    <name>FastEthernet0/1</name>
                 </interface>
                 <interface hwComponent="16" idAsString="18">
                     <cable>30</cable>
                     <hwType>CISCO_ROUTER</hwType>
                     <id>18</id>
-                    <interfaceName>FastEthernet0/1</interfaceName>
                     <ipAddress>192.168.2.2/26</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-0A</macAddress>
-                    <name>FastEthernet0/1</name>
+                    <name>FastEthernet0/0</name>
                 </interface>
                 <interface hwComponent="16" idAsString="19">
                     <hwType>CISCO_ROUTER</hwType>
                     <id>19</id>
-                    <interfaceName>FastEthernet0/2</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0B</macAddress>
@@ -146,7 +165,6 @@
                 <interface hwComponent="16" idAsString="20">
                     <hwType>CISCO_ROUTER</hwType>
                     <id>20</id>
-                    <interfaceName>FastEthernet0/3</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0C</macAddress>
@@ -161,11 +179,12 @@
                 <defaultZoomXPos>700</defaultZoomXPos>
                 <defaultZoomYPos>508</defaultZoomYPos>
                 <devSettings>
+                    <natConfig/>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
                             <destination>192.16.2.0/26</destination>
-                            <interfaceName>Eth2</interfaceName>
+                            <interfaceName>eth2</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>192.16.1.0/24</destination>
@@ -173,14 +192,12 @@
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
-                <deviceName>pc2</deviceName>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>2</id>
                 <interface hwComponent="2" idAsString="3">
                     <cable>26</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>3</id>
-                    <interfaceName>eth0</interfaceName>
                     <ipAddress>192.168.1.2/24</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-01</macAddress>
@@ -190,30 +207,27 @@
                     <cable>27</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>4</id>
-                    <interfaceName>Eth1</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-02</macAddress>
-                    <name>Eth1</name>
+                    <name>eth1</name>
                 </interface>
                 <interface hwComponent="2" idAsString="5">
                     <cable>30</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>5</id>
-                    <interfaceName>Eth2</interfaceName>
                     <ipAddress>192.168.2.1/26</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-03</macAddress>
-                    <name>Eth2</name>
+                    <name>eth2</name>
                 </interface>
                 <interface hwComponent="2" idAsString="6">
                     <hwType>LINUX_ROUTER</hwType>
                     <id>6</id>
-                    <interfaceName>Eth3</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-04</macAddress>
-                    <name>Eth3</name>
+                    <name>eth3</name>
                 </interface>
                 <name>pc2</name>
             </value>
@@ -224,6 +238,7 @@
                 <defaultZoomXPos>700</defaultZoomXPos>
                 <defaultZoomYPos>18</defaultZoomYPos>
                 <devSettings>
+                    <natConfig/>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
@@ -232,14 +247,12 @@
                         </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
-                <deviceName>cisco2</deviceName>
                 <hwType>CISCO_ROUTER</hwType>
                 <id>21</id>
                 <interface hwComponent="21" idAsString="22">
                     <cable>28</cable>
                     <hwType>CISCO_ROUTER</hwType>
                     <id>22</id>
-                    <interfaceName>FastEthernet0/0</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0D</macAddress>
@@ -249,7 +262,6 @@
                     <cable>29</cable>
                     <hwType>CISCO_ROUTER</hwType>
                     <id>23</id>
-                    <interfaceName>FastEthernet0/1</interfaceName>
                     <ipAddress>10.0.0.2/29</ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0E</macAddress>
@@ -258,7 +270,6 @@
                 <interface hwComponent="21" idAsString="24">
                     <hwType>CISCO_ROUTER</hwType>
                     <id>24</id>
-                    <interfaceName>FastEthernet0/2</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-0F</macAddress>
@@ -267,7 +278,6 @@
                 <interface hwComponent="21" idAsString="25">
                     <hwType>CISCO_ROUTER</hwType>
                     <id>25</id>
-                    <interfaceName>FastEthernet0/3</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>false</isUp>
                     <macAddress>AA-11-E0-00-00-10</macAddress>
@@ -282,17 +292,16 @@
                 <defaultZoomXPos>980</defaultZoomXPos>
                 <defaultZoomYPos>228</defaultZoomYPos>
                 <devSettings>
+                    <natConfig/>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig/>
                 </devSettings>
-                <deviceName>FW</deviceName>
                 <hwType>LINUX_ROUTER</hwType>
                 <id>7</id>
                 <interface hwComponent="7" idAsString="8">
                     <cable>27</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>8</id>
-                    <interfaceName>eth0</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-05</macAddress>
@@ -302,67 +311,56 @@
                     <cable>28</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>9</id>
-                    <interfaceName>Eth1</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-06</macAddress>
-                    <name>Eth1</name>
+                    <name>eth1</name>
                 </interface>
                 <interface hwComponent="7" idAsString="10">
                     <hwType>LINUX_ROUTER</hwType>
                     <id>10</id>
-                    <interfaceName>Eth2</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-07</macAddress>
-                    <name>Eth2</name>
+                    <name>eth2</name>
                 </interface>
                 <interface hwComponent="7" idAsString="11">
                     <hwType>LINUX_ROUTER</hwType>
                     <id>11</id>
-                    <interfaceName>Eth3</interfaceName>
                     <ipAddress></ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-08</macAddress>
-                    <name>Eth3</name>
+                    <name>eth3</name>
                 </interface>
                 <name>FW</name>
             </value>
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1331646780362</lastEditTimestamp>
+    <lastEditTimestamp>1332161770314</lastEditTimestamp>
     <counter>
         <nextId>88</nextId>
         <nextMacAddress>27</nextMacAddress>
         <nextNumberMap>
             <entry>
+                <key>BUNDLE_OF_CABLES</key>
+                <value>0</value>
+            </entry>
+            <entry>
                 <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>LINUX_SWITCH</key>
-                <value>4</value>
-            </entry>
-            <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
+                <key>REAL_PC</key>
+                <value>2</value>
             </entry>
             <entry>
                 <key>LINUX_ROUTER</key>
                 <value>7</value>
             </entry>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>2</value>
             </entry>
             <entry>
                 <key>END_DEVICE_PC</key>
@@ -377,7 +375,15 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_ETHERNET</key>
+                <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_SWITCH</key>
+                <value>4</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

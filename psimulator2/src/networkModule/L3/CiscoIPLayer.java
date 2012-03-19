@@ -61,7 +61,7 @@ public class CiscoIPLayer extends IPLayer {
 				newArpReply = true;
 				worker.wake();
 				break;
-	
+
 			default:
 				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel mi neznamy typ ARP paketu, zahazuju.", packet);
 		}
@@ -103,6 +103,9 @@ public class CiscoIPLayer extends IPLayer {
 		// odnatovat
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 		packet = packetFilter.preRouting(packet, ifaceIn);
+		if (packet == null) { // packet dropped, ..
+			return;
+		}
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..

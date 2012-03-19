@@ -2,8 +2,9 @@
  * http://www.samuraj-cz.com/clanek/cisco-ios-8-access-control-list/
  */
 
-package networkModule.L3;
+package networkModule.L3.nat;
 
+import networkModule.L3.nat.AccessList;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.ArrayList;
@@ -18,9 +19,13 @@ import java.util.List;
  *
  * @author Stanislav Řehák
  */
-public class NatAccessList {
+public class HolderAccessList {
 
-    private final List<AccessList> seznam = new ArrayList<>(); // nechat jako List, mapa to byti nemuze!
+    private final List<AccessList> list = new ArrayList<>(); // nechat jako List, mapa to byti nemuze!
+
+	public List<AccessList> getList() {
+		return list;
+	}
 
     /**
      * Prida do seznamu Access-listu na spravnou pozici dalsi pravidlo. <br />
@@ -30,19 +35,19 @@ public class NatAccessList {
      * @param cislo
      */
     public void pridejAccessList(IPwithNetmask adresa, int cislo) {
-        for (AccessList zaznam : seznam) {
+        for (AccessList zaznam : list) {
             if (zaznam.ip.equals(adresa)) { // kdyz uz tam je, tak nic nedelat
                 return;
             }
         }
         int index = 0;
-        for (AccessList access : seznam) {
+        for (AccessList access : list) {
             if (cislo < access.cislo) {
                 break;
             }
             index++;
         }
-        seznam.add(index, new AccessList(adresa, cislo));
+        list.add(index, new AccessList(adresa, cislo));
     }
 
     /**
@@ -51,20 +56,20 @@ public class NatAccessList {
      */
     public void smazAccessList(int cislo) {
         List<AccessList> smazat = new ArrayList<>();
-        for (AccessList zaznam : seznam) {
+        for (AccessList zaznam : list) {
             if (zaznam.cislo == cislo) {
                 smazat.add(zaznam);
             }
         }
 
-		seznam.removeAll(smazat);
+		list.removeAll(smazat);
     }
 
     /**
      * Smaze vsechny access-listy
      */
     public void smazAccessListyVsechny() {
-        seznam.clear();
+        list.clear();
     }
 
     /**
@@ -74,28 +79,11 @@ public class NatAccessList {
      * @return
      */
     public AccessList vratAccessListIP(IpAddress ip) {
-        for (AccessList access : seznam) {
+        for (AccessList access : list) {
             if (access.ip.isInMyNetwork(ip)) { // TODO: zkontrolovat spravnou funkcnost!
                 return access;
             }
         }
         return null;
-    }
-
-    /**
-     * Trida reprezentujici jeden seznam-list.
-     */
-    public class AccessList {
-
-        public final IPwithNetmask ip;
-		/**
-		 * V podstate unikatni jmeno AccessListu.
-		 */
-        public final int cislo;
-
-        public AccessList(IPwithNetmask ip, int cislo) {
-            this.ip = ip;
-            this.cislo = cislo;
-        }
     }
 }

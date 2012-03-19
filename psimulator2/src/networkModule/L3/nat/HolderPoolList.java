@@ -2,28 +2,24 @@
  * created 5.3.2012
  */
 
-package networkModule.L3;
+package networkModule.L3.nat;
 
+import networkModule.L3.nat.AccessList;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import networkModule.L3.NatAccessList.AccessList;
-import networkModule.L3.NatPoolAccess.PoolAccess;
-import networkModule.L3.NatTable.Record;
+import java.util.*;
+import networkModule.L3.nat.NatTable.Record;
 
 /**
  * Datova struktura pro pools poolu IP adres. <br />
  * Kazdy poolName obsahuje name a pools IpAdres. <br />
- * (cisco prikaz: "ip nat poolName 'jmenoPoolu' 'ip_start' 'ip_konec' prefix 'cislo'" )
+ * (cisco prikaz: "address nat poolName 'jmenoPoolu' 'ip_start' 'ip_konec' prefix 'cislo'" )
  *
  * OK
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class NatPool {
+public class HolderPoolList {
 
 	/**
 	 * Key - name of pool <br />
@@ -34,14 +30,20 @@ public class NatPool {
     private final NatTable natTable;
 
 
-    public NatPool(NatTable tab) {
+    public HolderPoolList(NatTable tab) {
         this.natTable = tab;
     }
 
+	public List<Pool> getSortedPools() {
+		List<Pool> list = new ArrayList<>(pools.values());
+		Collections.sort(list);
+		return list;
+	}
+
     /**
      * Prida poolName.
-     * @param start staci predavat jen IpAddress a maska muze byt null
-     * @param konec staci predavat jen IpAddress a maska muze byt null
+     * @param par staci predavat jen IpAddress
+     * @param konec staci predavat jen IpAddress
      * @param prefix maska pocet bitu
      * @param name neni null ani ""
      * @return 0 - ok prida poolName <br />
@@ -50,8 +52,8 @@ public class NatPool {
      *         3 - kdyz je spatna maska (% Invalid input detected) <br />
      *         4 - kdyz je start a konec v jine siti (%Start and end addresses on different subnets)
      */
-    public int pridejPool(IPwithNetmask start, IPwithNetmask konec, int prefix, String jmeno) {
-        if (start.getIp().getLongRepresentation() > konec.getIp().getLongRepresentation()) {
+    public int pridejPool(IpAddress par, IpAddress konec, int prefix, String jmeno) {
+        if (par.getLongRepresentation() > konec.getLongRepresentation()) {
             return 1;
         }
 
@@ -59,9 +61,9 @@ public class NatPool {
             return 3;
         }
 
-		start = new IPwithNetmask(start.getIp(), prefix);
+		IPwithNetmask start = new IPwithNetmask(par, prefix);
 
-		if (!start.isInMyNetwork(konec.getIp())) {
+		if (!start.isInMyNetwork(konec)) {
 			return 4;
 		}
 
@@ -79,7 +81,7 @@ public class NatPool {
             pool.pool.add(ukazatel.getIp());
 			ukazatel = new IPwithNetmask(IpAddress.nextAddress(ukazatel.getIp()), prefix);
 
-        } while (ukazatel.getIp().getLongRepresentation() <= konec.getIp().getLongRepresentation() && start.isInMyNetwork(ukazatel.getIp()));
+        } while (ukazatel.getIp().getLongRepresentation() <= konec.getLongRepresentation() && start.isInMyNetwork(ukazatel.getIp()));
 
         pool.pointer = pool.prvni();
 
@@ -212,8 +214,8 @@ public class NatPool {
      */
     private boolean isPoolInUse(String jmeno) {
         for (Record zaznam : natTable.table) {
-            if (zaznam.staticRule == false) {
-                List<Pool> pseznam = vratPoolProIp(zaznam.out);
+            if (zaznam.isStatic == false) {
+                List<Pool> pseznam = vratPoolProIp(zaznam.out.address);
                 if (pseznam == null) continue;
                 for (Pool pool : pseznam) {
                     if (pool.name.equals(jmeno)) {
@@ -223,92 +225,6 @@ public class NatPool {
             }
         }
         return false;
-    }
-
-    public class Pool {
-
-        /**
-         * Jmeno poolu
-         */
-        public final String name;
-        /**
-         * Prirazeny poolName adres.
-         */
-        List<IpAddress> pool;
-        /**
-         * Ukazuje na dalsi volnou IpAdresu z poolu nebo null, kdyz uz neni volna.
-         */
-        IpAddress pointer = null;
-		public final int prefix;
-
-        public Pool(String name, int prefix) {
-			this.name = name;
-			this.prefix = prefix;
-            pool = new ArrayList<IpAddress>(){
-
-                @Override
-                public boolean add(IpAddress ip) {
-                    if (pool.isEmpty()) {
-                        pointer = ip;
-                    }
-                    return super.add(ip);
-                }
-
-            };
-        }
-
-        /**
-         * Vrati prvni IpAdresu z poolu nebo null, kdyz je poolName prazdny.
-         * @return
-         */
-        public IpAddress prvni() {
-            if (pool.isEmpty()) {
-                return null;
-            }
-            return pool.get(0);
-        }
-
-        /**
-         * Vrati dalsi IpAdresu z poolu. Kdyz uz jsem na posledni, tak vracim null (DHU).
-         * @return
-         */
-        private IpAddress dalsi() {
-            int n = -1;
-            for (IpAddress ip : pool) {
-                n++;
-                if (ip.equals(pointer)) {
-                    break; // n = index ukazatele
-                }
-            }
-            if (n + 1 == pool.size()) {
-                return null;
-            }
-            return pool.get(n + 1);
-        }
-
-        /**
-         * Vrati dalsi IP z poolu nebo null, pokud uz neni dalsi IP.
-         * @param testovani true, kdyz se zjistuje, zda je jeste IP, nemenim pak pointer na volnou IP
-         * @return
-         */
-        public IpAddress dejIp(boolean testovani) {
-            IpAddress vrat = pointer;
-            if (testovani == false) {
-                pointer = dalsi();
-            }
-            return vrat;
-        }
-
-        /**
-         * Vrati posledni Ip
-         * @return
-         */
-        public IpAddress posledni() {
-            if (pool.size() <= 1) {
-                return prvni();
-            }
-            return pool.get(pool.size()-1);
-        }
     }
 }
 

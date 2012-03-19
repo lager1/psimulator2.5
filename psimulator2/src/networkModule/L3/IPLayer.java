@@ -3,6 +3,7 @@
  */
 package networkModule.L3;
 
+import networkModule.L3.nat.NatTable;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -33,7 +34,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 */
 	protected final ArpCache arpCache = new ArpCache();
 	/**
-	 * Packet filter. Controls NAT, packet dropping, ..
+	 * Packet filter. Controls NetworkAddressTranslation, packet dropping, ..
 	 */
 	protected final PacketFilter packetFilter = new PacketFilter(this);
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
@@ -90,6 +91,10 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 */
 	public NatTable getNatTable() {
 		return packetFilter.getNatTable();
+	}
+
+	public TcpIpNetMod getNetMod() {
+		return netMod;
 	}
 
 	public IcmpHandler getIcmpHandler() {
@@ -196,6 +201,9 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	protected void processPacket(IpPacket packet, Record record, NetworkInterface ifaceIn) {
 		// zanatuj
 		packet = packetFilter.postRouting(packet, ifaceIn, record.rozhrani); // prichozi rozhrani je null, protoze zadne takove neni
+		if (packet == null) { // packet dropped
+			return;
+		}
 
 		// zjistit nexHopIp
 		// kdyz RT vrati record s branou, tak je nextHopIp record.brana

@@ -9,7 +9,7 @@ import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.ArrayList;
 import java.util.List;
-import networkModule.L3.NatTable;
+import networkModule.L3.nat.NatTable;
 import networkModule.L3.NetworkInterface;
 import utils.Util;
 

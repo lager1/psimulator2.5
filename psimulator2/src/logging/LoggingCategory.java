@@ -98,7 +98,10 @@ public enum LoggingCategory {
 	 * Predevsim zpravy z WorkerThread, ale pripadne i ladeni jinejch vlaken
 	 */
 	THREADS,
-	
+	/**
+	 * Zpravy z NATU
+	 */
+	NetworkAddressTranslation,
 	/**
 	 * část aplikace sloužící pro odesílání eventů z loggeru do UI klienta
 	 */
