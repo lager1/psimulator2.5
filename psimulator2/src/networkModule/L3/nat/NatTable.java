@@ -27,7 +27,14 @@ public class NatTable implements Loggable {
 
 	private final IPLayer ipLayer;
 
+	/**
+	 * Dynamic records.
+	 */
 	List<Record> table = new ArrayList<>();
+	/**
+	 * Static rules.
+	 */
+	private List<StaticRule> staticRules = new ArrayList<>();
     /**
      * seznam poolu IP.
      */
@@ -80,8 +87,16 @@ public class NatTable implements Loggable {
 	 * Returns NetworkAddressTranslation table.
 	 * @return
 	 */
-	public List<Record> getRules() {
+	public List<Record> getDynamicRules() {
 		return table;
+	}
+
+	/**
+	 * Returns static rules.
+	 * @return
+	 */
+	public List<StaticRule> getStaticRules() {
+		return staticRules;
 	}
 
 	/**
@@ -219,9 +234,9 @@ public class NatTable implements Loggable {
      *         null pokud nic nenaslo
      */
     public IpAddress najdiStatickePravidloIn(IpAddress zdroj) {
-        for (Record record : table) {
-            if (record.isStatic && record.in.address.equals(zdroj)) {
-                return record.out.address;
+        for (StaticRule rule : staticRules) {
+            if (rule.in.equals(zdroj)) {
+                return rule.out;
             }
         }
         return null;
@@ -276,7 +291,7 @@ public class NatTable implements Loggable {
 
 		// projdu aktualni dynamicke zaznamy a jestli uz tam je takovy preklad, tak mu prodlouzim zivot a necham se prelozit
 		for (Record record : table) {
-			if (!record.isStatic && record.in.equals(tempRecord)) {
+			if (record.in.equals(tempRecord)) {
 				logNatOperation(packet, true, true);
 //				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation,
 //						String.format("Natuji: %s:%d na %s:%d", record.in.address.toString(), record.in.port, record.out.address.toString(), record.out.port), packet);
@@ -302,7 +317,7 @@ public class NatTable implements Loggable {
 		freePorts.remove(srcPortNew);
 
 		InnerRecord newDynamic = new InnerRecord(srcIpNew, srcPortNew, tempRecord.protocol);
-		Record r = new Record(tempRecord, newDynamic, false);
+		Record r = new Record(tempRecord, newDynamic);
 
 		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "Novy zaznam vytvoren: Pridavam do tabulky.", r);
 		table.add(r);
@@ -380,14 +395,14 @@ public class NatTable implements Loggable {
 		deleteOldDynamicRecords();
 
 		// 1) projit staticka pravidla, pokud tam bude sedet packet.dst s record.out.address, tak se vytvori novy a vrati se
-		for (Record record : table) {
-			if (record.isStatic && record.out.address.equals(packet.dst)) {
+		for (StaticRule rule : staticRules) {
+			if (rule.out.equals(packet.dst)) {
 				logNatOperation(packet, false, true);
 
 //				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Odnatuji: before: src: %s:%d dst: %s:%d",
 //						packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
 
-				IpPacket translated = new IpPacket(packet.src, record.in.address, packet.ttl, packet.data); // port se tu nemeni (je v packet.data)
+				IpPacket translated = new IpPacket(packet.src, rule.in, packet.ttl, packet.data); // port se tu nemeni (je v packet.data)
 
 				logNatOperation(translated, false, false);
 
@@ -399,7 +414,7 @@ public class NatTable implements Loggable {
 
 		// 2) projit dynamicka pravidla, tam musi sedet IP+port // TODO: NatTable: pridat protokol
 		for (Record record : table) {
-			if (!record.isStatic && record.out.address.equals(packet.dst) && record.out.port == packet.data.getPortDst()) {
+			if (record.out.address.equals(packet.dst) && record.out.port == packet.data.getPortDst()) {
 
 				logNatOperation(packet, false, true);
 
@@ -429,10 +444,27 @@ public class NatTable implements Loggable {
      * @param out
      * @return index noveho zaznamu
      */
-    private int dejIndexVTabulce(IpAddress out) {
+    private int getIndexForDynamicTable(IpAddress out) {
         int index = 0;
         for (Record zaznam : table) {
             if (out.getLongRepresentation() < zaznam.out.address.getLongRepresentation()) {
+                break;
+            }
+            index++;
+        }
+        return index;
+    }
+
+	/**
+     * Vrati pozici pro pridani do tabulky.
+     * Radi se to dle out adresy vzestupne.
+     * @param out
+     * @return index noveho zaznamu
+     */
+    private int getIndexForStaticTable(IpAddress out) {
+        int index = 0;
+        for (StaticRule rule : staticRules) {
+            if (out.getLongRepresentation() < rule.out.getLongRepresentation()) {
                 break;
             }
             index++;
@@ -535,13 +567,11 @@ public class NatTable implements Loggable {
         long now = System.currentTimeMillis();
         List<Record> delete = new ArrayList<>();
         for (Record record : table) {
-            if (record.isStatic == false) { // jen dynamicke zaznamy
-                if (now - record.getTimestamp() > natRecordLife) {
-					freePorts.add(record.out.port);
-                    delete.add(record);
-                }
-            }
-        }
+			if (now - record.getTimestamp() > natRecordLife) {
+				freePorts.add(record.out.port);
+				delete.add(record);
+			}
+		}
 
 		table.removeAll(delete);
     }
@@ -559,22 +589,17 @@ public class NatTable implements Loggable {
      */
     public int addStaticRuleForCisco(IpAddress in, IpAddress out) {
 
-		for (Record zaznam : table) {
-			if (zaznam.isStatic) {
-				if (zaznam.in.address.equals(in)) {
-					return 1;
-				}
-				if (zaznam.out.address.equals(out)) {
-					return 2;
-				}
+		for (StaticRule rule : staticRules) {
+			if (rule.in.equals(in)) {
+				return 1;
+			}
+			if (rule.out.equals(out)) {
+				return 2;
 			}
         }
 
-        int index = dejIndexVTabulce(out);
-		InnerRecord innerIn = new InnerRecord(in, 0, L4PacketType.ICMP); // port or L4type is irrelevant
-		InnerRecord innerOut = new InnerRecord(out, 0, L4PacketType.ICMP); // port or L4type is irrelevant
-        table.add(index, new Record(innerIn, innerOut, true));
-
+        int index = getIndexForStaticTable(out);
+        staticRules.add(index, new StaticRule(in, out));
         return 0;
     }
 
@@ -589,7 +614,7 @@ public class NatTable implements Loggable {
 
         List<Record> smaznout = new ArrayList<>();
         for (Record zaznam : table) {
-            if (zaznam.isStatic && in.equals(zaznam.in.address) && out.equals(zaznam.out.address)) {
+            if (in.equals(zaznam.in.address) && out.equals(zaznam.out.address)) {
                 smaznout.add(zaznam);
             }
         }
@@ -599,7 +624,6 @@ public class NatTable implements Loggable {
         }
 
 		table.removeAll(smaznout);
-
         return 0;
     }
 
@@ -660,10 +684,8 @@ public class NatTable implements Loggable {
         String s = "";
 
         for (Record zaznam : table) {
-            if (!zaznam.isStatic) {
-                s += zaznam.in.getAddressWithPort() + "\t" + zaznam.out.getAddressWithPort() + "\n";
-            }
-        }
+			s += zaznam.in.getAddressWithPort() + "\t" + zaznam.out.getAddressWithPort() + "\n";
+		}
         return s;
     }
 
@@ -741,16 +763,10 @@ public class NatTable implements Loggable {
      * @param out nova zdrojova (prelozena)
      */
     public void pridejStatickePravidloLinux(IpAddress in, IpAddress out) {
-		Record r = new Record(new InnerRecord(in, 0, L4PacketType.ICMP), new InnerRecord(out, 0, L4PacketType.ICMP), true);
-		table.add(r);
+		staticRules.add(new StaticRule(in, out));
     }
 
 	//--------------------------------------------- classes ---------------------------------------------
-
-	private enum Operation {
-		NAT,
-		DENAT,
-	}
 
 	/**
      * Reprezentuje jeden radek v NetworkAddressTranslation tabulce.
@@ -770,27 +786,21 @@ public class NatTable implements Loggable {
          */
         public final IpAddress target;
         /**
-         * Vlozeno staticky - true, dynamicky - false.
-         */
-        public final boolean isStatic;
-        /**
          * Cas vlozeni v ms (pocet ms od January 1, 1970)
          */
         private long timestamp;
 
-        public Record(InnerRecord in, InnerRecord out, boolean staticke) {
+        public Record(InnerRecord in, InnerRecord out) {
             this.in = in;
             this.out = out;
             this.target = null;
-            this.isStatic = staticke;
             this.timestamp = System.currentTimeMillis();
         }
 
-        public Record(InnerRecord in, InnerRecord out, IpAddress cil, boolean staticke) {
+        public Record(InnerRecord in, InnerRecord out, IpAddress cil) {
             this.in = in;
             this.out = out;
             this.target = cil;
-            this.isStatic = staticke;
             this.timestamp = System.currentTimeMillis();
         }
 
@@ -807,7 +817,7 @@ public class NatTable implements Loggable {
 
 		@Override
 		public String toString() {
-			return in.address.toString()+":"+in.port+" "+in.protocol+" => "+out.address.toString()+":"+out.port+" "+out.protocol + (isStatic ? " (static)" : "");
+			return in.address.toString()+":"+in.port+" "+in.protocol+" => "+out.address.toString()+":"+out.port+" "+out.protocol;
 		}
     }
 
@@ -854,6 +864,21 @@ public class NatTable implements Loggable {
 			hash = 53 * hash + this.port;
 			hash = 53 * hash + (this.protocol != null ? this.protocol.hashCode() : 0);
 			return hash;
+		}
+	}
+
+	public class StaticRule {
+		public final IpAddress in;
+		public final IpAddress out;
+
+		public StaticRule(IpAddress in, IpAddress out) {
+			this.in = in;
+			this.out = out;
+		}
+
+		@Override
+		public String toString() {
+			return "in: " + in + " out: " + out;
 		}
 	}
 }

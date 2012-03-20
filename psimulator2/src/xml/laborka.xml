@@ -343,31 +343,7 @@
         <nextMacAddress>27</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_OPTIC</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>2</value>
-            </entry>
-            <entry>
-                <key>LINUX_ROUTER</key>
-                <value>7</value>
-            </entry>
-            <entry>
                 <key>CABLE_ETHERNET</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_PC</key>
-                <value>1</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_WORKSTATION</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -375,7 +351,31 @@
                 <value>0</value>
             </entry>
             <entry>
+                <key>END_DEVICE_WORKSTATION</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_ROUTER</key>
+                <value>7</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_PC</key>
+                <value>1</value>
+            </entry>
+            <entry>
+                <key>CABLE_OPTIC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
                 <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -383,8 +383,8 @@
                 <value>4</value>
             </entry>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
-                <value>0</value>
+                <key>REAL_PC</key>
+                <value>2</value>
             </entry>
         </nextNumberMap>
     </counter>

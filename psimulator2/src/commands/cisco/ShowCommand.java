@@ -10,6 +10,7 @@ import networkModule.L3.nat.NatTable;
 import networkModule.L3.nat.NatTable.Record;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.AccessList;
+import networkModule.L3.nat.NatTable.StaticRule;
 import networkModule.L3.nat.Pool;
 import networkModule.L3.nat.PoolAccess;
 import shell.apps.CommandShell.CommandShell;
@@ -191,7 +192,7 @@ public class ShowCommand extends CiscoCommand {
 		NatTable table = ipLayer.getNatTable();
 		table.deleteOldDynamicRecords();
 
-		if (table.getRules().isEmpty()) {
+		if (table.getDynamicRules().isEmpty()) {
             s += "\n\n";
 			printWithDelay(s, 50);
             return;
@@ -201,22 +202,18 @@ public class ShowCommand extends CiscoCommand {
         s += Util.zarovnej("Outside local", 20) + Util.zarovnej("Outside global", 20);
         s += "\n";
 
-        for (Record zaznam : table.getRules()) {
-            if (zaznam.isStatic == false) {
-                s += Util.zarovnej("icmp " + zaznam.out.getAddressWithPort(), 24)
-                        + Util.zarovnej(zaznam.in.getAddressWithPort(), 20)
-                        + Util.zarovnej(zaznam.target.toString(), 20)
-                        + Util.zarovnej(zaznam.target.toString(), 20)+"\n";
-            }
+        for (Record zaznam : table.getDynamicRules()) {
+			s += Util.zarovnej("icmp " + zaznam.out.getAddressWithPort(), 24)
+					+ Util.zarovnej(zaznam.in.getAddressWithPort(), 20)
+					+ Util.zarovnej(zaznam.target.toString(), 20)
+					+ Util.zarovnej(zaznam.target.toString(), 20)+"\n";
         }
 
-        for (Record zaznam : table.getRules()) {
-            if (zaznam.isStatic) {
-                s += Util.zarovnej("--- " + zaznam.out.address, 24)
-                        + Util.zarovnej(zaznam.in.address.toString(), 20)
-                        + Util.zarovnej("---", 20)
-                        + Util.zarovnej("---", 20)+"\n";
-            }
+        for (NatTable.StaticRule rule : table.getStaticRules()) {
+			s += Util.zarovnej("--- " + rule.out, 24)
+					+ Util.zarovnej(rule.in.toString(), 20)
+					+ Util.zarovnej("---", 20)
+					+ Util.zarovnej("---", 20) + "\n";
         }
 
 		printWithDelay(s, 50);
@@ -316,11 +313,9 @@ public class ShowCommand extends CiscoCommand {
             s += "\n";
         }
 
-        for (Record zaznam : ipLayer.getNatTable().getRules()) {
-            if (zaznam.isStatic) {
-                s += "ip nat inside source static " + zaznam.in.address + " " + zaznam.out.address + "\n";
-            }
-        }
+		for (StaticRule rule : ipLayer.getNatTable().getStaticRules()) {
+			s += "ip nat inside source static " + rule.in + " " + rule.out + "\n";
+		}
 
         s += "!\n";
 

@@ -132,10 +132,8 @@ public class Saver {
 
 		// static rules
 		List<StaticRule> rules = new ArrayList<>();
-		for (NatTable.Record record : natTable.getRules()) {
-			if (record.isStatic) {
-				rules.add(new StaticRule(record.in.address.toString(), record.out.address.toString()));
-			}
+		for (NatTable.StaticRule rule : natTable.getStaticRules()) {
+			rules.add(new StaticRule(rule.in.toString(), rule.out.toString()));
 		}
 		config.setRules(rules);
 	}

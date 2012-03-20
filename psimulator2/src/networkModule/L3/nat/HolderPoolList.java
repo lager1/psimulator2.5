@@ -213,17 +213,17 @@ public class HolderPoolList {
      * @return
      */
     private boolean isPoolInUse(String jmeno) {
-        for (Record zaznam : natTable.table) {
-            if (zaznam.isStatic == false) {
-                List<Pool> pseznam = vratPoolProIp(zaznam.out.address);
-                if (pseznam == null) continue;
-                for (Pool pool : pseznam) {
-                    if (pool.name.equals(jmeno)) {
-                        return true;
-                    }
-                }
-            }
-        }
+		for (Record zaznam : natTable.table) {
+			List<Pool> pseznam = vratPoolProIp(zaznam.out.address);
+			if (pseznam == null) {
+				continue;
+			}
+			for (Pool pool : pseznam) {
+				if (pool.name.equals(jmeno)) {
+					return true;
+				}
+			}
+		}
         return false;
     }
 }

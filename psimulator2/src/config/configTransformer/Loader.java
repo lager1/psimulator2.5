@@ -234,7 +234,7 @@ public class Loader implements Loggable {
 			nm.ipLayer.updateNewRoutingTable();
 		}
 
-		//TODO dodelat nastaveni natu (paketovyho filtru)
+		// nastaveni NATu:
 		if (model.getDevSettings() != null && model.getDevSettings().getNatConfig() != null) {
 			NatConfig config = model.getDevSettings().getNatConfig();
 			NatTable natTable = nm.ipLayer.getNatTable();
@@ -257,31 +257,37 @@ public class Loader implements Loggable {
 			}
 
 			// pool
-			for (NatPoolConfig pool : config.getPools()) {
-				IpAddress start = new IpAddress(pool.getStart());
-				IpAddress end = new IpAddress(pool.getEnd());
-				natTable.lPool.pridejPool(start, end, pool.getPrefix(), pool.getName());
+			if (config.getPools() != null) {
+				for (NatPoolConfig pool : config.getPools()) {
+					IpAddress start = new IpAddress(pool.getStart());
+					IpAddress end = new IpAddress(pool.getEnd());
+					natTable.lPool.pridejPool(start, end, pool.getPrefix(), pool.getName());
+				}
 			}
 
 			// poolAccess
-			for (NatPoolAccessConfig poolAcc : config.getPoolAccesses()) {
-				natTable.lPoolAccess.pridejPoolAccess(poolAcc.getNumber(), poolAcc.getPoolName(), poolAcc.isOverload());
+			if (config.getPoolAccesses() != null) {
+				for (NatPoolAccessConfig poolAcc : config.getPoolAccesses()) {
+					natTable.lPoolAccess.pridejPoolAccess(poolAcc.getNumber(), poolAcc.getPoolName(), poolAcc.isOverload());
+				}
 			}
 
 			// accessList
-			for (NatAccessListConfig acc : config.getAccessLists()) {
-				IpNetmask mask = IpNetmask.maskFromWildcard(acc.getWildcard());
-				IpAddress adr = new IpAddress(acc.getAddress());
-
-				IPwithNetmask all =new IPwithNetmask(adr, mask);
-				natTable.lAccess.pridejAccessList(all, acc.getNumber());
+			if (config.getAccessLists() != null) {
+				for (NatAccessListConfig acc : config.getAccessLists()) {
+					IpNetmask mask = IpNetmask.maskFromWildcard(acc.getWildcard());
+					IpAddress adr = new IpAddress(acc.getAddress());
+					IPwithNetmask all = new IPwithNetmask(adr, mask);
+					natTable.lAccess.pridejAccessList(all, acc.getNumber());
+				}
 			}
 
 			// static rules
-			for (StaticRule rule : config.getRules()) {
-				natTable.pridejStatickePravidloLinux(new IpAddress(rule.getIn()), new IpAddress(rule.getOut()));
+			if (config.getRules() != null) {
+				for (StaticRule rule : config.getRules()) {
+					natTable.pridejStatickePravidloLinux(new IpAddress(rule.getIn()), new IpAddress(rule.getOut()));
+				}
 			}
-
 		}
 
 		//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
