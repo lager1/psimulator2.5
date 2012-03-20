@@ -3,6 +3,7 @@
  */
 package dataStructures.ipAdresses;
 
+import commands.linux.Ip;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpNetmask;
 import dataStructures.ipAddresses.BadNetmaskException;
@@ -247,6 +248,16 @@ public class IpAddressesTest {
 		assertEquals("255.255.255.224", mask.toString());
 		mask = IpNetmask.maskFromWildcard("0.0.0.3");
 		assertEquals("255.255.255.252", mask.toString());
+
+		IpNetmask wildcard = IpNetmask.maskFromWildcard("0.0.0.3");
+		mask = new IpNetmask("255.255.255.252");
+		assertEquals(wildcard, mask);
+
+		assertEquals("0.0.0.3", mask.getWildcardRepresentation());
+		assertEquals("0.0.0.31", IpNetmask.maskFromWildcard("0.0.0.31").getWildcardRepresentation());
+
+
+
 	}
 
 
