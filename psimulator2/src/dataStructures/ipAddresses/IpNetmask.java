@@ -72,7 +72,7 @@ public class IpNetmask extends IpAddress{
      * @author Stanislav Řehák
      */
     public String getWildcardRepresentation() {
-        long broadcast = (long)(new IPwithNetmask("1.1.1.1").getBroadcast().getBits());
+        long broadcast = (long)(new IPwithNetmask("255.255.255.255").getBroadcast().getBits());
         long mask = (long) bits;
         long wc = broadcast - mask;
         IpAddress wildcard = IpAddress.createIpFromBits((int)wc);
