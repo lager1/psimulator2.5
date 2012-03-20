@@ -140,20 +140,20 @@ public class Cable implements SmartRunnable, Loggable {
 
 	@Override
 	public String getDescription() {
-		return "Cable: device1_ID=" + idFirstDevice + " " + "device2_ID=" + idSecondDevice;
+		return "Cable: sourceID=" + idFirstDevice + " " + "destinationID=" + idSecondDevice;
 	}
 
 	public class CableItem {
 		public final L2Packet packet;
-		public final int device1_ID;
-		public final int device2_ID;
-		public final int cabel_ID;
+		public final int sourceID;
+		public final int destinationID;
+		public final int cabelID;
 
-		public CableItem(L2Packet packet, int device1_ID, int device2_ID, int cabel_ID) {
+		public CableItem(L2Packet packet, int source_ID, int destination_ID, int cabel_ID) {
 			this.packet = packet;
-			this.device1_ID = device1_ID;
-			this.device2_ID = device2_ID;
-			this.cabel_ID = cabel_ID;
+			this.sourceID = source_ID;
+			this.destinationID = destination_ID;
+			this.cabelID = cabel_ID;
 		}
 	}
 }

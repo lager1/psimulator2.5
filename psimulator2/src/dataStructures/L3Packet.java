@@ -8,7 +8,7 @@ package dataStructures;
  *
  * @author neiss
  */
-public abstract class L3Packet {
+public abstract class L3Packet implements EventDescriptive {
 
     public final L4Packet data;
 	protected int size;

@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.ipAddresses.IpAddress;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
 
 /**
@@ -39,5 +40,26 @@ public class IpPacket extends L3Packet {
 	@Override
 	protected final void countSize() { // IP header has 20 or 24 bytes (http://en.wikipedia.org/wiki/IPv4)
 		this.size = 20 + getDataSize();
+	}
+
+	@Override
+	public String getEventDesc() {
+		String s = "=== IP ===";
+		s += " src: "+src+"\n";
+		s += " dst: "+dst+"\n";
+		s += " ttl: "+ttl+"\n";
+		s += "size: "+size+"\n";
+		if (data != null) {
+			s += "\n" + data.getEventDesc();
+		}
+		return s;
+	}
+
+	@Override
+	public PacketType getPacketEventType() {
+		if (data != null) {
+			return data.getPacketEventType();
+		}
+		return PacketType.IP;
 	}
 }

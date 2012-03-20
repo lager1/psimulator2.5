@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.L3Packet.L3PacketType;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
 
 /**
@@ -69,5 +70,25 @@ public class EthernetPacket extends L2Packet {
 	public String toString(){
 		String vratit = "EthPacket: src: "+src+ " dst: "+dst+" "+Util.zarovnej(type.toString(), 4);	// vypis minimalistickej, aby se to veslo na obrazovku
 		return vratit;
+	}
+
+	@Override
+	public String getEventDesc() {
+		String s = "=== Ethernet ===";
+		s += " src: " + src + "\n";
+		s += " dst: " + dst + "\n";
+		s += "size: " + size;
+		if (data != null) {
+			s += "\n" + data.getEventDesc();
+		}
+		return s;
+	}
+
+	@Override
+	public PacketType getPacketEventType() {
+		if (data != null) {
+			return data.getPacketEventType();
+		}
+		return PacketType.ETHERNET;
 	}
 }

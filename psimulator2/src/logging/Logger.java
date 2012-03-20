@@ -45,6 +45,7 @@ public class Logger {
 		SystemListener systemListener = new SystemListener();
 		Psimulator.getPsimulator().systemListener = systemListener;
 		listeners.add(systemListener);
+//		listeners.add(Psimulator.getPsimulator().eventServer.getListener().getPacketTranslator()); // TODO: null pointer exception
 	}
 
 	/**

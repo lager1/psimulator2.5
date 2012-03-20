@@ -1,12 +1,15 @@
 package logging.networkEvents;
 
-import java.util.Random;
+import dataStructures.ArpPacket;
+import dataStructures.EthernetPacket;
+import dataStructures.L2Packet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
+import physicalModule.Cable.CableItem;
 import shared.NetworkObject;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
@@ -15,7 +18,7 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
  *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
-public class PacketTranslator implements Runnable, LoggerListener {
+public class PacketTranslator implements Runnable, LoggerListener, Loggable {
 
 	/**
 	 * input queue source of non-translated objects, internal queue. Source of objects a listen method.
@@ -73,9 +76,9 @@ public class PacketTranslator implements Runnable, LoggerListener {
 				// END COMMENT !!!
 
 				continue;
-			} 
-			
-			
+			}
+
+
 			NetworkObject translatedObject = translatePacket(packetToTranslate);
 			try {
 				this.translatedPackets.offer(translatedObject, 1, TimeUnit.SECONDS);
@@ -93,24 +96,29 @@ public class PacketTranslator implements Runnable, LoggerListener {
 
 		if(object instanceof NetworkObject) // if object is NetworkObject => send directly
 			return (NetworkObject) object;
-		
-		// else create NetworkObject aka SimulatorEvent
-		
+
+		if (!(object instanceof CableItem)) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.EVENTS_SERVER, "CableItem expected! Found: ", object);
+			return null; // TODO: nekde by se melo resit, ze sem nekdo posle bordel, tak aby to nespadlo, ale jen nic neposlalo.
+		}
+		CableItem m = (CableItem) object;
+
 		SimulatorEvent event = new SimulatorEvent();
-		event.setCableId(1);
-		event.setDestId(2);
-		event.setDetailsText("bla bla");
-		event.setPacketType(PacketType.TCP);
-		event.setSourcceId(3);
-		event.setTimeStamp(1234);
+		event.setCableId(m.cabelID);
+		event.setSourcceId(m.sourceID);
+		event.setDestId(m.destinationID);
+		event.setTimeStamp(System.currentTimeMillis());
 
-
-		throw new UnsupportedOperationException();
+		event.setDetailsText(m.packet.getEventDesc());
+		event.setPacketType(m.packet.getPacketEventType());
+		return event;
 	}
 
 	@Override
 	public void listen(Loggable caller, int logLevel, LoggingCategory category, String message, Object object) {
-		this.addPacket(object); // add packet object into translation queue
+		if (category == LoggingCategory.CABEL_SENDING) {
+			this.addPacket(object); // add packet object into translation queue
+		}
 	}
 
 	@Override
@@ -120,5 +128,10 @@ public class PacketTranslator implements Runnable, LoggerListener {
 	public void stop() {
 		this.quit = true;
 		Logger.log(Logger.INFO, LoggingCategory.EVENTS_SERVER, "Stopping PacketTranslator");
+	}
+
+	@Override
+	public String getDescription() {
+		return "PacketTranslator";
 	}
 }

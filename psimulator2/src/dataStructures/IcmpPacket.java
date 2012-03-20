@@ -3,6 +3,7 @@
  */
 package dataStructures;
 
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
 
 /**
@@ -183,5 +184,21 @@ public class IcmpPacket extends L4Packet {
 	@Override
 	public L4Packet getCopyWithDifferentDstPort(int port) {
 		return new IcmpPacket(type, code, port, seq, size > HEADER_LENGTH ? size - HEADER_LENGTH : size, data);
+	}
+
+	@Override
+	public String getEventDesc() {
+		String s = "=== ICMP ===";
+		s += "type: " + type + "\n";
+		s += "code: " + code + "\n";
+		s += "  id: " + id + "\n";
+		s += " seq: " + seq + "\n";
+		s += "size: " + size + "\n";
+		return s;
+	}
+
+	@Override
+	public PacketType getPacketEventType() {
+		return PacketType.ICMP;
 	}
 }

@@ -190,6 +190,8 @@
                             <number>7</number>
                             <wildcard>0.0.0.3</wildcard>
                         </accessLists>
+                        <inside>FastEthernet0/0</inside>
+                        <outside>FastEthernet0/1</outside>
                         <poolAccesses>
                             <number>7</number>
                             <overload>true</overload>
@@ -254,19 +256,19 @@
         <nextMacAddress>15</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>LINUX_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_OPTIC</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_WORKSTATION</key>
+                <key>REAL_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_ROUTER</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -274,19 +276,15 @@
                 <value>1</value>
             </entry>
             <entry>
-                <key>REAL_PC</key>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>LINUX_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>LINUX_ROUTER</key>
-                <value>5</value>
-            </entry>
-            <entry>
-                <key>CISCO_ROUTER</key>
+                <key>END_DEVICE_WORKSTATION</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -294,7 +292,11 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
+                <key>LINUX_ROUTER</key>
+                <value>5</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

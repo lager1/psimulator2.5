@@ -5,6 +5,7 @@
 package dataStructures;
 
 import dataStructures.ipAddresses.IpAddress;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 
 /**
  * Represents ARP packet.
@@ -106,5 +107,21 @@ public class ArpPacket extends L3Packet {
 	@Override
 	protected final void countSize() {
 		this.size = 28;
+	}
+
+	@Override
+	public String getEventDesc() {
+		String s = "=== ARP ===";
+		s += "sender MAC address: " + senderMacAddress + "\n";
+		s += "sender  IP address: " + senderIpAddress + "\n";
+		s += "sender MAC address: " + targetMacAddress + "\n";
+		s += "sender  IP address: " + targetIpAddress + "\n";
+		s += "			  opcode: " + operation;
+		return s;
+	}
+
+	@Override
+	public PacketType getPacketEventType() {
+		return PacketType.ARP;
 	}
 }

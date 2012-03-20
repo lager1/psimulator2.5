@@ -35,19 +35,19 @@ public class EventsListener implements Runnable {
 		try {
 			this.objectsToBroadCast.offer(object, 1, TimeUnit.SECONDS);
 		} catch (InterruptedException ex) { // this exception should not be thrown because using LinkedBlockedQueue
-			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");  
+			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");
 		}
 	}
 
 	/**
-	 * return actual LoggerListener object, 
-	 * @return 
+	 * return actual LoggerListener object,
+	 * @return
 	 */
-	public LoggerListener getListener() {
+	public LoggerListener getPacketTranslator() {
 		return this.packetTranslator;
 	}
-	
-	
+
+
 
 	@Override
 	public void run() {
@@ -61,7 +61,7 @@ public class EventsListener implements Runnable {
 
 			NetworkObject ntwObject = null;
 			try {
-				// get new object from broadcast queue. 
+				// get new object from broadcast queue.
 				// Timeouting prefered because there is no other simple option how to shutdown on blocking operation
 				ntwObject = objectsToBroadCast.poll(2000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException ex) {
@@ -93,7 +93,7 @@ public class EventsListener implements Runnable {
 	}
 
 	public void addClientSession(ClientSession clientSession) {
-		synchronized (this.clientSessions) {  // better have exclusive access 
+		synchronized (this.clientSessions) {  // better have exclusive access
 			this.clientSessions.add(clientSession);
 			clientSession.setListReference(clientSessions);
 		}
