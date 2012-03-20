@@ -221,11 +221,11 @@ public class RoutingTable implements Loggable{
      * @param rozhr
      * @author Stanislav Řehák
      */
-    public void addRecordWithoutControl(IPwithNetmask adresat,IpAddress brana,NetworkInterface rozhr){
-        if(!adresat.isNetworkNumber()){
-            throw new RuntimeException("Chyba v konfiguracnim souboru, adresat "+ adresat.toString() +
-                    " v routovaci tabulce neni cislem site. ");
-        }
+    public void addRecordWithoutControl(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr) {
+		if (!adresat.isNetworkNumber()) {
+			throw new RuntimeException("Chyba v konfiguracnim souboru, adresat " + adresat.toString()
+					+ " v routovaci tabulce neni cislem site. ");
+		}
         Record z = new Record(adresat,brana,rozhr);
         records.add(najdiSpravnouPosici(z), z);
     }

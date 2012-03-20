@@ -165,7 +165,7 @@ public class CiscoWrapperRT implements Loggable {
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
-                routingTable.addRecord(iface.getIpAddress(), iface, true);
+                routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface, true);
             }
         }
 
@@ -447,8 +447,9 @@ public class CiscoWrapperRT implements Loggable {
 //        CiscoWrapperRT wrapper = ((CiscoPocitac) pc).getWrapper();
         boolean defaultGW = false;
         String brana = null;
+		IPwithNetmask zeros = new IPwithNetmask("0.0.0.0", 0);
         for (int i = 0; i < size(); i++) {
-            if (vratZaznam(i).adresat.equals(new IPwithNetmask("0.0.0.0", 0))) {
+            if (vratZaznam(i).adresat.equals(zeros)) {
                 if (vratZaznam(i).brana != null) {
                     brana = vratZaznam(i).brana.toString();
                 }
