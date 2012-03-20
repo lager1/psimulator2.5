@@ -37,6 +37,9 @@ public class Logger {
 	 */
 	public static final int DEBUG = 5;
 
+	public static void addListener(LoggerListener listener){
+		Logger.listeners.add(listener);
+	}
 
 	/**
 	 * Setting up logger. Replacement for constructor.
@@ -45,7 +48,6 @@ public class Logger {
 		SystemListener systemListener = new SystemListener();
 		Psimulator.getPsimulator().systemListener = systemListener;
 		listeners.add(systemListener);
-//		listeners.add(Psimulator.getPsimulator().eventServer.getListener().getPacketTranslator()); // TODO: null pointer exception
 	}
 
 	/**

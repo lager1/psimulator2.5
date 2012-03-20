@@ -3,18 +3,15 @@ package logging.networkEvents;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
 import shared.NetworkObject;
 
 /**
- * EventsListener is a LoggerListener running in own thread, because broadcasting events over remote transmission can be
- * time consuming operation.
+ * EventsListener is running in own thread, because broadcasting events over network is time consuming operation.
  *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
@@ -29,6 +26,8 @@ public class EventsListener implements Runnable {
 	private PacketTranslator packetTranslator;
 
 	public EventsListener() {
+		this.packetTranslator = new PacketTranslator(objectsToBroadCast);
+		new Thread(this.packetTranslator).start();   // start packetTranslator
 	}
 
 	private void sendNetworkObject(NetworkObject object) {
@@ -41,21 +40,16 @@ public class EventsListener implements Runnable {
 
 	/**
 	 * return actual LoggerListener object,
+	 *
 	 * @return
 	 */
 	public LoggerListener getPacketTranslator() {
 		return this.packetTranslator;
 	}
 
-
-
 	@Override
 	public void run() {
 		Thread.currentThread().setName("EventsListener");
-
-		this.packetTranslator = new PacketTranslator(objectsToBroadCast);
-		new Thread(this.packetTranslator).start();   // start packetTranslator
-
 
 		while (!done) {
 

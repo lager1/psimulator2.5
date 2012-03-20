@@ -93,7 +93,7 @@ public class Main {
 		
 		Psimulator.getPsimulator().eventServer=eventServer;
 		
-		
+		Logger.addListener(eventServer.getListener().getPacketTranslator());
 
 	}
 }

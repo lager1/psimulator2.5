@@ -21,6 +21,10 @@ public class EventServer implements Runnable {
 	public EventServer(int port) {
 		this.port = port;
 		this.listener = new EventsListener();
+
+		// now is the right time to start EventListener thread
+		Thread thread = new Thread(this.listener);
+		thread.start();
 	}
 
 	public EventsListener getListener() {
@@ -38,16 +42,14 @@ public class EventServer implements Runnable {
 		}
 
 		Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "EventServer server socket successfully created.");
-		
-		// now is the right time to start EventListener thread
-		Thread thread = new Thread(this.listener);
-		thread.start();
-		
+
+
+
 		while (!quit) {
 			Socket clientSocket;
 			try {
 				clientSocket = serverSocket.accept();
-				Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Client with hostname "+clientSocket.getInetAddress().getHostName()+" connected");
+				Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Client with hostname " + clientSocket.getInetAddress().getHostName() + " connected");
 			} catch (IOException ex) {
 				if (!quit) {
 					Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "IOException occured when creating client socket. No other client socket will be created");
@@ -62,14 +64,14 @@ public class EventServer implements Runnable {
 		}
 
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		this.quit = true;
 		try {
 			this.serverSocket.close();
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "IOException occured when closing server socket");
 		}
-	
+
 	}
 }
