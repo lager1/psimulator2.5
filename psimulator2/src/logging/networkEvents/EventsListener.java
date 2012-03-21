@@ -72,11 +72,6 @@ public class EventsListener implements Runnable {
 			synchronized (this.clientSessions) { // lock clientSessions list
 				for (ClientSession clientSession : clientSessions) { // for all client sessions
 					if (clientSession.isActive()) {
-
-						if (!clientSession.isTelnetConfigSend()) { // check if telnetConfig was send for this session
-							clientSession.sendTelnetConfig();
-						}
-
 						clientSession.send(ntwObject);
 					}
 				}

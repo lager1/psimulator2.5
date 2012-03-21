@@ -58,6 +58,7 @@ public class EventServer implements Runnable {
 			}
 
 			ClientSession clientSession = new ClientSession(clientSocket);
+			clientSession.initCommunication();
 
 			this.listener.addClientSession(clientSession);
 

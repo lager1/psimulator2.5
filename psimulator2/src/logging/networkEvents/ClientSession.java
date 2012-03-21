@@ -30,51 +30,41 @@ public class ClientSession {
 	 */
 	private List listReference;
 	
-	private boolean telnetConfigSend = false;
 
 	public ClientSession(Socket socket) {
 		this.socket = socket;
 	}
 
-	public boolean isTelnetConfigSend() {
-		return telnetConfigSend;
-	}
-	
-	public void sendTelnetConfig(){
-		this.telnetConfigSend = true;	
-		this.send(TelnetProperties.getTelnetConfig());
-			
-	}
-
-	/**
-	 * transmission object throught connected socket and initialized outputstream
-	 * @param object 
-	 */
-	public void send(NetworkObject object) {
-
-		if(!this.telnetConfigSend){  // send only once... just for sure, if someone try to send object before telnetConfig is send
-			this.sendTelnetConfig();
-		}
-		
-		if (done) {
-			return;
-		}
+	public void initCommunication() {
 
 		if (this.outputStream == null) {
 
 			if (this.socket == null || this.socket.isClosed() || !this.socket.isConnected()) {
 				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Starting ClientSessionThread without properly connected socket. Stopping ClientSessionThread!!!");
-				this.closeSession();
 				return;
 			}
 			try {
 				this.outputStream = new ObjectOutputStream(socket.getOutputStream());
 				this.outputStream.flush();
+				this.send(TelnetProperties.getTelnetConfig());
 			} catch (IOException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "IOException occured when creating clientSession outputStream");
-				return;
 			}
 
+		}
+
+	}
+
+
+	/**
+	 * transmission object throught connected socket and initialized outputstream
+	 *
+	 * @param object
+	 */
+	public void send(NetworkObject object) {
+
+		if (done) {
+			return;
 		}
 
 		try {
@@ -102,7 +92,7 @@ public class ClientSession {
 		{
 			return;
 		}
-		
+
 		try {
 			socket.close();
 		} catch (IOException ex) {
@@ -111,9 +101,11 @@ public class ClientSession {
 	}
 
 	/**
-	 * Set {@see #listReference}.
-	 * 
-	 * @param list 
+	 * Set {
+	 *
+	 * @see #listReference}.
+	 *
+	 * @param list
 	 */
 	public void setListReference(List list) {
 		this.listReference = list;
