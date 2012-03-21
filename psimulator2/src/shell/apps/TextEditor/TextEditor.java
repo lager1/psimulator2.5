@@ -7,98 +7,172 @@ package shell.apps.TextEditor;
 import device.Device;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
+import telnetd.io.TerminalIO;
 import telnetd.io.terminal.ColorHelper;
-import telnetd.io.toolkit.Editarea;
+import telnetd.io.toolkit.Component;
 import telnetd.io.toolkit.Statusbar;
 import telnetd.io.toolkit.Titlebar;
+import telnetd.io.toolkit.myToolkit.ComponentReDrawer;
+import telnetd.io.toolkit.myToolkit.MyEditArea;
+import telnetd.io.toolkit.myToolkit.Quitable;
 
 /**
  *
  * @author Martin Lukáš
  */
-public class TextEditor extends TerminalApplication {
+public class TextEditor extends TerminalApplication implements ComponentReDrawer, Quitable {
 
 	private boolean quit = false;
-	
-    public TextEditor(BasicTerminalIO terminalIO, Device device) {
-        super(terminalIO, device);
-    }
+	List<Component> componentsToDraw;
+	private static String originalStatusText = "CTRL+S => SAVE, CTRL+X => QUIT";
+	/**
+	 * queue of quitable components to be called when quiting
+	 */
+	private List<Quitable> quitQueue = new LinkedList<>();
 
-    @Override
-    public int run() {
-        try {
-            terminalIO.eraseScreen();
-            terminalIO.homeCursor();
-            //myio.flush();
-            Titlebar tb2 = new Titlebar(terminalIO, "title 1");
-            tb2.setTitleText("TextEditor");
-            tb2.setAlignment(Titlebar.ALIGN_LEFT);
-            tb2.setBackgroundColor(ColorHelper.BLUE);
-            tb2.setForegroundColor(ColorHelper.YELLOW);
-            tb2.draw();
+	public TextEditor(BasicTerminalIO terminalIO, Device device) {
+		super(terminalIO, device);
+		this.componentsToDraw = new LinkedList<>();
+	}
 
-            Statusbar sb2 = new Statusbar(terminalIO, "status 1");
-            sb2.setStatusText("Status bar");
-            sb2.setAlignment(Statusbar.ALIGN_LEFT);
-            sb2.setBackgroundColor(ColorHelper.BLUE);
-            sb2.setForegroundColor(ColorHelper.YELLOW);
-            sb2.draw();
+	@Override
+	public void addComponentDraw(Component component) {
+		this.componentsToDraw.add(component);
+	}
 
-            terminalIO.setCursor(2, 1);
+	@Override
+	public void drawComponents() {
 
-            Editarea ea = new Editarea(terminalIO, "edit area", terminalIO.getRows() - 2, Integer.MAX_VALUE);
+		try {
+			for (Component activeComponent : componentsToDraw) {
+				activeComponent.draw();
+			}
+			terminalIO.flush();
+		} catch (IOException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Failed to draw a activeComponent");
+		}
 
-            ArrayList<String> lines = new ArrayList<String>(20);
-            lines.add("a");
-            lines.add("b");
-            lines.add("c");
-            lines.add("d");
-            lines.add("e");
-            lines.add("f");
-            lines.add("g");
-            lines.add("h");
-            lines.add("ch");
-            lines.add("i");
-            lines.add("j");
-            lines.add("k");
-            lines.add("l");
-            lines.add("m");
-            lines.add("n");
-            lines.add("o");
+	}
 
-            ea.setValue(lines);
+	@Override
+	public int run() {
+		try {
+			terminalIO.eraseScreen();
+			terminalIO.homeCursor();
+			//myio.flush();
+			Titlebar tb2 = new Titlebar(terminalIO, "title 1");
+			tb2.setTitleText("TextEditor");
+			tb2.setAlignment(Titlebar.ALIGN_LEFT);
+			tb2.setBackgroundColor(ColorHelper.BLUE);
+			tb2.setForegroundColor(ColorHelper.YELLOW);
+			this.addComponentDraw(tb2);
+
+			Statusbar sb2 = new Statusbar(terminalIO, "status 1");
+			sb2.setStatusText(originalStatusText);
+			sb2.setAlignment(Statusbar.ALIGN_LEFT);
+			sb2.setBackgroundColor(ColorHelper.BLUE);
+			sb2.setForegroundColor(ColorHelper.YELLOW);
+			this.addComponentDraw(sb2);
+
+
+			terminalIO.setCursor(2, 1);
+
+			MyEditArea ea = new MyEditArea(terminalIO, "edit area", terminalIO.getRows() - 2, Integer.MAX_VALUE);
+			ea.setComponentReDrawer(this);
+
+			this.quitQueue.add(ea);
 			
-            ea.draw();
-            terminalIO.flush();
-            ea.run();
+			ArrayList<String> lines = new ArrayList<>(20);
+			lines.add("a");
+			lines.add("b");
+			lines.add("c");
+			lines.add("d");
+			lines.add("e");
+			lines.add("f");
+			lines.add("g");
+			lines.add("h");
+			lines.add("ch");
+			lines.add("i");
+			lines.add("j");
+			lines.add("k");
+			lines.add("l");
+			lines.add("m");
+			lines.add("n");
+			lines.add("o");
 
+			ea.setValue(lines);
 
-            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + BasicTerminalIO.CRLF + ea.getValue());
+			ea.draw();
+			terminalIO.flush();
 
-        } catch (IOException ex) {
-			
-			if (quit) // if there is a quit request, then it is ok
-				{
-					return 0;
-				} else {
-					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "TextEditor");
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
-					return -1;
+			this.drawComponents();
+
+			while (!quit) {
+
+				ea.run();
+
+				int exitCode = ea.getExitCode();
+
+				switch (exitCode) {
+					case TerminalIO.CTRL_X:
+						this.quit();
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting from textEditor");
+						break;
+					case TerminalIO.CTRL_S:
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Saving into file.");
+						sb2.setStatusText("Saved");
+						sb2.draw();
+						terminalIO.flush();
+						sb2.setStatusText(originalStatusText);
+						this.addComponentDraw(sb2);  // redraw later
+						break;
 				}
-        }
 
-        return 0;
+			}
+
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "TextEditor quit with this value:" + BasicTerminalIO.CRLF + ea.getValue());
+
+		} catch (IOException ex) {
+
+			if (quit) // if there is a quit request, then it is ok
+			{
+				return 0;
+			} else {
+				this.quit();
+				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "TextEditor");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
+				return -1;
+			}
+		}
+
+		return 0;
 
 
-    }
+	}
 
 	@Override
 	public int quit() {
-		this.quit = true;
+		try {
+			this.quit = true;
+			
+			for (Quitable component : this.quitQueue) {
+				component.quit();
+			}
+			
+			this.terminalIO.eraseScreen();
+			this.terminalIO.homeCursor();
+			
+		} catch (IOException ex) {
+		}
+		
 		return 0;
 	}
+
+	
 }

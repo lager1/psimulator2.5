@@ -37,18 +37,18 @@ import telnetd.io.TerminalIO;
  * @author Dieter Wimberger
  * @version 2.0 (16/07/2006)
  */
-class Editline {
+public class Editline {
 
 	//Aggregations (inner class!)
-	private Buffer m_Buffer;
+	protected Buffer m_Buffer;
 	//Members
-	private BasicTerminalIO m_IO;
-	private int m_Cursor = 0;
-	private boolean m_InsertMode = true;
-	private int m_LastSize = 0;
-	private boolean m_HardWrapped = false;
-	private char m_LastRead;
-	private int m_LastCursPos = 0;
+	protected BasicTerminalIO m_IO;
+	protected int m_Cursor = 0;
+	protected boolean m_InsertMode = true;
+	protected int m_LastSize = 0;
+	protected boolean m_HardWrapped = false;
+	protected char m_LastRead;
+	protected int m_LastCursPos = 0;
 
 	/**
 	 * Constructs an Editline.
@@ -153,7 +153,7 @@ class Editline {
 		return content;
 	}//getHardWrap
 
-	private void setCharAt(int pos, char ch)
+	protected void setCharAt(int pos, char ch)
 			throws IndexOutOfBoundsException, IOException {
 
 		//buffer
@@ -164,7 +164,7 @@ class Editline {
 		draw();
 	}//setCharAt
 
-	private void insertCharAt(int pos, char ch)
+	protected void insertCharAt(int pos, char ch)
 			throws BufferOverflowException, IndexOutOfBoundsException, IOException {
 
 		storeSize();
@@ -179,7 +179,7 @@ class Editline {
 		draw();
 	}//insertCharAt
 
-	private void removeCharAt(int pos)
+	protected void removeCharAt(int pos)
 			throws IndexOutOfBoundsException, IOException {
 
 		storeSize();
@@ -195,7 +195,7 @@ class Editline {
 
 	}//removeChatAt
 
-	private void insertStringAt(int pos, String str)
+	protected void insertStringAt(int pos, String str)
 			throws BufferOverflowException, IndexOutOfBoundsException, IOException {
 
 		storeSize();
@@ -253,11 +253,11 @@ class Editline {
 		//System.out.println("Editline:cursor:"+Cursor);
 	}//setCursorPosition
 
-	private char getLastRead() {
+	protected char getLastRead() {
 		return m_LastRead;
 	}//getLastRead
 
-	private void setLastRead(char ch) {
+	protected void setLastRead(char ch) {
 		m_LastRead = ch;
 	}//setLastRead
 
@@ -371,7 +371,7 @@ class Editline {
 		}
 	}//draw
 
-	private boolean moveRight() throws IOException {
+	protected boolean moveRight() throws IOException {
 		//cursor
 		if (m_Cursor < m_Buffer.size()) {
 			m_Cursor++;
@@ -383,7 +383,7 @@ class Editline {
 		}
 	}//moveRight
 
-	private boolean moveLeft() throws IOException {
+	protected boolean moveLeft() throws IOException {
 		//cursor
 		if (m_Cursor > 0) {
 			m_Cursor--;
@@ -395,11 +395,11 @@ class Editline {
 		}
 	}//moveLeft
 
-	private boolean isCursorAtEnd() {
+	protected boolean isCursorAtEnd() {
 		return (m_Cursor == m_Buffer.size());
 	}//isCursorAtEnd
 
-	private void handleCharInput(int ch)
+	protected void handleCharInput(int ch)
 			throws BufferOverflowException, IOException {
 
 		if (!ShellUtils.isPrintable(ch)) // DO NOT ACCEPT NON-PRINTABLE CHARACTERS
@@ -424,7 +424,7 @@ class Editline {
 		}
 	}//handleCharInput
 
-	private void storeSize() {
+	protected void storeSize() {
 		m_LastSize = m_Buffer.size();
 	}//storeSize
 

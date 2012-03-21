@@ -649,6 +649,7 @@ public class TerminalIO
   public static final int CTRL_L = 12;
   public static final int CTRL_D = 1305;
   public static final int CTRL_S = 19;
+  public static final int CTRL_X = 24;
   public static final int HOME_KEY = 1072;
   public static final int END_KEY = 1070;
   public static final int PAGE_DOWN = 1054;

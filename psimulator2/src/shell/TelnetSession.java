@@ -4,8 +4,6 @@ import device.Device;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
@@ -38,9 +36,9 @@ public class TelnetSession implements Shell {
 		try {
 			this.m_Connection.getConnectionData().getSocket().setSoTimeout(1000);
 		} catch (SocketException ex) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "cannot setup socket timeout");
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "cannot setup socket timeout");
 		}
-		
+
 		this.m_IO = m_Connection.getTerminalIO();
 		this.m_Connection.addConnectionListener(this); //dont forget to register listener
 
@@ -60,24 +58,27 @@ public class TelnetSession implements Shell {
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot find device which listen on port: " + this.port);
 		}
 
-		Logger.log(Logger.INFO, LoggingCategory.TELNET, "TelnetSession sucessfuly created for device:" + device.getName() + " on port: " + this.port+ " using:" + con.getConnectionData().getNegotiatedTerminalType());
-		
-		
+		Logger.log(Logger.INFO, LoggingCategory.TELNET, "TelnetSession sucessfuly created for device:" + device.getName() + " on port: " + this.port + " using:" + con.getConnectionData().getNegotiatedTerminalType());
 
 
-//
+		int retValue = 0;
+
+// TESTING TEXT EDITOR
+//		TextEditor edt = new TextEditor(m_IO, device);
+//		this.rootApplication = edt;
+//		 this.rootApplication.run();
+//		
+
+		//
 		CommandShell cmd = new CommandShell(m_IO, this.device);  // create command shell
 		this.rootApplication = cmd;
 
-//		TextEditor edt = new TextEditor(m_IO, device);
-//		this.rootApplication = edt;
-//		
-		
-		int retValue = this.rootApplication.run();
+		retValue = this.rootApplication.run();
 
 		if (retValue != 0) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Command shell escaped with non-zero return value: " + retValue);
 		}
+
 
 
 	}

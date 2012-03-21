@@ -51,17 +51,17 @@ public class Editarea
         extends ActiveComponent {
 
     //Members
-    private int m_ColCursor = 0;
-    private int m_RowCursor = 0;
-    private int m_Rows = 0;
-    private boolean m_Firstrun = true;
-    private int m_FirstVisibleRow = 0;
-    private int m_LastCursor = 0;
-    private String m_Hardwrap = "\n";
-    private String m_Softwrap = " ";
+    protected int m_ColCursor = 0;
+    protected int m_RowCursor = 0;
+    protected int m_Rows = 0;
+    protected boolean m_Firstrun = true;
+    protected int m_FirstVisibleRow = 0;
+    protected int m_LastCursor = 0;
+    protected String m_Hardwrap = "\n";
+    protected String m_Softwrap = " ";
     //Associations
-    private Vector lines;
-    private Editline line;
+    protected Vector lines;
+    protected Editline line;
 
     public Editarea(BasicTerminalIO io, String name, int rowheight, int maxrows) {
         super(io, name);
@@ -350,7 +350,7 @@ public class Editarea
         } while (!done);
     }//run
 
-    private void scrollUp() throws IOException {
+    protected void scrollUp() throws IOException {
 
         int horizontalpos = line.getCursorPosition();
         //System.out.println("Debug:scrolling:up:horpos:"+horizontalpos);
@@ -393,7 +393,7 @@ public class Editarea
         }
     }//scrollUp
 
-    private void cursorUp() throws IOException {
+    protected void cursorUp() throws IOException {
         //System.out.println("Debug:cursor:up");
 
         int horizontalpos = line.getCursorPosition();
@@ -411,7 +411,7 @@ public class Editarea
         }
     }//cursorUp
 
-    private void scrollDown() throws IOException {
+    protected void scrollDown() throws IOException {
         //System.out.println("Debug:scrolling:down");
         int horizontalpos = line.getCursorPosition();
 
@@ -452,7 +452,7 @@ public class Editarea
         }
     }//scrollDown
 
-    private void cursorDown() throws IOException {
+    protected void cursorDown() throws IOException {
         //System.out.println("Debug:cursor:down");
         int horizontalpos = line.getCursorPosition();
         //Cursor
@@ -467,7 +467,7 @@ public class Editarea
         }
     }//cursorDown
 
-    private void appendNewLine() throws IOException {
+    protected void appendNewLine() throws IOException {
         //System.out.println("Debug:appendline");
         //buffer
         appendLine(createLine());
@@ -503,7 +503,7 @@ public class Editarea
         }
     }//appendNewLine
 
-    private void insertNewLine() throws IOException {
+    protected void insertNewLine() throws IOException {
         //System.out.println("Debug:insertline:");
         //buffer
         insertLine(m_RowCursor + 1, createLine());
@@ -554,7 +554,7 @@ public class Editarea
 
     }//insertNewLine
 
-    private void removeLine() throws IOException {
+    protected void removeLine() throws IOException {
 
         //buffer
         deleteLine(m_RowCursor);
@@ -611,31 +611,31 @@ public class Editarea
         m_IO.flush();
     }//draw
 
-    private void activateLine(int pos) {
+    protected void activateLine(int pos) {
         line = getLine(pos);
     }//activateLine
 
-    private boolean hasLineSpace() {
+    protected boolean hasLineSpace() {
         return (lines.size() < m_Rows);
     }//hasLineSpace
 
-    private Editline createLine() {
+    protected Editline createLine() {
         return new Editline(m_IO);
     }//newLine
 
-    private void deleteLine(int pos) {
+    protected void deleteLine(int pos) {
         lines.removeElementAt(pos);
     }//deleteLine
 
-    private void insertLine(int pos, Editline el) {
+    protected void insertLine(int pos, Editline el) {
         lines.insertElementAt(el, pos);
     }//insertLine
 
-    private void appendLine(Editline el) {
+    protected void appendLine(Editline el) {
         lines.addElement(el);
     }//appendLine
 
-    private Editline getLine(int pos) {
+    protected Editline getLine(int pos) {
         return (Editline) lines.elementAt(pos);
     }//getLine
 }//class Editarea
