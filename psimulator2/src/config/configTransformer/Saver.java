@@ -3,14 +3,18 @@
  */
 package config.configTransformer;
 
-import networkModule.L3.nat.Pool;
-import networkModule.L3.nat.PoolAccess;
-import networkModule.L3.nat.NatTable;
-import networkModule.L3.nat.AccessList;
 import device.Device;
 import java.util.ArrayList;
 import java.util.List;
-import networkModule.L3.*;
+import networkModule.L3.CiscoIPLayer;
+import networkModule.L3.CiscoWrapperRT;
+import networkModule.L3.CiscoWrapperRT.CiscoRecord;
+import networkModule.L3.NetworkInterface;
+import networkModule.L3.RoutingTable;
+import networkModule.L3.nat.AccessList;
+import networkModule.L3.nat.NatTable;
+import networkModule.L3.nat.Pool;
+import networkModule.L3.nat.PoolAccess;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
 import shared.Components.EthInterfaceModel;
@@ -81,16 +85,27 @@ public class Saver {
 		RoutingTableConfig rtc = new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci routovaci tabulky
 		model.getDevSettings().setRoutingTabConfig(rtc);	// priradim tu novou konfiguraci do nastaveni pocitace
 		RoutingTable rt = netMod.ipLayer.routingTable;
-		for (int i = 0; i < rt.size(); i++) {
-			RoutingTable.Record radek = rt.getRecord(i);
-			if (radek.brana != null) {
-				rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
-			} else {
-				rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, null);
+
+		if (netMod.ipLayer instanceof CiscoIPLayer) { // cisco uklada veci z wrapperu, ne obsah RT
+			CiscoWrapperRT wrapper = ((CiscoIPLayer) netMod.ipLayer).wrapper;
+			for (int i = 0; i < wrapper.size(); i++) {
+				CiscoRecord record = wrapper.vratZaznam(i);
+				if (record.getBrana() != null) { // adresa brana
+					rtc.addRecord(record.getAdresat().toString(), null, record.getBrana().toString());
+				} else { // adresa rozhrani
+					rtc.addRecord(record.getAdresat().toString(), record.getRozhrani().name, null);
+				}
+			}
+		} else {
+			for (int i = 0; i < rt.size(); i++) {
+				RoutingTable.Record radek = rt.getRecord(i);
+				if (radek.brana != null) {
+					rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
+				} else {
+					rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, null);
+				}
 			}
 		}
-
-
 	}
 
 	private void saveNatTable(TcpIpNetMod netMod, HwComponentModel model) {

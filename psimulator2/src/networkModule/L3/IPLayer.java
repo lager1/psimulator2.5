@@ -3,7 +3,6 @@
  */
 package networkModule.L3;
 
-import networkModule.L3.nat.NatTable;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -13,6 +12,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.RoutingTable.Record;
+import networkModule.L3.nat.NatTable;
 import networkModule.L4.IcmpHandler;
 import networkModule.TcpIpNetMod;
 import psimulator2.Psimulator;
@@ -37,11 +37,16 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * Packet filter. Controls NetworkAddressTranslation, packet dropping, ..
 	 */
 	protected final PacketFilter packetFilter = new PacketFilter(this);
+	/**
+	 * Buffer for incomming packets from L2.
+	 */
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
+	/**
+	 * Buffer for packets to by sent from L4.
+	 */
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	/**
-	 * Zde budou pakety, ktere je potreba odeslat, ale nemam ARP zaznam, takze byla odeslana ARP request, ale jeste
-	 * nemam odpoved.
+	 * Buffer for packet without MAC address nexthop. ARP request was sent and packets are waiting for the reply.
 	 */
 	private final List<StoreItem> storeBuffer = Collections.synchronizedList(new LinkedList<StoreItem>());
 	/**
@@ -57,6 +62,11 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * storeBuffer it is set to false.
 	 */
 	protected transient boolean newArpReply = false;
+	/**
+	 * Map of network interfaces. <br />
+	 * Key - interface name <br />
+	 * Value - interface
+	 */
 	private final Map<String, NetworkInterface> networkIfaces = new HashMap<>();
 	/**
 	 * Waiting time [ms] for ARP requests.
@@ -422,8 +432,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	}
 
 	/**
-	 * Returns interfaces as collection sorted by interfaces name.
-	 * Uzitecny pro vypisy u prikazu.
+	 * Returns interfaces as collection sorted by interface name.
 	 * @return
 	 */
 	public Collection<NetworkInterface> getSortedNetworkIfaces() {

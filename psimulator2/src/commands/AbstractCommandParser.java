@@ -257,6 +257,12 @@ public abstract class AbstractCommandParser implements Loggable {
 			return true;
 		}
 
+		if (commandName.equals("nat")) {
+			NatDynamicRecords cmd = new NatDynamicRecords(this);
+			cmd.run();
+			return true;
+		}
+
 		return false;
 	}
 

@@ -4,39 +4,31 @@
 package config.configTransformer;
 
 
-import device.Device;
-import networkModule.NetMod;
-import physicalModule.PhysicMod;
-import psimulator2.Psimulator;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
-import filesystem.ArchiveFileSystem;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import device.Device;
+import java.util.*;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
-import networkModule.L3.nat.NatTable;
+import networkModule.L3.CiscoIPLayer;
+import networkModule.L3.CiscoWrapperRT;
 import networkModule.L3.NetworkInterface;
+import networkModule.L3.nat.NatTable;
+import networkModule.NetMod;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
 import physicalModule.Cable;
+import physicalModule.PhysicMod;
 import physicalModule.SimulatorSwitchport;
 import physicalModule.Switchport;
+import psimulator2.Psimulator;
 import shared.Components.*;
-import shared.Components.simulatorConfig.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
-
-// TODO: PC nemuze mit 2 rozhrani stejnyho jmena !!!
+import shared.Components.simulatorConfig.*;
 
 /**
  *
@@ -62,10 +54,10 @@ public class Loader implements Loggable {
 	 * Mnozina jmen, slouzi ke kontrolovani, zda jeden Device ma unikatni jmena sitovych rozhrani.
 	 */
 	private Set<String> names = new HashSet<>();
-
-
-
-
+	/**
+	 * Cisco potrebuje mit natahane kabely na to, aby mohl nacist nastaveni routovaci tabulky.
+	 */
+	private Map<CiscoIPLayer, RoutingTableConfig> ciscoSettings = new HashMap<>();
 
 	public Loader(NetworkModel networkModel) {
 		this.networkModel = networkModel;
@@ -90,6 +82,7 @@ public class Loader implements Loggable {
 
 
 			connectCables();
+			updateRoutingTableForCisco();
 
 		} catch (Exception ex) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatna konfigurace, byla hozena vyjimka: ", ex);
@@ -113,35 +106,30 @@ public class Loader implements Loggable {
 		PhysicMod pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
-//		System.out.printf("  pocet rozhrani: %d\n", model.getEthInterfaceCount());
-//		System.out.println("  "+model.getInterfacesMap().toString());
 		names = new HashSet<>();
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
 			registerID(ifaceModel.getId());
 			registerName(ifaceModel.getName(), model);
-//			System.out.println("jedu");
 			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
-//			System.out.println("Pridal jem switchport pocitaci  s id="+ifaceModel.getId()+" s cislem "+cislovaniSwitchportu);
 			cislovaniSwitchportu++;
-//			System.out.print("X "+ifaceModel.getId());
 		}
 
 		// nastaveni sitovyho modulu
 		NetMod nm = createNetMod(model, pc);
 		pc.setNetworkModule(nm);
 
-		// setup filesystem		
+		// setup filesystem
 		// @TODO smazat !!!!  POKUSY S FILESYSTEM
 //		String pathFileSystem = String.valueOf(pc.configID) + ".fsm";
 //		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
-//		
+//
 //		OutputStream out = pc.getFilesystem().getOutputStreamToFile("/home/user/baf");
 //		PrintWriter print = new PrintWriter(out);
 //		print.println("ifconfig ble ble");
 //		print.flush();
 //		pc.getFilesystem().umount();
-		
+
 		return pc;
 	}
 
@@ -235,17 +223,27 @@ public class Loader implements Loggable {
 		// nastaveni routovaci tabulky:
 		if (model.getDevSettings() != null) {	// network modul uz byl nekdy ulozenej, nahrava se z neho
 
-			for(Record record: model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
-				IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
-				IpAddress brana = null;
-				if (record.getGateway() != null) {
-					brana = new IpAddress(record.getGateway());
+			if (nm.ipLayer instanceof CiscoIPLayer) { // cisco specific
+				CiscoIPLayer layer = ((CiscoIPLayer) (nm.ipLayer));
+				ciscoSettings.put(layer, model.getDevSettings().getRoutingTabConfig());
+			} else {
+				for (Record record : model.getDevSettings().getRoutingTabConfig().getRecords()) { //pro vsechny zaznamy
+					IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
+					IpAddress brana = null;
+					if (record.getGateway() != null) {
+						brana = new IpAddress(record.getGateway());
+					}
+					NetworkInterface iface = nm.ipLayer.getNetworkInteface(record.getInterfaceName());
+					nm.ipLayer.routingTable.addRecordWithoutControl(adresat, brana, iface);
 				}
-				NetworkInterface iface = nm.ipLayer.getNetworkInteface(record.getInterfaceName());
-				nm.ipLayer.routingTable.addRecordWithoutControl(adresat, brana, iface);
 			}
 		} else {	// network modul jeste nebyl ulozenej, je cerstve vytvorenej Martinouvym simulatorem, je potreba tabulku donastavit dle rozhrani
-			nm.ipLayer.updateNewRoutingTable();
+			if (nm.ipLayer instanceof CiscoIPLayer) { // cisco specific
+				CiscoIPLayer layer = ((CiscoIPLayer) (nm.ipLayer));
+				ciscoSettings.put(layer, null);
+			} else {
+				nm.ipLayer.updateNewRoutingTable();
+			}
 		}
 
 		// nastaveni NATu:
@@ -384,5 +382,29 @@ public class Loader implements Loggable {
 			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 rozhrani na jednom prvku ("+model.getName()+") se stejnym jmenem: "+name, null);
 		}
 		names.add(name);
+	}
+
+	/**
+	 * Updates cisco routing table.
+	 */
+	private void updateRoutingTableForCisco() {
+		for(CiscoIPLayer layer : ciscoSettings.keySet()) {
+			CiscoWrapperRT wrapper = layer.wrapper;
+
+			wrapper.update(); // nasype IP z rozhrani
+
+			if (ciscoSettings.get(layer) != null) {
+				for (Record record : ciscoSettings.get(layer).getRecords()) { //pro vsechny zaznamy
+					IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
+					if (record.getGateway() != null) {
+						IpAddress brana = new IpAddress(record.getGateway());
+						wrapper.pridejZaznam(adresat, brana);
+					} else {
+						NetworkInterface iface = layer.getNetworkInteface(record.getInterfaceName());
+						wrapper.pridejZaznam(adresat, iface);
+					}
+				}
+			}
+        }
 	}
 }

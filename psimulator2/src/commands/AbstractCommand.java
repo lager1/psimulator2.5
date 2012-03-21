@@ -11,16 +11,16 @@ import networkModule.NetMod;
 import networkModule.TcpIpNetMod;
 
 /**
+ * Parent of all commands in parsing system.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public abstract class AbstractCommand implements Loggable {
 
 	public final AbstractCommandParser parser;
-	private String name;
 
 	/**
-	 * Konstruktor prikazu. Nedavat zadny slozity veci / na to je metoda
+	 * Constructor - don't put any unnecessary reference here.
 	 *
 	 * @param parser
 	 */
@@ -29,30 +29,30 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Samotny spusteni prikazu, nebude se to vsechno uz delat v konstruktoru. Linuxovej prikaz pocita s tim, ze metoda
-	 * dalsi slovo vrati 1. slovo po nazvu prikazu.
+	 * Call this method for starting a commaad.
 	 *
 	 * @return
 	 */
 	public abstract void run();
 
-//	/**
-//	 * Predavani uzivatelskyho vstupu prave bezicimu commandu.
-//	 *
-//	 * @param input
-//	 */
-//	public abstract void catchUserInput(String input);
-
+	/**
+	 * Returns next word or "".
+	 * @return
+	 */
 	public String nextWord() {
 		return parser.nextWord();
 	}
 
+	/**
+	 * Returns peek of next word.
+	 * @return
+	 */
 	public String nextWordPeek() {
 		return parser.nextWordPeek();
 	}
 
 	/**
-	 * Zkratka: vrati hodnotu ukazatele do seznamu slov.
+	 * Shortcut: returns value of pointer in list of words.
 	 *
 	 * @return
 	 */
@@ -61,7 +61,7 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Zkratka na vraceni pocitace.
+	 * Shortcut: returns device.
 	 *
 	 * @return
 	 */
@@ -70,19 +70,7 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Vraci jmeno prikazu
-	 *
-	 * @return
-	 */
-	public String getName() {
-		if (name == null) {
-			Logger.log(this.getClass().getName(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz teto tridy nevraci jmeno.");
-		}
-		return name;
-	}
-
-	/**
-	 * Zkratka na vraceni TCP/IP sitovyho modulu.
+	 * Shortcut: returns TCP/IP metwork module.
 	 *
 	 * @return
 	 */
@@ -102,28 +90,28 @@ public abstract class AbstractCommand implements Loggable {
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu. Vypise radku pres shell svyho parseru.
+	 * Shortcut: print line to a shell.
 	 */
 	public void printLine(String s) {
 		parser.getShell().printLine(s);
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu. Vypise text pres shell svyho parseru.
+	 * Shortcut: print string to a shell.
 	 */
 	public void print(String s) {
 		parser.getShell().print(s);
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu.
+	 * Shortcut: print lines to a shell with given delay.
 	 */
 	protected void printWithDelay(String s, int delay) {
 		parser.getShell().printWithDelay(s, delay);
 	}
 
 	/**
-	 * Zkratka pro vypisovani do shellu.
+	 * Shortcut: print line to a shell - use iff you need to print something simulator specific.
 	 */
 	protected void printService(String s) {
 		parser.printService(s);

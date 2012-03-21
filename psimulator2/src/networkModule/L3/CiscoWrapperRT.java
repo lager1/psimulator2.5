@@ -157,6 +157,7 @@ public class CiscoWrapperRT implements Loggable {
 
         // smazu RT
         routingTable.flushAllRecords();
+		Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update, mazu RT.", null);
 
         // nastavuju citac
         this.citac = 0;
@@ -164,7 +165,7 @@ public class CiscoWrapperRT implements Loggable {
         // pridam routy na nahozena rozhrani
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
+				Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface, true);
             }
         }

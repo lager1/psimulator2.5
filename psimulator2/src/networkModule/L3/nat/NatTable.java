@@ -4,7 +4,6 @@
 
 package networkModule.L3.nat;
 
-import networkModule.L3.nat.AccessList;
 import dataStructures.IpPacket;
 import dataStructures.L4Packet;
 import dataStructures.L4Packet.L4PacketType;
@@ -289,14 +288,20 @@ public class NatTable implements Loggable {
 			return packet;
 		}
 
+		if (packet.data == null) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: Packet nema L4 data.", packet);
+			return packet;
+		}
+
 		// projdu aktualni dynamicke zaznamy a jestli uz tam je takovy preklad, tak mu prodlouzim zivot a necham se prelozit
 		for (Record record : table) {
 			if (record.in.equals(tempRecord)) {
 				logNatOperation(packet, true, true);
-//				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation,
-//						String.format("Natuji: %s:%d na %s:%d", record.in.address.toString(), record.in.port, record.out.address.toString(), record.out.port), packet);
-				IpPacket p = new IpPacket(record.out.address, packet.dst, packet.ttl, packet.data);
-				logNatOperation(packet, true, false);
+
+				L4Packet dataNew = packet.data.getCopyWithDifferentSrcPort(record.out.port); // zmena portu zde
+
+				IpPacket p = new IpPacket(record.out.address, packet.dst, packet.ttl, dataNew);
+				logNatOperation(p, true, false);
 				record.touch();
 				return p;
 			}
@@ -314,7 +319,7 @@ public class NatTable implements Loggable {
 			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "Dosla cisla volnych portu pro zanatovani! Vracim zpatky neprelozeny paket.", packet);
 			return packet;
 		}
-		freePorts.remove(srcPortNew);
+		freePorts.remove(srcPortNew); // port je obsazen
 
 		InnerRecord newDynamic = new InnerRecord(srcIpNew, srcPortNew, tempRecord.protocol);
 		Record r = new Record(tempRecord, newDynamic);
@@ -336,18 +341,11 @@ public class NatTable implements Loggable {
 	private IpPacket getTranslatedPacket(IpPacket packet, IpAddress srcIpNew, int srcPortNew) {
 		L4Packet data = packet.data.getCopyWithDifferentSrcPort(srcPortNew);
 
-//		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Zanatuji: before: src: %s:%d dst: %s:%d",
-//						packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
-
 		logNatOperation(packet, true, true);
 
 		IpPacket translated = new IpPacket(srcIpNew, packet.dst, packet.ttl, data);
 
-		logNatOperation(packet, true, false);
-
-//		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Zanatuji:  after: src: %s:%d dst: %s:%d",
-//						translated.src.toString(), translated.data.getPortSrc(), translated.dst.toString(), translated.data.getPortDst()), packet);
-
+		logNatOperation(translated, true, false);
 		return translated;
 	}
 
@@ -399,15 +397,9 @@ public class NatTable implements Loggable {
 			if (rule.out.equals(packet.dst)) {
 				logNatOperation(packet, false, true);
 
-//				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Odnatuji: before: src: %s:%d dst: %s:%d",
-//						packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
-
 				IpPacket translated = new IpPacket(packet.src, rule.in, packet.ttl, packet.data); // port se tu nemeni (je v packet.data)
 
 				logNatOperation(translated, false, false);
-
-//				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Odnatuji:  after: src: %s:%d dst: %s:%d",
-//						translated.src.toString(), translated.data.getPortSrc(), translated.dst.toString(), translated.data.getPortDst()), packet);
 				return translated;
 			}
 		}
@@ -418,15 +410,10 @@ public class NatTable implements Loggable {
 
 				logNatOperation(packet, false, true);
 
-//				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Odnatuji: before: src: %s:%d dst: %s:%d",
-//						packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
-
 				L4Packet dataNew = packet.data.getCopyWithDifferentDstPort(record.in.port); // zmena portu zde
 				IpPacket translated = new IpPacket(packet.src, record.in.address, packet.ttl, dataNew);
 
-//				Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format("Odnatuji:  after: src: %s:%d dst: %s:%d",
-//						translated.src.toString(), translated.data.getPortSrc(), translated.dst.toString(), translated.data.getPortDst()), packet);
-				logNatOperation(packet, false, false);
+				logNatOperation(translated, false, false);
 
 				return translated;
 			}
@@ -472,94 +459,6 @@ public class NatTable implements Loggable {
         return index;
     }
 
-//    /**
-//     * True, pokud je uz tam je zdrojova address v tabulce.
-//     * @param in adresa, kterou chceme porovnavat
-//     * @param isStatic udava, jestli se ma hledat jen mezi statickymi (true) nebo dynamickymi (false)
-//     * @return
-//     */
-//    private boolean jeTamZdrojova(IpAddress in, boolean isStatic) {
-//        for (Record record : table) {
-//            if (record.isStatic == isStatic && record.in.jeStejnaAdresaSPortem(in)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * True, pokud je uz tam je prelozena address v tabulce.
-//     * @param out adresa, kterou chceme porovnavat
-//     * @param isStatic udava, jestli se ma hledat jen mezi statickymi (true) nebo dynamickymi (false)
-//     * @return
-//     */
-//    private boolean jeTamPrelozena(IpAddress out, boolean staticke) {
-//        for (Record zaznam : table) {
-//            if (zaznam.isStatic == staticke && zaznam.out.jeStejnaAdresaSPortem(out)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-
-	//
-//    /**
-//     * Hleda mezi statickymi pravidly, jestli tam je zaznam pro danou IP.
-//     * @param zdroj
-//     * @return odnatovana IP <br />
-//     *         null pokud nic nenaslo
-//     */
-//    public IpAddress najdiStatickePravidloOut(IpAddress zdroj) {
-//        for (Record zaznam : table) {
-//            if (zaznam.isStatic && zaznam.out.jeStejnaAdresa(zdroj)) {
-//                return zaznam.in;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Vrati true, pokud muze odnatovat adr pomoci statickeho nebo dynamickeho pravidla.
-//     * Jinak false.
-//     * @param adr
-//     * @return
-//     */
-//    public boolean mamZaznamOutProIp(IpAddress adr) {
-//        IpAddress address = odnatujZdrojovouIpAdresu(adr);
-//        if (address == null) {
-//            return false;
-//        }
-//        return true;
-//    }
-
-//
-
-//    /**
-//     * Vrati true, pokud je mozne danou adresu prelozit. Jinak vrati false.
-//     * @param adr
-//     * @return true - musi byt adr v access-listu, k nemu priraznem pool s alespon 1 volnou IP adresou. <br />
-//     */
-//    public boolean lzePrelozit(IpAddress adr) {
-//
-//        AccessList access = lAccess.vratAccessListIP(adr);
-//        if (access == null) {
-//            return false;
-//        }
-//
-//        Pool pool = lPool.vratPoolZAccessListu(access);
-//        if (pool == null) {
-//            return false;
-//        }
-//
-//        IpAddress nova = pool.dejIp(true);
-//        if (nova == null) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-
     /**
      * Smaze stare (starsi nez natRecordLife [s]) dynamicke zaznamy v tabulce.
      */
@@ -576,9 +475,9 @@ public class NatTable implements Loggable {
 		table.removeAll(delete);
     }
 
-    /****************************************** functions for static rules ******************************************************/
+	//--------------------------------------------- functions for static rules ---------------------------------------------
 
-	    /**
+	/**
      * Prida isStatic pravidlo do tabulky.
      * Razeno vzestupne dle out adresy.
      * @param in zdrojova IP urcena pro preklad
@@ -612,9 +511,9 @@ public class NatTable implements Loggable {
      */
     public int deleteStaticRule(IpAddress in, IpAddress out) {
 
-        List<Record> smaznout = new ArrayList<>();
-        for (Record zaznam : table) {
-            if (in.equals(zaznam.in.address) && out.equals(zaznam.out.address)) {
+        List<StaticRule> smaznout = new ArrayList<>();
+        for (StaticRule zaznam : staticRules) {
+            if (in.equals(zaznam.in) && out.equals(zaznam.out)) {
                 smaznout.add(zaznam);
             }
         }
@@ -623,7 +522,7 @@ public class NatTable implements Loggable {
             return 1;
         }
 
-		table.removeAll(smaznout);
+		staticRules.removeAll(smaznout);
         return 0;
     }
 
@@ -646,7 +545,6 @@ public class NatTable implements Loggable {
      */
     public void nastavRozhraniOutside(NetworkInterface iface) {
         outside = iface;
-//        lPool.updateIpNaRozhrani();
     }
 
     /**
@@ -672,14 +570,14 @@ public class NatTable implements Loggable {
         outside = null;
     }
 
-    /****************************************** debug stuff *********************************************************/
+    //--------------------------------------------- debug stuff ---------------------------------------------
 
     /**
      * Pomocny servisni vypis.
      * Nejdriv se smazou stare dynamcike zaznamy.
      * @return
      */
-    public String vypisZaznamyDynamicky() {
+    public String getDynamicRulesInUse() {
         deleteOldDynamicRecords();
         String s = "";
 
@@ -690,6 +588,7 @@ public class NatTable implements Loggable {
     }
 
     //--------------------------------------------- linux stuff ---------------------------------------------
+
     /**
      * Nastavi Linux pocitac pro natovani. Kdyz uz je nastavena, nic nedela.
      * Pocitam s tim, ze ani pc ani rozhrani neni null.
