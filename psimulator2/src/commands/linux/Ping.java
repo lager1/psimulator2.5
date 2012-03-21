@@ -15,7 +15,9 @@ import logging.LoggingCategory;
 import networkModule.L3.NetworkInterface;
 
 /**
- * TODO: zmenit defaultni hodnoty counts a timeout
+ * Linuxovy prikaz ping.
+ *
+ * Znamy odchylky: pri nepovolenym intervalu (0;0,2) by se mela vypsat hlavicka pingu, zatim se nevypisuje.
  * @author Tomas Pitrinec
  */
 public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNotifiable {
@@ -210,15 +212,19 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
                     ttl = pom;
                 }
                 break;
-            } else if (slovo.charAt(uk) == 'i') {
-                double p=zpracujDoublePrepinac(uk);
-                if(p>0){
-                    interval=p;
-                }else{
-                    navratovyKod|=4;
-                    printLine("ping: bad timing interval.");
-                }
-                break;
+           } else if (slovo.charAt(uk) == 'i') {
+				double p = zpracujDoublePrepinac(uk);
+				if (p < 0) {
+					navratovyKod |= 4;
+					printLine("ping: bad timing interval.");
+
+				} else if (p < 0.2) {
+					navratovyKod |= 4;
+					printLine("ping: cannot flood; minimal interva is 200ms");	// zakazali jsme to, protoze to simulator nevytezovalo
+				} else {
+					interval = p;
+				}
+				break;
             }else{
                 printLine("ping: invalid option -- '"+slovo.charAt(uk)+"'");
                 vypisNapovedu();
