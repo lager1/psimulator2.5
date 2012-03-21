@@ -111,12 +111,12 @@ public class ArpPacket extends L3Packet {
 
 	@Override
 	public String getEventDesc() {
-		String s = "=== ARP ===";
+		String s = "=== ARP === \n";
 		s += "sender MAC address: " + senderMacAddress + "\n";
 		s += "sender  IP address: " + senderIpAddress + "\n";
 		s += "sender MAC address: " + targetMacAddress + "\n";
 		s += "sender  IP address: " + targetIpAddress + "\n";
-		s += "			  opcode: " + operation;
+		s += "            opcode: " + operation;
 		return s;
 	}
 

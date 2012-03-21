@@ -74,7 +74,7 @@ public class EthernetPacket extends L2Packet {
 
 	@Override
 	public String getEventDesc() {
-		String s = "=== Ethernet ===";
+		String s = "=== Ethernet === \n";
 		s += " src: " + src + "\n";
 		s += " dst: " + dst + "\n";
 		s += "size: " + size;

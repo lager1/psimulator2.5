@@ -188,7 +188,7 @@ public class IcmpPacket extends L4Packet {
 
 	@Override
 	public String getEventDesc() {
-		String s = "=== ICMP ===";
+		String s = "=== ICMP === \n";
 		s += "type: " + type + "\n";
 		s += "code: " + code + "\n";
 		s += "  id: " + id + "\n";
