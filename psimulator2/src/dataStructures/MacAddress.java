@@ -5,6 +5,9 @@
 package dataStructures;
 
 import java.util.Arrays;
+import logging.Logger;
+import logging.LoggingCategory;
+import utils.Util;
 
 /**
  * Implementation of mac address. Vnitrni representace je pomoci integeru, protoze s bytama byl problem se znainkem.
@@ -13,7 +16,7 @@ import java.util.Arrays;
  */
 public class MacAddress {
 
-	private final int[] representation;
+	private final byte[] representation;
 
 	/**
 	 * Vyjimka pro tvoreni mac adresy.
@@ -46,11 +49,11 @@ public class MacAddress {
 	}
 
 	/**
-	 * Konstruktor jen privatni pro staticky metody, napr. pro getRandomMac().
+	 * Creates mac address from array of bytes.
 	 *
 	 * @param representation
 	 */
-	private MacAddress(int[] representation) {
+	public MacAddress(byte[] representation) {
 		this.representation = representation;
 	}
 
@@ -86,6 +89,14 @@ public class MacAddress {
 		return vratit.substring(0, vratit.length() - 1);//aby se odmazala ta posledni dvojtecka
 	}
 
+	/**
+	 * Returns copy of this address inner representation.
+	 * @return
+	 */
+	public byte [] getByteArray(){
+		return Arrays.copyOf(representation, 6);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -102,7 +113,7 @@ public class MacAddress {
 	}
 
 	/**
-	 * Porovnavani.
+	 * Porovnavani. Potreba u spanning tree algoritmu.
 	 *
 	 * @param other
 	 * @return
@@ -139,7 +150,7 @@ public class MacAddress {
 	 */
 	public static boolean isBroadcast(MacAddress mac) {
 		for (int i = 0; i < 6; i++) {
-			if (mac.representation[i] != 255) {
+			if (mac.representation[i] != (byte) 0xff) {
 				return false;
 			}
 		}
@@ -148,9 +159,9 @@ public class MacAddress {
 
 	public static MacAddress broadcast() {
 		if (broadcast == null) {
-			int[] pole = new int[6];
+			byte[] pole = new byte[6];
 			for (int i = 0; i < 6; i++) {
-				pole[i] = 255;
+				pole[i] = (byte) 255;
 			}
 			broadcast = new MacAddress(pole);
 		}
@@ -158,9 +169,9 @@ public class MacAddress {
 	}
 
 	public static MacAddress getRandomMac() {
-		int[] representation = new int[6];
+		byte[] representation = new byte[6];
 		for (int i = 0; i < 6; i++) {
-			representation[i] = (int) (Math.random() * 256);
+			representation[i] = (byte) (Math.random() * 256);
 		}
 
 		MacAddress vratit = new MacAddress(representation);
@@ -172,8 +183,8 @@ public class MacAddress {
 	}
 
 // privatni staticky metody -------------------------------------------------------------------------------
-	private static int[] stringToBytes(String adr, char delimiter) {
-		int[] vratit = new int[6];
+	private static byte[] stringToBytes(String adr, char delimiter) {
+		byte[] vratit = new byte[6];
 		String[] pole = adr.split("\\" + delimiter);
 		if (pole.length != 6) {
 			throw new BadMacException("Neni to sest bytu, nezparsovala se mac adresa " + adr);
@@ -190,19 +201,19 @@ public class MacAddress {
 	 * @param s
 	 * @return
 	 */
-	private static int stringToByte(String s) {
+	private static byte stringToByte(String s) {
 		if (s.length() != 2) {
 			throw new BadMacException("Tenhleten bajt nema spravnou dylku: " + s);
 		}
 		try {
-			return Integer.parseInt(s, 16);
+			return (byte)(Integer.parseInt(s, 16));
 		} catch (NumberFormatException ex) {
 			throw new BadMacException("Tenhleten bajt nema spravnou dylku: " + s);
 		}
 	}
 
-	private static String byteToString(int bajt) {
-		String v = Integer.toHexString(bajt);
+	private static String byteToString(byte bajt) {
+		String v = Integer.toHexString(Util.byteToInt(bajt));
 		if (v.length() < 2) {
 			return "0" + v;
 		} else {

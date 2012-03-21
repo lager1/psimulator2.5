@@ -209,4 +209,15 @@ public class Util {
         }
         return s+ret;
     }
+
+	/**
+	 * Prevadi byte na inst, jako kdyby byly bez znaminka.
+	 * @param b
+	 * @return
+	 */
+	public static int byteToInt(byte b) {
+		int a = b & 0xff;	// bitova operace, jinak se totiz pretypovava byte jako se znaminkem, takhel se ty pocatecni jednicky vyandujou
+		return a;
+	}
+
 }

@@ -47,21 +47,10 @@ public abstract class Switchport {
 	protected abstract void receivePacket(L2Packet packet);
 
 	/**
-	 * Returns true if buffer is empty.
-	 */
-	public abstract boolean isEmptyBuffer();
-
-	/**
-	 * Remove packet form buffer and return it, decrements size of buffer. Synchronised via buffer. Throws exception when this method
-	 * is called and no packet is in buffer.
-	 *
-	 * @return
-	 */
-	public abstract L2Packet popPacket();
-
-	/**
 	 * Returns true, if on the other end of cable is connected other network device.
 	 * @return
 	 */
 	public abstract boolean isConnected();
+
+	public abstract boolean isReal();
 }

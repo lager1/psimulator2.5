@@ -9,20 +9,21 @@ import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- * Budik. Vzbudi zaregitrovanej SmartRunnable.
+ * Budik. Vzbudi zaregitrovanej Wakeable.
  *
  * @author Tomas Pitrinec
  */
 public class Alarm implements SmartRunnable, Loggable{
 
 	/**
-	 * Jen casy. Mam to kvuli razeni.
+	 * Prioritni fronta klientu a jejich casu. Neexistuje synchronizovana prioritni fronta, proto se do ni bude davat
+	 * specialnima matodama.
 	 */
-	Queue<WakeableItem> clients;
+	private final SynchronizedQueue clients;
 	protected final WorkerThread worker;
 
 	public Alarm() {
-		clients = new PriorityQueue<>();
+		clients =  new SynchronizedQueue();
 		this.worker = new WorkerThread(this);
 	}
 
@@ -36,7 +37,7 @@ public class Alarm implements SmartRunnable, Loggable{
 
 
 			if (relativeTimeToSleep <= 0) {	// kdyby budik zaspal, rovnou vzbudit
-				wakeObject(clients.poll());
+				wakeObject(clients.poll());	// TODO tady mi to jednou hodilo nullpointer
 
 			} else { //nezaspal, jde spat:
 
@@ -83,7 +84,30 @@ public class Alarm implements SmartRunnable, Loggable{
 	}
 
 
+	private class SynchronizedQueue {
 
+		private final Queue<WakeableItem> fronta;
+
+		public SynchronizedQueue() {
+			fronta = new PriorityQueue<>();
+		}
+
+		private synchronized void add(WakeableItem item) {
+				fronta.add(item);
+		}
+
+		private synchronized WakeableItem peek() {
+			return fronta.peek();
+		}
+
+		private synchronized boolean isEmpty() {
+			return fronta.isEmpty();
+		}
+
+		private synchronized WakeableItem poll(){
+			return fronta.poll();
+		}
+	}
 
 	/**
 	 * Polozka fronty ke vzbuzeni.
@@ -103,4 +127,10 @@ public class Alarm implements SmartRunnable, Loggable{
 			return ((Long) absTime).compareTo(o.absTime);
 		}
 	}
+
+
+
+
+
+
 }

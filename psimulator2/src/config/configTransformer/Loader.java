@@ -325,22 +325,47 @@ public class Loader implements Loggable {
 	}
 
 	/**
-	 * Projde vsechny kabely a spoji nase sitovy prvky.
+	 * Projde vsechny kabely a spoji nase sitovy prvky. Specialne taky resi realny switchporty.
 	 *
 	 * @param network
 	 */
 	private void connectCables() {
-		for (CableModel cableModel : networkModel.getCables()) {
-			registerID(cableModel.getId());
-			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());
+		for (CableModel cableModel : networkModel.getCables()) {	// pro vsechny kabely
+			registerID(cableModel.getId());	// registruje se id
+			Cable cable = new Cable(cableModel.getId(), cableModel.getDelay());	// vytvari se novej kabel
 
-			SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
-			cable.setFirstSwitchport(swportFirst);
-			cable.setFirstDeviceId(cableModel.getComponent1().getId());
+			HwComponentModel pcModel1 = cableModel.getComponent1();
+			HwComponentModel pcModel2 = cableModel.getComponent2();
 
-			SimulatorSwitchport swportSecond = findSwitchportFor(cableModel.getComponent2(), cableModel.getInterface2());
-			cable.setSecondSwitchport(swportSecond);
-			cable.setSecondDeviceId(cableModel.getComponent1().getId());
+			if (pcModel1.getHwType() != HwTypeEnum.REAL_PC && pcModel2.getHwType() != HwTypeEnum.REAL_PC) { // oba dva pocitace simulovany
+
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Ani jedna komponenta neni realna.", cable);
+
+				// zapojeni 1. switchportu:
+				SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
+				cable.setFirstSwitchport(swportFirst);
+				cable.setFirstDeviceId(cableModel.getComponent1().getId());
+
+				// zapojeni 2. switchportu:
+				SimulatorSwitchport swportSecond = findSwitchportFor(pcModel2, cableModel.getInterface2());
+				cable.setSecondSwitchport(swportSecond);
+				cable.setSecondDeviceId(cableModel.getComponent1().getId());
+
+			} else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
+				// nepripustny stav, hodi se vyjimka
+				throw new LoaderException("V konfiguracnim souboru jsou propojeny 2 realny pocitace, coz je nepripustne: "+pcModel1.getName()+" a "+pcModel2.getName());
+
+			} else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {	// pocitac 1 je realnej
+				// pocitaci 2 se nastavi realnej switchport:
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
+				SimulatorSwitchport swportSecond = findSwitchportFor(pcModel2, cableModel.getInterface2());
+				swportSecond.replaceWithRealSwitchport();
+
+			} else { // posledni moznost - pocitac 2 je realnej
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
+				SimulatorSwitchport swportFirst = findSwitchportFor(pcModel1, cableModel.getInterface1());
+				swportFirst.replaceWithRealSwitchport();
+			}
 		}
 	}
 

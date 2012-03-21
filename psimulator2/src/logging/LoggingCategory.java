@@ -47,7 +47,7 @@ public enum LoggingCategory {
 	ARP,
 	TELNET,
 	/**
-	 * nacitani a ukladani ukladacich struktur do xml souboru (povetsinou balicek psimulator2)
+	 * Nacitani a ukladani ukladacich struktur do xml souboru (povetsinou balicek psimulator2).
 	 */
 	XML_LOAD_SAVE,
 	/**
@@ -105,8 +105,13 @@ public enum LoggingCategory {
 	/**
 	 * část aplikace sloužící pro odesílání eventů z loggeru do UI klienta
 	 */
-	EVENTS_SERVER
+	EVENTS_SERVER,
 
-	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KTRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
+	/**
+	 * Zpravy z realny site.
+	 */
+	REAL_NETWORK,
+
+	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 
 }

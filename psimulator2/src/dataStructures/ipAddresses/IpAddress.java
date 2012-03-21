@@ -77,6 +77,20 @@ public class IpAddress {
         return l;
     }
 
+	/**
+	 * Returns IP address as array of byte.
+	 *
+	 * @return
+	 */
+	public byte[] getByteArray() {
+		int[] poleInt = bitsToArray(bits);
+		byte[] vratit = new byte[4];
+		for (int i = 0; i < 4; i++) {
+			vratit[i] = (byte) poleInt[i];
+		}
+		return vratit;
+	}
+
 
 // staticky metody pro ruzny prevadeni a tak: ----------------------------------------------------------------------------------------
 
@@ -93,7 +107,7 @@ public class IpAddress {
             return null;
         }
     }
-	
+
 	public static boolean isCorrectAddress(String ret) {
 		if (correctAddress(ret) != null) {
 			return true;
@@ -151,7 +165,7 @@ public class IpAddress {
      * @param r - ta vnitrni reprezentace
      * @return
      */
-    protected static IpAddress createIpFromBits(int r){
+    public static IpAddress createIpFromBits(int r){
         IpAddress vratit = new IpAddress();
         vratit.bits = r;
         return vratit;

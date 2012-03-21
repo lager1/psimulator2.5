@@ -15,8 +15,8 @@ import networkModule.L4.IcmpHandler;
 import networkModule.TcpIpNetMod;
 
 /**
- * Represents "interface" on L2.
- * For switchport connected to real network implement your own class.
+ * Represent's switchport on layer 2.
+ * Nebezi ve vlasti vlakne, ma jeden bufer odchozich paketu, ktery plni fysicka vrstva a vybira kabel.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
@@ -48,9 +48,28 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	private boolean hasL3module;
 	private boolean firstTime =  true;
 
+
+// konstruktory a buildeni pri startu: --------------------------------------------------------------------------------
+
 	public SimulatorSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
 	}
+
+	/**
+	 * In configuration it isn't saved, that switchport is real, it's discovered while cables are plugged in. So I need
+	 * this function to convert this SimulatorSwitchport to RealSwitchport.
+	 *
+	 * V konfiguraci neni ulozeno, je-li switchport realny, to se zjisti az podle toho, jestli kabel od neho natazenej
+	 * vede k realnymu pocitaci. Proto potrebuju tuto metodu, abych moh puvodne vytvoreny simulator switchport
+	 * konvertovat na realnej.
+	 */
+	public void replaceWithRealSwitchport(){
+		physicMod.addSwitchport(number, true, configID);
+	}
+
+
+
+// metody pro sitovou komunikaci:
 
 	@Override
 	protected void sendPacket(L2Packet packet) {
@@ -68,7 +87,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 			}
 
 			if (hasL3module) {
-				handleSourceQuench(packet);
+				handleSourceQuench(packet); 
 			}
 
 		} else if (cabel == null) { // no cabel attached
@@ -90,12 +109,11 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	}
 
 	/**
-	 * Removes packet form buffer and returns it, decrements size of buffer. Synchronised via buffer. Throws exception when this method
-	 * is called and no packet is in buffer.
+	 * Removes packet form buffer and returns it, decrements size of buffer. Synchronised via buffer. Throws exception
+	 * when this method is called and no packet is in buffer.
 	 *
 	 * @return
 	 */
-	@Override
 	public L2Packet popPacket() {
 		L2Packet packet;
 		packet = buffer.remove(0);
@@ -104,9 +122,8 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	}
 
 	/**
-	 * Return true if buffer is empty.
+	 * Returns true if buffer is empty.
 	 */
-	@Override
 	public boolean isEmptyBuffer() {
 		return buffer.isEmpty();
 	}
@@ -138,5 +155,10 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 		} else {
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Na rozhrani se uz nevejde zadny paket a chci poslat source-quench, ale paket neni IP, takze ho jen zahodim.", packet.toStringWithData());
 		}
+	}
+
+	@Override
+	public boolean isReal() {
+		return false;
 	}
 }

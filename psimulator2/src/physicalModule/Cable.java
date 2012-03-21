@@ -79,8 +79,8 @@ public class Cable implements SmartRunnable, Loggable {
 		boolean secondIsEmpty = true;
 
 		do {
-			Switchport first = firstCon; // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
-			Switchport second = secondCon;
+			SimulatorSwitchport first = firstCon; // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
+			SimulatorSwitchport second = secondCon;
 
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();

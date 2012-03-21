@@ -107,7 +107,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 		} else if (!jeRouta()) {
 			printLine("connect: Network is unreachable");
 		} else {
-			app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)interval*1000, ttl);
+			app = new LinuxPingApplication(parser.device, this, cil, count, size, timeout, (int)(interval*1000), ttl);
 			app.start();
 			Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Spustil jsem pingovou aplikaci a mam zpatky rizeni.", null);
 			return true;
@@ -122,12 +122,12 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 	 * @return
 	 */
 	private boolean jeRouta() {
-		for (NetworkInterface iface : getNetMod().ipLayer.getNetworkIfaces()) {
+		for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
 			if (iface.getIpAddress() != null && iface.getIpAddress().getIp().equals(cil)) {
 				return true;
 			}
 		}
-		if (getNetMod().ipLayer.routingTable.findRoute(cil) != null) {
+		if (ipLayer.routingTable.findRoute(cil) != null) {
 			return true;
 		}
 		return false;

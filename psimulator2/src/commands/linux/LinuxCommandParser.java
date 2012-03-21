@@ -6,6 +6,7 @@ package commands.linux;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand.Signal;
+import commands.Rnetconn;
 import commands.cisco.CiscoCommand;
 import commands.cisco.PingCommand;
 import device.Device;
@@ -53,6 +54,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("man", Man.class);
 		commands.put("traceroute", Traceroute.class);
 		commands.put("iptables", Iptables.class);
+		commands.put("rnetconn", Rnetconn.class);
 	}
 
 

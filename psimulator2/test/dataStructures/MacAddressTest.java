@@ -38,6 +38,10 @@ public class MacAddressTest {
          MacAddress mac;
          String sm;
 
+		 sm="ff:ff:ff:ff:ff:ff";
+         mac = new MacAddress(sm);
+         assertEquals(sm, mac.toString());
+
          sm="1a:4c:05:49:ad:f9";
          mac = new MacAddress(sm);
          assertEquals(sm, mac.toString());
