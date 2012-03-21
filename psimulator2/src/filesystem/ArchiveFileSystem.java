@@ -11,8 +11,8 @@ import filesystem.dataStructures.Node;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  *
@@ -97,7 +97,7 @@ public class ArchiveFileSystem implements FileSystem {
 			ret = new TFileOutputStream(file);
 
 		} catch (IOException ex) {
-			Logger.getLogger(ArchiveFileSystem.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "IOException occured when creating outputstream");
 		}
 
 		return ret;
@@ -117,7 +117,7 @@ public class ArchiveFileSystem implements FileSystem {
 			ret = new TFileInputStream(file);
 
 		} catch (IOException ex) {
-			Logger.getLogger(ArchiveFileSystem.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "IOException occured when creating inputstream");
 		}
 
 		return ret;		
@@ -128,7 +128,7 @@ public class ArchiveFileSystem implements FileSystem {
 		try {
 			TFile.umount(archive);
 		} catch (FsSyncException ex) {
-			//Logger.getLogger(ArchiveFileSystem.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "FsSyncException occured when umounting filesystem");
 		}
 	}
 

@@ -7,6 +7,7 @@ import applications.Application;
 import commands.AbstractCommandParser;
 import commands.cisco.CiscoCommandParser;
 import commands.linux.LinuxCommandParser;
+import filesystem.FileSystem;
 import java.util.HashMap;
 import java.util.Map;
 import networkModule.NetMod;
@@ -40,6 +41,7 @@ public class Device {
 	 */
 	private transient int telnetPort = -1;
 
+	private FileSystem filesystem;
 	/**
 	 * Konstruktor. Nastavi zadany promenny, vytvori si fysickej modul.
 	 *
@@ -64,6 +66,16 @@ public class Device {
 	public void setTelnetPort(int telnetPort) {
 		this.telnetPort = telnetPort;
 	}
+
+	public FileSystem getFilesystem() {
+		return filesystem;
+	}
+
+	public void setFilesystem(FileSystem filesystem) {
+		this.filesystem = filesystem;
+	}
+	
+	
 
 	public String getName() {
 		return name;

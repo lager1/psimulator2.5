@@ -12,6 +12,10 @@ import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+import filesystem.ArchiveFileSystem;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +27,6 @@ import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.nat.NatTable;
 import networkModule.L3.NetworkInterface;
-import networkModule.L3.nat.Pool;
 import networkModule.SimpleSwitchNetMod;
 import networkModule.TcpIpNetMod;
 import physicalModule.Cable;
@@ -128,6 +131,17 @@ public class Loader implements Loggable {
 		NetMod nm = createNetMod(model, pc);
 		pc.setNetworkModule(nm);
 
+		// setup filesystem		
+		// @TODO smazat !!!!  POKUSY S FILESYSTEM
+//		String pathFileSystem = String.valueOf(pc.configID) + ".fsm";
+//		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
+//		
+//		OutputStream out = pc.getFilesystem().getOutputStreamToFile("/home/user/baf");
+//		PrintWriter print = new PrintWriter(out);
+//		print.println("ifconfig ble ble");
+//		print.flush();
+//		pc.getFilesystem().umount();
+		
 		return pc;
 	}
 
