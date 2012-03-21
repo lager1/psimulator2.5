@@ -29,7 +29,6 @@ public class ClientSession {
 	 *
 	 */
 	private List listReference;
-	
 
 	public ClientSession(Socket socket) {
 		this.socket = socket;
@@ -55,7 +54,6 @@ public class ClientSession {
 
 	}
 
-
 	/**
 	 * transmission object throught connected socket and initialized outputstream
 	 *
@@ -72,16 +70,12 @@ public class ClientSession {
 			this.outputStream.flush();
 		} catch (IOException ex) {
 
-			if (done) {
+			if (done) {  // if everything is closed properly....
 				return;
 			}
 
-			if (this.socket == null || this.socket.isClosed() || !this.socket.isConnected()) {
-				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Starting ClientSessionThread without properly connected socket. Stopping ClientSessionThread!!!");
-				this.closeSession();
-			} else {
-				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Unexpected IOException occured when writing object into ObjectOutputStream");
-			}
+			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Unexpected IOException occured when writing object into ObjectOutputStream");
+			this.closeSession();
 		}
 	}
 
