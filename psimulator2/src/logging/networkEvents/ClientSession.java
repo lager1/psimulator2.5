@@ -69,6 +69,7 @@ public class ClientSession {
 			}
 			try {
 				this.outputStream = new ObjectOutputStream(socket.getOutputStream());
+				this.outputStream.flush();
 			} catch (IOException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "IOException occured when creating clientSession outputStream");
 				return;
@@ -78,6 +79,7 @@ public class ClientSession {
 
 		try {
 			this.outputStream.writeObject(object);  //serialize && send 
+			this.outputStream.flush();
 		} catch (IOException ex) {
 
 			if (done) {
