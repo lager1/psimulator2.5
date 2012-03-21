@@ -193,7 +193,7 @@ public class IcmpPacket extends L4Packet {
 		s += "code: " + code + "\n";
 		s += "  id: " + id + "\n";
 		s += " seq: " + seq + "\n";
-		s += "size: " + size + "\n";
+		s += "size: " + size;
 		return s;
 	}
 
