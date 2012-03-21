@@ -67,14 +67,14 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
      */
     private boolean zpracujParametry(String typVolby) {
         if (!kontrola("timeout", typVolby) && !kontrola("repeat", typVolby) && !kontrola("size", typVolby)) {
-            printLine("% Invalid input detected.");
+            invalidInputDetected();
             return false;
         }
 
         String volba = nextWord();
 
         if (volba.equals("")) {
-            printLine("% Incomplete command.");
+            incompleteCommand();
             return false;
         }
 
@@ -82,9 +82,13 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         if (kontrola("timeout", typVolby)) {
 			int timeout;
             try {
-                timeout = Integer.valueOf(volba) * 1000;
+                timeout = Integer.valueOf(volba) * 1000; // TODO: povolit maximalne 0.2 s (200ms)
+				if (timeout > 3600 || timeout < 0) {
+					invalidInputDetected();
+					return false;
+				}
             } catch (NumberFormatException e) {
-                printLine("% Invalid input detected.");
+                invalidInputDetected();
                 return false;
             }
 			app.setTimeout(timeout);
@@ -96,7 +100,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
             try {
                 count = Integer.valueOf(volba);
             } catch (NumberFormatException e) {
-                printLine("% Invalid input detected.");
+                invalidInputDetected();
                 return false;
             }
 			app.setCount(count);
@@ -106,11 +110,11 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
             try {
                 n = Integer.valueOf(volba);
             } catch (NumberFormatException e) {
-                printLine("% Invalid input detected.");
+                invalidInputDetected();
                 return false;
             }
             if (n < 36 || n > 18024) {
-                printLine("% Invalid input detected.");
+                invalidInputDetected();
                 return false;
             }
             app.setSize(n);

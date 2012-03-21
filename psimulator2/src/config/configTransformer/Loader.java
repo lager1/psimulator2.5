@@ -85,7 +85,7 @@ public class Loader implements Loggable {
 			updateRoutingTableForCisco();
 
 		} catch (Exception ex) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatna konfigurace, byla hozena vyjimka: ", ex);
+			Logger.log(this, Logger.INFO, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatna konfigurace, byla hozena vyjimka: ", ex);
 			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatny konfiguracni soubor. Koncim. " + ex.toString(), null);
 		}
 	}

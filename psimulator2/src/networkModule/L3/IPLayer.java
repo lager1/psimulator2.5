@@ -163,31 +163,38 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 		List<StoreItem> remove = new ArrayList<>();
 
-		for (StoreItem m : storeBuffer) {
+		StoreItem m;
+		Iterator<StoreItem> it = storeBuffer.iterator();
 
-			if (now - m.timeStamp >= arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
-				remove.add(m);
-				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", m.packet);
-				getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet);
-				continue;
+
+		try {
+			while (it.hasNext()) {
+				m = it.next();
+
+				if (now - m.timeStamp >= arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
+					remove.add(m);
+					Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", m.packet);
+					getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet);
+					continue;
+				}
+
+				MacAddress mac = arpCache.getMacAdress(m.nextHop);
+				if (mac != null) {
+					// obslouzit
+					Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", m.packet);
+					netMod.ethernetLayer.sendPacket(m.packet, m.out, mac);
+
+					// vyndat z bufferu
+					remove.add(m);
+				}
+
+				Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: " + (now - m.timeStamp) + ", maze se az: " + arpTTL, null);
 			}
 
-			MacAddress mac = arpCache.getMacAdress(m.nextHop);
-			if (mac != null) {
-				// obslouzit
-				Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", m.packet);
-				netMod.ethernetLayer.sendPacket(m.packet, m.out, mac);
-
-				// vyndat z bufferu
-				remove.add(m);
-			}
-
-			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: "+(now - m.timeStamp)+", maze se az: "+arpTTL, null);
-		}
-
-		// vymazani proslych ci obslouzenych zaznamu
-		for (StoreItem m : remove) {
-			storeBuffer.remove(m);
+			// vymazani proslych ci obslouzenych zaznamu
+			storeBuffer.removeAll(remove);
+		} catch (ConcurrentModificationException e) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "ConcurrentModificationException, jinak pohoda..", e);
 		}
 
 		newArpReply = false;
