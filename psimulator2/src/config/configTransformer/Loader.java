@@ -349,7 +349,7 @@ public class Loader implements Loggable {
 				// zapojeni 2. switchportu:
 				SimulatorSwitchport swportSecond = findSwitchportFor(pcModel2, cableModel.getInterface2());
 				cable.setSecondSwitchport(swportSecond);
-				cable.setSecondDeviceId(cableModel.getComponent1().getId());
+				cable.setSecondDeviceId(cableModel.getComponent2().getId());
 
 			} else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
 				// nepripustny stav, hodi se vyjimka
