@@ -45,10 +45,10 @@ public class IpPacket extends L3Packet {
 	@Override
 	public String getEventDesc() {
 		String s = "=== IP === \n";
-		s += " src: "+src+"\n";
-		s += " dst: "+dst+"\n";
-		s += " ttl: "+ttl+"\n";
-		s += "size: "+size+"\n";
+		s += "src: "+src+"  ";
+		s += "dst: "+dst+"  ";
+		s += "ttl: "+ttl+"  ";
+		s += "size: "+size+"  ";
 		if (data != null) {
 			s += "\n" + data.getEventDesc();
 		}

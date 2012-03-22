@@ -193,7 +193,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 			// vymazani proslych ci obslouzenych zaznamu
 			storeBuffer.removeAll(remove);
-		} catch (ConcurrentModificationException e) {
+		} catch (ConcurrentModificationException e) { // tady se to catchne, ale stejnak to spadne.. asi bug javy
 			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "ConcurrentModificationException, jinak pohoda..", e);
 		}
 
