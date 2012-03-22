@@ -61,6 +61,13 @@ public class IpAddress {
         return true;
     }
 
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 59 * hash + this.bits;
+		return hash;
+	}
+
 	/**
      * Vrati long hodnotu z adresy. Vhodne pro porovnavani adres.
      * @param ip

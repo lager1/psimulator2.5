@@ -112,6 +112,13 @@ public class MacAddress {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 23 * hash + Arrays.hashCode(this.representation);
+		return hash;
+	}
+
 	/**
 	 * Porovnavani. Potreba u spanning tree algoritmu.
 	 *
