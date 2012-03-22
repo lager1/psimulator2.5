@@ -46,10 +46,19 @@ public class Main {
 			try {
 				firstTelnetPort = Integer.parseInt(args[1]);
 			} catch (NumberFormatException ex) {
-				Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Second argument is not port number: "+args[1]);
+				Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Second argument "+args[1]+" is not port number. Using default value: " + firstTelnetPort);
 			}
 		}
 
+		int eventServerPort = 12000;
+		if (args.length >= 3) {
+			try {
+				eventServerPort = Integer.parseInt(args[2]);
+			} catch (NumberFormatException ex) {
+				Logger.log(Logger.WARNING, LoggingCategory.XML_LOAD_SAVE, "Third argument "+args[2]+" is not port number. Using default value: " + eventServerPort);
+			}
+		}
+		
 		// serializace xml do ukladacich struktur:
 		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
 		NetworkModel networkModel = null;
@@ -87,7 +96,25 @@ public class Main {
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Error occured when creating telnet servers.");
 		}
 		
-		EventServer eventServer = new EventServer(12000);
+		// SETUP EVENT SERVER
+		int tryMark = 0;
+		int maxTryMark = 10;
+		
+		while(true){
+			if(Util.availablePort(eventServerPort))
+				break; // break while
+		
+			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Port "+eventServerPort+" not available, using:" + (eventServerPort+1) );
+			
+			tryMark++;
+			eventServerPort++;
+			
+			if(tryMark>maxTryMark)
+				Logger.log(Logger.ERROR, LoggingCategory.EVENTS_SERVER, "Cannot start event server, no port available");
+		}
+		
+		
+		EventServer eventServer = new EventServer(eventServerPort);
 		Thread thread = new Thread(eventServer);
 		thread.start();
 		
@@ -95,5 +122,7 @@ public class Main {
 		
 		Logger.addListener(eventServer.getListener().getPacketTranslator());
 
+		Logger.log(Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "EventServer sucessfully started on port: " + eventServerPort);
+		
 	}
 }
