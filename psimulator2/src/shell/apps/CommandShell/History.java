@@ -42,6 +42,17 @@ public class History {
 		this.commandIterartor = this.activeHistory.listIterator(this.activeHistory.size());
 	}
 
+	public List<String> getActiveHistory() {
+		return activeHistory;
+	}
+
+	public void setActiveHistory(List<String> activeHistory) {
+		this.activeHistory = activeHistory;
+	}
+	
+	
+	
+
 	/**
 	 * metoda, která rotuje dvě různé historie
 	 */

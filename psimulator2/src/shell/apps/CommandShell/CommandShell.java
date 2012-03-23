@@ -6,9 +6,10 @@ package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
 import device.Device;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -256,9 +257,15 @@ public class CommandShell extends TerminalApplication {
 		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
 		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
 		//this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
+		
+		// load history
+		String historyPath = "/home/user/history";
+		//this.loadHistory(this.getShellRenderer().getHistory(), historyPath);
+		
+		try {
 
-		while (!quit) {
-			try {
+			while (!quit) {
+
 
 				switch (this.shellMode) {
 
@@ -282,18 +289,21 @@ public class CommandShell extends TerminalApplication {
 						break;
 
 				}
+			}
 
-			} catch (Exception ex) {
+			// save history
+//			this.saveHistory(this.getShellRenderer().getHistory(), historyPath);
 
-				if (quit) // if there is a quit request, then it is ok
-				{
-					return 0;
-				} else {
-					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "CommandShell");
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
-					return -1;
-				}
 
+		} catch (Exception ex) {
+
+			if (quit) // if there is a quit request, then it is ok
+			{
+				return 0;
+			} else {
+				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Exception occured, when reading a line from telnet, closing program: " + "CommandShell");
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
+				return -1;
 			}
 		}
 
@@ -307,5 +317,40 @@ public class CommandShell extends TerminalApplication {
 		return 0;
 	}
 
-	
+	public void saveHistory(History history, String path) {
+		OutputStream out = this.device.getFilesystem().getOutputStreamToFile(path);
+		PrintWriter historyWriter = new PrintWriter(out);
+
+		List<String> historyList = history.getActiveHistory();
+
+		for (String command : historyList) {
+			historyWriter.println(command);
+		}
+		try {
+			out.close();
+		} catch (IOException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when saving history");
+		}
+
+	}
+
+	public void loadHistory(History history, String path) {
+		
+		InputStream in = this.device.getFilesystem().getInputStreamToFile(path);
+		Scanner sc = new Scanner(in);
+		List<String> historyList = new LinkedList<>();
+		
+		while(sc.hasNextLine()){
+			historyList.add(sc.nextLine().trim());
+		}
+		
+		history.setActiveHistory(historyList);
+		
+		try {
+			in.close();
+		} catch (IOException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when loading history");
+		}
+
+	}
 }

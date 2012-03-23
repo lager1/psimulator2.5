@@ -79,6 +79,42 @@ public class ShellRenderer extends ActiveComponent {
 					continue;
 				}
 
+				// possible utf-8 characters handling, not used beacuse swingTelnetClient is not able to handle utf-8
+//				if (inputValue > 127) { 
+//
+//					int size = 0;
+//
+//					if (inputValue >= 194 && inputValue <= 223) {
+//						size = 2;
+//					} else if (inputValue >= 224 && inputValue <= 239) {
+//						size = 3;
+//					} else if (inputValue >= 240 && inputValue <= 256) {
+//						size = 4;
+//					}
+//
+//					if (size <= 4 && size >= 2) {
+//
+//						byte[] buffer = new byte[size];
+//						buffer[0] = (byte) inputValue;
+//
+//
+//						for (int i = 1; i < size; i++) {
+//							buffer[i] = (byte) this.m_IO.read();
+//						}
+//
+//						String eh = new String(buffer, "UTF8");
+//
+//						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem UTF-8 znak: " + eh);
+//						m_IO.write(eh);
+//						sb.insert(cursor, eh);
+//						cursor++;
+//						draw();
+//						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
+//						continue; // continue while
+//					}
+//
+//				}
+
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 
 				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
