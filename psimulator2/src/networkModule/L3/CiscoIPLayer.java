@@ -9,6 +9,7 @@ import dataStructures.IpPacket;
 import dataStructures.L4Packet;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+import java.util.Objects;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
@@ -155,5 +156,32 @@ public class CiscoIPLayer extends IPLayer {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Just for Loader's: private Map<CiscoIPLayer, RoutingTableConfig> ciscoSettings = new HashMap<>().
+	 * @param obj
+	 * @return
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final CiscoIPLayer other = (CiscoIPLayer) obj;
+		if (!Objects.equals(this.getNetMod().getDevice().getName(), other.getNetMod().getDevice().getName())) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 52465;
+		hash = 71 * hash + Objects.hashCode(getNetMod().getDevice().getName());
+		return hash;
 	}
 }

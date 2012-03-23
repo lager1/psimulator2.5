@@ -28,11 +28,11 @@ import utils.WorkerThread;
  */
 public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
-	protected final WorkerThread worker;
+	protected WorkerThread worker;
 	/**
 	 * ARP cache table.
 	 */
-	protected final ArpCache arpCache = new ArpCache();
+	protected final ArpCache arpCache;
 	/**
 	 * Packet filter. Controls NetworkAddressTranslation, packet dropping, ..
 	 */
@@ -48,7 +48,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	/**
 	 * Buffer for packet without MAC address nexthop. ARP request was sent and packets are waiting for the reply.
 	 */
-	private final List<StoreItem> storeBuffer = Collections.synchronizedList(new LinkedList<StoreItem>());
+	private final List<StoreItem> storeBuffer = new LinkedList<>();
 	/**
 	 * Routing table with record.
 	 */
@@ -83,6 +83,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 */
 	public IPLayer(TcpIpNetMod netMod) {
 		this.netMod = netMod;
+		this.arpCache = new ArpCache(netMod.getDevice());
 		this.worker = new WorkerThread(this);
 	}
 
@@ -161,40 +162,44 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 		long now = System.currentTimeMillis();
 
-		List<StoreItem> remove = new ArrayList<>();
-
+		List<StoreItem> old = new ArrayList<>();
+		List<StoreItem> serve = new ArrayList<>();
 		StoreItem m;
 		Iterator<StoreItem> it = storeBuffer.iterator();
+		Map<IpAddress, MacAddress> temp = new HashMap<>();
 
 
-		try {
-			while (it.hasNext()) {
-				m = it.next();
+		while (it.hasNext()) {
+			m = it.next();
 
-				if (now - m.timeStamp >= arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
-					remove.add(m);
-					Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", m.packet);
-					getIcmpHandler().sendDestinationHostUnreachable(m.packet.src, m.packet);
-					continue;
-				}
-
-				MacAddress mac = arpCache.getMacAdress(m.nextHop);
-				if (mac != null) {
-					// obslouzit
-					Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", m.packet);
-					netMod.ethernetLayer.sendPacket(m.packet, m.out, mac);
-
-					// vyndat z bufferu
-					remove.add(m);
-				}
-
-				Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: " + (now - m.timeStamp) + ", maze se az: " + arpTTL, null);
+			if (now - m.timeStamp >= arpTTL) { // vice jak arpTTL [s] stare se smaznou, tak se posle zpatky DHU
+				// vyndat z bufferu
+				old.add(m);
+				continue;
 			}
 
-			// vymazani proslych ci obslouzenych zaznamu
-			storeBuffer.removeAll(remove);
-		} catch (ConcurrentModificationException e) { // tady se to catchne, ale stejnak to spadne.. asi bug javy
-			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "ConcurrentModificationException, jinak pohoda..", e);
+			MacAddress mac = arpCache.getMacAdress(m.nextHop);
+			if (mac != null) {
+				// obslouzit
+				temp.put(m.nextHop, mac);
+				serve.add(m);
+			}
+
+			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: " + (now - m.timeStamp) + ", maze se az: " + arpTTL, null);
+		}
+
+		storeBuffer.removeAll(old);
+		storeBuffer.removeAll(serve);
+
+		for (StoreItem o : old) {
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", o.packet);
+			getIcmpHandler().sendDestinationHostUnreachable(o.packet.src, o.packet);
+		}
+
+		for (StoreItem s : serve) {
+			MacAddress mac = temp.get(s.nextHop);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", s.packet);
+			netMod.ethernetLayer.sendPacket(s.packet, s.out, mac);
 		}
 
 		newArpReply = false;
@@ -239,7 +244,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 					+ record.rozhrani.name, arpPacket); // packet tu nemsi by
 			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast());
 
-			storeBuffer.add(new IPLayer.StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
+			storeBuffer.add(new StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
 			Psimulator.getPsimulator().budik.registerWake(this, arpTTL);
 			return;
 		}

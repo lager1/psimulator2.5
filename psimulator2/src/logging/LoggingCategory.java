@@ -111,6 +111,7 @@ public enum LoggingCategory {
 	 * Zpravy z realny site.
 	 */
 	REAL_NETWORK,
+	ARP_CACHE,
 
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 

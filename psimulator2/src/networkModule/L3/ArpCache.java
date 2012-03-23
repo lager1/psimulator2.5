@@ -5,8 +5,12 @@ package networkModule.L3;
 
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IpAddress;
+import device.Device;
 import java.util.HashMap;
 import java.util.Set;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 
 /**
@@ -14,13 +18,29 @@ import networkModule.L2.EthernetInterface;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class ArpCache {
+public class ArpCache implements Loggable {
 
-	class ArpRecord {
+	private final Device device;
+	/**
+	 * Valid record time in ms.
+	 */
+	private int validRecordTime = 20_000;
+	/**
+	 * HashMap of records. <br/>
+	 * Key - IP address <br />
+	 * Value - ArpRecord
+	 */
+	private HashMap<IpAddress, ArpRecord> cache = new HashMap<>();
 
-		long timeStamp;
-		MacAddress mac;
-		EthernetInterface iface;
+	public ArpCache(Device device) {
+		this.device = device;
+	}
+
+	public class ArpRecord {
+
+		public final long timeStamp;
+		public final MacAddress mac;
+		public final EthernetInterface iface;
 
 		public ArpRecord(MacAddress mac, EthernetInterface iface) {
 			this.timeStamp = System.currentTimeMillis();
@@ -28,7 +48,6 @@ public class ArpCache {
 			this.iface = iface;
 		}
 	}
-	private HashMap<IpAddress, ArpRecord> cache = new HashMap<>();
 
 	/**
 	 * For platform formatted output only.
@@ -40,13 +59,14 @@ public class ArpCache {
 	}
 
 	/**
-	 * Returns MacAddres iff there is a record pair IpAddress with MacAddress AND timeout is not off. <br /> It removes
-	 * ArpRecord and returns null, if timeout is off. <br /> Return null if there is no record with given IpAddress.
+	 * Returns MacAddres iff there is a record pair IpAddress with MacAddress AND timeout is not off. <br />
+	 * It removes ArpRecord and returns null, if timeout is off. <br />
+	 * Return null if there is no record with given IpAddress.
 	 *
 	 * @param ip
 	 * @return
 	 */
-	public MacAddress getMacAdress(IpAddress ip) {
+	public MacAddress getMacAdress(IpAddress ip) { // TODO: tady bych spravne mel resit i rozhrani!!! a delat neco jen kdyz to odpovida
 		ArpRecord record = getRecord(ip);
 		if (record == null) {
 			return null;
@@ -63,6 +83,7 @@ public class ArpCache {
 	 */
 	public void updateArpCache(IpAddress ip, MacAddress mac, EthernetInterface iface) {
 		ArpRecord record = new ArpRecord(mac, iface);
+		Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Pridavam si zaznam na IP: "+ip.toString()+" MAC: "+mac, null);
 		cache.put(ip, record);
 	}
 
@@ -81,10 +102,12 @@ public class ArpCache {
 		}
 
 		long now = System.currentTimeMillis();
-		if ((now - record.timeStamp) > 20_000) {
+		long time = now - record.timeStamp;
+		if (time > validRecordTime) {
 			// cisco default is 14400s, here it has to be much smaller,
 			// because when someone change his IP address a his neighbour begins to send packets to him, he should ask again
 			// with ARP req
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Zahazuju stary zaznam pro IP: "+ip+" a MAC: "+record.mac+ " byl prosly o "+(time-validRecordTime), null);
 			cache.remove(ip);
 			return null;
 		}
@@ -104,5 +127,10 @@ public class ArpCache {
 			}
 		}
 		return s;
+	}
+
+	@Override
+	public String getDescription() {
+		return device.getName()+" ArpCache";
 	}
 }
