@@ -1,6 +1,7 @@
 package logging.networkEvents;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -69,10 +70,13 @@ public class EventsListener implements Runnable {
 
 			Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Object for broadcasting recieved. Broadcasting ... ");
 
-			synchronized (this.clientSessions) { // lock clientSessions list
-				for (ClientSession clientSession : clientSessions) { // for all client sessions
+			synchronized (this.clientSessions) {
+				for (Iterator<ClientSession> it = clientSessions.iterator(); it.hasNext();) {
+					ClientSession clientSession = it.next();
 					if (clientSession.isActive()) {
 						clientSession.send(ntwObject);
+					} else {
+						it.remove();
 					}
 				}
 			}

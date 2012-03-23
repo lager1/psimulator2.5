@@ -80,7 +80,7 @@ public class ClientSession {
 	}
 
 	public void closeSession() {
-		this.listReference.remove(this);
+	//	this.listReference.remove(this);   // auto-remove when is not active, this line may causing concuret modification exception
 		this.done = true;
 		if (this.socket == null || this.socket.isClosed()) // nothing to close
 		{
