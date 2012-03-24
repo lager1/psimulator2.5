@@ -4,8 +4,8 @@
 
 package networkModule.L3;
 
-import networkModule.L3.nat.NatTable;
 import dataStructures.IpPacket;
+import networkModule.L3.nat.NatTable;
 
 /**
  * Represents packet filter, implements network address translation.

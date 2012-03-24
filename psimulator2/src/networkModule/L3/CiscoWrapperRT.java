@@ -165,7 +165,7 @@ public class CiscoWrapperRT implements Loggable {
         // pridam routy na nahozena rozhrani
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
-				Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Pridavam routy z nahozenych rozhrani do RT: "+iface.getIpAddress(), null);
+				Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: "+iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface, true);
             }
         }
@@ -258,7 +258,7 @@ public class CiscoWrapperRT implements Loggable {
 
         if (!zaznam.getAdresat().isNetworkNumber()) { // vyjimka pro nacitani z konfiguraku, jinak to je osetreno v parserech
 //            throw new RuntimeException("Adresa " + zaznam.getAdresat().getIp() + " neni cislem site!");
-			Logger.log(this, Logger.WARNING, LoggingCategory.WRAPPER_CISCO, "Adresa " + zaznam.getAdresat().getIp() + " neni cislem site! Nepridano!", zaznam);
+			Logger.log(this, Logger.WARNING, LoggingCategory.WRAPPER_CISCO, "Address " + zaznam.getAdresat().getIp() + " is not network number! Skipping..", zaznam);
 			return;
         }
 

@@ -142,7 +142,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				break;
 
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type: " + packet.getType()+", zahazuji packet: ", packet);
+				Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type packet: " + packet.getType()+", dropping packet: ", packet);
 		}
 	}
 
@@ -168,7 +168,6 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		Iterator<StoreItem> it = storeBuffer.iterator();
 		Map<IpAddress, MacAddress> temp = new HashMap<>();
 
-
 		while (it.hasNext()) {
 			m = it.next();
 
@@ -185,20 +184,20 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				serve.add(m);
 			}
 
-			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Tento zaznam jeste nevyprsel a ani neprisla odpoved, stari: " + (now - m.timeStamp) + ", maze se az: " + arpTTL, null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "This record has not timedout nor ARP answer has come. age: " + (now - m.timeStamp) + ", will delete:: " + arpTTL, null);
 		}
 
 		storeBuffer.removeAll(old);
 		storeBuffer.removeAll(serve);
 
 		for (StoreItem o : old) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Vyprsel timout ve storeBufferu, zahazuju tento paket. Pak poslu zpatky DHU.", o.packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: ARP reply was not received. Will send Destination Unreachable.", o.packet);
 			getIcmpHandler().sendDestinationHostUnreachable(o.packet.src, o.packet);
 		}
 
 		for (StoreItem s : serve) {
 			MacAddress mac = temp.get(s.nextHop);
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Uz mi prisla ARPem MAC adresa nexthopu, tak vybiram ze storeBufferu packet a posilam ho.", s.packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "ARP reply received, sending packet to nextHop.", s.packet);
 			netMod.ethernetLayer.sendPacket(s.packet, s.out, mac);
 		}
 
@@ -240,8 +239,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		if (nextHopMac == null) { // posli ARP request a dej do fronty
 			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), nextHopIp);
 
-			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Nemohu odeslat IpPacket na adresu " + packet.dst + ", protoze neznam MAC adresu nextHopu, takze posilam ARP request na rozhrani "
-					+ record.rozhrani.name, arpPacket); // packet tu nemsi by
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Cannot send packet to address: " + packet.dst + ", becaouse nextHop MAC address is unknown. Sending ARP request via interface: "
+					+ record.rozhrani.name, arpPacket);
 			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast());
 
 			storeBuffer.add(new StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
@@ -250,7 +249,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		}
 
 		// kdyz to doslo az sem, tak muzu odeslat..
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam paket.", packet);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending packet.", packet);
 		netMod.ethernetLayer.sendPacket(packet, record.rozhrani.ethernetInterface, nextHopMac);
 
 	}
@@ -294,13 +293,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		// prochazet jednotlivy buffery a vyrizovat jednotlivy pakety
 		while (!sendBuffer.isEmpty() || !receiveBuffer.isEmpty()) {
 			if (!receiveBuffer.isEmpty()) {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() cyklus receiveBuffer", null);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() receiveBuffer", null);
 				ReceiveItem m = receiveBuffer.remove(0);
 				handleReceivePacket(m.packet, m.iface);
 			}
 
 			if (!sendBuffer.isEmpty()) {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() cyklus sendBuffer", null);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() sendBuffer", null);
 				SendItem m = sendBuffer.remove(0);
 				handleSendPacket(m.packet, m.dst); // bude se obsluhovat platform-specific
 			}
@@ -387,7 +386,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		}
 		NetworkInterface iface = getNetworkInteface(inc.name);
 		if (iface == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Nenazeleno NetworkIface, ktere by bylo spojeno s EthernetInterface, ze ktereho prave prisel packet!!!", null);
+			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "No NetworkInterface is connected to this EthernetInterface from which was reveived packet. This should never happen!", null);
 		}
 		return iface;
 	}
@@ -401,8 +400,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 */
 	public void updateNewRoutingTable() {
 		if (routingTable.size() != 0) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Spustena metoda updateNewRoutingTable, ktera je urcena pro vyplneni routovaci tabulky dle rozhrani, nebyla-li zadana v konfiguraku. "
-					+ "Tabulka vsak neni prazdna.", null);
+			Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "updateNewRoutingTable(): should be called only in case no saved setting in configuration file. "
+					+ "But table is no empty!!!", null);
 			return;
 		}
 		for (NetworkInterface iface : getNetworkIfaces()) {
@@ -455,7 +454,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 	@Override
 	public void wake() {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "vzbudil me Budik", null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "awaken by Alarm", null);
 		newArpReply = true;
 		this.worker.wake();
 	}

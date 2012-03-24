@@ -174,43 +174,43 @@ public class NatTable implements Loggable {
 		 */
 
 		if (packet.data == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "Nenatuji: prisel mi paket, ktery nema L4 data, takze nemuzu zjistit jeho port!?", packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "No NAT translation: packet with no L4 data received. Could not gain port number!?", packet);
 			return packet;
 		}
 
 		boolean vstupniJeInside = false;
-		NetworkInterface insideTemp = inside.get(in == null ? null : in.name); // TODO: osetrit null !!! - spravne chovani!!!
+		NetworkInterface insideTemp = inside.get(in == null ? null : in.name);
 		if (insideTemp != null) {
 			vstupniJeInside = true;
 		}
 
 		if (outside == null) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: neni nastaveno outside rozhrani.", null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: no outside interface is set.", null);
 			return packet; // 5
 		}
 
 		if (!out.name.equals(outside.name) || !vstupniJeInside) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: vstupni neni inside nebo vystupni neni outside.", null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming interace is not inside or outgoing interface is not outside.", null);
 			return packet; // 3
 		}
 
 		IpAddress srcTranslated = najdiStatickePravidloIn(packet.src);
         if (srcTranslated != null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "Natuji: nalezeno staticke pravidlo!", null);
+			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "NAT translation: static rule found.", null);
 			return staticTranslation(packet, srcTranslated); // 0
         }
 
         // neni v access-listech, tak se nanatuje
         AccessList acc = lAccess.vratAccessListIP(packet.src);
         if (acc == null) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: zdrojova adresa neni v access-listech.", null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: source address is not in access-lists.", null);
             return packet; // 4
         }
 
         // je v access-listech, ale neni prirazen pool, vrat DHU
         Pool pool = lPool.vratPoolZAccessListu(acc);
         if (pool == null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "Nenatuji a posilam DHU: zdrojova adresa je v access-listech, ale neni vstupni neni prirazen pool..", null);
+			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: source address is in access-lists, but no pool is assigned.", null);
 			// poslat DHU
 			ipLayer.getIcmpHandler().sendDestinationHostUnreachable(packet.src, null);
             return null; // 1
@@ -218,7 +218,7 @@ public class NatTable implements Loggable {
 
         IpAddress adr = pool.dejIp(true);
         if (adr == null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "Nenatuji a posilam DHU: neni dostupna zadna volna IP adresa pro zanatovani.", null);
+			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: no free IP is available for translation.", null);
 			ipLayer.getIcmpHandler().sendDestinationHostUnreachable(packet.src, null);
             return null; // 2
         }
@@ -257,9 +257,9 @@ public class NatTable implements Loggable {
 	private void logNatOperation(IpPacket packet, boolean natting, boolean before) {
 		String op;
 		if (natting) {
-			op = "Zanatuji";
+			op = "Forward translation ";
 		} else {
-			op = "Odnatuji";
+			op = "Backward translation";
 		}
 
 		String when;
@@ -289,7 +289,7 @@ public class NatTable implements Loggable {
 		}
 
 		if (packet.data == null) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: Packet nema L4 data.", packet);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: Packet has no L4 data.", packet);
 			return packet;
 		}
 
@@ -316,7 +316,7 @@ public class NatTable implements Loggable {
 		try {
 			srcPortNew = freePorts.iterator().next();
 		} catch (NoSuchElementException e) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "Dosla cisla volnych portu pro zanatovani! Vracim zpatky neprelozeny paket.", packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "There is no free port available for translation! Returning unchanged packet.", packet);
 			return packet;
 		}
 		freePorts.remove(srcPortNew); // port je obsazen
@@ -324,7 +324,7 @@ public class NatTable implements Loggable {
 		InnerRecord newDynamic = new InnerRecord(srcIpNew, srcPortNew, tempRecord.protocol);
 		Record r = new Record(tempRecord, newDynamic);
 
-		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "Novy zaznam vytvoren: Pridavam do tabulky.", r);
+		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "New dynamic record created: ", r);
 		table.add(r);
 
 		return getTranslatedPacket(packet, srcIpNew, srcPortNew);
@@ -357,7 +357,7 @@ public class NatTable implements Loggable {
 			type = packet.data.getType();
 			port = packet.data.getPortSrc();
 		} else {
-			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "generateInnerRecordForSrc: Neprijimam paket s L4 data == null, vracim null!", packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "generateInnerRecordForSrc: packet with L4 data == null, returning null!", packet);
 			return null;
 		}
 
@@ -374,17 +374,17 @@ public class NatTable implements Loggable {
 	 */
 	public IpPacket backwardTranlate(IpPacket packet, NetworkInterface in) {
 		if (outside == null) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: outside je null.", packet);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: outside is null.", packet);
 			return packet;
 		}
 		if (packet.data == null) {
-			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: Packet nema L4 data.", packet);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: Packet has no L4 data.", packet);
 			return packet;
 		}
 		if (outside.name.equals(in.name)) {
 			return doBackwardTranslation(packet);
 		}
-		Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Nenatuji: prichozi rozhrani je: "+in.name+", outside ale je: "+outside.name, packet);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming iface is: "+in.name+", but outside is: "+outside.name, packet);
 		return packet;
 	}
 
@@ -419,7 +419,7 @@ public class NatTable implements Loggable {
 			}
 		}
 
-		Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "Neodnatuji: nepodarilo se najit zaznam pro odnatovani.", packet);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT backward translation: no record available for operation.", packet);
 		return packet;
 	}
 

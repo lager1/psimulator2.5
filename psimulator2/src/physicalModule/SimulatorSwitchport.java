@@ -75,7 +75,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
 		if (size + packetSize > capacity) { // run out of capacity
-			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Odesilaci fronta je plna, proto zahazuji paket.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: Queue is full.", packet.toStringWithData());
 			dropped++;
 
 			if (firstTime) {
@@ -87,11 +87,11 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 			}
 
 			if (hasL3module) {
-				handleSourceQuench(packet); 
+				handleSourceQuench(packet);
 			}
 
 		} else if (cabel == null) { // no cabel attached
-			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Neni pripojen zadny kabel, proto zahazuji paket.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: No cable is attached.", packet.toStringWithData());
 			dropped++;
 		} else {
 			size += packetSize;
@@ -153,7 +153,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 			IpPacket p = (IpPacket) packet.data;
 			icmpHandler.sendSourceQuench(p.src, p);
 		} else {
-			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Na rozhrani se uz nevejde zadny paket a chci poslat source-quench, ale paket neni IP, takze ho jen zahodim.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: queue is full - packet is not IP so no source-quench is sent.", packet.toStringWithData());
 		}
 	}
 

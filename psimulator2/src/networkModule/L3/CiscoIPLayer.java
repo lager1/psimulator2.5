@@ -36,7 +36,7 @@ public class CiscoIPLayer extends IPLayer {
 		// tady se bude resit update cache + reakce
 		switch (packet.operation) {
 			case ARP_REQUEST:
-				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP request", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "ARP request received.", packet);
 
 				// ulozit si odesilatele
 				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
@@ -47,15 +47,15 @@ public class CiscoIPLayer extends IPLayer {
 
 					// poslat ARP reply
 					ArpPacket arpPacket = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, packet.targetIpAddress, iface.getMac());
-					Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Reaguji na ARP request a posilam REPLY na " + packet.senderIpAddress, arpPacket);
+					Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Reacting on ARP request: sending REPLY to " + packet.senderIpAddress, arpPacket);
 					netMod.ethernetLayer.sendPacket(arpPacket, iface, packet.senderMacAddress);
 				} else {
-					Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "Prisel mi ARP request, ale nemam odpovedet, takze nic nedelam.", packet);
+					Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "ARP request received, but I am not a target - doing nothing.", packet);
 				}
 				break;
 
 			case ARP_REPLY:
-				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel ARP reply - ukladam ji tez do cache.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "ARP reply received.", packet);
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me (protoze odpoved se posila jen odesilateli a ne na broadcast), takze si ji muzu ulozit a je to ok
 				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
@@ -64,7 +64,7 @@ public class CiscoIPLayer extends IPLayer {
 				break;
 
 			default:
-				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Prisel mi neznamy typ ARP paketu, zahazuju.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Dropping packet: Unknown ARP type packet received.", packet);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class CiscoIPLayer extends IPLayer {
 
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze nejde zaroutovat", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: unroutable.", packet);
 			return;
 		}
 
@@ -110,7 +110,7 @@ public class CiscoIPLayer extends IPLayer {
 
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ktery je pro me.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet destined to be mine.", packet);
 			netMod.transportLayer.receivePacket(packet);
 			return;
 		}
@@ -118,7 +118,7 @@ public class CiscoIPLayer extends IPLayer {
 		// osetri TTL
 		if (packet.ttl == 1) {
 			// posli TTL expired a zaloguj zahozeni paketu
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze vyprselo TTL", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: TTL expired.", packet);
 			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
@@ -126,7 +126,7 @@ public class CiscoIPLayer extends IPLayer {
 		// zaroutuj
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prijimam IP paket, ale nejde zaroutovat, pac nemam zaznam na "+packet.dst+". Poslu DNU.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for "+packet.dst+". Will send Destination Host Unreachable.", packet);
 			getIcmpHandler().sendDestinationHostUnreachable(packet.src, packet); // cisco na skolnich routerech odesi DHU a nebo DNU jako linux
 			return;
 		}
@@ -135,7 +135,7 @@ public class CiscoIPLayer extends IPLayer {
 		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
 		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Prisel IP paket z rozhrani: "+ifaceIn.name, packet);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+ifaceIn.name, packet);
 		processPacket(p, record, ifaceIn);
 	}
 

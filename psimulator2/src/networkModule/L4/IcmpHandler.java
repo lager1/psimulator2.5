@@ -36,7 +36,7 @@ public class IcmpHandler implements Loggable {
 			case REQUEST:
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.DEFAULT, p.id, p.seq, p.getSize()-8);	// zadava se velikost payloadu
-				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Odesilam ARP odpoved.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packet);
 				getIpLayer().handleSendPacket(reply, packet.src);
 				break;
 			case REPLY:
@@ -44,11 +44,11 @@ public class IcmpHandler implements Loggable {
 			case UNDELIVERED:
 			case SOURCE_QUENCH:
 				// predat aplikacim
-				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Preposilam ARP odpoved aplikaci na port: "+p.id, packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Forwarding ARP reply to application on port: "+p.id, packet);
 				transportLayer.forwardPacketToApplication(packet, p.id);
 				break;
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Neznamy typ ICMP paketu, zahazuju..", packet);
+				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: unknown ICMP packet type.", packet);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class IcmpHandler implements Loggable {
 		} else {
 			p = new IcmpPacket(type, code);
 		}
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Posilam "+type+" "+code+" na: "+dst, p);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending "+type+" "+code+" to: "+dst, p);
 		getIpLayer().handleSendPacket(p, dst);
 	}
 

@@ -83,7 +83,7 @@ public class ArpCache implements Loggable {
 	 */
 	public void updateArpCache(IpAddress ip, MacAddress mac, EthernetInterface iface) {
 		ArpRecord record = new ArpRecord(mac, iface);
-		Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Pridavam si zaznam na IP: "+ip.toString()+" MAC: "+mac, null);
+		Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Updating ARP cache: IP: "+ip.toString()+" MAC: "+mac, null);
 		cache.put(ip, record);
 	}
 
@@ -107,7 +107,7 @@ public class ArpCache implements Loggable {
 			// cisco default is 14400s, here it has to be much smaller,
 			// because when someone change his IP address a his neighbour begins to send packets to him, he should ask again
 			// with ARP req
-			Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Zahazuju stary zaznam pro IP: "+ip+" a MAC: "+record.mac+ " byl prosly o "+(time-validRecordTime), null);
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP_CACHE, "Deleting old record for IP: "+ip+" and MAC: "+record.mac+ " out of date = "+(time-validRecordTime) + " ms.", null);
 			cache.remove(ip);
 			return null;
 		}
