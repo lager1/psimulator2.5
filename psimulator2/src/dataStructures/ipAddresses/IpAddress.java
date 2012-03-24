@@ -186,7 +186,7 @@ public class IpAddress {
      */
     protected static int stringToBits(String adr) throws BadIpException{
         if (!adr.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
-            throw new BadIpException("Spatna IP: \""+adr+"\"");
+            throw new BadIpException("Bad IP: \""+adr+"\"");
         }
         //uz vim, ze se to sklada z cisel, pokracuju tedy:
         String[] pole = adr.split("\\."); //pole Stringu s jednotlivejma cislama
