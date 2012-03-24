@@ -312,6 +312,10 @@ public class CommandShell extends TerminalApplication {
 
 	@Override
 	public int quit() {
+		
+		if(this.shellRenderer !=null)
+			this.shellRenderer.quit();
+		
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;

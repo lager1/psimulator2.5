@@ -32,6 +32,7 @@ public class ShellRenderer extends ActiveComponent {
 	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
 	 */
 	private boolean returnValue = true;
+	private boolean quit;
 
 	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
 		super(termIO, name);
@@ -47,6 +48,12 @@ public class ShellRenderer extends ActiveComponent {
 		this.history = history;
 	}
 
+	public int quit() {
+		this.quit = true;
+
+		return 0;
+	}
+
 	/**
 	 * hlavní funkce zobrazování shellu a čtení z terminálu, reakce na různé klávesy ENETER, BACKSCAPE, LEFT ....
 	 *
@@ -56,14 +63,14 @@ public class ShellRenderer extends ActiveComponent {
 	public void run() throws Exception {
 
 		this.sb.setLength(0); // clear string builder
-		returnValue = true;
-		boolean stop = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
+		this.returnValue = true;
+		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
 		List<String> nalezenePrikazy = new LinkedList<String>(); // seznam nalezenych příkazů po zmáčknutí tabu
 		this.cursor = 0;
 
 
 
-		while (!stop) {
+		while (!quit) {
 
 			try {
 
@@ -135,12 +142,12 @@ public class ShellRenderer extends ActiveComponent {
 				{
 					switch (inputValue) {
 						case TerminalIO.CTRL_C:
-							stop = true;
+							quit = true;
 							returnValue = false;
 							//termIO.write(BasicTerminalIO.CRLF);
 							break;
 						case TerminalIO.CTRL_D:  // ctrl+d is catched before this... probably somewhere in telnetd2 library structures, no need for this
-							stop = true;
+							quit = true;
 							returnValue = false;
 							m_IO.write("BYE");
 							break;
@@ -215,7 +222,7 @@ public class ShellRenderer extends ActiveComponent {
 						break;
 
 					case TerminalIO.ENTER:
-						stop = true;
+						quit = true;
 						history.add(this.getValue());
 						m_IO.write(BasicTerminalIO.CRLF);
 						break;
@@ -223,7 +230,7 @@ public class ShellRenderer extends ActiveComponent {
 					case -1:
 					case -2:
 						Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Shell renderer read Input(Code):" + inputValue);
-						stop = true;
+						quit = true;
 						break;
 				}
 
@@ -231,7 +238,13 @@ public class ShellRenderer extends ActiveComponent {
 
 
 			} catch (IOException ex) {
-				stop = true;
+
+				if (this.quit) // ok no problem, outer program code probably closed socket
+				{
+					Logger.log(Logger.INFO, LoggingCategory.TELNET, "Closing ShellRenderer");
+					return;
+				}
+				quit = true;
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
 				ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
 				this.commandShell.quit();
