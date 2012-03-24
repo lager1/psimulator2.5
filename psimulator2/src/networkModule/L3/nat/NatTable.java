@@ -55,7 +55,7 @@ public class NatTable implements Loggable {
      * Verejne (outside) rozhrani.
      */
     NetworkInterface outside; // = new HashMap<>(); // nevim, jestli potreva jich mit, pak to asi predelam
-    private boolean linux_nastavena_maskarada = false;
+    private boolean isSetLinuxMasquarade = false;
 
 	/**
 	 * Dynamicke zaznamy starsi nez tato hodnota se smazou.
@@ -194,21 +194,21 @@ public class NatTable implements Loggable {
 			return packet; // 3
 		}
 
-		IpAddress srcTranslated = najdiStatickePravidloIn(packet.src);
+		IpAddress srcTranslated = findStaticRuleIn(packet.src);
         if (srcTranslated != null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "NAT translation: static rule found.", null);
 			return staticTranslation(packet, srcTranslated); // 0
         }
 
         // neni v access-listech, tak se nanatuje
-        AccessList acc = lAccess.vratAccessListIP(packet.src);
+        AccessList acc = lAccess.getAccessList(packet.src);
         if (acc == null) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: source address is not in access-lists.", null);
             return packet; // 4
         }
 
         // je v access-listech, ale neni prirazen pool, vrat DHU
-        Pool pool = lPool.vratPoolZAccessListu(acc);
+        Pool pool = lPool.getPool(acc);
         if (pool == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: source address is in access-lists, but no pool is assigned.", null);
 			// poslat DHU
@@ -216,7 +216,7 @@ public class NatTable implements Loggable {
             return null; // 1
         }
 
-        IpAddress adr = pool.dejIp(true);
+        IpAddress adr = pool.getIP(true);
         if (adr == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: no free IP is available for translation.", null);
 			ipLayer.getIcmpHandler().sendDestinationHostUnreachable(packet.src, null);
@@ -232,7 +232,7 @@ public class NatTable implements Loggable {
      * @return zanatovana IP <br />
      *         null pokud nic nenaslo
      */
-    public IpAddress najdiStatickePravidloIn(IpAddress zdroj) {
+    private IpAddress findStaticRuleIn(IpAddress zdroj) {
         for (StaticRule rule : staticRules) {
             if (rule.in.equals(zdroj)) {
                 return rule.out;
@@ -308,9 +308,9 @@ public class NatTable implements Loggable {
 		}
 
 		// nenasel se stary, tak vygenerujeme novy
-		AccessList access = lAccess.vratAccessListIP(packet.src);
-		Pool pool = lPool.vratPoolZAccessListu(access);
-        IpAddress srcIpNew = lPool.dejIpZPoolu(pool);
+		AccessList access = lAccess.getAccessList(packet.src);
+		Pool pool = lPool.getPool(access);
+        IpAddress srcIpNew = lPool.getIpFromPool(pool);
 
 		Integer srcPortNew;
 		try {
@@ -486,7 +486,7 @@ public class NatTable implements Loggable {
      *         1 - chyba, in adresa tam uz je (% in already mapped (in -> out)) <br />
      *         2 - chyba, out adresa tam uz je (% similar static entry (in -> out) already exists)
      */
-    public int addStaticRuleForCisco(IpAddress in, IpAddress out) {
+    public int addStaticRuleCisco(IpAddress in, IpAddress out) {
 
 		for (StaticRule rule : staticRules) {
 			if (rule.in.equals(in)) {
@@ -504,7 +504,7 @@ public class NatTable implements Loggable {
 
 	 /**
      * Smaze vsechny isStatic zaznamy, ktere maji odpovidajici in a out.
-     * Dale aktualizuje outside rozhrani co se IP tyce. Nejdrive smaze vsechny krom prvni,
+     * Dale aktualizuje outside rozhrani co se IP tyce. Nejdrive smaze vsechny krom getFirst,
      * a pak postupne prida ze statickych a pak i z poolu.
      * @return 0 - alespon 1 zaznam se smazal <br />
      *         1 - nic se nesmazalo, pac nebyl nalezen odpovidajici zaznam (% Translation not found)
@@ -533,7 +533,7 @@ public class NatTable implements Loggable {
      * Pro pouziti prikazu 'address nat inside'.
      * @param iface
      */
-    public void pridejRozhraniInside(NetworkInterface iface) {
+    public void addInside(NetworkInterface iface) {
 		if (!inside.containsKey(iface.name)) { // nepridavam uz pridane
 			inside.put(iface.name, iface);
 		}
@@ -543,7 +543,7 @@ public class NatTable implements Loggable {
      * Nastavi outside rozhrani.
      * @param iface
      */
-    public void nastavRozhraniOutside(NetworkInterface iface) {
+    public void setOutside(NetworkInterface iface) {
         outside = iface;
     }
 
@@ -552,21 +552,21 @@ public class NatTable implements Loggable {
      * Kdyz to rozhrani neni v inside, tak se nestane nic.
      * @param iface
      */
-    public void smazRozhraniInside(NetworkInterface iface) {
+    public void deleteInside(NetworkInterface iface) {
 		inside.remove(iface.name);
     }
 
     /**
      * Smaze vsechny inside rozhrani.
      */
-    public void smazRozhraniInsideVsechny() {
+    public void deleteInsideAll() {
         inside.clear();
     }
 
     /**
      * Smaze outside rozhrani.
      */
-    public void smazRozhraniOutside() {
+    public void deleteOutside() {
         outside = null;
     }
 
@@ -599,9 +599,9 @@ public class NatTable implements Loggable {
      * @param pc
      * @param outside, urci ze je tohle rozhrani outside a ostatni jsou automaticky soukroma.
      */
-    public void nastavLinuxMaskaradu(NetworkInterface verejne) {
+    public void setLinuxMasquarade(NetworkInterface verejne) {
 
-        if (linux_nastavena_maskarada) {
+        if (isSetLinuxMasquarade) {
             return;
         }
 
@@ -612,48 +612,48 @@ public class NatTable implements Loggable {
                 continue; // preskakuju verejny
             }
             // vsechny ostatni nastrkam do inside
-            pridejRozhraniInside(iface);
+            addInside(iface);
         }
-        nastavRozhraniOutside(verejne);
+        setOutside(verejne);
 
         // osefovani access-listu
         int cislo = 1;
-        lAccess.smazAccessListyVsechny();
-        lAccess.pridejAccessList(new IPwithNetmask("0.0.0.0", 0), cislo);
+        lAccess.deleteAccessLists();
+        lAccess.addAccessList(new IPwithNetmask("0.0.0.0", 0), cislo);
 
         // osefovani IP poolu
         String pool = "ovrld";
-        lPool.smazPoolVsechny();
-        lPool.pridejPool(verejne.getIpAddress().getIp(), verejne.getIpAddress().getIp(), 24, pool);
+        lPool.deletePools();
+        lPool.addPool(verejne.getIpAddress().getIp(), verejne.getIpAddress().getIp(), 24, pool);
 
-        lPoolAccess.smazPoolAccessVsechny();
-        lPoolAccess.pridejPoolAccess(cislo, pool, true);
+        lPoolAccess.deletePoolAccesses();
+        lPoolAccess.addPoolAccess(cislo, pool, true);
 
-        linux_nastavena_maskarada = true;
+        isSetLinuxMasquarade = true;
     }
 
     /**
      * Zrusi linux DNAT. Kdyz neni nastavena, nic nedela.
      */
-    public void zrusLinuxMaskaradu() {
+    public void cancelLinuxMasquerade() {
 
-        lAccess.smazAccessListyVsechny();
-        lPool.smazPoolVsechny();
-        lPoolAccess.smazPoolAccessVsechny();
-        smazRozhraniOutside();
-        smazRozhraniInsideVsechny();
-        linux_nastavena_maskarada = false;
+        lAccess.deleteAccessLists();
+        lPool.deletePools();
+        lPoolAccess.deletePoolAccesses();
+        deleteOutside();
+        deleteInsideAll();
+        isSetLinuxMasquarade = false;
     }
 
-    public boolean jeNastavenaLinuxovaMaskarada() {
-        return linux_nastavena_maskarada;
+    public boolean isSetLinuxMasquarade() {
+        return isSetLinuxMasquarade;
     }
 
     /**
      * Nastavi promennou na true.
      */
-    public void nastavZKonfigurakuLinuxBooleanTrue() {
-        linux_nastavena_maskarada = true;
+    public void setLinuxMasquaradeFromConfigOnTrue() {
+        isSetLinuxMasquarade = true;
     }
 
     /**
@@ -661,7 +661,7 @@ public class NatTable implements Loggable {
      * @param in zdrojova IP
      * @param out nova zdrojova (prelozena)
      */
-    public void pridejStatickePravidloLinux(IpAddress in, IpAddress out) {
+    public void addStaticRuleLinux(IpAddress in, IpAddress out) {
 		staticRules.add(new StaticRule(in, out));
     }
 

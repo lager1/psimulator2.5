@@ -34,8 +34,8 @@ public class HolderPoolAccess {
      * @param access
      * @param poolName
      */
-    public void pridejPoolAccess(int access, String pool, boolean overload) {
-        smazPoolAccess(access);
+    public void addPoolAccess(int access, String pool, boolean overload) {
+        deletePoolAccess(access);
         PoolAccess novy = new PoolAccess(access, pool, overload);
 //        int index = 0;
 //        for (PoolAccess pa : seznam) {
@@ -53,7 +53,7 @@ public class HolderPoolAccess {
      * @return 0 - ok, smazalo to. <br />
      *         1 - takovy zaznam neni (%Dynamic mapping not found)
      */
-    public int smazPoolAccess(int access) {
+    public int deletePoolAccess(int access) {
 
         Object object = poolAccess.remove(access);
 		if (object == null) {
@@ -66,7 +66,7 @@ public class HolderPoolAccess {
     /**
      * Smaze vsechny PoolAccessy.
      */
-    public void smazPoolAccessVsechny() {
+    public void deletePoolAccesses() {
         poolAccess.clear();
     }
 
@@ -75,7 +75,7 @@ public class HolderPoolAccess {
      * @param poolName
      * @return
      */
-    public PoolAccess vratPoolAccess(Pool pool) {
+    public PoolAccess getPoolAccess(Pool pool) {
 		for (PoolAccess pa : poolAccess.values()) {
             if (pa.poolName.equals(pool.name)) {
                 return pa;

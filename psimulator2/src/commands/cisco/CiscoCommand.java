@@ -54,7 +54,7 @@ public abstract class CiscoCommand extends AbstractCommand {
      * @param min kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    protected boolean kontrola(String command, String cmd, int min) { // TODO: kontrola prejmenovat
+    protected boolean isCommand(String command, String cmd, int min) { // TODO: isCommand prejmenovat
 
         if (cmd.length() == 0) {
             incompleteCommand();
@@ -81,7 +81,7 @@ public abstract class CiscoCommand extends AbstractCommand {
      * @param min kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    protected boolean kontrolaBezVypisu(String command, String cmd, int min) { // TODO: kontrolaBezVypisu prejmenovat
+    protected boolean isCommandWithoutOutput(String command, String cmd, int min) { // TODO: isCommandWithoutOutput prejmenovat
 
         if (cmd.length() == 0) {
             return false;
@@ -104,7 +104,7 @@ public abstract class CiscoCommand extends AbstractCommand {
      * @param s
      * @return
      */
-    protected boolean jePrazdny(String s) {
+    protected boolean isEmptyWithIcompleteCommand(String s) {
         if (s.equals("")) {
             incompleteCommand();
             return true;

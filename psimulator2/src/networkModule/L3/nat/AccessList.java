@@ -18,10 +18,10 @@ public class AccessList {
 	/**
 	 * V podstate unikatni jmeno AccessListu.
 	 */
-	public final int cislo;
+	public final int number;
 
 	public AccessList(IPwithNetmask ip, int cislo) {
 		this.ip = ip;
-		this.cislo = cislo;
+		this.number = cislo;
 	}
 }

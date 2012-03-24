@@ -268,7 +268,7 @@ public class CiscoWrapperRT implements Loggable {
             }
         }
 
-        radky.add(dejIndexPozice(zaznam, true), zaznam);
+        radky.add(getPositionIndex(zaznam, true), zaznam);
         update();
     }
 
@@ -281,7 +281,7 @@ public class CiscoWrapperRT implements Loggable {
         if (zaznam.jePrimoPripojene()) {
             ciscozaznam.setConnected();
         }
-        radky.add(dejIndexPozice(ciscozaznam, false), ciscozaznam);
+        radky.add(getPositionIndex(ciscozaznam, false), ciscozaznam);
     }
 
     /**
@@ -359,10 +359,10 @@ public class CiscoWrapperRT implements Loggable {
      * pouziva se pri normalnim vkladani do wrapperu, false pro vypis RT
      * @return
      */
-    private int dejIndexPozice(CiscoRecord pridavany, boolean nejminBituVMasce) {
+    private int getPositionIndex(CiscoRecord pridavany, boolean nejminBituVMasce) {
         int i = 0;
         for (CiscoRecord cz : radky) {
-            if (jeMensiIP(pridavany.adresat, cz.adresat, nejminBituVMasce)) {
+            if (isLessIp(pridavany.adresat, cz.adresat, nejminBituVMasce)) {
                 break;
             }
             i++;
@@ -376,7 +376,7 @@ public class CiscoWrapperRT implements Loggable {
      * @param druha
      * @return
      */
-    private boolean jeMensiIP(IPwithNetmask prvni, IPwithNetmask druha, boolean nejminBituVMasce) {
+    private boolean isLessIp(IPwithNetmask prvni, IPwithNetmask druha, boolean nejminBituVMasce) {
 
         // kdyz maj stejny IP a ruzny masky
         if (prvni.getIp().toString().equals(druha.getIp().toString())) {
@@ -401,7 +401,7 @@ public class CiscoWrapperRT implements Loggable {
      * @param index
      * @return
      */
-    public CiscoRecord vratZaznam(int index) {
+    public CiscoRecord getRecord(int index) {
         return radky.get(index);
     }
 
@@ -409,7 +409,7 @@ public class CiscoWrapperRT implements Loggable {
      * Vrati pocet zaznamu ve wrapperu.
      * @return
      */
-    public int size() {
+    public int getSize() {
         return radky.size();
     }
 
@@ -417,7 +417,7 @@ public class CiscoWrapperRT implements Loggable {
      * Pro vypis pres 'sh run'
      * @return
      */
-    public String vypisRunningConfig() {
+    public String getRunningConfig() {
         String s = "";
         for (CiscoRecord z : radky) {
             s += "ip route " + z + "\n";
@@ -430,7 +430,7 @@ public class CiscoWrapperRT implements Loggable {
      * Kasle se na tridni vypisy pro adresaty ze A rozsahu, protoze se v laborce takovy rozsah nepouziva.
      * @return
      */
-    public String vypisRT() {
+    public String getShIpRoute() {
         String s = "";
 
         if (debug) {
@@ -449,10 +449,10 @@ public class CiscoWrapperRT implements Loggable {
         boolean defaultGW = false;
         String brana = null;
 		IPwithNetmask zeros = new IPwithNetmask("0.0.0.0", 0);
-        for (int i = 0; i < size(); i++) {
-            if (vratZaznam(i).adresat.equals(zeros)) {
-                if (vratZaznam(i).brana != null) {
-                    brana = vratZaznam(i).brana.toString();
+        for (int i = 0; i < getSize(); i++) {
+            if (getRecord(i).adresat.equals(zeros)) {
+                if (getRecord(i).brana != null) {
+                    brana = getRecord(i).brana.toString();
                 }
                 defaultGW = true;
             }
@@ -477,7 +477,7 @@ public class CiscoWrapperRT implements Loggable {
         }
 
         for (CiscoRecord czaznam : wrapper_pro_razeni.radky) {
-            s += vypisZaznamDoRT(czaznam);
+            s += getRecordForShow(czaznam);
         }
 
         return s;
@@ -488,7 +488,7 @@ public class CiscoWrapperRT implements Loggable {
      * @param zaznam
      * @return
      */
-    private String vypisZaznamDoRT(CiscoRecord zaznam) {
+    private String getRecordForShow(CiscoRecord zaznam) {
         String s = "";
 
         if (zaznam.isConnected()) { //C       21.21.21.0 is directly connected, FastEthernet0/0

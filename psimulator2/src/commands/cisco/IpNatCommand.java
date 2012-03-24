@@ -50,9 +50,9 @@ public class IpNatCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		boolean pokracovat = zpracujRadek();
+		boolean pokracovat = process();
         if (pokracovat) {
-            vykonejPrikaz();
+            start();
         }
 	}
 
@@ -60,7 +60,7 @@ public class IpNatCommand extends CiscoCommand {
 		Logger.log("IpNatCommand: ", Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, s);
 	}
 
-	private boolean zpracujRadek() {
+	private boolean process() {
 
         // ip nat pool ovrld 172.16.10.1 172.16.10.1 prefix 24
         // ip nat inside source list 7 pool ovrld overload?
@@ -68,12 +68,12 @@ public class IpNatCommand extends CiscoCommand {
 
         String dalsi = nextWord();
         if (dalsi.startsWith("p")) {
-            if (kontrola("pool", dalsi, 1)) {
+            if (isCommand("pool", dalsi, 1)) {
                 return zpracujPool();
             }
             return false;
         } else {
-            if (kontrola("inside", dalsi, 1)) {
+            if (isCommand("inside", dalsi, 1)) {
                 return zpracujInside();
             }
             if (dalsi.startsWith("outside")) {
@@ -83,19 +83,19 @@ public class IpNatCommand extends CiscoCommand {
         }
     }
 
-    private void vykonejPrikaz() {
+    private void start() {
 
         int n;
         if (no) {
             if (stav == State.INSIDE) { // no ip nat inside source list 7 pool ovrld overload?
-                n = natTable.lPoolAccess.smazPoolAccess(accesslist);
+                n = natTable.lPoolAccess.deletePoolAccess(accesslist);
                 if (n == 1) {
                     printLine("%Dynamic mapping not found");
                 }
                 return;
             }
             if (stav == State.POOL) { // no ip nat pool ovrld 172.16.10.1 172.16.10.1 prefix 24
-                n = natTable.lPool.smazPool(poolJmeno);
+                n = natTable.lPool.deletePool(poolJmeno);
                 if (n == 1) {
                     printLine("%Pool " + poolJmeno + " not found");
                 }
@@ -116,7 +116,7 @@ public class IpNatCommand extends CiscoCommand {
         }
 
         if (stav == State.POOL) { // ip nat pool ovrld 172.16.10.1 172.16.10.1 prefix 24
-            int ret = natTable.lPool.pridejPool(start, konec, poolPrefix, poolJmeno);
+            int ret = natTable.lPool.addPool(start, konec, poolPrefix, poolJmeno);
             switch (ret) {
                 case 0:
                     // ok
@@ -140,12 +140,12 @@ public class IpNatCommand extends CiscoCommand {
         }
 
         if (stav == State.INSIDE) { // ip nat inside source list 7 pool ovrld overload
-            natTable.lPoolAccess.pridejPoolAccess(accesslist, poolJmeno, overload);
+            natTable.lPoolAccess.addPoolAccess(accesslist, poolJmeno, overload);
 			return;
         }
 
         if (stav == State.STATIC) { // ip nat inside source static 10.10.10.2 171.16.68.5
-            n = natTable.addStaticRuleForCisco(start, konec);
+            n = natTable.addStaticRuleCisco(start, konec);
             if (n == 1) {
                 printLine("% " + start + " already mapped (" + start + " -> "
                         + konec + ")");
@@ -165,7 +165,7 @@ public class IpNatCommand extends CiscoCommand {
         // ip nat pool ovrld | 172.16.10.1 172.16.10.1 prefix 24
 
         String dalsi = nextWord();
-        if (jePrazdny(dalsi)) {
+        if (isEmptyWithIcompleteCommand(dalsi)) {
             return false;
         }
         poolJmeno = dalsi;
@@ -179,13 +179,13 @@ public class IpNatCommand extends CiscoCommand {
 //        ladici("tady11");
         try {
             dalsi = nextWord();
-            if (jePrazdny(dalsi)) {
+            if (isEmptyWithIcompleteCommand(dalsi)) {
                 return false;
             }
             start = new IpAddress(dalsi);
 
             dalsi = nextWord();
-            if (jePrazdny(dalsi)) {
+            if (isEmptyWithIcompleteCommand(dalsi)) {
                 return false;
             }
             konec = new IpAddress(dalsi);
@@ -197,19 +197,19 @@ public class IpNatCommand extends CiscoCommand {
         dalsi = nextWord();
 
         if(dalsi.startsWith("n")) {
-            if (!kontrola("netmask", dalsi, 1)) {
+            if (!isCommand("netmask", dalsi, 1)) {
                 return false;
             }
             printService("netmask neni implementovan; pouzijte volbu prefix-length");
             return false;
         }
 
-        if (!kontrola("prefix-length", dalsi, 1)) {
+        if (!isCommand("prefix-length", dalsi, 1)) {
             return false;
         }
 
         dalsi = nextWord();
-        if (jePrazdny(dalsi)) {
+        if (isEmptyWithIcompleteCommand(dalsi)) {
             return false;
         }
         try {
@@ -244,7 +244,7 @@ public class IpNatCommand extends CiscoCommand {
 
         String dalsi;
 
-        if (!kontrola("source", nextWord(), 1)) {
+        if (!isCommand("source", nextWord(), 1)) {
             return false;
         }
 
@@ -253,13 +253,13 @@ public class IpNatCommand extends CiscoCommand {
             return zpracujStatic(dalsi);
         }
 
-        if (!kontrola("list", dalsi, 1)) {
+        if (!isCommand("list", dalsi, 1)) {
             return false;
         }
 
         dalsi = nextWord();
         try {
-            if (jePrazdny(dalsi)) {
+            if (isEmptyWithIcompleteCommand(dalsi)) {
                 return false;
             }
             accesslist = Integer.parseInt(dalsi);
@@ -268,12 +268,12 @@ public class IpNatCommand extends CiscoCommand {
             return false;
         }
 
-        if (!kontrola("pool", nextWord(), 1)) {
+        if (!isCommand("pool", nextWord(), 1)) {
             return false;
         }
 
         dalsi = nextWord();
-        if (jePrazdny(dalsi)) {
+        if (isEmptyWithIcompleteCommand(dalsi)) {
             return false;
         }
         poolJmeno = dalsi;
@@ -307,19 +307,19 @@ public class IpNatCommand extends CiscoCommand {
     private boolean zpracujStatic(String s) {
         // ip nat inside source static 10.10.10.2 171.16.68.5
         String dalsi = s;
-        if (!kontrola("static", dalsi, 1)) {
+        if (!isCommand("static", dalsi, 1)) {
             return false;
         }
 
         try {
             dalsi = nextWord();
-            if (jePrazdny(dalsi)) {
+            if (isEmptyWithIcompleteCommand(dalsi)) {
                 return false;
             }
             start = new IpAddress(dalsi);
 
             dalsi = nextWord();
-            if (jePrazdny(dalsi)) {
+            if (isEmptyWithIcompleteCommand(dalsi)) {
                 return false;
             }
             konec = new IpAddress(dalsi);

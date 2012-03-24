@@ -28,13 +28,13 @@ public class IpNatInterfaceCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		boolean pokracovat = zpracujRadek();
+		boolean pokracovat = process();
         if (pokracovat) {
-            vykonejPrikaz();
+            start();
         }
 	}
 
-    private boolean zpracujRadek() { // sezrany: no ip nat
+    private boolean process() { // sezrany: no ip nat
 
         String side = nextWord();
         if (side.equals("")) {
@@ -42,13 +42,13 @@ public class IpNatInterfaceCommand extends CiscoCommand {
             return false;
         }
         if (side.startsWith("i")) {
-            if (kontrola("inside", side, 1)) {
+            if (isCommand("inside", side, 1)) {
                 inside = true;
             } else {
                 return false;
             }
         } else {
-            if (kontrola("outside", side, 1)) {
+            if (isCommand("outside", side, 1)) {
                 outside = true;
             } else {
                 return false;
@@ -58,16 +58,16 @@ public class IpNatInterfaceCommand extends CiscoCommand {
         return true;
     }
 
-    private void vykonejPrikaz() {
+    private void start() {
 
         if (no) {
             if (inside) {
 //				System.out.println("mazu inside");
-                ipLayer.getNatTable().smazRozhraniInside(parser.configuredInterface);
+                ipLayer.getNatTable().deleteInside(parser.configuredInterface);
             } else if (outside) {
 				if (ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
 //					System.out.println("mazu outside");
-					ipLayer.getNatTable().smazRozhraniOutside();
+					ipLayer.getNatTable().deleteOutside();
 				}
             }
             return;
@@ -75,16 +75,16 @@ public class IpNatInterfaceCommand extends CiscoCommand {
 
         if (inside) {
 //			System.out.println("nastavuju inside");
-			ipLayer.getNatTable().smazRozhraniOutside();
-			ipLayer.getNatTable().pridejRozhraniInside(parser.configuredInterface);
+			ipLayer.getNatTable().deleteOutside();
+			ipLayer.getNatTable().addInside(parser.configuredInterface);
         } else if (outside) {
             if (ipLayer.getNatTable().getOutside() != null && ! ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
 				printService("Implementace nepovoluje mit vice nastavenych verejnych rozhrani. "
                         + "Takze se rusi aktualni verejne: " + ipLayer.getNatTable().getOutside().name+ " a nastavi se "+parser.configuredInterface.name);
             }
 //			System.out.println("nastavuju outside");
-			ipLayer.getNatTable().smazRozhraniInside(parser.configuredInterface);
-			ipLayer.getNatTable().nastavRozhraniOutside(parser.configuredInterface);
+			ipLayer.getNatTable().deleteInside(parser.configuredInterface);
+			ipLayer.getNatTable().setOutside(parser.configuredInterface);
         }
     }
 }

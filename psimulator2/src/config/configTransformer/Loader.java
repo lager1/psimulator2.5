@@ -255,7 +255,7 @@ public class Loader implements Loggable {
 			if (config.getInside() != null) {
 				for (NetworkInterface iface : nm.ipLayer.getSortedNetworkIfaces()) {
 					if (config.getInside().contains(iface.name)) {
-						natTable.pridejRozhraniInside(iface);
+						natTable.addInside(iface);
 					}
 				}
 			}
@@ -264,7 +264,7 @@ public class Loader implements Loggable {
 			if (config.getOutside() != null) {
 				NetworkInterface iface = nm.ipLayer.getNetworkInteface(config.getOutside());
 				if (iface != null) {
-					natTable.nastavRozhraniOutside(iface);
+					natTable.setOutside(iface);
 				}
 			}
 
@@ -273,14 +273,14 @@ public class Loader implements Loggable {
 				for (NatPoolConfig pool : config.getPools()) {
 					IpAddress start = new IpAddress(pool.getStart());
 					IpAddress end = new IpAddress(pool.getEnd());
-					natTable.lPool.pridejPool(start, end, pool.getPrefix(), pool.getName());
+					natTable.lPool.addPool(start, end, pool.getPrefix(), pool.getName());
 				}
 			}
 
 			// poolAccess
 			if (config.getPoolAccesses() != null) {
 				for (NatPoolAccessConfig poolAcc : config.getPoolAccesses()) {
-					natTable.lPoolAccess.pridejPoolAccess(poolAcc.getNumber(), poolAcc.getPoolName(), poolAcc.isOverload());
+					natTable.lPoolAccess.addPoolAccess(poolAcc.getNumber(), poolAcc.getPoolName(), poolAcc.isOverload());
 				}
 			}
 
@@ -290,14 +290,14 @@ public class Loader implements Loggable {
 					IpNetmask mask = IpNetmask.maskFromWildcard(acc.getWildcard());
 					IpAddress adr = new IpAddress(acc.getAddress());
 					IPwithNetmask all = new IPwithNetmask(adr, mask);
-					natTable.lAccess.pridejAccessList(all, acc.getNumber());
+					natTable.lAccess.addAccessList(all, acc.getNumber());
 				}
 			}
 
 			// static rules
 			if (config.getRules() != null) {
 				for (StaticRule rule : config.getRules()) {
-					natTable.pridejStatickePravidloLinux(new IpAddress(rule.getIn()), new IpAddress(rule.getOut()));
+					natTable.addStaticRuleLinux(new IpAddress(rule.getIn()), new IpAddress(rule.getOut()));
 				}
 			}
 		}

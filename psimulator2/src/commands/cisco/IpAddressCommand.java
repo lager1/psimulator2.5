@@ -33,9 +33,9 @@ public class IpAddressCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		 boolean pokracovat = zpracujRadek();
+		 boolean pokracovat = process();
         if (pokracovat) {
-            vykonejPrikaz();
+            start();
         }
 	}
 
@@ -43,7 +43,7 @@ public class IpAddressCommand extends CiscoCommand {
      * Vim, ze mi prislo '(no) ip address'.
      * @return
      */
-    private boolean zpracujRadek() {
+    private boolean process() {
         //ip address 192.168.2.129 255.255.255.128
 
         String ip = nextWord();
@@ -54,7 +54,7 @@ public class IpAddressCommand extends CiscoCommand {
         }
 
         String maska = nextWord();
-        if (jePrazdny(ip) || jePrazdny(maska)) {
+        if (isEmptyWithIcompleteCommand(ip) || isEmptyWithIcompleteCommand(maska)) {
             return false;
         }
 
@@ -117,7 +117,7 @@ public class IpAddressCommand extends CiscoCommand {
         return true;
     }
 
-    private void vykonejPrikaz() {
+    private void start() {
 		IPLayer ipLayer = getNetMod().ipLayer;
 
         if (no) {

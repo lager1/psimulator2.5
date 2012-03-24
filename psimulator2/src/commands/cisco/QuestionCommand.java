@@ -58,14 +58,14 @@ public class QuestionCommand extends CiscoCommand {
                     napoveda.add("  no                      Negate a command or set its defaults");
                     napoveda.add("  shutdown                Shutdown system elements");
             }
-            posliList(napoveda);
+            sendList(napoveda);
     }
 
     /**
      * pomocna metoda pro vypis povolenych prikazu
      * @param n seznam, ktery se bude prochazet po prvcich a posilat uzivateli
      */
-    private void posliList(List<String> n) {
+    private void sendList(List<String> n) {
         Collections.sort(n);
         for (String s : n) {
             printWithDelay(s, 50);

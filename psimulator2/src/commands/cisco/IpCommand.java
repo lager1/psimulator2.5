@@ -39,20 +39,20 @@ public class IpCommand extends CiscoCommand {
         if (state == CommandShell.CISCO_CONFIG_MODE) {
 
 			if (debug) {
-				if (kontrolaBezVypisu("route", dalsi, 5)) {
+				if (isCommandWithoutOutput("route", dalsi, 5)) {
 					command = new IpRouteCommand(parser, no);
 					command.run();
 					return;
 				}
 			}
 
-            if (kontrolaBezVypisu("nat", dalsi, 3)) {
+            if (isCommandWithoutOutput("nat", dalsi, 3)) {
                 command = new IpNatCommand(parser, no);
 				command.run();
                 return;
             }
 
-            if (kontrolaBezVypisu("classless", dalsi, 2)) {
+            if (isCommandWithoutOutput("classless", dalsi, 2)) {
                 if (no) {
 					getNetMod().ipLayer.routingTable.classless = false;
                 } else {
@@ -63,20 +63,20 @@ public class IpCommand extends CiscoCommand {
         }
 
         if (state == CommandShell.CISCO_CONFIG_IF_MODE) {
-            if (kontrolaBezVypisu("address", dalsi, 3)) {
+            if (isCommandWithoutOutput("address", dalsi, 3)) {
                 command = new IpAddressCommand(parser, no);
 				command.run();
                 return;
             }
 
-            if (kontrolaBezVypisu("nat", dalsi, 2)) {
+            if (isCommandWithoutOutput("nat", dalsi, 2)) {
 				command = new IpNatInterfaceCommand(parser, no);
 				command.run();
                 return;
             }
         }
 
-        if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise kontrolaBezVypisu
+        if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise isCommandWithoutOutput
             invalidInputDetected();
         }
 	}

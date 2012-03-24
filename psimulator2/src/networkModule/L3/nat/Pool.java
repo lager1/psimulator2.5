@@ -43,11 +43,11 @@ public class Pool implements Comparable<Pool> {
 	}
 
 	/**
-	 * Vrati prvni IpAdresu z poolu nebo null, kdyz je poolName prazdny.
+	 * Vrati getFirst IpAdresu z poolu nebo null, kdyz je poolName prazdny.
 	 *
 	 * @return
 	 */
-	public IpAddress prvni() {
+	public IpAddress getFirst() {
 		if (pool.isEmpty()) {
 			return null;
 		}
@@ -55,11 +55,11 @@ public class Pool implements Comparable<Pool> {
 	}
 
 	/**
-	 * Vrati dalsi IpAdresu z poolu. Kdyz uz jsem na posledni, tak vracim null (DHU).
+	 * Vrati dalsi IpAdresu z poolu. Kdyz uz jsem na getLast, tak vracim null (DHU).
 	 *
 	 * @return
 	 */
-	private IpAddress dalsi() {
+	private IpAddress getNext() {
 		int n = -1;
 		for (IpAddress ip : pool) {
 			n++;
@@ -79,22 +79,22 @@ public class Pool implements Comparable<Pool> {
 	 * @param testovani true, kdyz se zjistuje, zda je jeste IP, nemenim pak pointer na volnou IP
 	 * @return
 	 */
-	public IpAddress dejIp(boolean testovani) {
+	public IpAddress getIP(boolean testovani) {
 		IpAddress vrat = pointer;
 		if (testovani == false) {
-			pointer = dalsi();
+			pointer = getNext();
 		}
 		return vrat;
 	}
 
 	/**
-	 * Vrati posledni Ip
+	 * Vrati getLast Ip
 	 *
 	 * @return
 	 */
-	public IpAddress posledni() {
+	public IpAddress getLast() {
 		if (pool.size() <= 1) {
-			return prvni();
+			return getFirst();
 		}
 		return pool.get(pool.size() - 1);
 	}

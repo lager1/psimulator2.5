@@ -39,7 +39,7 @@ public class ShowCommand extends CiscoCommand {
 	}
 
     // show interfaces (rozhrani 0/0)?
-    private boolean zpracujInterfaces() {
+    private boolean processInterfaces() {
         stavShow = State.INTERFACES;
 
         String rozh = nextWord();
@@ -59,9 +59,9 @@ public class ShowCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		boolean cont = zpracujRadek();
+		boolean cont = process();
 		if (cont) {
-			vykonejPrikaz();
+			start();
 		}
 
 	}
@@ -75,7 +75,7 @@ public class ShowCommand extends CiscoCommand {
         INTERFACES,
     };
 
-    private boolean zpracujRadek() {
+    private boolean process() {
         // show ip route
         // show running-config      - jen v ROOT rezimu
         // show interfaces          - jen v ROOT rezimu
@@ -107,7 +107,7 @@ public class ShowCommand extends CiscoCommand {
                 return false;
             }
 
-            if (!kontrola("running-config", dalsi, 3)) {
+            if (!isCommand("running-config", dalsi, 3)) {
                 return false;
             }
             stavShow = State.RUN;
@@ -118,32 +118,32 @@ public class ShowCommand extends CiscoCommand {
                     invalidInputDetected();
                     return false;
                 }
-                if (!kontrola("interfaces", dalsi, 3)) {
+                if (!isCommand("interfaces", dalsi, 3)) {
                     return false;
                 }
-                return zpracujInterfaces();
+                return processInterfaces();
             }
 
-            if (!kontrola("ip", dalsi, 2)) {
+            if (!isCommand("ip", dalsi, 2)) {
                 return false;
             }
 
             dalsi = nextWord();
             if (dalsi.startsWith("r")) {
-                if (!kontrola("route", dalsi, 2)) {
+                if (!isCommand("route", dalsi, 2)) {
                     return false;
                 }
                 stavShow = State.ROUTE;
                 return true;
             } else {
-                if (!kontrola("nat", dalsi, 2)) {
+                if (!isCommand("nat", dalsi, 2)) {
                     return false;
                 }
                 if (stavCisco == CommandShell.CISCO_USER_MODE) {
                     invalidInputDetected();
                     return false;
                 }
-                if (!kontrola("translations", nextWord(), 1)) {
+                if (!isCommand("translations", nextWord(), 1)) {
                     return false;
                 }
                 stavShow = State.NAT;
@@ -152,7 +152,7 @@ public class ShowCommand extends CiscoCommand {
         }
     }
 
-    private void vykonejPrikaz() {
+    private void start() {
         switch (stavShow) {
             case RUN:
                 runningConfig();
@@ -224,7 +224,7 @@ public class ShowCommand extends CiscoCommand {
      */
     private void ipRoute() {
         String s = "";
-        s += ipLayer.wrapper.vypisRT();
+        s += ipLayer.wrapper.getShIpRoute();
         printWithDelay(s, 50);
     }
 
@@ -295,13 +295,13 @@ public class ShowCommand extends CiscoCommand {
         if (ipLayer.routingTable.classless) {
             s += "ip classless\n";
         }
-        s += ipLayer.wrapper.vypisRunningConfig();
+        s += ipLayer.wrapper.getRunningConfig();
 
         s += "!\n";
         s += "ip http server\n";
 
         for (Pool pool : ipLayer.getNatTable().lPool.getSortedPools()) {
-            s += "ip nat pool " + pool.name + " " + pool.prvni() + " " + pool.posledni()
+            s += "ip nat pool " + pool.name + " " + pool.getFirst() + " " + pool.getLast()
                     + " prefix-length " + pool.prefix + "\n";
         }
 
@@ -320,7 +320,7 @@ public class ShowCommand extends CiscoCommand {
         s += "!\n";
 
         for (AccessList access : ipLayer.getNatTable().lAccess.getList()) {
-            s += "access-list " + access.cislo + " permit " + access.ip.getIp() + " " + access.ip.getMask().getWildcardRepresentation() + "\n";
+            s += "access-list " + access.number + " permit " + access.ip.getIp() + " " + access.ip.getMask().getWildcardRepresentation() + "\n";
         }
 
         if (!debug) {

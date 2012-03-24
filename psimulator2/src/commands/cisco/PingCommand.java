@@ -50,7 +50,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 	public void run() {
 		parser.setRunningCommand(this,false);
 
-		boolean conti = zpracujRadek();
+		boolean conti = processLine();
 		if (conti) {
 			// vytvor aplikaci
 			app.start();
@@ -65,8 +65,8 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
      * @return true pokud se ma pokracovat v posilani pingu
      *         false pokud to vypsalo chybu a tedy uz nic nedelat
      */
-    private boolean zpracujParametry(String typVolby) {
-        if (!kontrola("timeout", typVolby) && !kontrola("repeat", typVolby) && !kontrola("size", typVolby)) {
+    private boolean processParameters(String typVolby) {
+        if (!check("timeout", typVolby) && !check("repeat", typVolby) && !check("size", typVolby)) {
             invalidInputDetected();
             return false;
         }
@@ -79,7 +79,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         }
 
 
-        if (kontrola("timeout", typVolby)) {
+        if (check("timeout", typVolby)) {
 			int timeout;
             try {
                 timeout = Integer.valueOf(volba) * 1000; // TODO: povolit maximalne 0.2 s (200ms)
@@ -95,7 +95,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         }
 
 
-        if (kontrola("repeat", typVolby)) {
+        if (check("repeat", typVolby)) {
 			int count;
             try {
                 count = Integer.valueOf(volba);
@@ -105,7 +105,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
             }
 			app.setCount(count);
         }
-        if (kontrola("size", typVolby)) {
+        if (check("size", typVolby)) {
             int n;
             try {
                 n = Integer.valueOf(volba);
@@ -122,7 +122,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
         typVolby = nextWord();
         if (! typVolby.equals("")) {
-            return zpracujParametry(typVolby);
+            return processParameters(typVolby);
         }
 
         return true;
@@ -132,7 +132,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
      * Parsuje prikaz ping.
      * @return
      */
-    private boolean zpracujRadek() {
+    private boolean processLine() {
 //        if (parser.words.size() < 2) {
 		if (nextWordPeek().isEmpty()) { // TODO: overit funkcnost
 
@@ -155,7 +155,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
             return true;
         }
 
-        return zpracujParametry(typVolby);
+        return processParameters(typVolby);
     }
 
 	/**
@@ -164,7 +164,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
      * @param cmd prikaz, ktery zadal uzivatel
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
-    private boolean kontrola(String command, String cmd) {
+    private boolean check(String command, String cmd) {
 
         int n = 1;
         if (command.equals("size")) n = 2;

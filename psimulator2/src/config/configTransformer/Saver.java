@@ -88,8 +88,8 @@ public class Saver {
 
 		if (netMod.ipLayer instanceof CiscoIPLayer) { // cisco uklada veci z wrapperu, ne obsah RT
 			CiscoWrapperRT wrapper = ((CiscoIPLayer) netMod.ipLayer).wrapper;
-			for (int i = 0; i < wrapper.size(); i++) {
-				CiscoRecord record = wrapper.vratZaznam(i);
+			for (int i = 0; i < wrapper.getSize(); i++) {
+				CiscoRecord record = wrapper.getRecord(i);
 				if (record.getBrana() != null) { // adresa brana
 					rtc.addRecord(record.getAdresat().toString(), null, record.getBrana().toString());
 				} else { // adresa rozhrani
@@ -127,7 +127,7 @@ public class Saver {
 		// pool
 		List<NatPoolConfig> poolConfig = new ArrayList<>();
 		for (Pool pool : natTable.lPool.getSortedPools()) {
-			poolConfig.add(new NatPoolConfig(pool.name, pool.posledni() != null ? pool.prvni().toString() : null, pool.prvni() != null ? pool.posledni().toString() : null, pool.prefix));
+			poolConfig.add(new NatPoolConfig(pool.name, pool.getLast() != null ? pool.getFirst().toString() : null, pool.getFirst() != null ? pool.getLast().toString() : null, pool.prefix));
 		}
 		config.setPools(poolConfig);
 
@@ -141,7 +141,7 @@ public class Saver {
 		// accessList
 		List<NatAccessListConfig> alc = new ArrayList<>();
 		for (AccessList ac : natTable.lAccess.getList()) {
-			alc.add(new NatAccessListConfig(ac.cislo, ac.ip.getIp().toString(), ac.ip.getMask().getWildcardRepresentation()));
+			alc.add(new NatAccessListConfig(ac.number, ac.ip.getIp().toString(), ac.ip.getMask().getWildcardRepresentation()));
 		}
 		config.setAccessLists(alc);
 

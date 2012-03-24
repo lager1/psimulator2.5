@@ -4,7 +4,6 @@
 
 package networkModule.L3.nat;
 
-import networkModule.L3.nat.AccessList;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 
 /**
  * Datova struktura pro seznam Access-listu.
- * Kazdy access-list obsahuje jmeno (cislo 1-2699) a IPwithNetmask,
+ * Kazdy access-list obsahuje jmeno (number 1-2699) a IPwithNetmask,
  * ktera definuje rozsah pristupnych IP adres.
  *
  * OK
@@ -29,12 +28,12 @@ public class HolderAccessList {
 
     /**
      * Prida do seznamu Access-listu na spravnou pozici dalsi pravidlo. <br />
-     * Je to razeny dle cislo access-listu.
+     * Je to razeny dle number access-listu.
      * Pocitam s tim, ze ani jedno neni null.
      * @param adresa
-     * @param cislo
+     * @param number
      */
-    public void pridejAccessList(IPwithNetmask adresa, int cislo) {
+    public void addAccessList(IPwithNetmask adresa, int cislo) {
         for (AccessList zaznam : list) {
             if (zaznam.ip.equals(adresa)) { // kdyz uz tam je, tak nic nedelat
                 return;
@@ -42,7 +41,7 @@ public class HolderAccessList {
         }
         int index = 0;
         for (AccessList access : list) {
-            if (cislo < access.cislo) {
+            if (cislo < access.number) {
                 break;
             }
             index++;
@@ -52,12 +51,12 @@ public class HolderAccessList {
 
     /**
      * Smaze vsechny seznam-listy s danym cislem.
-     * @param cislo
+     * @param number
      */
-    public void smazAccessList(int cislo) {
+    public void deleteAccessList(int cislo) {
         List<AccessList> smazat = new ArrayList<>();
         for (AccessList zaznam : list) {
-            if (zaznam.cislo == cislo) {
+            if (zaznam.number == cislo) {
                 smazat.add(zaznam);
             }
         }
@@ -68,7 +67,7 @@ public class HolderAccessList {
     /**
      * Smaze vsechny access-listy
      */
-    public void smazAccessListyVsechny() {
+    public void deleteAccessLists() {
         list.clear();
     }
 
@@ -78,7 +77,7 @@ public class HolderAccessList {
      * @param ip
      * @return
      */
-    public AccessList vratAccessListIP(IpAddress ip) {
+    public AccessList getAccessList(IpAddress ip) {
         for (AccessList access : list) {
             if (access.ip.isInMyNetwork(ip)) { // TODO: zkontrolovat spravnou funkcnost!
                 return access;

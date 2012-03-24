@@ -518,16 +518,16 @@ public class Iptables extends LinuxCommand {
             vypis();
         }
         if(provest==1 || provest==2){ //-A nebo -I
-            if(! natTable.jeNastavenaLinuxovaMaskarada()){
-                natTable.nastavLinuxMaskaradu(vystupni);
+            if(! natTable.isSetLinuxMasquarade()){
+                natTable.setLinuxMasquarade(vystupni);
             } else {
                 parser.printService("Simulator neumoznuje pridat vic nez jedno pravidlo do tabulky. " +
                         "Nejprve smazte existujici pravidlo.");
             }
         }
         if(provest==3){ //mazani
-            if(natTable.jeNastavenaLinuxovaMaskarada()){
-                natTable.zrusLinuxMaskaradu();
+            if(natTable.isSetLinuxMasquarade()){
+                natTable.cancelLinuxMasquerade();
             } else {
                 printLine("iptables: Index of deletion too big");
             }
@@ -542,7 +542,7 @@ public class Iptables extends LinuxCommand {
         printLine("");
         printLine("Chain POSTROUTING (policy ACCEPT)");
         printLine("target     prot opt source               destination");
-        if(natTable.jeNastavenaLinuxovaMaskarada())
+        if(natTable.isSetLinuxMasquarade())
             printLine("MASQUERADE  all  --  0.0.0.0/0            0.0.0.0/0");
         printLine("");
         printLine("Chain OUTPUT (policy ACCEPT)");

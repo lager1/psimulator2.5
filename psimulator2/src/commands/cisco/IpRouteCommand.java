@@ -33,7 +33,7 @@ public class IpRouteCommand extends CiscoCommand {
 		this.no = no;
 	}
 
-	private boolean zpracujRadek() {
+	private boolean process() {
 
 		String adr = "";
 		String maska = "";
@@ -113,13 +113,13 @@ public class IpRouteCommand extends CiscoCommand {
 	@Override
 	public void run() {
 
-		boolean pokracovat = zpracujRadek();
-        if (pokracovat) {
-            vykonejPrikaz();
+		boolean cont = process();
+        if (cont) {
+            start();
         }
 	}
 
-	private void vykonejPrikaz() {
+	private void start() {
 
 //		if (debug) pc.vypis("pridej="+no);
         if (no == false) {

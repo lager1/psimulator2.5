@@ -31,16 +31,16 @@ public class AccessListCommand extends CiscoCommand {
 
 	@Override
 	public void run() {
-		boolean pokracovat = zpracujRadek();
+		boolean pokracovat = process();
         if (pokracovat) {
-            vykonejPrikaz();
+            start();
         }
 	}
 
-    private boolean zpracujRadek() {
+    private boolean process() {
 
 //        if (no) {
-//            if(!kontrola("access-list", nextWord(), 2)) {
+//            if(!isCommand("access-list", nextWord(), 2)) {
 //                return false;
 //            }
 //        }
@@ -61,7 +61,7 @@ public class AccessListCommand extends CiscoCommand {
             return true;
         }
 
-        if (!kontrola("permit", nextWord(), 1)) {
+        if (!isCommand("permit", nextWord(), 1)) {
             return false;
         }
 
@@ -96,12 +96,12 @@ public class AccessListCommand extends CiscoCommand {
         return true;
     }
 
-    private void vykonejPrikaz() {
+    private void start() {
 
         if (no) {
-            natTable.lAccess.smazAccessList(access);
+            natTable.lAccess.deleteAccessList(access);
         } else {
-			natTable.lAccess.pridejAccessList(adr, access);
+			natTable.lAccess.addAccessList(adr, access);
 		}
     }
 }
