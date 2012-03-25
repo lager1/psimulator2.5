@@ -240,7 +240,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		if (nextHopMac == null) { // posli ARP request a dej do fronty
 			ArpPacket arpPacket = new ArpPacket(record.iface.ipAddress.getIp(), record.iface.getMacAddress(), nextHopIp);
 
-			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Cannot send packet to address: " + packet.dst + ", becaouse nextHop MAC address is unknown. Sending ARP request via interface: "
+			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Cannot send packet to address: " + packet.dst + ", because nextHop MAC address is unknown. Sending ARP request via interface: "
 					+ record.iface.name, arpPacket);
 			netMod.ethernetLayer.sendPacket(arpPacket, record.iface.ethernetInterface, MacAddress.broadcast());
 
