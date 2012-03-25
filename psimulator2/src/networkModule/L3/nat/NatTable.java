@@ -389,7 +389,6 @@ public class NatTable implements Loggable {
 	}
 
 	private IpPacket doBackwardTranslation(IpPacket packet) {
-		// TODO: zde asi smazat stare zaznamy, abych podle nich neodnatovaval, kdyz nemam..
 		deleteOldDynamicRecords();
 
 		// 1) projit staticka pravidla, pokud tam bude sedet packet.dst s record.out.address, tak se vytvori novy a vrati se

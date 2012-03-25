@@ -56,10 +56,6 @@ public class IpNatCommand extends CiscoCommand {
         }
 	}
 
-	private void ladici(String s) { // TODO: smazat
-		Logger.log("IpNatCommand: ", Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, s);
-	}
-
 	private boolean process() {
 
         // ip nat pool ovrld 172.16.10.1 172.16.10.1 prefix 24
