@@ -7,6 +7,7 @@ import dataStructures.EthernetPacket;
 import dataStructures.MacAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import logging.Loggable;
 import physicalModule.Switchport;
 
@@ -37,8 +38,31 @@ public class EthernetInterface implements Loggable {
 
 	private static int switchTableTimeout = 20;
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EthernetInterface other = (EthernetInterface) obj;
+		if (!Objects.equals(this.name, other.name)) {
+			return false;
+		}
+		if (!Objects.equals(this.mac, other.mac)) {
+			return false;
+		}
+		return true;
+	}
 
-
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 29 * hash + Objects.hashCode(this.name);
+		hash = 29 * hash + Objects.hashCode(this.mac);
+		return hash;
+	}
 
 // Konstruktor a veci pri buildeni: -------------------------------------------------------------------------
 

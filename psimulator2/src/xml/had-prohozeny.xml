@@ -98,64 +98,6 @@
             </value>
         </entry>
         <entry>
-            <key>20</key>
-            <value idAsString="20">
-                <defaultZoomXPos>1190</defaultZoomXPos>
-                <defaultZoomYPos>438</defaultZoomYPos>
-                <devSettings>
-                    <natConfig/>
-                    <netModType>tcp_ip_netmod</netModType>
-                    <routingTabConfig>
-                        <routingTableItem>
-                            <destination>10.0.2.0/24</destination>
-                            <interfaceName>eth0</interfaceName>
-                        </routingTableItem>
-                        <routingTableItem>
-                            <destination>0.0.0.0/0</destination>
-                            <gateway>10.0.2.1</gateway>
-                            <interfaceName>eth0</interfaceName>
-                        </routingTableItem>
-                    </routingTabConfig>
-                </devSettings>
-                <hwType>LINUX_ROUTER</hwType>
-                <id>20</id>
-                <interface hwComponent="20" idAsString="21">
-                    <cable>32</cable>
-                    <hwType>LINUX_ROUTER</hwType>
-                    <id>21</id>
-                    <ipAddress>10.0.2.2/24</ipAddress>
-                    <isUp>true</isUp>
-                    <macAddress>AA-11-E0-00-00-10</macAddress>
-                    <name>eth0</name>
-                </interface>
-                <interface hwComponent="20" idAsString="22">
-                    <hwType>LINUX_ROUTER</hwType>
-                    <id>22</id>
-                    <ipAddress></ipAddress>
-                    <isUp>true</isUp>
-                    <macAddress>AA-11-E0-00-00-11</macAddress>
-                    <name>eth1</name>
-                </interface>
-                <interface hwComponent="20" idAsString="23">
-                    <hwType>LINUX_ROUTER</hwType>
-                    <id>23</id>
-                    <ipAddress></ipAddress>
-                    <isUp>true</isUp>
-                    <macAddress>AA-11-E0-00-00-12</macAddress>
-                    <name>eth2</name>
-                </interface>
-                <interface hwComponent="20" idAsString="24">
-                    <hwType>LINUX_ROUTER</hwType>
-                    <id>24</id>
-                    <ipAddress></ipAddress>
-                    <isUp>true</isUp>
-                    <macAddress>AA-11-E0-00-00-13</macAddress>
-                    <name>eth3</name>
-                </interface>
-                <name>router4</name>
-            </value>
-        </entry>
-        <entry>
             <key>5</key>
             <value idAsString="5">
                 <defaultZoomXPos>1190</defaultZoomXPos>
@@ -216,6 +158,64 @@
                     <name>eth3</name>
                 </interface>
                 <name>router1</name>
+            </value>
+        </entry>
+        <entry>
+            <key>20</key>
+            <value idAsString="20">
+                <defaultZoomXPos>1190</defaultZoomXPos>
+                <defaultZoomYPos>438</defaultZoomYPos>
+                <devSettings>
+                    <natConfig/>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig>
+                        <routingTableItem>
+                            <destination>10.0.2.0/24</destination>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>10.0.2.1</gateway>
+                            <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                    </routingTabConfig>
+                </devSettings>
+                <hwType>LINUX_ROUTER</hwType>
+                <id>20</id>
+                <interface hwComponent="20" idAsString="21">
+                    <cable>32</cable>
+                    <hwType>LINUX_ROUTER</hwType>
+                    <id>21</id>
+                    <ipAddress>10.0.2.2/24</ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-10</macAddress>
+                    <name>eth0</name>
+                </interface>
+                <interface hwComponent="20" idAsString="22">
+                    <hwType>LINUX_ROUTER</hwType>
+                    <id>22</id>
+                    <ipAddress></ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-11</macAddress>
+                    <name>eth1</name>
+                </interface>
+                <interface hwComponent="20" idAsString="23">
+                    <hwType>LINUX_ROUTER</hwType>
+                    <id>23</id>
+                    <ipAddress></ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-12</macAddress>
+                    <name>eth2</name>
+                </interface>
+                <interface hwComponent="20" idAsString="24">
+                    <hwType>LINUX_ROUTER</hwType>
+                    <id>24</id>
+                    <ipAddress></ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-13</macAddress>
+                    <name>eth3</name>
+                </interface>
+                <name>router4</name>
             </value>
         </entry>
         <entry>
@@ -283,17 +283,17 @@
         </entry>
     </componentsMap>
     <id>-1</id>
-    <lastEditTimestamp>1332448233675</lastEditTimestamp>
+    <lastEditTimestamp>1332680270734</lastEditTimestamp>
     <counter>
         <nextId>35</nextId>
         <nextMacAddress>24</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>REAL_PC</key>
+                <key>END_DEVICE_PC</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>CISCO_SWITCH</key>
+                <key>REAL_PC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -301,7 +301,7 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -309,15 +309,7 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_ETHERNET</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_OPTIC</key>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -325,7 +317,15 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_PC</key>
+                <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>

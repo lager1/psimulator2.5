@@ -23,11 +23,11 @@ import utils.Util;
  * @author Tomas Pitrinec
  */
 public class Route extends LinuxCommand {
-	
+
 
     // pomocny promenny pro parser prikazu:
     private String slovo; //drzi si slovo ke zpracovani
-    private boolean poDevNepokracovat=false; //kdyz je rozhrani zadano jen eth0, a ne dev eth0, tak uz nemuze
+    private boolean poDevNepokracovat=false; //kdyz je iface zadano jen eth0, a ne dev eth0, tak uz nemuze
                                               //prijit zadnej dalsi prikaz jako gw nebo netmask
 
     //nastaveni prikazu:
@@ -38,9 +38,9 @@ public class Route extends LinuxCommand {
     private String adr; //adresat
     private String maska;
     private int pocetBituMasky;
-    private NetworkInterface rozhr=null; // rozhrani
+    private NetworkInterface rozhr=null; // iface
     private boolean nastavovanaBrana=false; // jestli uz byla zadana brana
-    private boolean nastavovanoRozhrani=false; // jestli uz bylo zadano rozhrani
+    private boolean nastavovanoRozhrani=false; // jestli uz bylo zadano iface
     private boolean nastavovanaMaska=false;
     private boolean minusHost = false; //zadano -host
     private boolean minusNet = false; //zadano -net
@@ -64,8 +64,8 @@ public class Route extends LinuxCommand {
      * 2. bit (4) - spatny adresat, spatna maska za lomitkem <br />
      * 3. bit (8) - spatna brana <br />
      * 4. bit (16) - brana zadavana vice nez jednou <br />
-     * 5. bit (32) - nezname rozhrani <br />
-     * 6. bit (64) - rozhrani zadano bez dev a pak jeste neco pokracovalo, nic se nesmi nastavit <br />
+     * 5. bit (32) - nezname iface <br />
+     * 6. bit (64) - iface zadano bez dev a pak jeste neco pokracovalo, nic se nesmi nastavit <br />
      * 7. bit (128) - nejakej nesmysl navic <br />
      * 8. bit (256) - pri parametru -host byla zadana maska -> nic neprovadet <br />
      * 9. bit (512) - maska zadavana vice nez jednou (jakymkoliv zpusobem) -> nic nenastavovat <br />
@@ -257,7 +257,7 @@ public class Route extends LinuxCommand {
                 nastavNetmask();
             }else if(slovo.equals("") && akce ==2){ //prazdnej retezec u akce del
                 //konec prikazu
-            }else{ //cokoliv ostatniho, i nic, se povazuje za rozhrani
+            }else{ //cokoliv ostatniho, i nic, se povazuje za iface
                 poDevNepokracovat=true;
                 nastavDev();
             }
@@ -310,7 +310,7 @@ public class Route extends LinuxCommand {
                 nastavNetmask();
             }else if(slovo.equals("") && akce ==2){ //prazdnej retezec u akce del
                 //konec prikazu
-            }else{ //cokoliv ostatniho, i nic, se povazuje za rozhrani
+            }else{ //cokoliv ostatniho, i nic, se povazuje za iface
                 poDevNepokracovat=true;
                 nastavDev();
             }
@@ -345,7 +345,7 @@ public class Route extends LinuxCommand {
 				slovo = dalsiSlovo();
 				nastavNetmask();
 			} else if (slovo.equals("")) { //konec prikazu
-			} else { //vsechno ostatni se povazuje za nazev rozhrani
+			} else { //vsechno ostatni se povazuje za nazev iface
 				poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
 				nastavDev();
 			}
@@ -362,7 +362,7 @@ public class Route extends LinuxCommand {
 		}
 		nastavovanoRozhrani = true;
 		rozhr = ipLayer.getNetworkInteface(slovo);
-		if (rozhr == null) { // rozhrani nebylo nalezeno
+		if (rozhr == null) { // iface nebylo nalezeno
 			if (ladiciVypisovani) {
 				rozhr = new NetworkInterface(-1, slovo, null);
 			}
@@ -425,7 +425,7 @@ public class Route extends LinuxCommand {
 				nastavGw();
 			} else if (slovo.equals("")) {
 				//konec prikazu
-			} else { //vsechno ostatni se povazuje za nazev rozhrani
+			} else { //vsechno ostatni se povazuje za nazev iface
 				poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
 				nastavDev();
 			}
@@ -531,7 +531,7 @@ public class Route extends LinuxCommand {
         for (int i = 0; i < pocet; i++) {
             v="";
             RoutingTable.Record z = ipLayer.routingTable.getRecord(i);
-            if (z.rozhrani.isUp) {
+            if (z.iface.isUp) {
                 v += Util.zarovnej(z.adresat.getIp().toString(),16);
                 if (z.brana == null) {
                     if (z.adresat.getMask().toString().equals("255.255.255.255")) {
@@ -549,7 +549,7 @@ public class Route extends LinuxCommand {
                     }
 
                 }
-                v += "0      0        0 " + z.rozhrani.name;
+                v += "0      0        0 " + z.iface.name;
                 printLine(v);
             }
         }

@@ -92,7 +92,7 @@ public class Saver {
 				CiscoRecord record = wrapper.getRecord(i);
 				if (record.getBrana() != null) { // adresa brana
 					rtc.addRecord(record.getAdresat().toString(), null, record.getBrana().toString());
-				} else { // adresa rozhrani
+				} else { // adresa iface
 					rtc.addRecord(record.getAdresat().toString(), record.getRozhrani().name, null);
 				}
 			}
@@ -100,9 +100,9 @@ public class Saver {
 			for (int i = 0; i < rt.size(); i++) {
 				RoutingTable.Record radek = rt.getRecord(i);
 				if (radek.brana != null) {
-					rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, radek.brana.toString());
+					rtc.addRecord(radek.adresat.toString(), radek.iface.name, radek.brana.toString());
 				} else {
-					rtc.addRecord(radek.adresat.toString(), radek.rozhrani.name, null);
+					rtc.addRecord(radek.adresat.toString(), radek.iface.name, null);
 				}
 			}
 		}

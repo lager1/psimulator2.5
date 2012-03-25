@@ -70,7 +70,7 @@ public class CiscoIPLayer extends IPLayer {
 
 	/**
 	 * Na ciscu, kdyz se odesila novy packet (ze shora), tak se nejdrive kontroluje RT, pokud neni zadny zaznam,
-	 * tak se clovek ani nedopingne na sve rozhrani s IP.
+	 * tak se clovek ani nedopingne na sve iface s IP.
 	 * @param packet
 	 * @param dst
 	 */
@@ -83,7 +83,7 @@ public class CiscoIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.rozhrani.getIpAddress().getIp(), dst, this.ttl, packet);
+		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, this.ttl, packet);
 
 		if (isItMyIpAddress(dst)) {
 			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
@@ -132,7 +132,7 @@ public class CiscoIPLayer extends IPLayer {
 		}
 
 		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
-		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
+		//		a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
 		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+ifaceIn.name, packet);

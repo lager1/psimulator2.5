@@ -5,6 +5,7 @@ package networkModule.L3;
 
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
+import java.util.Objects;
 import networkModule.L2.EthernetInterface;
 
 /**
@@ -65,5 +66,31 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 	@Override
 	public int compareTo(NetworkInterface o) {
 		return name.compareTo(o.name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final NetworkInterface other = (NetworkInterface) obj;
+		if (this.configID != other.configID) {
+			return false;
+		}
+		if (!Objects.equals(this.name, other.name)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 61 * hash + this.configID;
+		hash = 61 * hash + Objects.hashCode(this.name);
+		return hash;
 	}
 }

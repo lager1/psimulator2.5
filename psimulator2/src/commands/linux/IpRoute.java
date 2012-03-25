@@ -47,13 +47,13 @@ public class IpRoute extends LinuxCommand {
      * (zadava parser) <br />
      * 1. - spatny adresat (zadava parser) <br />
      * 2. - napsano dev nebo via, ale nic po nem... (zadava parser) <br />
-     * 3. - zadano neexistujici rozhrani (kontrola) <br />
+     * 3. - zadano neexistujici iface (kontrola) <br />
      * 4. -  <br />
      * 5. - chybejici parametry u add nebo del (kontrola) <br />
      * 6. - neznama akce (neni to show flush add ani del) (zadava parser) <br />
      * 7. - spatna adresa parametru via (zadava parser) <br />
      * 8. - adresat se nemuze pridat, uz v routovaci tabulce jeden stejnej je (provedeni) <br />
-     * 9. - mazany zaznam (u akce del) na rozhrani neni (provedeni) <br />
+     * 9. - mazany zaznam (u akce del) na iface neni (provedeni) <br />
      * 10. - nevykonava se metoda zkontroluj <br />
      * 11. - nevykonava se metoda vykonejPrikaz (ukladam to sem jen kvuli prehlednosti) <br />
      * 12. - u prikazu get volan zakazany parametr via (zadava parser) <br />
@@ -159,7 +159,7 @@ public class IpRoute extends LinuxCommand {
             printLine("RTNETLINK answers: No such device");
             return;
         }
-        if ((navrKod & Util.md(3)) != 0) { // spatne rozhrani
+        if ((navrKod & Util.md(3)) != 0) { // spatne iface
             printLine("Cannot find device \""+rozhrRet+"\"");
             return;
         }
@@ -191,7 +191,7 @@ public class IpRoute extends LinuxCommand {
             return;
         }
 
-        //kontrola rozhrani, jestlize bylo zadano:
+        //kontrola iface, jestlize bylo zadano:
         if (rozhrRet != null) {
 			rozhr = ipLayer.getNetworkInteface(rozhrRet);
             if (rozhr == null) { //rozhrani nenalezeno napr. ip a a 1.1.1.1 dev dsa
@@ -211,14 +211,14 @@ public class IpRoute extends LinuxCommand {
         //specialni kontrola pro akci add, kontroluju, bylo-li zadano dev nebo via:
         if(akce==2){
             if(brana==null && rozhrRet==null){ //kontroluju to radsi pres ten string, aby tam nebyly
-                        //zbytecne 2 navrKody na neexistujici rozhrani
+                        //zbytecne 2 navrKody na neexistujici iface
                 navrKod |= Util.md(5);
             }
         }
 
         //akce show nepotrebuje zadnou zvlastni kontrolu
 
-        //kontrola pro akci flush, musi u ni bejt zadano aspon jedno: adresat, brana, rozhrani, all
+        //kontrola pro akci flush, musi u ni bejt zadano aspon jedno: adresat, brana, iface, all
         if(akce==4){
             if(adresat==null && rozhr==null && brana==null && !all){
                 navrKod |= Util.md(13);
@@ -278,10 +278,10 @@ public class IpRoute extends LinuxCommand {
             for(int i=0; i<rTable.size();i++){ //vypisuje abulku po radcich
                 v="";
                 RoutingTable.Record z = rTable.getRecord(i);
-                if (z.rozhrani.isUp) {
+                if (z.iface.isUp) {
                     //radek se zobrazi jen za nejakejch podminek:
                     if ((adresat == null || adresat.equals(z.adresat)) //adresat nezadan, nebo souhlasi
-                            && (rozhr == null || rozhr == z.rozhrani) //rozhrani nezadano, nebo souhlasi
+                            && (rozhr == null || rozhr == z.iface) //rozhrani nezadano, nebo souhlasi
                             && (brana == null || brana.equals(z.brana))) //brana nezadana, nebo dobra
                     {
                         v += z.adresat.toString();
@@ -290,7 +290,7 @@ public class IpRoute extends LinuxCommand {
                             v += " via " + z.brana.toString();
                         }
                         if (rozhr == null) { //rozhrani se vypise, jen kdyz nebylo zadano jako filtr
-                            v += " dev " + z.rozhrani.name;
+                            v += " dev " + z.iface.name;
                         }
                     }
                     if (!v.equals("")) {
@@ -305,7 +305,7 @@ public class IpRoute extends LinuxCommand {
                 RoutingTable.Record zazn = rTable.getRecord(i);
                 //radek se smaze jen za nejakejch podminek:
                 if ((adresat == null || adresat.equals(zazn.adresat)) //adresat nezadan, nebo souhlasi
-                        && (rozhr == null || rozhr == zazn.rozhrani) //rozhrani nezadano, nebo souhlasi
+                        && (rozhr == null || rozhr == zazn.iface) //rozhrani nezadano, nebo souhlasi
                         && (brana == null || brana.equals(zazn.brana))) //brana nezadana, nebo dobra
                 {
                     keSmazani.add(zazn); //zatim se to jen oznacuje, aby to spravne fungovalo, kdyz
@@ -334,8 +334,8 @@ public class IpRoute extends LinuxCommand {
                 if(zazn.brana!=null){
                     prvni+= " via "+zazn.brana.toString();
                 }
-                prvni+=" dev "+zazn.rozhrani.name+
-                        "  src "+zazn.rozhrani.getIpAddress().getIp().toString();
+                prvni+=" dev "+zazn.iface.name+
+                        "  src "+zazn.iface.getIpAddress().getIp().toString();
                 printLine(prvni);
                 printLine("    cache  mtu 1500 advmss 1460 hoplimit 64");
             }
@@ -347,7 +347,7 @@ public class IpRoute extends LinuxCommand {
      * Pri volani podrazeny metody ta metoda dostava prvni ji uzitecnu slovo. <br />
      * Vsechny akce (add, del, show, flush, get) se parsujou vicemene stejne, jen u get je zakazanej
      * parametr via. <br />
-     * IP se parsujou primo v parseru, existence rozhrani se tady ale nekontroluje. <br />
+     * IP se parsujou primo v parseru, existence iface se tady ale nekontroluje. <br />
      * Jakmile parser narazi na jednu chybu, dal uz nepokracuje. <br />
      */
     private void parsujPrikaz() {

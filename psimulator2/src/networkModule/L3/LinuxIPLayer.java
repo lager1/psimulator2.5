@@ -80,7 +80,7 @@ public class LinuxIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.rozhrani.getIpAddress().getIp(), dst, this.ttl, packet);
+		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, this.ttl, packet);
 
 		processPacket(p, record, null);
 	}
@@ -130,7 +130,7 @@ public class LinuxIPLayer extends IPLayer {
 		}
 
 		// vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
-		//		a tedy IP adresa se musi vyplnit dle rozhrani, ze ktereho to poleze ven
+		//		a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
 		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+ifaceIn.name, packet);

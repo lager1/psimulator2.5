@@ -11,6 +11,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
+import networkModule.L3.ArpCache.Target;
 import networkModule.L3.RoutingTable.Record;
 import networkModule.L3.nat.NatTable;
 import networkModule.L4.IcmpHandler;
@@ -92,7 +93,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 *
 	 * @return
 	 */
-	public HashMap<IpAddress, ArpCache.ArpRecord> getArpCache() {
+	public HashMap<Target, ArpCache.ArpRecord> getArpCache() {
 		return arpCache.getCache();
 	}
 
@@ -177,7 +178,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				continue;
 			}
 
-			MacAddress mac = arpCache.getMacAdress(m.nextHop);
+			MacAddress mac = arpCache.getMacAdress(m.nextHop, m.out);
 			if (mac != null) {
 				// obslouzit
 				temp.put(m.nextHop, mac);
@@ -217,11 +218,11 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 *
 	 * @param packet co chci odeslaat
 	 * @param record zaznam z RT
-	 * @param ifaceIn prichozi rozhrani, null pokud odesilam novy paket
+	 * @param ifaceIn prichozi iface, null pokud odesilam novy paket
 	 */
 	protected void processPacket(IpPacket packet, Record record, NetworkInterface ifaceIn) {
 		// zanatuj
-		packet = packetFilter.postRouting(packet, ifaceIn, record.rozhrani); // prichozi rozhrani je null, protoze zadne takove neni
+		packet = packetFilter.postRouting(packet, ifaceIn, record.iface); // prichozi iface je null, protoze zadne takove neni
 		if (packet == null) { // packet dropped
 			return;
 		}
@@ -235,22 +236,22 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		}
 
 		// zjisti MAC adresu z ARP cache - je=OK, neni=vygenerovat ARP request a vlozit do storeBuffer + touch na sendItem, ktera bude v storeBuffer
-		MacAddress nextHopMac = arpCache.getMacAdress(nextHopIp);
+		MacAddress nextHopMac = arpCache.getMacAdress(nextHopIp, record.iface.ethernetInterface);
 		if (nextHopMac == null) { // posli ARP request a dej do fronty
-			ArpPacket arpPacket = new ArpPacket(record.rozhrani.ipAddress.getIp(), record.rozhrani.getMacAddress(), nextHopIp);
+			ArpPacket arpPacket = new ArpPacket(record.iface.ipAddress.getIp(), record.iface.getMacAddress(), nextHopIp);
 
 			Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Cannot send packet to address: " + packet.dst + ", becaouse nextHop MAC address is unknown. Sending ARP request via interface: "
-					+ record.rozhrani.name, arpPacket);
-			netMod.ethernetLayer.sendPacket(arpPacket, record.rozhrani.ethernetInterface, MacAddress.broadcast());
+					+ record.iface.name, arpPacket);
+			netMod.ethernetLayer.sendPacket(arpPacket, record.iface.ethernetInterface, MacAddress.broadcast());
 
-			storeBuffer.add(new StoreItem(packet, record.rozhrani.ethernetInterface, nextHopIp));
+			storeBuffer.add(new StoreItem(packet, record.iface.ethernetInterface, nextHopIp));
 			Psimulator.getPsimulator().budik.registerWake(this, arpTTL);
 			return;
 		}
 
 		// kdyz to doslo az sem, tak muzu odeslat..
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending packet.", packet);
-		netMod.ethernetLayer.sendPacket(packet, record.rozhrani.ethernetInterface, nextHopMac);
+		netMod.ethernetLayer.sendPacket(packet, record.iface.ethernetInterface, nextHopMac);
 
 	}
 

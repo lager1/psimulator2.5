@@ -17,7 +17,7 @@ import utils.Util;
 
 /**
  * Trida reprezentujici wrapper nad routovaci tabulkou pro system cisco.
- * Tez bude sefovat zmenu v RT dle vlastnich rozhrani.
+ * Tez bude sefovat zmenu v RT dle vlastnich iface.
  * Cisco samo o sobe ma tez 2 tabulky: <br />
  *      1. zadane uzivatelem (tato trida) <br />
  *      2. vypocitane routy z tabulky c. 1 (trida RoutovaciTabulka)
@@ -51,7 +51,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Vnitrni trida pro reprezentaci CiscoZaznamu ve wrapperu.
-     * Adresat neni null, ale bud rozhrani nebo brana je vzdy null.
+     * Adresat neni null, ale bud iface nebo brana je vzdy null.
      */
     public class CiscoRecord {
 
@@ -74,7 +74,7 @@ public class CiscoWrapperRT implements Loggable {
          * Pouze pro ucely vypisu RT!!! Jinak nepouzivat!
          * @param adresat
          * @param brana
-         * @param rozhrani
+         * @param iface
          */
         private CiscoRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani) {
             this.adresat = adresat;
@@ -115,7 +115,7 @@ public class CiscoWrapperRT implements Loggable {
 
         /**
          * CiscoZaznamy se rovnaji pokud adresat ma stejnou adresu i masku &&
-         * ( se takto rovnaji i brany ) || ( rozhrani se jmenuji stejne nehlede na velikost pismen )
+         * ( se takto rovnaji i brany ) || ( iface se jmenuji stejne nehlede na velikost pismen )
          * @param obj
          * @return
          */
@@ -162,7 +162,7 @@ public class CiscoWrapperRT implements Loggable {
         // nastavuju citac
         this.citac = 0;
 
-        // pridam routy na nahozena rozhrani
+        // pridam routy na nahozena iface
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
 				Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: "+iface.getIpAddress(), null);
@@ -172,7 +172,7 @@ public class CiscoWrapperRT implements Loggable {
 
         // propocitam a pridam routy s prirazenyma rozhranima
         for (CiscoRecord zaznam : radky) {
-            if (zaznam.rozhrani != null) { // kdyz to je na rozhrani
+            if (zaznam.rozhrani != null) { // kdyz to je na iface
                 if (zaznam.rozhrani.isUp) {
 					Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam zaznam na rozhrani.", zaznam);
                     routingTable.addRecord(zaznam.adresat, zaznam.rozhrani);
@@ -195,10 +195,10 @@ public class CiscoWrapperRT implements Loggable {
     }
 
     /**
-     * Vrati rozhrani, na ktere se ma odesilat, kdyz je zaznam na branu.
-     * Tato metoda pocita s tim, ze v RT uz jsou zaznamy pro nahozena rozhrani.
+     * Vrati iface, na ktere se ma odesilat, kdyz je zaznam na branu.
+     * Tato metoda pocita s tim, ze v RT uz jsou zaznamy pro nahozena iface.
      * @param brana
-     * @return kdyz nelze nalezt zadne rozhrani, tak vrati null
+     * @return kdyz nelze nalezt zadne iface, tak vrati null
      */
     NetworkInterface najdiRozhraniProBranu(IpAddress brana) {
 
@@ -208,11 +208,11 @@ public class CiscoWrapperRT implements Loggable {
         }
         for (int i = radky.size() - 1; i >= 0; i--) { // prochazim opacne (tedy vybiram s nejvyssim poctem jednicek)
 
-            // kdyz to je na rozsah vlastniho rozhrani
+            // kdyz to je na rozsah vlastniho iface
 			Record record = routingTable.findRoute(brana);
-            if (record.rozhrani != null) {
+            if (record.iface != null) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: nalezeno rozhrani.. ok", brana);
-                return record.rozhrani;
+                return record.iface;
             } else {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro "+brana, null);
 			}
@@ -240,9 +240,9 @@ public class CiscoWrapperRT implements Loggable {
     }
 
     /**
-     * Pridava do wrapperu novou routu na rozhrani.
+     * Pridava do wrapperu novou routu na iface.
      * @param adresa
-     * @param rozhrani
+     * @param iface
      */
     public void pridejZaznam(IPwithNetmask adresa, NetworkInterface rozhrani) {
         CiscoRecord z = new CiscoRecord(adresa, rozhrani);
@@ -250,7 +250,7 @@ public class CiscoWrapperRT implements Loggable {
     }
 
     /**
-     * Prida do wrapperu novou routu na rozhrani. Pote updatuje RT je-li potreba.
+     * Prida do wrapperu novou routu na iface. Pote updatuje RT je-li potreba.
      * V teto metode se kontroluje, zda adresat je cislem site.
      * @param zaznam, ktery chci vlozit
      */
@@ -277,7 +277,7 @@ public class CiscoWrapperRT implements Loggable {
      * @param zaznam
      */
     private void pridejRTZaznamJenProVypis(Record zaznam) {
-        CiscoRecord ciscozaznam = new CiscoRecord(zaznam.adresat, zaznam.brana, zaznam.rozhrani);
+        CiscoRecord ciscozaznam = new CiscoRecord(zaznam.adresat, zaznam.brana, zaznam.iface);
         if (zaznam.jePrimoPripojene()) {
             ciscozaznam.setConnected();
         }
@@ -286,14 +286,14 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Smaze zaznam z wrapperu + aktualizuje RT. Rozhrani maze podle jmena!
-     * Muze byt zadana bud adresa nebo adresa+brana nebo adresa+rozhrani.
+     * Muze byt zadana bud adresa nebo adresa+brana nebo adresa+iface.
      *
      * no ip route IP MASKA DALSI? <br />
      * IP a MASKA je povinne, DALSI := { ROZHRANI | BRANA } <br />
      *
      * @param adresa
      * @param brana
-     * @param rozhrani
+     * @param iface
      * @return 0 = ok, 1 = nic se nesmazalo
      */
     public int smazZaznam(IPwithNetmask adresa, IpAddress brana, NetworkInterface rozhrani) {
