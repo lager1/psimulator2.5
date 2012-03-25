@@ -22,7 +22,7 @@ class HelpCommand extends CiscoCommand {
 		String s ="";
 		s += "There is no such command in real cisco. \n" +
                     "It is used only for a hint. This implementation has more commands then real cisco:\n" +
-                    " help_en - writes this hint\n" +
+                    " help - writes this hint\n" +
                     " kill - for leaving console from any state of cisco\n" +
                     " save - for saving current configuration of all computers to XML file, " +
                     "without paramater it saves to "+Main.configFileName+"\n\n" +

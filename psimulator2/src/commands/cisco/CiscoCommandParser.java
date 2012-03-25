@@ -65,6 +65,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		} else {
 			this.ipLayer = null; // never happen, because devices L2 only have no telnet access
 		}
+
+		command = new HelpCommand(this);
+		command.run();
 	}
 
 	@Override
