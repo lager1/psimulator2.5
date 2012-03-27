@@ -46,7 +46,7 @@ public class CiscoIPLayer extends IPLayer {
 						|| (!isItMyIpAddress(packet.targetIpAddress) && haveRouteFor(packet.senderIpAddress) && haveRouteFor(packet.targetIpAddress))) {
 
 					// poslat ARP reply
-					ArpPacket arpPacket = new ArpPacket(packet.senderIpAddress, packet.senderMacAddress, packet.targetIpAddress, iface.getMac());
+					ArpPacket arpPacket = new ArpPacket(packet.targetIpAddress, iface.getMac(), packet.senderIpAddress, packet.senderMacAddress);
 					Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Reacting on ARP request: sending REPLY to " + packet.senderIpAddress, arpPacket);
 					netMod.ethernetLayer.sendPacket(arpPacket, iface, packet.senderMacAddress);
 				} else {
@@ -58,7 +58,7 @@ public class CiscoIPLayer extends IPLayer {
 				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "ARP reply received.", packet);
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me (protoze odpoved se posila jen odesilateli a ne na broadcast), takze si ji muzu ulozit a je to ok
-				arpCache.updateArpCache(packet.targetIpAddress, packet.targetMacAddress, iface);
+				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
 				newArpReply = true;
 				worker.wake();
 				break;
