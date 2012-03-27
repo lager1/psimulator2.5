@@ -55,7 +55,6 @@ public class CiscoPingApplication extends PingApplication {
 
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
 
-//		areAllAtHome(packet);
 		// http://www.cisco.com/en/US/products/sw/iosswrel/ps1831/products_tech_note09186a00800a6057.shtml
 
 		switch (packet.type) {
@@ -102,13 +101,4 @@ public class CiscoPingApplication extends PingApplication {
         }
         shell.printWithDelay(s, 10);
 	}
-
-//	private void areAllAtHome(IcmpPacket packet) {
-//		recieved[packet.seq - 1] = true;
-//		for (int i = 0; i < recieved.length; i++) {
-//			if (recieved[i] == false) {
-//				return;
-//			}
-//		}
-//	}
 }

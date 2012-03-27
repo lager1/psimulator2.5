@@ -53,7 +53,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	int lastSent = 0; // seq number of last sent packet
 	int lastReceived = 0;	// seq number of last received packet
 
-	private boolean zavolanoBudikem = false;
+	private transient boolean zavolanoBudikem = false;
 
 	public PingApplication(Device device, ApplicationNotifiable command) {
 		super("ping", device);

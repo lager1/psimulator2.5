@@ -185,7 +185,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				serve.add(m);
 			}
 
-			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "This record has not timedout nor ARP answer has come. age: " + (now - m.timeStamp) + ", will delete:: " + arpTTL, null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "This record has not timedout nor ARP answer has come. age: " + (now - m.timeStamp) + ", will delete: " + arpTTL+ " nextHop="+m.nextHop, m.packet);
 		}
 
 		storeBuffer.removeAll(old);
@@ -193,7 +193,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 		for (StoreItem o : old) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: ARP reply was not received. Will send Destination Unreachable.", o.packet);
-			getIcmpHandler().sendDestinationHostUnreachable(o.packet.src, o.packet);
+			getIcmpHandler().sendHostUnreachable(o.packet.src, o.packet);
 		}
 
 		for (StoreItem s : serve) {

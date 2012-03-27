@@ -127,7 +127,7 @@ public class CiscoIPLayer extends IPLayer {
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for "+packet.dst+". Will send Destination Host Unreachable.", packet);
-			getIcmpHandler().sendDestinationHostUnreachable(packet.src, packet); // cisco na skolnich routerech odesi DHU a nebo DNU jako linux
+			getIcmpHandler().sendHostUnreachable(packet.src, packet); // cisco na skolnich routerech odesi DHU a nebo DNU jako linux
 			return;
 		}
 

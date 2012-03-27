@@ -109,7 +109,7 @@ public class LinuxIPLayer extends IPLayer {
 
 		if (!ip_forward) {
 			// Jestli se nepletu, tak paket proste zahodi. Chce to ale jeste overit.
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Zahazuji tento packet, protoze neni nastaven ip_forward.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: ip_forward is not set.", packet);
 			return;
 		}
 
@@ -125,7 +125,7 @@ public class LinuxIPLayer extends IPLayer {
 		RoutingTable.Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for "+packet.dst+". Will send Destination Network Unreachable.", packet);
-			getIcmpHandler().sendDestinationNetworkUnreachable(packet.src, packet);
+			getIcmpHandler().sendNetworkUnreachable(packet.src, packet);
 			return;
 		}
 

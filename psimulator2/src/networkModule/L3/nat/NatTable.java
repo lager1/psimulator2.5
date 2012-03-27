@@ -212,14 +212,14 @@ public class NatTable implements Loggable {
         if (pool == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: source address is in access-lists, but no pool is assigned.", null);
 			// poslat DHU
-			ipLayer.getIcmpHandler().sendDestinationHostUnreachable(packet.src, null);
+			ipLayer.getIcmpHandler().sendHostUnreachable(packet.src, null);
             return null; // 1
         }
 
         IpAddress adr = pool.getIP(true);
         if (adr == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: no free IP is available for translation.", null);
-			ipLayer.getIcmpHandler().sendDestinationHostUnreachable(packet.src, null);
+			ipLayer.getIcmpHandler().sendHostUnreachable(packet.src, null);
             return null; // 2
         }
 
