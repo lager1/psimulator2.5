@@ -70,7 +70,7 @@ public class IcmpHandler implements Loggable {
 	 * @param dst message target
 	 * @param packet for some additional information only.
 	 */
-	public void sendDestinationHostUnreachable(IpAddress dst, IpPacket packet) {
+	public void sendHostUnreachable(IpAddress dst, IpPacket packet) {
 		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.HOST_UNREACHABLE);
 	}
 
@@ -79,8 +79,17 @@ public class IcmpHandler implements Loggable {
 	 * @param dst message target
 	 * @param packet for some additional information only.
 	 */
-	public void sendDestinationNetworkUnreachable(IpAddress dst, IpPacket packet) {
+	public void sendNetworkUnreachable(IpAddress dst, IpPacket packet) {
 		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE);
+	}
+
+	/**
+	 * Sends ICMP message Destination Network Unreachable to a given IpAddress.
+	 * @param dst message target
+	 * @param packet for some additional information only.
+	 */
+	void sendPortUnreachable(IpAddress dst, IpPacket packet) {
+		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.PORT_UNREACHABLE);
 	}
 
 	/**

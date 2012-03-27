@@ -51,7 +51,7 @@ public class TransportLayer implements Loggable {
 	 */
 	public void receivePacket(IpPacket packet) {
 		if (packet.data == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Prisel mi sem paket, ktery nema zadna L4 data! Zahazuji packet:", packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: Received packet with no L4 data.", packet);
 			return;
 		}
 
@@ -62,14 +62,14 @@ public class TransportLayer implements Loggable {
 				break;
 
 			case TCP:
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "TCP handler neni implementovan! Zahazuji packet:", packet);
+				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet: TCP handler is not yet implemented.", packet);
 				break;
 
 			case UDP:
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "UDP handler neni implementovan! Zahazuji packet:", packet);
+				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet: UDP handler is not yet implemented.", packet);
 				break;
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Prisel mi sem paket neznameho L4 typu. Zahazuji packet:", packet);
+				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: Received packet with unknown L4 type.", packet);
 		}
 	}
 
@@ -84,7 +84,8 @@ public class TransportLayer implements Loggable {
 		if (app != null) {
 			app.receivePacket(packet);
 		} else {
-			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Zahazuju paket, protoze neni tu zaregistrovana zadna aplikace, ktera by ho obslouzila. Neobsluhovany port: "+port, packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Dropping packet: There is now app listening on this port: "+port+ ", sending port unreachable to: "+packet.src, packet);
+			icmphandler.sendPortUnreachable(packet.src, packet);
 		}
 	}
 
