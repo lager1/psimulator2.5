@@ -4,7 +4,6 @@
 
 package commands.cisco;
 
-import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.BadNetmaskException;
@@ -15,6 +14,13 @@ import networkModule.L3.NetworkInterface;
 import utils.Util;
 
 /**
+ * Class for parsing this commands:
+ *
+ * ip route 'target' 'mask of target' 'gateway or interface
+ * '
+ * ip route 0.0.0.0 0.0.0.0 192.168.2.254
+ * ip route 192.168.2.0 255.255.255.192 fastEthernet 0/0
+ * no ip route ...
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
@@ -39,7 +45,10 @@ public class IpRouteCommand extends CiscoCommand {
 		String maska = "";
         try {
             adr = nextWord();
+			debug("address: "+adr);
+
             maska = nextWord();
+			debug("mask: "+maska);
 
             if (adr.isEmpty() || maska.isEmpty()) {
                 incompleteCommand();
@@ -71,6 +80,7 @@ public class IpRouteCommand extends CiscoCommand {
         }
 
         String dalsi = nextWord();
+		debug("dalsi: "+dalsi);
 
         if (Util.zacinaCislem(dalsi)) { // na branu
             try {
@@ -124,15 +134,15 @@ public class IpRouteCommand extends CiscoCommand {
 //		if (debug) pc.vypis("pridej="+no);
         if (no == false) {
             if (brana != null) { // na branu
-                ipLayer.wrapper.pridejZaznam(adresat, brana);
+                ipLayer.wrapper.addRecord(adresat, brana);
             } else { // na rozhrani
                 if (rozhrani == null) {
                     return;
                 }
-                ipLayer.wrapper.pridejZaznam(adresat, rozhrani);
+                ipLayer.wrapper.addRecord(adresat, rozhrani);
             }
         } else { // mazu
-            int n = ipLayer.wrapper.smazZaznam(adresat, brana, rozhrani);
+            int n = ipLayer.wrapper.deleteRecord(adresat, brana, rozhrani);
             if (n == 1) {
                 printLine("%No matching route to delete");
             }

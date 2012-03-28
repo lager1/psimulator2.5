@@ -285,7 +285,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * @param packet data to be sent
 	 * @param dst destination address
 	 */
-	public abstract void handleSendPacket(L4Packet packet, IpAddress dst);
+	public abstract void handleSendPacket(L4Packet packet, IpAddress dst, int ttl);
 
 	@Override
 	public void doMyWork() {
@@ -302,7 +302,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			if (!sendBuffer.isEmpty()) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() sendBuffer", null);
 				SendItem m = sendBuffer.remove(0);
-				handleSendPacket(m.packet, m.dst); // bude se obsluhovat platform-specific
+				handleSendPacket(m.packet, m.dst, m.ttl); // bude se obsluhovat platform-specific
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) { // ten boolean tam je proto, aby se to neprochazelo v kazdym cyklu

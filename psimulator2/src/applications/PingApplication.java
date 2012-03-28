@@ -94,7 +94,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 
 			// zkouseni, jestli je ten paket spravnej:
 			if (! (p.data instanceof IcmpPacket)) {
-				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication recieved non ICMP packet", p);
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication recieved non ICMP packet", p);
 				continue;
 			}
 
@@ -104,7 +104,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			timestamps.remove(packet.seq); // odstranim uz ulozeny
 			// TODO: resit nejak lip duplikace paketu, zatim se to loguje:
 			if (sendTime == null) {
-				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet, because PingApplication doesn't expect such a PING reply "
+				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication doesn't expect such a PING reply "
 						+ "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
 				continue;
 			}

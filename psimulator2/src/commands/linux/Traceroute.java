@@ -4,6 +4,7 @@
 
 package commands.linux;
 
+import applications.LinuxTracerouteApplication;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
@@ -29,7 +30,7 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
      */
     protected int stavKonani = 0;
 
-
+	private LinuxTracerouteApplication app;
 
 	public Traceroute(AbstractCommandParser parser) {
 		super(parser);
@@ -40,20 +41,21 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 		parsujPrikaz();
 		if(navrKod ==0){ // jen kdyz je parsovani v poradku
 			parser.setRunningCommand(this, false);
-			throw new UnsupportedOperationException("Not supported yet.");
-//			vykonejPrikaz();
-		}
 
+			vykonejPrikaz();
+		}
 	}
 
 	@Override
 	public void catchSignal(Signal signal) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		if(signal==Signal.CTRL_C){
+			app.exit();
+		}
 	}
 
 	@Override
 	public void catchUserInput(String line) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		// nic nedela
 	}
 
 	@Override
@@ -63,7 +65,13 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 
 
 
-
+	private void vykonejPrikaz() {
+		app = new LinuxTracerouteApplication(getDevice(), this);
+		app.setTarget(adr);
+		app.setQueryPerTTL(5);
+		app.setMaxTTL(11);
+		app.start();
+	}
 
 // privatni metody - parsovani:
 

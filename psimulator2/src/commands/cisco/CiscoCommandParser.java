@@ -63,11 +63,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		if (nm.isStandardTcpIpNetMod()) {
 			this.ipLayer = (CiscoIPLayer) ((TcpIpNetMod) nm).ipLayer;
 		} else {
-			this.ipLayer = null; // never happen, because devices L2 only have no telnet access
+			this.ipLayer = null; // never happen, because L2 only devices have no telnet access
 		}
 
-		command = new HelpCommand(this);
-		command.run();
+		printService("Type command 'help' for list of supported commands.");
 	}
 
 	@Override

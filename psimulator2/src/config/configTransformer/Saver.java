@@ -90,10 +90,10 @@ public class Saver {
 			CiscoWrapperRT wrapper = ((CiscoIPLayer) netMod.ipLayer).wrapper;
 			for (int i = 0; i < wrapper.getSize(); i++) {
 				CiscoRecord record = wrapper.getRecord(i);
-				if (record.getBrana() != null) { // adresa brana
-					rtc.addRecord(record.getAdresat().toString(), null, record.getBrana().toString());
+				if (record.getGateway() != null) { // adresa brana
+					rtc.addRecord(record.getTarget().toString(), null, record.getGateway().toString());
 				} else { // adresa iface
-					rtc.addRecord(record.getAdresat().toString(), record.getRozhrani().name, null);
+					rtc.addRecord(record.getTarget().toString(), record.getInterface().name, null);
 				}
 			}
 		} else {

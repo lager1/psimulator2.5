@@ -22,7 +22,7 @@ public abstract class TwoThreadApplication extends Application implements Runnab
 
 	public TwoThreadApplication(String name, Device device) {
 		super(name, device);
-		myThread = new Thread(this, device.getName()+": pingApp_vlakno_na_popredi");
+		myThread = new Thread(this, device.getName()+": TwoThreadedApp_vlakno_na_popredi");
 	}
 
 	/**

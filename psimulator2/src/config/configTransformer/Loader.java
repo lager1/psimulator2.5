@@ -423,10 +423,10 @@ public class Loader implements Loggable {
 					IPwithNetmask adresat = new IPwithNetmask(record.getDestination(), 32, false);
 					if (record.getGateway() != null) {
 						IpAddress brana = new IpAddress(record.getGateway());
-						wrapper.pridejZaznam(adresat, brana);
+						wrapper.addRecord(adresat, brana);
 					} else {
 						NetworkInterface iface = layer.getNetworkInteface(record.getInterfaceName());
-						wrapper.pridejZaznam(adresat, iface);
+						wrapper.addRecord(adresat, iface);
 					}
 				}
 			}

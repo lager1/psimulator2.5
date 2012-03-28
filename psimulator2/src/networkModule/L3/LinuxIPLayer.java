@@ -65,10 +65,10 @@ public class LinuxIPLayer extends IPLayer {
 	}
 
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress dst) {
+	public void handleSendPacket(L4Packet packet, IpAddress dst, int ttl) {
 
 		if (isItMyIpAddress(dst)) {
-			IpPacket p = new IpPacket(dst, dst, this.ttl, packet);
+			IpPacket p = new IpPacket(dst, dst, ttl, packet);
 
 			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
 			return;
@@ -80,7 +80,7 @@ public class LinuxIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, this.ttl, packet);
+		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, ttl, packet);
 
 		processPacket(p, record, null);
 	}

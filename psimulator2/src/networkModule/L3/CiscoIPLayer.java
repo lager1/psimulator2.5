@@ -75,7 +75,7 @@ public class CiscoIPLayer extends IPLayer {
 	 * @param dst
 	 */
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress dst) {
+	public void handleSendPacket(L4Packet packet, IpAddress dst, int ttl) {
 
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
@@ -83,7 +83,7 @@ public class CiscoIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, this.ttl, packet);
+		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, ttl, packet);
 
 		if (isItMyIpAddress(dst)) {
 			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
