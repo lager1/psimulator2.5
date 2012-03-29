@@ -98,6 +98,11 @@
                             <destination>192.168.1.0/24</destination>
                             <interfaceName>eth0</interfaceName>
                         </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>192.168.2.2</gateway>
+                            <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
                 <hwType>LINUX_ROUTER</hwType>
@@ -141,6 +146,15 @@
                             <destination>192.168.2.0/24</destination>
                             <interfaceName>eth0</interfaceName>
                         </routingTableItem>
+                        <routingTableItem>
+                            <destination>192.168.3.0/24</destination>
+                            <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>0.0.0.0/0</destination>
+                            <gateway>192.168.3.20</gateway>
+                            <interfaceName>eth1</interfaceName>
+                        </routingTableItem>
                     </routingTabConfig>
                 </devSettings>
                 <hwType>LINUX_ROUTER</hwType>
@@ -158,7 +172,7 @@
                     <cable>16</cable>
                     <hwType>LINUX_ROUTER</hwType>
                     <id>9</id>
-                    <ipAddress></ipAddress>
+                    <ipAddress>192.168.3.1/24</ipAddress>
                     <isUp>true</isUp>
                     <macAddress>AA-11-E0-00-00-05</macAddress>
                     <name>eth1</name>
@@ -197,15 +211,11 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_OPTIC</key>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>CISCO_SWITCH</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -217,7 +227,15 @@
                 <value>1</value>
             </entry>
             <entry>
-                <key>END_DEVICE_WORKSTATION</key>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>LINUX_SWITCH</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -225,15 +243,11 @@
                 <value>3</value>
             </entry>
             <entry>
-                <key>LINUX_SWITCH</key>
+                <key>END_DEVICE_WORKSTATION</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_ETHERNET</key>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

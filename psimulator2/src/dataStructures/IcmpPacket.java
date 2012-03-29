@@ -5,72 +5,20 @@ package dataStructures;
 
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
+import static dataStructures.IcmpPacket.Type.*;
+import static dataStructures.IcmpPacket.Code.*;
 
 /**
  * Represents ICMP packet.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
+ * @author Tomas Pitrinec
  */
 public class IcmpPacket extends L4Packet {
 
-	private static int HEADER_LENGTH = 8;
+	private static int HEADER_LENGTH = 8;	// staticka promenna pro dylku hlavicky
+	private static int DEFAULT_PAYLOAD_SIZE = 56;
 
-	@Override
-	public L4PacketType getType() {
-		return L4PacketType.ICMP;
-	}
-
-	/**
-	 * Types of ICMP packet.
-	 */
-	public enum Type {
-
-		/**
-		 * Ozvěna.
-		 */
-		REPLY,
-		/**
-		 * Žádost o ozvěnu.
-		 */
-		REQUEST,
-		/**
-		 * Signalizace nedoručení IP paketu.
-		 */
-		UNDELIVERED,
-		/**
-		 * Čas (ttl) vypršel.
-		 */
-		TIME_EXCEEDED,
-		/**
-		 * This message may be generated if a router or host does not have sufficient buffer space to process the request, or may occur if the router or host buffer is approaching its limit.
-		 */
-		SOURCE_QUENCH,
-
-	}
-
-	/**
-	 * Podtypy icmp paketu, pro kazdej typ jinej vyznam, u nas to ma vyznam jen pro typ UNDELIVERED.
-	 */
-	public enum Code {
-
-		/**
-		 * kdyz se odesila REPLY
-		 */
-		DEFAULT,
-		//	   * 0 – nedosažitelná síť (network unreachable)
-		NETWORK_UNREACHABLE,
-		//     * 1 - nedosažitelný uzel (host unreachable)
-		HOST_UNREACHABLE,
-		//     * 2 - nedosažitelný protokol (protocol unreachable)
-		PROTOCOL_UNREACHABLE,
-		//     * 3 – nedosažitelný port (port unreachable)
-		PORT_UNREACHABLE,
-		//     * 4 - nedosažitelná síť (network unreachable)
-
-		//     * 5 – nutná fragmentace, ale není povolena
-		FRAGMENTAION_REQUIRED,
-		//     * 6 – neznámá cílová síť (destination network unknown)
-		DESTINATION_NETWORK_UNKNOWN,}
 	/**
 	 * REPLY, REQUEST, UNDELIVERED, TIME_EXCEEDED.
 	 */
@@ -90,22 +38,37 @@ public class IcmpPacket extends L4Packet {
 	public final int seq;
 
 	/**
+	 * Payload, vyplneno pouze pokud paket pochazi z realne site. Je potreba ho predavat do odpovedi!
+	 */
+	public final byte [] payload;
+
+	/**
+	 * Dylka payloadu, vyplnena vzdy, kdyz je paket z realny site, tak je to jeho skutecna dylka.
+	 */
+	public final int payloadSize;
+
+
+// konstruktory: -----------------------------------------------------------------------------------------------------
+
+	/**
 	 * Creates IcmpPacket with given type and code. <br /> id and seq is set to 0
+	 * PayloadSize se doplni automaticky, payload se nastavi na null.
 	 *
 	 * @param type
 	 * @param code
 	 */
 	public IcmpPacket(Type type, Code code) {
-		super(null);
 		this.type = type;
 		this.code = code;
 		this.id = 0;
 		this.seq = 0;
-		countSize();
+		payload = null;
+		payloadSize=DEFAULT_PAYLOAD_SIZE;
 	}
 
 	/**
 	 * Creates IcmpPacket with given type, code, id, seq.
+	 * PayloadSize se doplni automaticky, payload se nastavi na null.
 	 *
 	 * @param type
 	 * @param code
@@ -113,48 +76,63 @@ public class IcmpPacket extends L4Packet {
 	 * @param seq
 	 */
 	public IcmpPacket(Type type, Code code, int id, int seq) {
-		super(null);
 		this.type = type;
 		this.code = code;
 		this.id = id;
 		this.seq = seq;
-		countSize();
+		payload = null;
+		payloadSize=DEFAULT_PAYLOAD_SIZE;
 	}
 
 	/**
-	 * Creates IcmpPacket with given type, code, id, seq.
+	 * Uplnej konstruktor.
 	 *
 	 * @param type
 	 * @param code
 	 * @param id
 	 * @param seq
-	 * @param size payload size
+	 * @param payloadSize
+	 * @param payload
 	 */
-	public IcmpPacket(Type type, Code code, int id, int seq, int size) {
-		super(null);
+	public IcmpPacket(Type type, Code code, int id, int seq, int payloadSize, byte[] payload) {
 		this.type = type;
 		this.code = code;
 		this.id = id;
 		this.seq = seq;
-		this.size = HEADER_LENGTH + size;
+		this.payloadSize = payloadSize;
+		this.payload = payload;
 	}
 
 	/**
-	 * Creates IcmpPacket with given type, code, id, seq.
+	 * Uplny konstruktor z typu a kodu jako integeru.
+	 * Creates IcmpPacket with given type, code, id, seq. Payload cannot be null!
 	 *
 	 * @param type
 	 * @param code
 	 * @param id
 	 * @param seq
-	 * @param size payload size
+	 * @param payload
 	 */
-	public IcmpPacket(Type type, Code code, int id, int seq, int size, Object data) {
-		super(null);
-		this.type = type;
-		this.code = code;
+	public IcmpPacket(int type, int code, int id, int seq, byte[] payload) throws Exception {
+		this.type = intToTypeEnum(type);
+		this.code = intToCodeEnum(code);
 		this.id = id;
 		this.seq = seq;
-		this.size = HEADER_LENGTH + size;
+		payloadSize = payload.length;
+		this.payload = payload;
+	}
+
+
+// metody: -----------------------------------------------------------------------------------------------------
+
+	@Override
+	public L4PacketType getType() {
+		return L4PacketType.ICMP;
+	}
+
+	@Override
+	public int getSize(){
+		return payloadSize+HEADER_LENGTH;
 	}
 
 	@Override
@@ -162,8 +140,12 @@ public class IcmpPacket extends L4Packet {
 		return "IcmpPacket: "+Util.zarovnej(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
 	}
 
-	private void countSize() { // ICMP packet has 8 bytes + data (http://en.wikipedia.org/wiki/Ping)
-		this.size = HEADER_LENGTH + 56;
+	public int getPayloadSize() {
+		if (payload != null) {
+			return payload.length;
+		} else {
+			return getSize() - 8; // vraci velikost dat bez hlavicky
+		}
 	}
 
 	@Override
@@ -178,12 +160,12 @@ public class IcmpPacket extends L4Packet {
 
 	@Override
 	public L4Packet getCopyWithDifferentSrcPort(int port) {
-		return new IcmpPacket(type, code, port, seq, size > HEADER_LENGTH ? size - HEADER_LENGTH : size, data);
+		return new IcmpPacket(type, code, port, seq, payloadSize, payload);
 	}
 
 	@Override
 	public L4Packet getCopyWithDifferentDstPort(int port) {
-		return new IcmpPacket(type, code, port, seq, size > HEADER_LENGTH ? size - HEADER_LENGTH : size, data);
+		return new IcmpPacket(type, code, port, seq, payloadSize, payload);
 	}
 
 	@Override
@@ -193,12 +175,110 @@ public class IcmpPacket extends L4Packet {
 		s += "code: " + code + "\n";
 		s += "id: " + id + "   ";
 		s += "seq: " + seq + "   ";
-		s += "size: " + size;
+		s += "payloadSize: " + payloadSize;
 		return s;
 	}
 
 	@Override
 	public PacketType getPacketEventType() {
 		return PacketType.ICMP;
+	}
+
+
+
+
+// Enums for type and code (witch converting functions): ------------------------------------------------------------
+
+	/**
+	 * Types of ICMP packet.
+	 */
+	public enum Type {
+
+		/**
+		 * Ozvěna.
+		 */
+		REPLY(0),
+		/**
+		 * Žádost o ozvěnu.
+		 */
+		REQUEST(8),
+		/**
+		 * Signalizace nedoručení IP paketu.
+		 */
+		UNDELIVERED(3),
+		/**
+		 * Čas (ttl) vypršel.
+		 */
+		TIME_EXCEEDED(11),
+		/**
+		 * This message may be generated if a router or host does not have sufficient buffer space to process the
+		 * request, or may occur if the router or host buffer is approaching its limit.
+		 */
+		SOURCE_QUENCH(4);
+
+		private int value; // value as int
+
+		// Constructor
+		Type(int value) {
+			this.value = value;
+		}
+
+		public int getIntValue(){
+			return value;
+		}
+
+	}
+
+	public static Type intToTypeEnum(int t) throws Exception{
+		switch(t){
+			case 0: return REPLY;
+			case 8: return REQUEST;
+			case 3: return UNDELIVERED;
+			case 11: return TIME_EXCEEDED;
+			case 4: return SOURCE_QUENCH;
+		}
+		throw new Exception("ICMP type "+t+" cannot be recognized");
+	}
+
+	/**
+	 * Podtypy icmp paketu, pro kazdej typ jinej vyznam, u nas to ma vyznam jen pro typ UNDELIVERED.
+	 */
+	public enum Code {
+
+		/**
+		 * U typu 3 (undelivered) to je destination network unreachable, jinak nic (default)
+		 */
+		ZERO(0),
+		//     * 1 - nedosažitelný uzel (host unreachable)
+		HOST_UNREACHABLE(1),
+		//     * 2 - nedosažitelný protokol (protocol unreachable)
+		PROTOCOL_UNREACHABLE(2),
+		//     * 3 – nedosažitelný port (port unreachable)
+		PORT_UNREACHABLE(3),
+		//     * 4 - nedosažitelná síť (network unreachable)
+
+		//     * 5 – nutná fragmentace, ale není povolena
+		FRAGMENTAION_REQUIRED(4),
+		//     * 6 – neznámá cílová síť (destination network unknown)
+		DESTINATION_NETWORK_UNKNOWN(6);
+
+		private int value; // value as int
+		Code(int value){
+			this.value = value;
+		}
+		public int getIntValue(){
+			return value;
+		}
+	}
+	public static Code intToCodeEnum(int t) throws Exception{
+		switch(t){
+			case 0: return ZERO;
+			case 1: return HOST_UNREACHABLE;
+			case 2: return PROTOCOL_UNREACHABLE;
+			case 3: return PORT_UNREACHABLE;
+			case 4: return FRAGMENTAION_REQUIRED;
+			case 6: return DESTINATION_NETWORK_UNKNOWN;
+		}
+		throw new Exception("ICMP code "+t+" cannot be recognized");
 	}
 }

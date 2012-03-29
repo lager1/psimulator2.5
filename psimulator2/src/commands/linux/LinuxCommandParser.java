@@ -69,7 +69,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 				runningCommand.catchSignal(sig);
 			}
 		}
-		// TODO: [nedulezite] jeste nejake dalsi signaly nez ctrl+C?
+		// zadny dalsi signaly nepotrebuju
 	}
 
 	/**
@@ -157,25 +157,4 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
 	}
 
-
-
-	/**
-	 * TODO: Tohle pravdepodobne prijde smazat.
-	 * @param name
-	 * @return
-	 */
-	@Deprecated
-	private AbstractCommand getLinuxCommandStara(String name) {
-		if (name.equals("ifconfig")) {
-			return new Ifconfig(this);
-		} else if (name.equals("route")){
-			return new Route(this);
-		} else if (name.equals("exit")){
-			return new Exit(this);
-		} else if (name.equals("ping")){
-			return new Ping(this);
-		} else {
-			return null;
-		}
-	}
 }

@@ -103,12 +103,11 @@ public class LinuxPingApplication extends PingApplication {
 						" time="+Util.zaokrouhli(delay)+" ms");
 				break;
 			case TIME_EXCEEDED:
-				// TODO: Time To Live Exceeded
 				ping.printLine("From " + p.src.toString()+ " icmp_seq=" + packet.seq+ " Time to live exceeded");
 				break;
 			case UNDELIVERED:
 				switch (packet.code) {
-					case NETWORK_UNREACHABLE:
+					case ZERO:
 						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
                         packet.seq + " Destination Net Unreachable");
 						break;

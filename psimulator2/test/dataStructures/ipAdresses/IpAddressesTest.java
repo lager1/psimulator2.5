@@ -309,4 +309,22 @@ public class IpAddressesTest {
         assertEquals("172.16.1.1/16", new IPwithNetmask("172.16.1.1").toString());
         assertEquals("192.168.1.1/24", new IPwithNetmask("192.168.1.1").toString());
     }
+
+	@Test
+	public void testByteArrayKonstruktor(){
+
+		IpAddress adr;
+
+		byte[] array = new byte[]{1,2,3,4};
+		adr = new IpAddress(array);
+		assertEquals("1.2.3.4", adr.toString());
+
+		array = new byte[]{(byte)255,(byte)255,(byte)255,(byte)255};
+		adr = new IpAddress(array);
+		assertEquals("255.255.255.255", adr.toString());
+
+		array = new byte[]{(byte)128,(byte)128,(byte)128,(byte)128};
+		adr = new IpAddress(array);
+		assertEquals("128.128.128.128", adr.toString());
+	}
 }

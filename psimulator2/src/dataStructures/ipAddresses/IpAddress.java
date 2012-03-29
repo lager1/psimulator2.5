@@ -4,6 +4,8 @@
 
 package dataStructures.ipAddresses;
 
+import utils.Util;
+
 
 /**
  * Representation of IPv4 IP adress.
@@ -16,6 +18,9 @@ public class IpAddress {
      */
     protected int bits;
 
+
+// konstruktory: -----------------------------------------------------------------------------------------------
+
     /**
      * Creates an IP adress from String in format 1.2.3.4
      * @param ret
@@ -24,11 +29,22 @@ public class IpAddress {
         bits=stringToBits(ret);
     }
 
+	/**
+	 * Creates IP address from byte array.
+	 * @param array
+	 * @throws BadIpException iff the array hasn't length=4
+	 */
+	public IpAddress(byte[]array){
+		bits = byteArrayToInt(array);
+	}
+
     /**
      * Only for construktor classes in this package.
      */
     protected IpAddress(){}
 
+
+// verejny metody: ----------------------------------------------------------------------------------------------
 	/**
 	 * Returns inner representation.
 	 * @return
@@ -235,6 +251,17 @@ public class IpAddress {
     protected static String bitsToString(int bits) {
         return arrayToString(bitsToArray(bits));
     }
+
+	protected static int byteArrayToInt(byte[] array) {
+		int vratit = 0;
+		if (array.length != 4) {
+			throw new BadIpException("Given array has length=" + array.length);
+		}
+		for (int i = 0; i < 4; i++) {
+			vratit = vratit * 256 + Util.byteToInt(array[i]);
+		}
+		return vratit;
+	}
 
 
 

@@ -59,7 +59,7 @@ public class LinuxTracerouteApplication extends TracerouteApplication {
 						case HOST_UNREACHABLE:
 							cmd.print("!H ");
 							break;
-						case NETWORK_UNREACHABLE:
+						case ZERO:
 							cmd.print("!N ");
 							break;
 						case PROTOCOL_UNREACHABLE:

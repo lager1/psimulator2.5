@@ -19,7 +19,8 @@ public abstract class L3Packet implements EventDescriptive {
 
 	public enum L3PacketType{
 		IPv4,
-		ARP;
+		ARP,
+		UNKNOWN,	// nejakej neznamej typ
 	}
 
 	protected int getDataSize() {

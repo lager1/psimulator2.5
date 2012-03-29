@@ -35,7 +35,7 @@ public class IcmpHandler implements Loggable {
 		switch (p.type) {
 			case REQUEST:
 				// odpovedet
-				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.DEFAULT, p.id, p.seq, p.getSize()-8);	// zadava se velikost payloadu
+				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.getSize()-8,p.payload);	// zadava se velikost payloadu
 				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packet);
 				getIpLayer().handleSendPacket(reply, packet.src, getIpLayer().ttl);
 				break;
@@ -62,7 +62,7 @@ public class IcmpHandler implements Loggable {
 	 * @param packet for some additional information only.
 	 */
 	public void sendTimeToLiveExceeded(IpAddress dst, IpPacket packet) {
-		send(packet, dst, IcmpPacket.Type.TIME_EXCEEDED, IcmpPacket.Code.DEFAULT);
+		send(packet, dst, IcmpPacket.Type.TIME_EXCEEDED, IcmpPacket.Code.ZERO);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class IcmpHandler implements Loggable {
 	 * @param packet for some additional information only.
 	 */
 	public void sendNetworkUnreachable(IpAddress dst, IpPacket packet) {
-		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.NETWORK_UNREACHABLE);
+		send(packet, dst, IcmpPacket.Type.UNDELIVERED, IcmpPacket.Code.ZERO);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class IcmpHandler implements Loggable {
 	 * @param packet for some additional information only.
 	 */
 	public void sendSourceQuench(IpAddress dst, IpPacket packet) {
-		send(packet, dst, IcmpPacket.Type.SOURCE_QUENCH, IcmpPacket.Code.DEFAULT);
+		send(packet, dst, IcmpPacket.Type.SOURCE_QUENCH, IcmpPacket.Code.ZERO);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class IcmpHandler implements Loggable {
 			sendTtl = this.getIpLayer().ttl;
 		}
 
-		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.DEFAULT, id, seq, payload);
+		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.ZERO, id, seq, payload, null);
 		getIpLayer().sendPacket(packet, target, sendTtl);
 	}
 }

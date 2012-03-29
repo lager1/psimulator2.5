@@ -10,17 +10,9 @@ package dataStructures;
  */
 public abstract class L4Packet implements EventDescriptive {
 
-	protected int size;
 
-	public final Object data;
 
-	public L4Packet(Object data) {
-		this.data = data;
-	}
-
-	public int getSize() {
-		return size;
-	}
+	public abstract int getSize();
 
 	public enum L4PacketType{
 		ICMP,

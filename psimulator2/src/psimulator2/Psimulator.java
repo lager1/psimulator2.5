@@ -81,6 +81,15 @@ public class Psimulator implements Loggable{
 		return "Class Psimulator";
 	}
 
+	public Device getDeviceByName(String name){
+		for (Device d: devices){
+			if(d.getName().equals(name)){
+				return d;
+			}
+		}
+		return null;
+	}
+
 
 
 

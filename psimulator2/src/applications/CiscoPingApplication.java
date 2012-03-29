@@ -66,7 +66,7 @@ public class CiscoPingApplication extends PingApplication {
 				break;
 			case UNDELIVERED:
 				switch (packet.code) {
-					case NETWORK_UNREACHABLE:
+					case ZERO:
 						// cisco posila 'U' a '.', jak se mu chce
 						if (Math.round(Math.random()) % 2 == 0) {
 							shell.print("U");

@@ -110,7 +110,7 @@ public class Loader implements Loggable {
 		for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
 			registerID(ifaceModel.getId());
 			registerName(ifaceModel.getName(), model);
-			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	//TODO: neresi se tu realnej switchport
+			pm.addSwitchport(cislovaniSwitchportu, false, ifaceModel.getId());	// realnej switchport se resi az s kabelama
 			switchporty.put(ifaceModel.getId(), cislovaniSwitchportu);
 			cislovaniSwitchportu++;
 		}

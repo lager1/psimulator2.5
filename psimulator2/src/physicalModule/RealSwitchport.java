@@ -1,19 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Erstellt am 20.3.2012.
  */
 package physicalModule;
 
 import dataStructures.L2Packet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import logging.*;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapIf;
 
 /**
- * TODO implementovat
+ * This is switchport to connect to real interface.
+ *
+ * Switchport slouzici ke spojeni s realnym pocitacem. Posila a prijima pakety do a z realny site, k tomu ma Catcher a
+ * Sender. Nebezi ve vlastnim vlakne, ale catcher a sender bezi.
+ *
  * @author neiss
  */
 public class RealSwitchport extends Switchport implements Loggable {
@@ -32,30 +34,38 @@ public class RealSwitchport extends Switchport implements Loggable {
 		log(Logger.DEBUG,"Byl vytvoren realnej switchport c. "+number+" s configID "+configID, null);
 	}
 
-	public synchronized void start(String ifaceName){
+	/**
+	 * Nastartuje spojeni s realnou siti
+	 * @param ifaceName
+	 * @return 0 - vsechno v poradku, </br> 1 nepodarilo se otevrit spojeni.
+	 */
+	public synchronized int start(String ifaceName){
 		// ze vseho nejdriv se pokusim otevrit spojeni s realnym pocitacem
 		pcap = otevriSpojeni(ifaceName);
 		if(pcap == null){
 			log(Logger.WARNING, "Nepodarilo se spojeni s realnym pocitacem.", null);
-			return;
+			return 1;
 		} else {
 			this.ifaceName = ifaceName;
+			log(Logger.DEBUG, "Otevrel jsem spojeni na interfacu "+ifaceName, null);
 		}
 
 		// kdyz je spojeni otevreno, spoustim obsluhu:
 		catcher = new PacketCatcher(pcap, this);
 		isStarted = true;
 		sender = new PacketSender(pcap, this);
+		return 0;
 	}
 
 
 
 
-// metody zdedeny po Switchportu, ktery musej bejt implementovany:
+// metody zdedeny po Switchportu, ktery musej bejt implementovany: ---------------------------------------------------
 
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		if(isStarted){
+			log(Logger.DEBUG, "Jdu poslat paket.", packet);
 			sender.sendPacket(packet);
 		} else {
 			log(Logger.WARNING, "Doslo k pokusu odeslat paket, napojeni na realnou sit vsak neni funkcni.", null);
@@ -64,6 +74,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
 	@Override
 	protected void receivePacket(L2Packet packet) {
+		log(Logger.DEBUG, "Chytil jsem paket.", packet);
 		physicMod.receivePacket(packet, this);
 	}
 
@@ -78,7 +89,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
 		StringBuilder errbuf = new StringBuilder(); // For any error msgs
 
-		List<PcapIf> alldevs = new ArrayList<PcapIf>(); // Will be filled with NICs
+		List<PcapIf> alldevs = new ArrayList<>(); // Will be filled with NICs
 
 
 		// listovani rozhrani, zkopiroval jsem to a az pak jsem zjistil, ze je to zbytecny, uz to tady ale nechavam:
@@ -87,7 +98,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 		// nejdriv si najdu vsechny rozhrani:
 		int r = Pcap.findAllDevs(alldevs, errbuf);
 		if (r == Pcap.NOT_OK || alldevs.isEmpty()) {
-			log(Logger.WARNING,"Can't read list of devices, error is "+errbuf.toString(), null);
+			log(Logger.WARNING,"Can't read list of devices. Do you run psimulator as root?", null);
 			return null;
 		}
 		log(Logger.DEBUG,"Network devices found.", null);
@@ -125,7 +136,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
 	@Override
 	public String getDescription() {
-		return physicMod.device.getName()+": RealSwitchport";
+		return getDeviceName()+": RealSwitchport "+number;
 	}
 
 	private void log(int logLevel, String msg, Object obj){
@@ -141,7 +152,15 @@ public class RealSwitchport extends Switchport implements Loggable {
 		return ifaceName;
 	}
 
-	
+	/**
+	 * Zkratka pro logovani.
+	 * @return
+	 */
+	public String getDeviceName(){
+		return physicMod.device.getName();
+	}
+
+
 
 
 

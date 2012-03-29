@@ -217,8 +217,12 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 			linkDebug("Prijal jsem paket pro me (nebo broadcast), nic s nim ale nedelam, protoze jsem switch. ", packet);
 			//TODO: Jedina vec, kdy se budou posilat pakety primo switchi je spanning tree protocol - tady bude jeho implementace.
 		} else {
-			linkDebug("Prijal jsem paket pro me a jdu ho predat vyssi vrstve. ", packet);
-			((TcpIpNetMod) netMod).ipLayer.receivePacket(packet.data, iface);
+			if (packet.getEthertype() == L3Packet.L3PacketType.UNKNOWN || packet.data == null) {
+				linkDebug("Prijal jsem paket pro me ale nepredavam ho vyssi vrstve, protoze je neznamyho typu. ", packet);
+			} else {
+				linkDebug("Prijal jsem paket pro me a jdu ho predat vyssi vrstve. ", packet);
+				((TcpIpNetMod) netMod).ipLayer.receivePacket(packet.data, iface);
+			}
 		}
 	}
 

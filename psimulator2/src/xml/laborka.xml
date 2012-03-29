@@ -108,7 +108,7 @@
         <entry>
             <key>2</key>
             <value idAsString="2">
-                <defaultZoomXPos>910</defaultZoomXPos>
+                <defaultZoomXPos>630</defaultZoomXPos>
                 <defaultZoomYPos>648</defaultZoomYPos>
                 <devSettings>
                     <natConfig/>
@@ -171,8 +171,8 @@
         <entry>
             <key>28</key>
             <value idAsString="28">
-                <defaultZoomXPos>70</defaultZoomXPos>
-                <defaultZoomYPos>158</defaultZoomYPos>
+                <defaultZoomXPos>1190</defaultZoomXPos>
+                <defaultZoomYPos>648</defaultZoomYPos>
                 <devSettings>
                     <natConfig>
                         <accessLists>
@@ -269,7 +269,7 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>BUNDLE_OF_CABLES</key>
+                <key>CABLE_ETHERNET</key>
                 <value>0</value>
             </entry>
             <entry>

@@ -14,8 +14,7 @@ public abstract class TcpUdpPacket extends L4Packet {
 	public final int srcPort;
 	public final int dstPort;
 
-	public TcpUdpPacket(int srcPort, int dstPort, Object data) {
-		super(data);
+	public TcpUdpPacket(int srcPort, int dstPort) {
 		this.srcPort = srcPort;
 		this.dstPort = dstPort;
 	}

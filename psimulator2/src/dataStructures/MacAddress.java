@@ -49,12 +49,14 @@ public class MacAddress {
 	}
 
 	/**
-	 * Creates mac address from array of bytes.
+	 * Creates mac address from array of bytes. The array is copied in constructor.
+	 *
+	 * To pole se v konstruktoru pro jistotu kopiruje, kdyby ho nekde nekdo mezitim menil.
 	 *
 	 * @param representation
 	 */
 	public MacAddress(byte[] representation) {
-		this.representation = representation;
+		this.representation = Arrays.copyOf(representation, 6);
 	}
 
 

@@ -124,7 +124,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			if (delay <= timeout) { // ok, paket dorazil vcas
 				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Dorazil mi nejaky ping.", packet);
 
-				if (p.src.equals(target) && packet.type == IcmpPacket.Type.REPLY && packet.code == IcmpPacket.Code.DEFAULT) {
+				if (p.src.equals(target) && packet.type == IcmpPacket.Type.REPLY && packet.code == IcmpPacket.Code.ZERO) {
 					// ok, dopingnul jsem se do cile -> uz dalsi ICMP request neposilat
 					targetReached = true;
 					targetTTL = t.ttl;
