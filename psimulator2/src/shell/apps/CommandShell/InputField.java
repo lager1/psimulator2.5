@@ -113,7 +113,7 @@ public class InputField extends BasicInputField {
 					break;
 
 				case TerminalIO.ENTER:
-//					m_IO.write(BasicTerminalIO.CRLF);
+					m_IO.write(BasicTerminalIO.CRLF);
 					this.stop();
 					break;
 
