@@ -37,8 +37,10 @@ public class Rnetconn extends AbstractCommand {
 			listAllRealSwitchports();
 		} else if (prikaz.equals("help")) {
 			printHelp();
-		} else if (prikaz.equals("connect")) {
+		} else if (prikaz.equals("tight")) {
 			connectSwitchport();
+		} else if (prikaz.equals("untight")) {
+			disconnectSwitchport();
 		} else{
 			printLine("Unsupported command: "+prikaz);
 			printHelp();
@@ -69,16 +71,25 @@ public class Rnetconn extends AbstractCommand {
 	private void printSwitchportSettings(Device dev, RealSwitchport swport){
 		String vratit = dev.getName()+"    switchport no. "+swport.number+"    ";
 		if(swport.isConnected()){
-			vratit+="connected     "+swport.getIfaceName();
+			vratit+="tighted     "+swport.getIfaceName();
 		} else {
-			vratit +="not connected";
+			vratit +="not tighted";
 		}
 		printLine(vratit);
 	}
 
 
 	private void printHelp() {
-		printLine("Tady se bude vypisovat napoveda.");	// TODO vypsat napovedu
+		printLine("");
+		printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
+		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
+		printLine("SYNOPSIS: rnetconn command options");
+		printLine("  The possible commands are:");
+		printLine("    rnetconn list                                   list all real switchports in virtual network");
+		printLine("    rnetconn tight device switchport_num iface      tight real switchport switchport_num on device to iface");
+		printLine("    rnetconn untight device switchport_num          untight switchport from its device");
+		printLine("    help                                            print this help and exit");
+		printLine("");
 	}
 
 	/**
@@ -121,11 +132,59 @@ public class Rnetconn extends AbstractCommand {
 		// vsechno je v poradku, jde se pripojit:
 		RealSwitchport rport = (RealSwitchport)swport;
 		int navrKod = rport.start(ifaceName);
-		if(navrKod!=0){
+		if(navrKod==1){
 			printLine("An error occured while trying to connect to interface. For more informations see the programms main console.");
+		}if(navrKod==2){
+			printLine("Switchport was tighted! Can not tight tighted switchport!");
 		}else{
-			printLine("Switchport was connected.");
+			printLine("Switchport was tighted.");
 		}
+
+	}
+
+	/**
+	 * Zparsuje a provede prikazy connect, tedy pripojeni rozhrani na realnej switchport.
+	 */
+	private void disconnectSwitchport() {
+
+		// zparsovani:
+		String deviceName = nextWord();
+		int switchportNumber;
+		try{
+			switchportNumber = Integer.parseInt(nextWord());
+		} catch (NumberFormatException ex){
+			printLine("Bad switchport number.");
+			printHelp();
+			return;
+		}
+
+		// hledani pocitace:
+		Device dev = Psimulator.getPsimulator().getDeviceByName(deviceName);
+		if(dev==null){
+			printLine("Device "+deviceName+" doesn't exist in this simulated network.");
+			printHelp();
+			return;
+		}
+
+		//hledani switchportu:
+		Switchport swport = dev.physicalModule.getSwitchports().get(switchportNumber);
+		if(swport==null){
+			printLine("On "+deviceName+" doesn't exist switchport number "+switchportNumber);
+			printHelp();
+			return;
+		} else if(!swport.isReal()){
+			printLine("Switchport "+switchportNumber+" on "+deviceName+" is only simulator switchport, it can not be connected to real interface.");
+			printHelp();
+			return;
+		} else if(!swport.isConnected()){
+			printLine("Switchport "+switchportNumber+" on "+deviceName+" is not tighted, so it can't be untighted.");
+			return;
+		}
+
+		// vsechno je v poradku, jde se pripojit:
+		RealSwitchport rport = (RealSwitchport)swport;
+		rport.stop();
+		printLine("Switchport "+switchportNumber+" on "+deviceName+" has been untighted.");
 
 	}
 

@@ -69,6 +69,11 @@ public class PacketSender implements SmartRunnable, Loggable {
 		worker.wake();
 	}
 
+	public void stop(){
+		pcap = null;
+		worker.die();
+	}
+
 
 
 // privatni metody pro sitovou komunikaci: -----------------------------------------------------

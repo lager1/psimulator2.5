@@ -21,7 +21,7 @@ import org.jnetpcap.protocol.network.Ip4;
 
 /**
  * Class for capturing packets from real network.
- * 
+ *
  * Trida na chytani paketu z realny site. Bezi v uplne vlastim vlakne!
  * @author Tomas Pitrinec
  */
@@ -58,6 +58,8 @@ public class PacketCatcher implements Runnable, Loggable {
 
 		// spustim nekonecnou smycku:
 		pcap.loop(-1, packetHandler, null);
+
+		log(Logger.DEBUG,"Vlakno catcheru konci.",null); // sem se to muze dostat jedine po zavolani pcap.close()
 	}
 
 

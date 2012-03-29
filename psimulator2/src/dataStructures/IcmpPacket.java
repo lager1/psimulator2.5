@@ -144,7 +144,7 @@ public class IcmpPacket extends L4Packet {
 		if (payload != null) {
 			return payload.length;
 		} else {
-			return getSize() - 8; // vraci velikost dat bez hlavicky
+			return payloadSize; // vraci velikost dat bez hlavicky
 		}
 	}
 

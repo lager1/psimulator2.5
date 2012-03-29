@@ -22,12 +22,11 @@ public class RealSwitchport extends Switchport implements Loggable {
 
 	private PacketCatcher catcher;
 	private PacketSender sender;
-	private boolean isStarted = false;
 	private Pcap pcap;
 	private String ifaceName;
 
 
-// konstruktory a startovani (nestartuje se pri konstrukci ale az na vyzadani: --------------------------------------
+// konstruktory, startovani a zastavovani (nestartuje se pri konstrukci ale az na vyzadani): --------------------------
 
 	public RealSwitchport(PhysicMod physicMod, int number, int configID) {
 		super(physicMod, number, configID);
@@ -37,38 +36,52 @@ public class RealSwitchport extends Switchport implements Loggable {
 	/**
 	 * Nastartuje spojeni s realnou siti
 	 * @param ifaceName
-	 * @return 0 - vsechno v poradku, </br> 1 nepodarilo se otevrit spojeni.
+	 * @return 0 - vsechno v poradku </br> 1 nepodarilo se otevrit spojeni </br> 2 uz je propojeno
 	 */
-	public synchronized int start(String ifaceName){
+	public synchronized int start(String ifaceName) {
+		if (isConnected()) {
+			return 2;
+		}
+
 		// ze vseho nejdriv se pokusim otevrit spojeni s realnym pocitacem
 		pcap = otevriSpojeni(ifaceName);
-		if(pcap == null){
-			log(Logger.WARNING, "Nepodarilo se spojeni s realnym pocitacem.", null);
+		if (pcap == null) {
+			log(Logger.WARNING, "Fail. Connection to real computer not succeeded.", null);
 			return 1;
 		} else {
 			this.ifaceName = ifaceName;
-			log(Logger.DEBUG, "Otevrel jsem spojeni na interfacu "+ifaceName, null);
+			log(Logger.IMPORTANT, "Real interface " + ifaceName + " tighted together with switchport n. " + number + ". Connection to real network started.", null);
 		}
 
 		// kdyz je spojeni otevreno, spoustim obsluhu:
 		catcher = new PacketCatcher(pcap, this);
-		isStarted = true;
 		sender = new PacketSender(pcap, this);
 		return 0;
+	}
+
+	public synchronized void stop() {
+		if (isConnected()) {
+			pcap.close();
+			sender.stop();
+			pcap = null;
+			log(Logger.IMPORTANT, "Real switchport untighted.", null);
+		} else {
+			log(Logger.WARNING, "Attempting to disconnect untighted switchport.", null);
+		}
 	}
 
 
 
 
-// metody zdedeny po Switchportu, ktery musej bejt implementovany: ---------------------------------------------------
+// metody pro sitovou komunikaci: ----------------------------------------------------------------------------------
 
 	@Override
 	protected void sendPacket(L2Packet packet) {
-		if(isStarted){
+		if(isConnected()){
 			log(Logger.DEBUG, "Jdu poslat paket.", packet);
 			sender.sendPacket(packet);
 		} else {
-			log(Logger.WARNING, "Doslo k pokusu odeslat paket, napojeni na realnou sit vsak neni funkcni.", null);
+			log(Logger.WARNING, "Attempting to send packet on real network while real interface is not connected.", packet);
 		}
 	}
 
@@ -79,11 +92,36 @@ public class RealSwitchport extends Switchport implements Loggable {
 	}
 
 
+// ostatni verejny metody: -------------------------------------------------------------------------------------------
+
 	@Override
 	public boolean isConnected() {
-		return isStarted;
+		if(pcap==null){
+			return false;
+		}
+		return true;
 	}
 
+	@Override
+	public String getDescription() {
+		return getDeviceName()+": RealSwitchport "+number;
+	}
+
+	@Override
+	public boolean isReal() {
+		return true;
+	}
+
+	/**
+	 * Metodu pouziva rnetconn.
+	 * @return
+	 */
+	public String getIfaceName() {
+		return ifaceName;
+	}
+
+
+// privatni metody: --------------------------------------------------------------------------------------------------
 
 	private Pcap otevriSpojeni(String ifaceName) {
 
@@ -121,35 +159,23 @@ public class RealSwitchport extends Switchport implements Loggable {
 		int snaplen = 64 * 1024;           // Capture all packets, no trucation
 		int flags = Pcap.MODE_PROMISCUOUS; // capture all packets
 		int timeout = 10 * 1000;           // 10 seconds in millis
-		Pcap pcap =
+		Pcap vytvorenyPcap =
 				Pcap.openLive(iface.getName(), snaplen, flags, timeout, errbuf);
 
-		if (pcap == null) {
+		if (vytvorenyPcap == null) {
 			log(Logger.WARNING, "Error while opening device for capture: "+ errbuf.toString(), null);
 		}
 
-		return pcap;
+		return vytvorenyPcap;
 	}
 
 
-// ruzny pomocny a informativni metody: -------------------------------------------------------------------------------
+// ruzny pomocny metody: -------------------------------------------------------------------------------
 
-	@Override
-	public String getDescription() {
-		return getDeviceName()+": RealSwitchport "+number;
-	}
+
 
 	private void log(int logLevel, String msg, Object obj){
 		Logger.log(this, logLevel, LoggingCategory.REAL_NETWORK, msg, obj);
-	}
-
-	@Override
-	public boolean isReal() {
-		return true;
-	}
-
-	public String getIfaceName() {
-		return ifaceName;
 	}
 
 	/**
