@@ -8,18 +8,15 @@ import logging.LoggingCategory;
 import shell.ShellUtils;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
-import telnetd.io.toolkit.ActiveComponent;
 
 /**
  *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
-public class NormalRead extends ActiveComponent {
+public class NormalRead extends BasicInputField {
 
 	boolean stop = false;
 	AbstractCommandParser parser;
-	//StringBuilder sb = new StringBuilder(10);
-	int cursor = 0;
 	CommandShell commandShell;
 
 	public NormalRead(BasicTerminalIO io, String name, AbstractCommandParser parser, CommandShell commandShell) {
@@ -46,15 +43,14 @@ public class NormalRead extends ActiveComponent {
 				continue;
 			}
 
+			if (inputValue == 0) {
+				continue;
+			}
+
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 
 			if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
-				m_IO.write(inputValue);
-				//sb.insert(cursor, (char) inputValue);
-				cursor++;
-				draw();
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
+				handleInput(inputValue);
 				continue; // continue while
 			}
 
@@ -107,7 +103,7 @@ public class NormalRead extends ActiveComponent {
 					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno BACKSPACE, ale nic s ním nedělám. Normal_Read mode");
 					break;
 				case TerminalIO.CTRL_W:
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+W, ale nic s ním nedělám. Normal_Read mode");	// @TODO vyladit smazání slova tak aby odpovídalo konvencím na linuxu
+					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+W, ale nic s ním nedělám. Normal_Read mode");
 					break; // break switch
 
 				case TerminalIO.CTRL_L:	// clean screen

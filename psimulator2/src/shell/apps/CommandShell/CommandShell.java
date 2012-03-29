@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -31,6 +32,7 @@ public class CommandShell extends TerminalApplication {
 	public static final int CISCO_CONFIG_IF_MODE = 3;
 	private ShellRenderer shellRenderer;
 	private NormalRead normalRead;
+	private InputField inputField;
 	public String prompt = "default promt:~# ";
 	private boolean quit = false;
 	private AbstractCommandParser parser;
@@ -88,10 +90,8 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public String readCommand() {
 
-		String ret = null;
 		try {
 			this.getShellRenderer().run();
-			ret = this.getShellRenderer().getValue();
 		} catch (InterruptedException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 		} catch (Exception ex) {
@@ -100,7 +100,30 @@ public class CommandShell extends TerminalApplication {
 			return null;
 		}
 
-		return ret;
+		return this.getShellRenderer().getValue();
+
+	}
+
+	public String readInput() {
+
+		try {
+			this.getInputField().run();
+		} catch (Exception ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost " + ex.toString());
+			this.quit();
+			return null;
+		}
+
+		return this.getInputField().getValue();
+
+	}
+
+	public InputField getInputField() {
+		if (this.inputField == null) {
+			this.inputField = new InputField(terminalIO, "InputField", this.getParser(), this);
+		}
+
+		return this.inputField;
 	}
 
 	public ShellRenderer getShellRenderer() {
@@ -256,12 +279,12 @@ public class CommandShell extends TerminalApplication {
 
 		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
 		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
-		//this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
-		
+	//	this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
+
 		// load history
 		String historyPath = "/home/user/history";
 		//this.loadHistory(this.getShellRenderer().getHistory(), historyPath);
-		
+
 		try {
 
 			while (!quit) {
@@ -274,7 +297,7 @@ public class CommandShell extends TerminalApplication {
 						line = readCommand();
 
 						if (line != null) {
-							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "PRECETL JSEM PRIKAZ:" + line);
+							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "COMMAND READ:" + line);
 							this.getParser().processLine(line, mode);
 						}
 						break;
@@ -285,7 +308,14 @@ public class CommandShell extends TerminalApplication {
 							Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 						}
 						break;
-					case INPUT_FIELD:	// @TODO not handled yet
+					case INPUT_FIELD:	
+						line = readInput();
+						
+						if (line != null) {
+							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "INPUT FIELD READ:" + line);
+							this.getParser().catchUserInput(line);
+						}
+						
 						break;
 
 				}
@@ -312,10 +342,11 @@ public class CommandShell extends TerminalApplication {
 
 	@Override
 	public int quit() {
-		
-		if(this.shellRenderer !=null)
+
+		if (this.shellRenderer != null) {
 			this.shellRenderer.quit();
-		
+		}
+
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;
@@ -339,17 +370,17 @@ public class CommandShell extends TerminalApplication {
 	}
 
 	public void loadHistory(History history, String path) {
-		
+
 		InputStream in = this.device.getFilesystem().getInputStreamToFile(path);
 		Scanner sc = new Scanner(in);
 		List<String> historyList = new LinkedList<>();
-		
-		while(sc.hasNextLine()){
+
+		while (sc.hasNextLine()) {
 			historyList.add(sc.nextLine().trim());
 		}
-		
+
 		history.setActiveHistory(historyList);
-		
+
 		try {
 			in.close();
 		} catch (IOException ex) {

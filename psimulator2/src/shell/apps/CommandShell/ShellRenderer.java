@@ -15,18 +15,15 @@ import logging.LoggingCategory;
 import shell.ShellUtils;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
-import telnetd.io.toolkit.ActiveComponent;
 
 /**
  *
  * @author Martin Lukáš
  */
-public class ShellRenderer extends ActiveComponent {
+public class ShellRenderer extends BasicInputField {
 
 	private CommandShell commandShell;
 	// private BasicTerminalIO m_IO;   // no need for this. Parent class Component has same protected member
-	private int cursor = 0;
-	private StringBuilder sb = new StringBuilder(50); //buffer načítaného řádku, čtecí buffer
 	private History history = new History();
 	/**
 	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
@@ -125,12 +122,7 @@ public class ShellRenderer extends ActiveComponent {
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 
 				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
-					m_IO.write(inputValue);
-					sb.insert(cursor, (char) inputValue);
-					cursor++;
-					draw();
-					Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
+					handleInput(inputValue);
 					continue; // continue while
 				}
 
@@ -184,21 +176,12 @@ public class ShellRenderer extends ActiveComponent {
 					case TerminalIO.DEL:
 					case TerminalIO.DELETE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno DEL/DELETE");
-						if (cursor != sb.length()) {
-							sb.deleteCharAt(cursor);
-							draw();
-							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "DELETE upravil pozici kurzoru na: " + cursor);
-						}
+						handleDelete();
 						break;
 
 					case TerminalIO.BACKSPACE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno BACKSPACE");
-						if (cursor != 0) {
-							sb.deleteCharAt(cursor - 1);
-							moveCursorLeft(1);
-							draw();
-							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Backspace upravil pozici kurzoru na: " + cursor);
-						}
+						handleBackSpace();
 						break;
 					case TerminalIO.CTRL_W:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+W");	// @TODO vyladit smazání slova tak aby odpovídalo konvencím na linuxu
@@ -329,60 +312,6 @@ public class ShellRenderer extends ActiveComponent {
 		m_IO.moveRight(sb.length() + this.commandShell.prompt.length());
 		this.cursor = sb.length();
 
-	}
-
-	/**
-	 * funkce obstarávající posun kurzoru vlevo. Posouvá "blikající" kurzor, ale i "neviditelný" kurzor značící pracovní
-	 * místo v čtecím bufferu
-	 */
-	private void moveCursorLeft(int times) {
-
-		for (int i = 0; i < times; i++) {
-			if (cursor == 0) {
-				return;
-			} else {
-				try {
-					m_IO.moveLeft(1);
-					cursor--;
-				} catch (IOException ex) {
-					Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
-
-				}
-
-
-			}
-			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "VLEVO, pozice: " + cursor);
-
-		}
-
-	}
-
-	/**
-	 * funkce obstarávající posun kurzoru vpravo. Posouvá "blikající" kurzor, ale i "neviditelný" kurzor značící
-	 * pracovní místo v čtecím bufferu
-	 */
-	private void moveCursorRight(int times) {
-
-		for (int i = 0; i < times; i++) {
-
-
-			if (cursor >= this.sb.length()) {
-				return;
-			} else {
-				try {
-					m_IO.moveRight(1);
-					cursor++;
-				} catch (IOException ex) {
-					Logger.log(Logger.WARNING, LoggingCategory.TELNET, "VPRAVO, pozice: " + cursor);
-
-				}
-
-
-			}
-			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "VPRAVO, pozice: " + cursor);
-
-
-		}
 	}
 
 	/**
