@@ -5,6 +5,7 @@
 package networkModule.L3;
 
 import dataStructures.ArpPacket;
+import dataStructures.DropItem;
 import dataStructures.IpPacket;
 import dataStructures.L4Packet;
 import dataStructures.ipAddresses.IPwithNetmask;
@@ -65,6 +66,7 @@ public class CiscoIPLayer extends IPLayer {
 
 			default:
 				Logger.log(this, Logger.INFO, LoggingCategory.ARP, "Dropping packet: Unknown ARP type packet received.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
 		}
 	}
 
@@ -80,6 +82,7 @@ public class CiscoIPLayer extends IPLayer {
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: unroutable.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
 			return;
 		}
 
@@ -119,6 +122,7 @@ public class CiscoIPLayer extends IPLayer {
 		if (packet.ttl == 1) {
 			// posli TTL expired a zaloguj zahozeni paketu
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: TTL expired.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", packet);
 			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
@@ -127,6 +131,7 @@ public class CiscoIPLayer extends IPLayer {
 		Record record = routingTable.findRoute(packet.dst);
 		if (record == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for "+packet.dst+". Will send Destination Host Unreachable.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
 			getIcmpHandler().sendHostUnreachable(packet.src, packet); // cisco na skolnich routerech odesi DHU a nebo DNU jako linux
 			return;
 		}

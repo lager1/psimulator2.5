@@ -1,5 +1,6 @@
 package logging.networkEvents;
 
+import dataStructures.DropItem;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import logging.Loggable;
@@ -8,6 +9,7 @@ import logging.LoggerListener;
 import logging.LoggingCategory;
 import physicalModule.Cable.CableItem;
 import shared.NetworkObject;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 
 /**
@@ -93,26 +95,41 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
 		if(object instanceof NetworkObject) // if object is NetworkObject => send directly
 			return (NetworkObject) object;
 
-		if (!(object instanceof CableItem)) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.EVENTS_SERVER, "CableItem expected! Found: ", object);
-			return null; // TODO: nekde by se melo resit, ze sem nekdo posle bordel, tak aby to nespadlo, ale jen nic neposlalo.
+		if (object instanceof CableItem) {
+
+			CableItem m = (CableItem) object;
+
+			SimulatorEvent event = new SimulatorEvent();
+			event.setCableId(m.cabelID);
+			event.setSourcceId(m.sourceID);
+			event.setDestId(m.destinationID);
+			event.setTimeStamp(System.currentTimeMillis());
+
+			event.setDetailsText(m.packet.getEventDesc());
+			event.setPacketType(m.packet.getPacketEventType());
+
+			return event;
 		}
-		CableItem m = (CableItem) object;
 
-		SimulatorEvent event = new SimulatorEvent();
-		event.setCableId(m.cabelID);
-		event.setSourcceId(m.sourceID);
-		event.setDestId(m.destinationID);
-		event.setTimeStamp(System.currentTimeMillis());
+		if (object instanceof DropItem) {
+			DropItem m = (DropItem) object;
+			SimulatorEvent event = new SimulatorEvent(); // TODO: Martinove si to tu musi poresit, zda si budou posilat stavajici SimulatorEvent a nebo si pro tento pripad zalozi neco jineho..
 
-		event.setDetailsText(m.packet.getEventDesc());
-		event.setPacketType(m.packet.getPacketEventType());
-		return event;
+			event.setSourcceId(m.deviceID);
+			event.setDetailsText(m.toString());
+			event.setPacketType(m.getPacketType());
+
+			return event;
+		}
+
+		Logger.log(this, Logger.WARNING, LoggingCategory.EVENTS_SERVER, "CableItem or DropItem expected! Found: ", object);
+		return null; // TODO: nekde by se melo resit, ze sem nekdo posle bordel, tak aby to nespadlo, ale jen nic neposlalo.
+
 	}
 
 	@Override
 	public void listen(Loggable caller, int logLevel, LoggingCategory category, String message, Object object) {
-		if (category == LoggingCategory.CABEL_SENDING) {
+		if (category == LoggingCategory.CABEL_SENDING || category == LoggingCategory.PACKET_DROP) {
 			this.addPacket(object); // add packet object into translation queue
 		}
 	}

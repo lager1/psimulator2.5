@@ -4,6 +4,7 @@
 
 package networkModule.L3.nat;
 
+import dataStructures.DropItem;
 import dataStructures.IpPacket;
 import dataStructures.L4Packet;
 import dataStructures.L4Packet.L4PacketType;
@@ -211,6 +212,7 @@ public class NatTable implements Loggable {
         Pool pool = lPool.getPool(acc);
         if (pool == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: source address is in access-lists, but no pool is assigned.", null);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, ipLayer.getNetMod().getDevice().configID));
 			// poslat DHU
 			ipLayer.getIcmpHandler().sendHostUnreachable(packet.src, null);
             return null; // 1
@@ -219,6 +221,7 @@ public class NatTable implements Loggable {
         IpAddress adr = pool.getIP(true);
         if (adr == null) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "No NAT translation + sending DHU: no free IP is available for translation.", null);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, ipLayer.getNetMod().getDevice().configID));
 			ipLayer.getIcmpHandler().sendHostUnreachable(packet.src, null);
             return null; // 2
         }

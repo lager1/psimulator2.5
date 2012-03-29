@@ -3,6 +3,7 @@
  */
 package physicalModule;
 
+import dataStructures.DropItem;
 import dataStructures.IpPacket;
 import dataStructures.L2Packet;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 		int packetSize = packet.getSize();
 		if (size + packetSize > capacity) { // run out of capacity
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: Queue is full.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, physicMod.device.configID));
 			dropped++;
 
 			if (firstTime) {
@@ -92,6 +94,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 
 		} else if (cabel == null) { // no cabel attached
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: No cable is attached.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, physicMod.device.configID));
 			dropped++;
 		} else {
 			size += packetSize;
@@ -154,6 +157,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 			icmpHandler.sendSourceQuench(p.src, p);
 		} else {
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: queue is full - packet is not IP so no source-quench is sent.", packet.toStringWithData());
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, physicMod.device.configID));
 		}
 	}
 

@@ -5,6 +5,7 @@
 
 package networkModule.L4;
 
+import dataStructures.DropItem;
 import dataStructures.IcmpPacket;
 import dataStructures.IcmpPacket.Code;
 import dataStructures.IcmpPacket.Type;
@@ -49,6 +50,7 @@ public class IcmpHandler implements Loggable {
 				break;
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: unknown ICMP packet type.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 		}
 	}
 

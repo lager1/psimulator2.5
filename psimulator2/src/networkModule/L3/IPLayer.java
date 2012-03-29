@@ -193,6 +193,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 		for (StoreItem o : old) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: ARP reply was not received. Will send Destination Unreachable.", o.packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(o.packet, getNetMod().getDevice().configID));
 			getIcmpHandler().sendHostUnreachable(o.packet.src, o.packet);
 		}
 

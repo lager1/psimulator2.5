@@ -4,6 +4,7 @@
 package networkModule.L4;
 
 import applications.Application;
+import dataStructures.DropItem;
 import dataStructures.IpPacket;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class TransportLayer implements Loggable {
 	public void receivePacket(IpPacket packet) {
 		if (packet.data == null) {
 			Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: Received packet with no L4 data.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 			return;
 		}
 
@@ -63,13 +65,16 @@ public class TransportLayer implements Loggable {
 
 			case TCP:
 				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet: TCP handler is not yet implemented.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 				break;
 
 			case UDP:
 				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet: UDP handler is not yet implemented.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 				break;
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: Received packet with unknown L4 type.", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 		}
 	}
 
@@ -85,6 +90,7 @@ public class TransportLayer implements Loggable {
 			app.receivePacket(packet);
 		} else {
 			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Dropping packet: There is now app listening on this port: "+port+ ", sending port unreachable to: "+packet.src, packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
 //			icmphandler.sendPortUnreachable(packet.src, packet);
 		}
 	}

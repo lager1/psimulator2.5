@@ -85,9 +85,11 @@ public class Loader implements Loggable {
 			updateRoutingTableForCisco();
 
 		} catch (Exception ex) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatna konfigurace, byla hozena vyjimka: ", ex);
-			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Spatny konfiguracni soubor. Koncim. " + ex.toString(), null);
+			Logger.log(this, Logger.INFO, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "XML configuration file is corrupted: ", ex);
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "XML configuration file is corrupted. Exiting. " + ex.toString(), null);
 		}
+
+		Logger.log(this, Logger.IMPORTANT, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Configuration succesfully loaded from: "+Psimulator.getPsimulator().lastConfigFile, null);
 	}
 
 	/**

@@ -5,6 +5,7 @@
 package applications;
 
 import commands.ApplicationNotifiable;
+import dataStructures.DropItem;
 import dataStructures.IcmpPacket;
 import dataStructures.IpPacket;
 import dataStructures.ipAddresses.IpAddress;
@@ -95,6 +96,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			// zkouseni, jestli je ten paket spravnej:
 			if (! (p.data instanceof IcmpPacket)) {
 				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication recieved non ICMP packet", p);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(p, device.configID));
 				continue;
 			}
 
@@ -106,6 +108,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 			if (sendTime == null) {
 				Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication doesn't expect such a PING reply "
 						+ "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(p, device.configID));
 				continue;
 			}
 
