@@ -9,7 +9,7 @@ import logging.LoggerListener;
 import logging.LoggingCategory;
 import physicalModule.Cable.CableItem;
 import shared.NetworkObject;
-import shared.SimulatorEvents.SerializedComponents.PacketType;
+import shared.SimulatorEvents.SerializedComponents.EventType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 
 /**
@@ -105,6 +105,7 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
 			event.setDestId(m.destinationID);
 			event.setTimeStamp(System.currentTimeMillis());
 
+			event.setEventType(EventType.SUCCESSFULLY_TRANSMITTED);
 			event.setDetailsText(m.packet.getEventDesc());
 			event.setPacketType(m.packet.getPacketEventType());
 
@@ -113,11 +114,17 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
 
 		if (object instanceof DropItem) {
 			DropItem m = (DropItem) object;
-			SimulatorEvent event = new SimulatorEvent(); // TODO: Martinove si to tu musi poresit, zda si budou posilat stavajici SimulatorEvent a nebo si pro tento pripad zalozi neco jineho..
+			SimulatorEvent event = new SimulatorEvent();
 
 			event.setSourcceId(m.deviceID);
 			event.setDetailsText(m.toString());
 			event.setPacketType(m.getPacketType());
+
+			event.setEventType(EventType.LOST_IN_DEVICE);
+			event.setTimeStamp(System.currentTimeMillis());
+
+			event.setCableId(-1);
+			event.setDestId(-1);
 
 			return event;
 		}

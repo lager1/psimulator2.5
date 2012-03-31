@@ -18,7 +18,7 @@ import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
 import shared.Serializer.SaveLoadException;
-import utils.*;
+import utils.Alarm;
 
 /**
  * Instance of Psimulator.
@@ -97,7 +97,7 @@ public class Psimulator implements Loggable{
 // staticky veci:
 
 	public static String getNameOfProgram(){
-		return "psimulator";
+		return "psimulator2";
 	}
 
 	private static volatile Psimulator instance;

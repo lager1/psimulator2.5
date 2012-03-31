@@ -27,9 +27,7 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 
 		if (nextWord.isEmpty()) {
 			parser.setRunningCommand(this,true);
-//			System.out.println("Nastaven INPUT_FIELD");
-			print("Configuring from terminal, memory, or network [terminal]? "); // TODO: otestovat radnou funkcnost az to bude mit Martin L hotovy pres ty ENUMy
-//			parser.getShell().setShellMode(ShellMode.INPUT_FIELD);
+			print("Configuring from terminal, memory, or network [terminal]? ");
 			return;
 		}
 
@@ -48,21 +46,21 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 	}
 
 	@Override
-	public void catchUserInput(String nextWord) {
+	public void catchUserInput(String nextWord) { // TODO: prosetrit spravnou funknost
 		parser.deleteRunningCommand();
 		if ("terminal".startsWith(nextWord) || nextWord.isEmpty()) {
 			// zmen rovnou do CONFIGURE_MODE
-			parser.getShell().setShellMode(ShellMode.COMMAND_READ);
 			parser.changeMode(CISCO_CONFIG_MODE);
 			return;
 		}
 
 		if ("memory".startsWith(nextWord) || "network".startsWith(nextWord) || "?".startsWith(nextWord)) {
 			printLine("?Must be \"terminal\"");
-			parser.printService("only supported keyword \"terminal\"");
+			printService("only supported keyword \"terminal\"");
 			return;
 		}
 
+		printLine("chyba: "+nextWord);
 		parser.invalidInputDetected();
 	}
 

@@ -147,6 +147,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type packet: " + packet.getType()+", dropping packet: ", packet);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
+
 		}
 	}
 

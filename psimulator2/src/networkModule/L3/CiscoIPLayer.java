@@ -122,7 +122,7 @@ public class CiscoIPLayer extends IPLayer {
 		if (packet.ttl == 1) {
 			// posli TTL expired a zaloguj zahozeni paketu
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: TTL expired.", packet);
-			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
 			getIcmpHandler().sendTimeToLiveExceeded(packet.src, packet);
 			return;
 		}
