@@ -59,12 +59,10 @@ public class ShellRenderer extends BasicInputField {
 	 */
 	public void run() throws Exception {
 
-		this.sb.setLength(0); // clear string builder
+		this.clearBuffer();
 		this.returnValue = true;
 		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
 		List<String> nalezenePrikazy = new LinkedList<String>(); // seznam nalezenych příkazů po zmáčknutí tabu
-		this.cursor = 0;
-
 
 
 		while (!quit) {

@@ -18,6 +18,11 @@ public abstract class BasicInputField extends ActiveComponent {
 	public BasicInputField(BasicTerminalIO io, String name) {
 		super(io, name);
 	}
+	
+	protected void clearBuffer(){
+		this.sb.setLength(0); // clear string builder
+		this.cursor = 0;
+	}
 
 	/**
 	 * funkce obstarávající posun kurzoru vlevo. Posouvá "blikající" kurzor, ale i "neviditelný" kurzor značící pracovní

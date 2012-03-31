@@ -29,7 +29,7 @@ public class InputField extends BasicInputField {
 
 	@Override
 	public void run() throws Exception {
-		this.sb.setLength(0); // clear string builder
+		this.clearBuffer();
 		this.stop = false;
 		this.returnValue = true;
 		
