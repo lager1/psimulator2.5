@@ -40,8 +40,6 @@ import telnetd.io.toolkit.*;
 import telnetd.net.Connection;
 import telnetd.net.ConnectionData;
 import telnetd.net.ConnectionEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 
@@ -58,7 +56,7 @@ import java.io.IOException;
 public class DummyShell
     implements Shell {
 
-  private static Log log = LogFactory.getLog(DummyShell.class);
+
   private Connection m_Connection;
   private BasicTerminalIO m_IO;
   private Editfield m_EF;
@@ -88,7 +86,7 @@ public class DummyShell
       while (!done) {
         int i = m_IO.read();
         if (i == -1 || i == -2) {
-          log.debug("Input(Code):" + i);
+//          log.debug("Input(Code):" + i);
           done = true;
         }
         if (i == 10) {
@@ -221,7 +219,7 @@ public class DummyShell
           ef2.setPasswordField(true);
           ef2.run();
 
-          log.debug("Your secret password was:" + ef2.getValue());
+//          log.debug("Your secret password was:" + ef2.getValue());
           m_IO.flush();
 
           //clear the screen and start from zero
@@ -247,7 +245,7 @@ public class DummyShell
           Editarea ea = new Editarea(m_IO, "area", m_IO.getRows() - 2, 100);
           m_IO.flush();
           ea.run();
-          log.debug(ea.getValue());
+//          log.debug(ea.getValue());
 
           m_IO.eraseScreen();
           m_IO.homeCursor();
@@ -257,8 +255,8 @@ public class DummyShell
 
         }
         //the next line is for debug reasons
-        else
-          log.debug("Input(Code):" + i);
+//        else
+//          log.debug("Input(Code):" + i);
       }
       m_IO.homeCursor();
       m_IO.eraseScreen();
@@ -266,7 +264,7 @@ public class DummyShell
       m_IO.flush();
 
     } catch (Exception ex) {
-      log.error("run()", ex);
+//      log.error("run()", ex);
     }
   }//run
 
@@ -278,7 +276,7 @@ public class DummyShell
       //close connection
       m_Connection.close();
     } catch (Exception ex) {
-      log.error("connectionTimedOut()", ex);
+//      log.error("connectionTimedOut()", ex);
     }
   }//connectionTimedOut
 
@@ -287,7 +285,7 @@ public class DummyShell
       m_IO.write("CONNECTION_IDLE");
       m_IO.flush();
     } catch (IOException e) {
-      log.error("connectionIdle()", e);
+//      log.error("connectionIdle()", e);
     }
 
   }//connectionIdle
@@ -297,7 +295,7 @@ public class DummyShell
       m_IO.write("CONNECTION_LOGOUTREQUEST");
       m_IO.flush();
     } catch (Exception ex) {
-      log.error("connectionLogoutRequest()", ex);
+//      log.error("connectionLogoutRequest()", ex);
     }
   }//connectionLogout
   
@@ -306,7 +304,7 @@ public class DummyShell
       m_IO.write("CONNECTION_BREAK");
       m_IO.flush();
     } catch (Exception ex) {
-      log.error("connectionSentBreak()", ex);
+//      log.error("connectionSentBreak()", ex);
     }
   }//connectionSentBreak
 

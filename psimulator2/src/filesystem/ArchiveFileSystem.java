@@ -1,18 +1,17 @@
 package filesystem;
 
-import de.schlichtherle.truezip.file.TArchiveDetector;
-import de.schlichtherle.truezip.file.TFile;
-import de.schlichtherle.truezip.file.TFileInputStream;
-import de.schlichtherle.truezip.file.TFileOutputStream;
+import de.schlichtherle.truezip.file.*;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
+import de.schlichtherle.truezip.nio.file.TPath;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 import filesystem.dataStructures.Node;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import logging.Logger;
-import logging.LoggingCategory;
+import java.nio.file.Files;
 
 /**
  *
@@ -20,120 +19,142 @@ import logging.LoggingCategory;
  */
 public class ArchiveFileSystem implements FileSystem {
 
-	String pathToFileSystem;
-	TFile archive;
-	
-	public static String fileSystemExtensions = "fsm";
+    String pathToFileSystem;
+    TPath archive;
 
-	public ArchiveFileSystem(String pathToFileSystem) {
+    public static String getFileSystemExtension() {
+        return "fsm";
+    }
 
-		this.pathToFileSystem = pathToFileSystem;
-		TFile.setDefaultArchiveDetector(
-				new TArchiveDetector(
-				fileSystemExtensions, // file system file extension
-				new JarDriver(IOPoolLocator.SINGLETON)));
+    public ArchiveFileSystem(String pathToFileSystem) {
 
-		archive = new TFile(pathToFileSystem);
+        this.pathToFileSystem = pathToFileSystem;
+        TConfig config = TConfig.get();
+        config.setArchiveDetector(new TArchiveDetector(
+                getFileSystemExtension(), // file system file extension
+                new JarDriver(IOPoolLocator.SINGLETON)));
 
-		if (!archive.exists()) {
-			archive.mkdirs();
-		}
+        TConfig.push();
 
-	}
+        archive = new TPath(pathToFileSystem);
 
-	@Override
-	public boolean rm_r(String path) {
-		TFile file = new TFile(path);
-		
-		if(!file.exists())
-			return false;
-		
-		try {
-			file.rm_r();
-		} catch (IOException ex) {
-			return false;
-		}
-		
-		return true;
-	}
+        TFile archiveFile = archive.toFile();
 
-	@Override
-	public boolean isFile(String path) {
-		TFile file = new TFile(path);
-		
-		if(!file.exists())
-			return false;
-		
-		return file.isFile();
-	}
+        if (!archiveFile.exists() && !archiveFile.mkdirs()) // if archive doesnt exist and cannot create empty one
+        {
+            System.err.println("mkdir failed");
+        }
 
-	@Override
-	public boolean isDir(String path) {
-		TFile file = new TFile(path);
-		
-		if(!file.exists())
-			return false;
-		
-		return file.isDirectory();
-	}
 
-	@Override
-	public boolean exists(String path) {
-		return new TFile(path).exists();
-	}
+        if (!archiveFile.isArchive() || !archiveFile.isDirectory()) {
+            System.err.println("file: " + pathToFileSystem + " is not compatible archive ");
+        }
 
-	
-	@Override
-	public OutputStream getOutputStreamToFile(String path) {
+    }
 
-		TFile file = new TFile(archive, path);
-		OutputStream ret = null;
-		try {
+    @Override
+    public boolean rm_r(String path) {
+        TFile file = new TFile(path);
 
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+        if (!file.exists()) {
+            return false;
+        }
 
-			ret = new TFileOutputStream(file);
+        try {
+            file.rm_r();
+        } catch (IOException ex) {
+            return false;
+        }
 
-		} catch (IOException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "IOException occured when creating outputstream");
-		}
+        return true;
+    }
 
-		return ret;
+    @Override
+    public boolean isFile(String path) {
+        TFile file = new TFile(path);
 
-	}
+        if (!file.exists()) {
+            return false;
+        }
 
-	@Override
-	public InputStream getInputStreamToFile(String path) {
-		TFile file = new TFile(archive, path);
-		InputStream ret = null;
-		try {
+        return file.isFile();
+    }
 
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+    @Override
+    public boolean isDir(String path) {
+        TFile file = new TFile(path);
 
-			ret = new TFileInputStream(file);
+        if (!file.exists()) {
+            return false;
+        }
 
-		} catch (IOException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "IOException occured when creating inputstream");
-		}
+        return file.isDirectory();
+    }
 
-		return ret;		
-	}
+    @Override
+    public boolean exists(String path) {
+        
+        return new TFile(pathToFileSystem+path).exists();
+    }
 
-	@Override
-	public void umount() {
-		try {
-			TFile.umount(archive);
-		} catch (FsSyncException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "FsSyncException occured when umounting filesystem");
-		}
-	}
+    @Override
+    public void umount() {
+        try {
+            TVFS.umount(archive.toFile());
+        } catch (FsSyncException ex) {
+            System.err.println("FsSyncException occured when umounting filesystem");
+            //Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "FsSyncException occured when umounting filesystem");
+        }
+    }
 
-	@Override
-	public Node[] listDir(String path) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    @Override
+    public Node[] listDir(String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int runInputFileJob(String path, InputFileJob job) {
+
+        InputStream input = null;
+
+        try {
+            input = Files.newInputStream(archive.resolve(path));
+            job.workOnFile(input);
+            return 0;
+        } catch (Exception ex) {
+            System.err.println(ex);
+        } finally {
+
+            try {
+                input.close();
+            } catch (Exception ex) {
+            }
+        }
+
+        return -1;
+
+    }
+
+    @Override
+    public int runOutputFileJob(String path, OutputFileJob job) {
+        OutputStream output = null;
+
+        try {
+            TPath pat = new TPath(this.pathToFileSystem, path);
+            
+            output = Files.newOutputStream(pat);
+            job.workOnFile(output);
+            return 0;
+        } catch (Exception ex) {
+            System.err.println(ex);
+        } finally {
+
+            try {
+                output.close();
+            } catch (Exception ex) {
+            }
+        }
+
+        return -1;
+    }
 }

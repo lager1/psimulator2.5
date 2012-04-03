@@ -1,9 +1,8 @@
 package filesystem;
 
 import commands.AbstractCommandParser;
-import java.util.Scanner;
-import logging.Logger;
-import logging.LoggingCategory;
+import filesystem.dataStructures.jobs.InputFileJob;
+import java.io.InputStream;
 
 /**
  *
@@ -12,45 +11,23 @@ import logging.LoggingCategory;
 public class ReplayScriptConfig {
 
 	FileSystem fileSystem;
-	/**
-	 * object used for replaying command from file
-	 * @param fileSystem  filesystem, where files are searched
-	 */
+
 	public ReplayScriptConfig(FileSystem fileSystem) {
 		this.fileSystem = fileSystem;
 	}
 
-	/**
-	 * method for batch commands run  from file
-	 * @param fileName file to be replayed
-	 * @param parser parser which process command
-	 */
-	public void replay(String fileName, AbstractCommandParser parser) {
+	public int replay(String fileName, AbstractCommandParser parser){
+	
+		fileSystem.runInputFileJob(fileName, new InputFileJob() {
 
-		Scanner in = new Scanner(fileSystem.getInputStreamToFile(fileName));
-
-		while (in.hasNextLine()) {
-
-			String command = in.nextLine();
-
-			if (command.startsWith("#")) // ignore commentary
-			{
-				continue;
+			@Override
+			public int workOnFile(InputStream input) throws Exception {
+				throw new UnsupportedOperationException("Not supported yet.");
 			}
-
-			int cmntPosition = command.indexOf("#");
-
-			command = command.substring(0,cmntPosition).trim();
-
-			if (parser != null) {
-				parser.processLine(command, parser.getShell().getMode());  // @TODO opravdu 0, zeptat se asi Standy?
-			} else {
-				Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\""+command + "\"" );
-			}
-		}
-
-
-		in.close();  // dont forget to close file
-
+		});
+		
+	
+		return 0;
 	}
+	
 }

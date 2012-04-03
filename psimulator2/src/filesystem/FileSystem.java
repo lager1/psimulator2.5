@@ -5,8 +5,8 @@
 package filesystem;
 
 import filesystem.dataStructures.Node;
-import java.io.InputStream;
-import java.io.OutputStream;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
 
 /**
  *
@@ -45,18 +45,9 @@ public interface FileSystem {
 	 */
 	public Node[] listDir(String path);
 	
-	/**
-	 * 
-	 * @param path path to the file
-	 * @return OutputStream, do not forget to close it!!!
-	 */
-	public OutputStream getOutputStreamToFile(String path);
-	/**
-	 * 
-	 * @param path path to the file
-	 * @return InputStream, do not forget to close it!!!
-	 */
-	public InputStream getInputStreamToFile(String path);
+        public int runInputFileJob(String path, InputFileJob job);
+        
+        public int runOutputFileJob(String path, OutputFileJob job);
 	
 	public void umount();
 	

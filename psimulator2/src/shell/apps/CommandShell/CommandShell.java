@@ -352,40 +352,40 @@ public class CommandShell extends TerminalApplication {
 		return 0;
 	}
 
-	public void saveHistory(History history, String path) {
-		OutputStream out = this.device.getFilesystem().getOutputStreamToFile(path);
-		PrintWriter historyWriter = new PrintWriter(out);
+//	public void saveHistory(History history, String path) {
+//		OutputStream out = this.device.getFilesystem().getOutputStreamToFile(path);
+//		PrintWriter historyWriter = new PrintWriter(out);
+//
+//		List<String> historyList = history.getActiveHistory();
+//
+//		for (String command : historyList) {
+//			historyWriter.println(command);
+//		}
+//		try {
+//			out.close();
+//		} catch (IOException ex) {
+//			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when saving history");
+//		}
+//
+//	}
 
-		List<String> historyList = history.getActiveHistory();
-
-		for (String command : historyList) {
-			historyWriter.println(command);
-		}
-		try {
-			out.close();
-		} catch (IOException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when saving history");
-		}
-
-	}
-
-	public void loadHistory(History history, String path) {
-
-		InputStream in = this.device.getFilesystem().getInputStreamToFile(path);
-		Scanner sc = new Scanner(in);
-		List<String> historyList = new LinkedList<>();
-
-		while (sc.hasNextLine()) {
-			historyList.add(sc.nextLine().trim());
-		}
-
-		history.setActiveHistory(historyList);
-
-		try {
-			in.close();
-		} catch (IOException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when loading history");
-		}
-
-	}
+//	public void loadHistory(History history, String path) {
+//
+//		InputStream in = this.device.getFilesystem().getInputStreamToFile(path);
+//		Scanner sc = new Scanner(in);
+//		List<String> historyList = new LinkedList<>();
+//
+//		while (sc.hasNextLine()) {
+//			historyList.add(sc.nextLine().trim());
+//		}
+//
+//		history.setActiveHistory(historyList);
+//
+//		try {
+//			in.close();
+//		} catch (IOException ex) {
+//			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when loading history");
+//		}
+//
+//	}
 }
