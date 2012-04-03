@@ -21,6 +21,9 @@ public class ReplayScriptConfig {
 
 	public int replay(String fileName, final AbstractCommandParser parser) {
 
+		if(fileSystem == null)
+			return -1;
+		
 		fileSystem.runInputFileJob(fileName, new InputFileJob() {
 
 			@Override
@@ -47,16 +50,11 @@ public class ReplayScriptConfig {
 						Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\"" + command + "\"");
 					}
 
-
 				}
 
 				return 0;
 			}
 		});
-
-
-
-
 
 		return 0;
 	}
