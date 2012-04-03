@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  *
@@ -54,7 +56,7 @@ public class ArchiveFileSystem implements FileSystem {
 
     @Override
     public boolean rm_r(String path) {
-        TFile file = new TFile(path);
+        TFile file = new TFile(pathToFileSystem+path);
 
         if (!file.exists()) {
             return false;
@@ -71,7 +73,7 @@ public class ArchiveFileSystem implements FileSystem {
 
     @Override
     public boolean isFile(String path) {
-        TFile file = new TFile(path);
+        TFile file = new TFile(pathToFileSystem+path);
 
         if (!file.exists()) {
             return false;
@@ -82,7 +84,7 @@ public class ArchiveFileSystem implements FileSystem {
 
     @Override
     public boolean isDir(String path) {
-        TFile file = new TFile(path);
+        TFile file = new TFile(pathToFileSystem+path);
 
         if (!file.exists()) {
             return false;
@@ -103,7 +105,7 @@ public class ArchiveFileSystem implements FileSystem {
             TVFS.umount(archive.toFile());
         } catch (FsSyncException ex) {
             System.err.println("FsSyncException occured when umounting filesystem");
-            //Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "FsSyncException occured when umounting filesystem");
+            Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "FsSyncException occured when umounting filesystem");
         }
     }
 
@@ -122,7 +124,7 @@ public class ArchiveFileSystem implements FileSystem {
             job.workOnFile(input);
             return 0;
         } catch (Exception ex) {
-            System.err.println(ex);
+            Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Exception occured when running inputFileJob: " + ex.toString());
         } finally {
 
             try {
@@ -146,7 +148,7 @@ public class ArchiveFileSystem implements FileSystem {
             job.workOnFile(output);
             return 0;
         } catch (Exception ex) {
-            System.err.println(ex);
+            Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Exception occured when running outputFileJob: " + ex.toString());
         } finally {
 
             try {

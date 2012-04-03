@@ -12,7 +12,12 @@ import java.io.InputStream;
  */
 public interface InputFileJob {
     
-    
+    /**
+	 * 
+	 * @param input autoclosed inputstream, no need to close it
+	 * @return
+	 * @throws Exception 
+	 */
     public int workOnFile(InputStream input) throws Exception;
     
 }

@@ -3,6 +3,9 @@ package filesystem;
 import commands.AbstractCommandParser;
 import filesystem.dataStructures.jobs.InputFileJob;
 import java.io.InputStream;
+import java.util.Scanner;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
  *
@@ -16,18 +19,45 @@ public class ReplayScriptConfig {
 		this.fileSystem = fileSystem;
 	}
 
-	public int replay(String fileName, AbstractCommandParser parser){
-	
+	public int replay(String fileName, final AbstractCommandParser parser) {
+
 		fileSystem.runInputFileJob(fileName, new InputFileJob() {
 
 			@Override
 			public int workOnFile(InputStream input) throws Exception {
-				throw new UnsupportedOperationException("Not supported yet.");
+
+				Scanner in = new Scanner(input);
+
+				while (in.hasNextLine()) {
+
+					String command = in.nextLine();
+
+					if (command.startsWith("#")) // ignore commentary
+					{
+						continue;
+					}
+
+					int cmntPosition = command.indexOf("#");
+
+					command = command.substring(0, cmntPosition).trim();
+
+					if (parser != null) {
+						parser.processLine(command, parser.getShell().getMode());  
+					} else {
+						Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\"" + command + "\"");
+					}
+
+
+				}
+
+				return 0;
 			}
 		});
-		
-	
+
+
+
+
+
 		return 0;
 	}
-	
 }

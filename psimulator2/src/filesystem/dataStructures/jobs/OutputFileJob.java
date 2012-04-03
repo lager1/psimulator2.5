@@ -12,6 +12,12 @@ import java.io.OutputStream;
  */
 public interface OutputFileJob {
     
+	/**
+	 * 
+	 * @param output autoclosed outputstream
+	 * @return
+	 * @throws Exception 
+	 */
         public int workOnFile(OutputStream output) throws Exception;
     
 }
