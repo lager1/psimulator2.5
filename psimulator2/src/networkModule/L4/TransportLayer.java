@@ -99,12 +99,20 @@ public class TransportLayer implements Loggable {
 	 * Register application to listen and accept packets.
 	 *
 	 * @param app to register
-	 * @param port listen on this port
+	 * @param port listen on this port - if null given it will assign free port
+	 * @return assigned port or -1 iff given port is already in use
 	 */
 	public int registerApplication(Application app, Integer port) {
 		if (port == null) {
 			port = getFreePort();
+		} else {
+			Application a = applications.get(port);
+			if (a != null) {
+				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Given port is already is use: " + port + " by " + a.name, null);
+				return -1;
+			}
 		}
+
 		applications.put(port, app);
 		return port;
 	}
