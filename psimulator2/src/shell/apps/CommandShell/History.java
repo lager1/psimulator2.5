@@ -48,11 +48,9 @@ public class History {
 
 	public void setActiveHistory(List<String> activeHistory) {
 		this.activeHistory = activeHistory;
+		this.resetIterator();
 	}
 	
-	
-	
-
 	/**
 	 * metoda, která rotuje dvě různé historie
 	 */

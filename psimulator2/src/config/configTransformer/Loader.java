@@ -9,6 +9,7 @@ import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
+import filesystem.ArchiveFileSystem;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
@@ -122,15 +123,9 @@ public class Loader implements Loggable {
 		pc.setNetworkModule(nm);
 
 		// setup filesystem
-		// @TODO smazat !!!!  POKUSY S FILESYSTEM
-//		String pathFileSystem = String.valueOf(pc.configID) + ".fsm";
-//		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
-//
-//		OutputStream out = pc.getFilesystem().getOutputStreamToFile("/home/user/baf");
-//		PrintWriter print = new PrintWriter(out);
-//		print.println("ifconfig ble ble");
-//		print.flush();
-//		pc.getFilesystem().umount();
+		
+		String pathFileSystem = String.valueOf(pc.configID) + "." + ArchiveFileSystem.getFileSystemExtension();
+		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
 
 		return pc;
 	}

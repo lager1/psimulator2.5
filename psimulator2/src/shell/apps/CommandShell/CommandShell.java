@@ -6,7 +6,13 @@ package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
 import device.Device;
+import filesystem.ArchiveFileSystem;
+import filesystem.FileSystem;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
 import java.io.*;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -279,11 +285,11 @@ public class CommandShell extends TerminalApplication {
 
 		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
 		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
-	//	this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
+		//	this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
 
 		// load history
 		String historyPath = "/home/user/history";
-		//this.loadHistory(this.getShellRenderer().getHistory(), historyPath);
+		this.loadHistory(this.getShellRenderer().getHistory(), historyPath);
 
 		try {
 
@@ -308,22 +314,18 @@ public class CommandShell extends TerminalApplication {
 							Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
 						}
 						break;
-					case INPUT_FIELD:	
+					case INPUT_FIELD:
 						line = readInput();
-						
+
 						if (line != null) {
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "INPUT FIELD READ:" + line);
 							this.getParser().catchUserInput(line);
 						}
-						
+
 						break;
 
 				}
 			}
-
-			// save history
-//			this.saveHistory(this.getShellRenderer().getHistory(), historyPath);
-
 
 		} catch (Exception ex) {
 
@@ -335,6 +337,11 @@ public class CommandShell extends TerminalApplication {
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 				return -1;
 			}
+		} finally {
+
+			// save history
+			this.saveHistory(this.getShellRenderer().getHistory(), historyPath);
+
 		}
 
 		return 0;
@@ -352,40 +359,49 @@ public class CommandShell extends TerminalApplication {
 		return 0;
 	}
 
-//	public void saveHistory(History history, String path) {
-//		OutputStream out = this.device.getFilesystem().getOutputStreamToFile(path);
-//		PrintWriter historyWriter = new PrintWriter(out);
-//
-//		List<String> historyList = history.getActiveHistory();
-//
-//		for (String command : historyList) {
-//			historyWriter.println(command);
-//		}
-//		try {
-//			out.close();
-//		} catch (IOException ex) {
-//			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when saving history");
-//		}
-//
-//	}
+	public void saveHistory(final History history, String path) {
 
-//	public void loadHistory(History history, String path) {
-//
-//		InputStream in = this.device.getFilesystem().getInputStreamToFile(path);
-//		Scanner sc = new Scanner(in);
-//		List<String> historyList = new LinkedList<>();
-//
-//		while (sc.hasNextLine()) {
-//			historyList.add(sc.nextLine().trim());
-//		}
-//
-//		history.setActiveHistory(historyList);
-//
-//		try {
-//			in.close();
-//		} catch (IOException ex) {
-//			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when loading history");
-//		}
-//
-//	}
+
+		this.device.getFilesystem().runOutputFileJob(path, new OutputFileJob() {
+
+			@Override
+			public int workOnFile(OutputStream output) throws Exception {
+
+				PrintWriter historyWriter = new PrintWriter(output);
+
+				List<String> historyList = history.getActiveHistory();
+
+				for (String command : historyList) {
+					historyWriter.println(command);
+				}
+
+				historyWriter.flush();
+				
+				return 0;
+			}
+		});
+
+	}
+
+	public void loadHistory(final History history, String path) {
+
+		this.device.getFilesystem().runInputFileJob(path, new InputFileJob() {
+
+			@Override
+			public int workOnFile(InputStream input) throws Exception {
+
+				Scanner sc = new Scanner(input);
+				List<String> historyList = new LinkedList<>();
+
+				while (sc.hasNextLine()) {
+					historyList.add(sc.nextLine().trim());
+				}
+
+				history.setActiveHistory(historyList);
+
+				return 0;
+			}
+		});
+
+	}
 }

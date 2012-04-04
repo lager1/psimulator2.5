@@ -48,7 +48,7 @@ public class FileSystemTest {
         DateFormat format = DateFormat.getInstance();
         String mark = format.format(new Date());
 
-        String fileSystemPath = "test"+System.getProperty("file.separator") + "test"+mark.replaceAll("\\s", "")+".fsm";
+        String fileSystemPath = "test"+System.getProperty("file.separator") + "test"+mark.replaceAll("\\s", "")+ "."+ ArchiveFileSystem.getFileSystemExtension();
         String testPath = "/home/user/history";
         String testedData = "abaca dabaca $;+-/* __ xyz \n dalsi radek";
         FileSystem filesystem = new ArchiveFileSystem(fileSystemPath);
@@ -70,8 +70,6 @@ public class FileSystemTest {
 
         assert new TFile(fileSystemPath).exists();
         assert filesystem.exists(testPath);
-
-
 
     }
 }
