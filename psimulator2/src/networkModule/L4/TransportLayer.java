@@ -100,7 +100,7 @@ public class TransportLayer implements Loggable {
 	 *
 	 * @param app to register
 	 * @param port listen on this port - if null given it will assign free port
-	 * @return assigned port or -1 iff given port is already in use
+	 * @return assigned port or -1 iff given port is already in use (than app is for obvious reason not registered)
 	 */
 	public int registerApplication(Application app, Integer port) {
 		if (port == null) {
