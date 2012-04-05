@@ -5,9 +5,9 @@
 package networkModule.L3.nat;
 
 import dataStructures.DropItem;
-import dataStructures.IpPacket;
-import dataStructures.L4Packet;
-import dataStructures.L4Packet.L4PacketType;
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L4Packet.L4PacketType;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import java.util.*;
@@ -175,7 +175,9 @@ public class NatTable implements Loggable {
 		 */
 
 		if (packet.data == null) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.NetworkAddressTranslation, "No NAT translation: packet with no L4 data received. Could not gain port number!?", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation,
+					"No NAT translation: packet with no L4 data received. Could not gain port number!?", packet);
+						// -> Standa to logoval jako warning, ale vzhledem k napojeni na realnou sit se to muze stavat pomerne casto
 			return packet;
 		}
 

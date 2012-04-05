@@ -4,8 +4,8 @@
 package physicalModule;
 
 import dataStructures.DropItem;
-import dataStructures.IpPacket;
-import dataStructures.L2Packet;
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L2Packet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

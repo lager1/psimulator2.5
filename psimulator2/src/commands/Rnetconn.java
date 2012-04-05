@@ -37,9 +37,9 @@ public class Rnetconn extends AbstractCommand {
 			listAllRealSwitchports();
 		} else if (prikaz.equals("help")) {
 			printHelp();
-		} else if (prikaz.equals("tight")) {
+		} else if (prikaz.equals("tie")) {
 			connectSwitchport();
-		} else if (prikaz.equals("untight")) {
+		} else if (prikaz.equals("untie")) {
 			disconnectSwitchport();
 		} else{
 			printLine("Unsupported command: "+prikaz);
@@ -71,9 +71,9 @@ public class Rnetconn extends AbstractCommand {
 	private void printSwitchportSettings(Device dev, RealSwitchport swport){
 		String vratit = dev.getName()+"    switchport no. "+swport.number+"    ";
 		if(swport.isConnected()){
-			vratit+="tighted     "+swport.getIfaceName();
+			vratit+="tied     "+swport.getIfaceName();
 		} else {
-			vratit +="not tighted";
+			vratit +="not tied";
 		}
 		printLine(vratit);
 	}
@@ -85,10 +85,10 @@ public class Rnetconn extends AbstractCommand {
 		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
 		printLine("SYNOPSIS: rnetconn command options");
 		printLine("  The possible commands are:");
-		printLine("    rnetconn list                                   list all real switchports in virtual network");
-		printLine("    rnetconn tight device switchport_num iface      tight real switchport switchport_num on device to iface");
-		printLine("    rnetconn untight device switchport_num          untight switchport from its device");
-		printLine("    help                                            print this help and exit");
+		printLine("    rnetconn list                                 list all real switchports in virtual network");
+		printLine("    rnetconn tie device switchport_num iface      tie real switchport switchport_num on device to iface");
+		printLine("    rnetconn untie device switchport_num          untie switchport from its device");
+		printLine("    help                                          print this help and exit");
 		printLine("");
 	}
 
@@ -135,9 +135,9 @@ public class Rnetconn extends AbstractCommand {
 		if(navrKod==1){
 			printLine("An error occured while trying to connect to interface. For more informations see the programms main console.");
 		}if(navrKod==2){
-			printLine("Switchport was tighted! Can not tight tighted switchport!");
+			printLine("Switchport was tied! Can not tie tied switchport!");
 		}else{
-			printLine("Switchport was tighted.");
+			printLine("Switchport was tied.");
 		}
 
 	}
@@ -177,14 +177,14 @@ public class Rnetconn extends AbstractCommand {
 			printHelp();
 			return;
 		} else if(!swport.isConnected()){
-			printLine("Switchport "+switchportNumber+" on "+deviceName+" is not tighted, so it can't be untighted.");
+			printLine("Switchport "+switchportNumber+" on "+deviceName+" is not tied, so it can't be untied.");
 			return;
 		}
 
 		// vsechno je v poradku, jde se pripojit:
 		RealSwitchport rport = (RealSwitchport)swport;
 		rport.stop();
-		printLine("Switchport "+switchportNumber+" on "+deviceName+" has been untighted.");
+		printLine("Switchport "+switchportNumber+" on "+deviceName+" has been untied.");
 
 	}
 

@@ -6,8 +6,8 @@ package applications;
 
 import commands.ApplicationNotifiable;
 import dataStructures.DropItem;
-import dataStructures.IcmpPacket;
-import dataStructures.IpPacket;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.IpPacket;
 import dataStructures.ipAddresses.IpAddress;
 import device.Device;
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 		IcmpPacket packet;
 
 		while (!buffer.isEmpty()) {
-			IpPacket p = buffer.remove(0);
+			IpPacket p = buffer.remove(0).packet;
 
 			// zkouseni, jestli je ten paket spravnej:
 			if (! (p.data instanceof IcmpPacket)) {

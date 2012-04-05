@@ -2,7 +2,9 @@
  * Erstellt am 27.10.2011.
  */
 
-package dataStructures;
+package dataStructures.packets;
+
+import dataStructures.EventDescriptive;
 
 /**
  *

@@ -6,8 +6,8 @@ package applications;
 
 
 import commands.linux.Ping;
-import dataStructures.IcmpPacket;
-import dataStructures.IpPacket;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.IpPacket;
 import dataStructures.ipAddresses.IpAddress;
 import device.Device;
 import logging.Logger;

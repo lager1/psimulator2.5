@@ -3,7 +3,7 @@
  */
 package networkModule.L2;
 
-import dataStructures.EthernetPacket;
+import dataStructures.packets.EthernetPacket;
 import dataStructures.MacAddress;
 import java.util.HashMap;
 import java.util.Map;

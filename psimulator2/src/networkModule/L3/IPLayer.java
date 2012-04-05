@@ -3,6 +3,11 @@
  */
 package networkModule.L3;
 
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L3Packet;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.ArpPacket;
 import dataStructures.*;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;

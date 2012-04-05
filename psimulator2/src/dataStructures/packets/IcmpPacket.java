@@ -1,12 +1,12 @@
 /*
  * created 29.2.2012
  */
-package dataStructures;
+package dataStructures.packets;
 
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
-import static dataStructures.IcmpPacket.Type.*;
-import static dataStructures.IcmpPacket.Code.*;
+import static dataStructures.packets.IcmpPacket.Type.*;
+import static dataStructures.packets.IcmpPacket.Code.*;
 
 /**
  * Represents ICMP packet.

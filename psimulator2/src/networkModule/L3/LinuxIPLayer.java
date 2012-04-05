@@ -4,10 +4,11 @@
 
 package networkModule.L3;
 
-import dataStructures.ArpPacket;
+import dataStructures.packets.ArpPacket;
 import dataStructures.DropItem;
-import dataStructures.IpPacket;
-import dataStructures.L4Packet;
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
+import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -106,7 +107,7 @@ public class LinuxIPLayer extends IPLayer {
 		// je pro me?
 		if (isItMyIpAddress(packet.dst)) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet destined to be mine.", packet);
-			netMod.transportLayer.receivePacket(packet);
+			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
 			return;
 		}
 

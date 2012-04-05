@@ -6,8 +6,8 @@ package applications;
 
 import commands.ApplicationNotifiable;
 import commands.cisco.CiscoCommandParser;
-import dataStructures.IcmpPacket;
-import dataStructures.IpPacket;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.IpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;

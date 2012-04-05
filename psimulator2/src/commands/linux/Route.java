@@ -142,25 +142,28 @@ public class Route extends LinuxCommand {
      * Odchylka: Nezparsuje route -ven
      */
     private void parsujPrikaz() {
-        // prepinace:
-        slovo = dalsiSlovo();
-        while( slovo.length()>1 && slovo.charAt(0)=='-'){
-            if( slovo.equals("-n") || slovo.equals("--numeric") ){
-                minus_n=true;
-            }else if( slovo.equals("-v") || slovo.equals("--verbose") ){
-                minus_v=true;
-            }else if( slovo.equals("-e") || slovo.equals("--extend") ){
-                minus_e=true;
-            }else if( slovo.equals("-h") || slovo.equals("--help") ){
-                minus_h=true;
-            }else{
-                printLine("route: invalid option -- "+slovo); //neznamej prepinac
-                vypisDelsiNapovedu();
-                navratovyKod=navratovyKod|1;
-                return;
-            }
-            slovo=dalsiSlovo();
-        }
+		// prepinace:
+		slovo = dalsiSlovo();
+		while (slovo.length() > 1 && slovo.charAt(0) == '-') {
+			if (slovo.equals("-n") || slovo.equals("--numeric")) {
+				minus_n = true;
+			} else if (slovo.equals("-v") || slovo.equals("--verbose")) {
+				minus_v = true;
+			} else if (slovo.equals("-e") || slovo.equals("--extend")) {
+				minus_e = true;
+			} else if (slovo.equals("-en") || slovo.equals("-ne")) {	// bylo to v navodu na eduxu, tak jsem to sem pridal
+				minus_e = true;
+				minus_n = true;
+			} else if (slovo.equals("-h") || slovo.equals("--help")) {
+				minus_h = true;
+			} else {
+				printLine("route: invalid option -- " + slovo); //neznamej prepinac
+				vypisDelsiNapovedu();
+				navratovyKod = navratovyKod | 1;
+				return;
+			}
+			slovo = dalsiSlovo();
+		}
         // dalsi parsovani:
         if(minus_h){
             //to se pak uz nic neparsuje.

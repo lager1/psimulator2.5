@@ -4,7 +4,7 @@
 
 package networkModule;
 
-import dataStructures.L2Packet;
+import dataStructures.packets.L2Packet;
 import device.Device;
 import physicalModule.PhysicMod;
 

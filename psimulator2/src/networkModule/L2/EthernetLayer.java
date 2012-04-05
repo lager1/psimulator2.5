@@ -3,8 +3,8 @@
  */
 package networkModule.L2;
 
-import dataStructures.EthernetPacket;
-import dataStructures.L3Packet;
+import dataStructures.packets.EthernetPacket;
+import dataStructures.packets.L3Packet;
 import dataStructures.MacAddress;
 import java.util.*;
 import logging.*;

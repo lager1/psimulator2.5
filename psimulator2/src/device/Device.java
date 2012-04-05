@@ -55,7 +55,10 @@ public class Device {
 		this.name = name;
 		this.type = type;
 		physicalModule = new PhysicMod(this);
-		TelnetProperties.addListener(this);  // telnetPort is configured in this method
+		// telnetovy pripojeni se pridava jen kdyz to neni switch
+		if(type!=DeviceType.simple_switch){
+			TelnetProperties.addListener(this);  // telnetPort is configured in this method
+		}
 		this.applications = new HashMap<>();
 	}
 
@@ -74,8 +77,8 @@ public class Device {
 	public void setFilesystem(FileSystem filesystem) {
 		this.filesystem = filesystem;
 	}
-	
-	
+
+
 
 	public String getName() {
 		return name;

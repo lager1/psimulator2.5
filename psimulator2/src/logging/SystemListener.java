@@ -3,9 +3,9 @@
  */
 package logging;
 
-import dataStructures.L2Packet;
-import dataStructures.L3Packet;
-import dataStructures.L4Packet;
+import dataStructures.packets.L2Packet;
+import dataStructures.packets.L3Packet;
+import dataStructures.packets.L4Packet;
 import java.util.EnumMap;
 import java.util.Map;
 

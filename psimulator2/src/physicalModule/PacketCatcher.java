@@ -4,6 +4,12 @@
 
 package physicalModule;
 
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L3Packet;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.EthernetPacket;
+import dataStructures.packets.ArpPacket;
 import dataStructures.*;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Loggable;

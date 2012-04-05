@@ -4,8 +4,8 @@
 
 package networkModule;
 
-import dataStructures.EthernetPacket;
-import dataStructures.L2Packet;
+import dataStructures.packets.EthernetPacket;
+import dataStructures.packets.L2Packet;
 import device.Device;
 import logging.Loggable;
 import logging.Logger;

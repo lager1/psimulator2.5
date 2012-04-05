@@ -4,6 +4,9 @@
 
 package dataStructures;
 
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L3Packet;
+import dataStructures.packets.L2Packet;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 
 /**

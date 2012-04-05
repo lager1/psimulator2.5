@@ -3,8 +3,10 @@
  */
 package applications;
 
-import dataStructures.IpPacket;
+import dataStructures.packets.IpPacket;
+import dataStructures.PacketItem;
 import device.Device;
+import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +40,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	/**
 	 * buffer prichozich paketu ze site
 	 */
-	protected final List<IpPacket> buffer = Collections.synchronizedList(new LinkedList<IpPacket>());
+	protected final List<PacketItem> buffer = Collections.synchronizedList(new LinkedList<PacketItem>());
 
 	/**
 	 * Jestli aplikace prave bezi
@@ -63,13 +65,13 @@ public abstract class Application implements SmartRunnable, Loggable {
 	 * Predavani paketu ze site aplikaci.
 	 * @param packet
 	 */
-	public void receivePacket(IpPacket packet) {
-		if(running){
-		Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName()+"Prisel paket", packet);
-		buffer.add(packet);
-		worker.wake();
+	public void receivePacket(PacketItem packetItem) {
+		if (running) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + "Prisel paket", packetItem.packet);
+			buffer.add(packetItem);
+			worker.wake();
 		} else {
-			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName()+"Prisel paket, ackoliv aplikace jiz ", packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Prisel paket, ackoliv aplikace jiz ", packetItem.packet);
 		}
 	}
 

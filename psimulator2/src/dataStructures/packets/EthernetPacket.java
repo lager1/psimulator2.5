@@ -2,9 +2,10 @@
  * created 25.1.2012
  */
 
-package dataStructures;
+package dataStructures.packets;
 
-import dataStructures.L3Packet.L3PacketType;
+import dataStructures.packets.L3Packet.L3PacketType;
+import dataStructures.MacAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
 
@@ -57,8 +58,8 @@ public class EthernetPacket extends L2Packet {
 	}
 
 	private void countSize(){
-		int sum = 24; //8,6,6,2,?,4 (preambule, mac, mac, typ, data crc) - 3. predaska PSI
-		size = sum + (data != null ? data.getSize() : 0);
+		int headerLength = 24; //8,6,6,2,?,4 (preambule, mac, mac, typ, data crc) - 3. predaska PSI
+		size = headerLength + (data != null ? data.getSize() : 0);
 	}
 
 	@Override

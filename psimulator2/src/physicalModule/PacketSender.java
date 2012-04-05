@@ -4,7 +4,13 @@
 
 package physicalModule;
 
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L2Packet;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.EthernetPacket;
 import dataStructures.*;
+import dataStructures.packets.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +21,10 @@ import org.jnetpcap.Pcap;
 import org.jnetpcap.packet.JPacket;
 import utils.SmartRunnable;
 import utils.WorkerThread;
-import static dataStructures.L3Packet.L3PacketType.*;
+import static dataStructures.packets.L3Packet.L3PacketType.*;
 import org.jnetpcap.packet.JMemoryPacket;
 import org.jnetpcap.protocol.JProtocol;
-import static dataStructures.ArpPacket.ArpOperation.*;
+import static dataStructures.packets.ArpPacket.ArpOperation.*;
 import org.jnetpcap.protocol.network.Icmp;
 import org.jnetpcap.protocol.network.Ip4;
 import org.jnetpcap.protocol.tcpip.Tcp;

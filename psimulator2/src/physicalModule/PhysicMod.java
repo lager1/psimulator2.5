@@ -3,7 +3,7 @@
  */
 package physicalModule;
 
-import dataStructures.L2Packet;
+import dataStructures.packets.L2Packet;
 import device.Device;
 import java.util.*;
 import networkModule.NetMod;

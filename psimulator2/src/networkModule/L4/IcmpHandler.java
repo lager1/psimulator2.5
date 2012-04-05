@@ -6,10 +6,11 @@
 package networkModule.L4;
 
 import dataStructures.DropItem;
-import dataStructures.IcmpPacket;
-import dataStructures.IcmpPacket.Code;
-import dataStructures.IcmpPacket.Type;
-import dataStructures.IpPacket;
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.IcmpPacket.Code;
+import dataStructures.packets.IcmpPacket.Type;
+import dataStructures.packets.IpPacket;
+import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Loggable;
 import logging.Logger;
@@ -30,27 +31,27 @@ public class IcmpHandler implements Loggable {
 		this.transportLayer = transportLayer;
 	}
 
-	public void handleReceivedIcmpPacket(IpPacket packet) {
-		IcmpPacket p = (IcmpPacket) packet.data;
+	public void handleReceivedIcmpPacket(PacketItem packetItem) {
+		IcmpPacket p = (IcmpPacket) packetItem.packet.data;
 
 		switch (p.type) {
 			case REQUEST:
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.payloadSize,p.payload);	// zadava se velikost payloadu
-				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packet);
-				getIpLayer().handleSendPacket(reply, packet.src, getIpLayer().ttl);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packetItem);
+				getIpLayer().handleSendPacket(reply, packetItem.packet.src, getIpLayer().ttl);
 				break;
 			case REPLY:
 			case TIME_EXCEEDED:
 			case UNDELIVERED:
 			case SOURCE_QUENCH:
 				// predat aplikacim
-				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Forwarding ARP reply to application on port: "+p.id, packet);
-				transportLayer.forwardPacketToApplication(packet, p.id);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Forwarding ARP reply to application on port: "+p.id, packetItem);
+				transportLayer.forwardPacketToApplication(packetItem, p.id);
 				break;
 			default:
-				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: unknown ICMP packet type.", packet);
-				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getIpLayer().getNetMod().getDevice().configID));
+				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: unknown ICMP packet type.", packetItem);
+				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packetItem.packet, getIpLayer().getNetMod().getDevice().configID));
 		}
 	}
 

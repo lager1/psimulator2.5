@@ -2,8 +2,9 @@
  * created 1.2.2012
  */
 
-package dataStructures;
+package dataStructures.packets;
 
+import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IpAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 

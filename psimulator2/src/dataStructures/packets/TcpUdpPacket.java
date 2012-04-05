@@ -2,7 +2,9 @@
  * created 17.3.2012
  */
 
-package dataStructures;
+package dataStructures.packets;
+
+import dataStructures.packets.L4Packet;
 
 /**
  * Represents TCP and UDP packet.

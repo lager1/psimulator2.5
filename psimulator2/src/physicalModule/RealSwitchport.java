@@ -3,7 +3,7 @@
  */
 package physicalModule;
 
-import dataStructures.L2Packet;
+import dataStructures.packets.L2Packet;
 import java.util.ArrayList;
 import java.util.List;
 import logging.*;
@@ -50,7 +50,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 			return 1;
 		} else {
 			this.ifaceName = ifaceName;
-			log(Logger.IMPORTANT, "Real interface " + ifaceName + " tighted together with switchport n. " + number + ". Connection to real network started.", null);
+			log(Logger.IMPORTANT, "Real interface " + ifaceName + " tied together with switchport n. " + number + ". Connection to real network started.", null);
 		}
 
 		// kdyz je spojeni otevreno, spoustim obsluhu:
@@ -64,9 +64,9 @@ public class RealSwitchport extends Switchport implements Loggable {
 			pcap.close();
 			sender.stop();
 			pcap = null;
-			log(Logger.IMPORTANT, "Real switchport untighted.", null);
+			log(Logger.IMPORTANT, "Real switchport untied.", null);
 		} else {
-			log(Logger.WARNING, "Attempting to disconnect untighted switchport.", null);
+			log(Logger.WARNING, "Attempting to disconnect untied switchport.", null);
 		}
 	}
 

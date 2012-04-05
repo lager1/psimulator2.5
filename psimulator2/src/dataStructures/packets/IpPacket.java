@@ -2,8 +2,10 @@
  * created 1.2.2012
  */
 
-package dataStructures;
+package dataStructures.packets;
 
+import dataStructures.packets.L4Packet;
+import dataStructures.packets.L3Packet;
 import dataStructures.ipAddresses.IpAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
