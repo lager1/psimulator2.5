@@ -6,17 +6,7 @@ package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
 import device.Device;
-import filesystem.ArchiveFileSystem;
-import filesystem.FileSystem;
-import filesystem.dataStructures.jobs.InputFileJob;
-import filesystem.dataStructures.jobs.OutputFileJob;
 import java.io.*;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -44,6 +34,7 @@ public class CommandShell extends TerminalApplication {
 	private AbstractCommandParser parser;
 	private ShellMode shellMode = ShellMode.COMMAND_READ;
 	private Thread thread;  // thread running blocking IO operations
+	private HistoryManager historyManager;
 	/**
 	 * Stav shellu, na linuxuje to furt defaultni 0, na ciscu se to meni podle toho (enable, configure terminal atd.).
 	 * Dle stavu se bude resit napovidani a historie.
@@ -54,6 +45,8 @@ public class CommandShell extends TerminalApplication {
 		super(terminalIO, device);
 		this.thread = Thread.currentThread();
 		this.thread.setName("CommandShell/Parser thread");
+
+		this.historyManager = new HistoryManager(device);
 	}
 
 	/**
@@ -72,6 +65,10 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void setShellMode(ShellMode shellMode) {
 		this.shellMode = shellMode;
+	}
+
+	public HistoryManager getHistoryManager() {
+		return historyManager;
 	}
 
 	public void setPrompt(String prompt) {
@@ -288,8 +285,10 @@ public class CommandShell extends TerminalApplication {
 		//	this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
 
 		// load history
-		String historyPath = "/home/user/history";
-		this.loadHistory(this.getShellRenderer().getHistory(), historyPath);
+		if (historyManager == null || historyManager.getActiveHistory() == null) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "historyManager or active history object is null.. something goes wrong");
+		}
+
 
 		try {
 
@@ -340,7 +339,7 @@ public class CommandShell extends TerminalApplication {
 		} finally {
 
 			// save history
-			this.saveHistory(this.getShellRenderer().getHistory(), historyPath);
+			this.historyManager.saveAllHistory();
 
 		}
 
@@ -357,51 +356,5 @@ public class CommandShell extends TerminalApplication {
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;
-	}
-
-	public void saveHistory(final History history, String path) {
-
-
-		this.device.getFilesystem().runOutputFileJob(path, new OutputFileJob() {
-
-			@Override
-			public int workOnFile(OutputStream output) throws Exception {
-
-				PrintWriter historyWriter = new PrintWriter(output);
-
-				List<String> historyList = history.getActiveHistory();
-
-				for (String command : historyList) {
-					historyWriter.println(command);
-				}
-
-				historyWriter.flush();
-				
-				return 0;
-			}
-		});
-
-	}
-
-	public void loadHistory(final History history, String path) {
-
-		this.device.getFilesystem().runInputFileJob(path, new InputFileJob() {
-
-			@Override
-			public int workOnFile(InputStream input) throws Exception {
-
-				Scanner sc = new Scanner(input);
-				List<String> historyList = new LinkedList<>();
-
-				while (sc.hasNextLine()) {
-					historyList.add(sc.nextLine().trim());
-				}
-
-				history.setActiveHistory(historyList);
-
-				return 0;
-			}
-		});
-
 	}
 }

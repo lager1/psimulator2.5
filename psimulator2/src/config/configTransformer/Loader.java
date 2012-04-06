@@ -10,6 +10,8 @@ import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
 import filesystem.ArchiveFileSystem;
+import java.io.File;
+
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
@@ -123,8 +125,16 @@ public class Loader implements Loggable {
 		pc.setNetworkModule(nm);
 
 		// setup filesystem
+		String pathSeparator = System.getProperty("file.separator");
 		
-		String pathFileSystem = String.valueOf(pc.configID) + "." + ArchiveFileSystem.getFileSystemExtension();
+		File filesystemDir = new File("filesystems");
+		
+		if(!filesystemDir.isDirectory() && 	!filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
+			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
+		
+		
+		
+		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + String.valueOf(pc.configID) + "." + ArchiveFileSystem.getFileSystemExtension();
 		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
 
 		return pc;

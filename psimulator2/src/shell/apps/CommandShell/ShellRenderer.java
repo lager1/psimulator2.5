@@ -23,8 +23,7 @@ import telnetd.io.TerminalIO;
 public class ShellRenderer extends BasicInputField {
 
 	private CommandShell commandShell;
-	// private BasicTerminalIO m_IO;   // no need for this. Parent class Component has same protected member
-	private History history = new History();
+	
 	/**
 	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
 	 */
@@ -34,15 +33,8 @@ public class ShellRenderer extends BasicInputField {
 	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
 		super(termIO, name);
 		this.commandShell = commandShell;
+		
 		// this.termIO = termIO;  // no need for this. Parent class Component has same protected member
-	}
-
-	public History getHistory() {
-		return history;
-	}
-
-	public void setHistory(History history) {
-		this.history = history;
 	}
 
 	public int quit() {
@@ -204,7 +196,7 @@ public class ShellRenderer extends BasicInputField {
 
 					case TerminalIO.ENTER:
 						quit = true;
-						history.add(this.getValue());
+						this.commandShell.getHistoryManager().getActiveHistory().addCommand(this.getValue());
 						m_IO.write(BasicTerminalIO.CRLF);
 						break;
 
@@ -299,10 +291,10 @@ public class ShellRenderer extends BasicInputField {
 
 		if (key == TerminalIO.UP) {
 			//  this.sb.setLength(0);
-			this.history.handlePrevious(this.sb);
+			this.commandShell.getHistoryManager().getActiveHistory().handlePrevious(this.sb);
 		} else if (key == TerminalIO.DOWN) {
 			//  this.sb.setLength(0);
-			this.history.handleNext(this.sb);
+			this.commandShell.getHistoryManager().getActiveHistory().handleNext(this.sb);
 		}
 
 		m_IO.write(this.sb.toString());

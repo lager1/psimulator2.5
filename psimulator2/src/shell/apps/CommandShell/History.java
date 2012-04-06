@@ -1,94 +1,85 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package shell.apps.CommandShell;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import device.Device;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.*;
+import logging.Logger;
+import logging.LoggingCategory;
 
 /**
- * třída pro uchování historií konsole + přístup k nim
  *
- * @author Martin Lukáš
+ * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class History {
 
-	private List<String> activeHistory;
-	private List<List> listOfHistorys;
-//    private int historyIterator = 0;
+	private List<String> commands;
 	private ListIterator<String> commandIterartor;
-	private ListIterator<List> historysIterator;
-	String activeHistoryLine;
+	private String historyPathFile;
 	private boolean calledNext = false;
 	private boolean calledPrevious = false;
+	private String activeHistoryLine;
+	private Device deviceReference;
+	
+	private Date loaded;
+	private Date saved;
+	
 
-	public History() {
-		this.activeHistory = new ArrayList<String>();
-		this.commandIterartor = this.activeHistory.listIterator(this.activeHistory.size());
+	public History(String historyPathFile, Device deviceReference) {
+		this.historyPathFile = historyPathFile;
+		this.deviceReference = deviceReference;
+	}
 
-		this.listOfHistorys = new ArrayList<>(2);
-		this.listOfHistorys.add(activeHistory);
-		this.historysIterator = listOfHistorys.listIterator();
+	public Date getLoaded() {
+		return loaded;
+	}
 
+	public Date getSaved() {
+		return saved;
 	}
 
 	/**
-	 * pokud uživatel odešle příkaz, pak by se měl nastavit iterátor do výchozí pozice, aby při dalším listování
-	 * historií se začalo posledním odeslaným příkazem
+	 * reseting history command iteration method. When command is commited or ..
 	 */
 	private void resetIterator() {
-		this.commandIterartor = this.activeHistory.listIterator(this.activeHistory.size());
+		this.commandIterartor = this.commands.listIterator(this.commands.size());
 	}
 
-	public List<String> getActiveHistory() {
-		return activeHistory;
-	}
-
-	public void setActiveHistory(List<String> activeHistory) {
-		this.activeHistory = activeHistory;
+	/**
+	 * if this history object was not used for last, then it should be activated with this method. This method basicaly
+	 * just reset history commands iteration and load data from file if needed
+	 */
+	public void activate() {
+		
+		if(this.loaded == null)
+			this.load();
+		
 		this.resetIterator();
 	}
-	
-	/**
-	 * metoda, která rotuje dvě různé historie
-	 */
-	public void swapHistory() {
-		if (listOfHistorys.size() == 1) {
-			listOfHistorys.add(new ArrayList<String>());
-		}
-
-		if (!historysIterator.hasNext()) // pokud nemá další pak nastavím iterátor nastavím na začátek
-		{
-			this.historysIterator = listOfHistorys.listIterator();
-		}
-
-		this.activeHistory = historysIterator.next();
-
-		resetIterator();
-
-	}
 
 	/**
-	 * command entered
+	 * add commited command into history list
 	 *
 	 * @param command
 	 */
-	public void add(String command) {
+	public void addCommand(String command) {
 
-		if(command == null)
+		if (command == null) {
 			return;
-		
+		}
+
 		command = command.trim();
 
 		if (command.isEmpty() || command.equalsIgnoreCase("")) { // do not add empty command
 			return;
 		}
 
-		if (!activeHistory.isEmpty()) {
+		if (!this.commands.isEmpty()) {		// if history is not empty
 
-			String lastCommand = activeHistory.get(activeHistory.size() - 1).trim();
+			String lastCommand = this.commands.get(this.commands.size() - 1).trim();
 
 			if (command.equalsIgnoreCase(lastCommand)) { // do not add two same commands
 				resetIterator();
@@ -99,9 +90,8 @@ public class History {
 		this.calledNext = false;
 		this.calledPrevious = false;
 		this.activeHistoryLine = null;
-		this.activeHistory.add(command);
+		this.commands.add(command);
 		resetIterator();
-
 	}
 
 	/**
@@ -114,7 +104,7 @@ public class History {
 
 		String ret = "";
 
-		if (activeHistory.isEmpty()) {
+		if (this.commands.isEmpty()) {
 			return ret;
 		}
 
@@ -156,7 +146,7 @@ public class History {
 
 		String ret = "";
 
-		if (activeHistory.isEmpty()) {
+		if (this.commands.isEmpty()) {
 			return ret;
 		}
 
@@ -182,12 +172,68 @@ public class History {
 
 			this.calledNext = false;
 			this.calledPrevious = false;
-			
+
 			sb.setLength(0);
 			sb.append(ret);
 
 		}
 
 		return ret;
+	}
+
+	public void save() {
+
+
+		this.deviceReference.getFilesystem().runOutputFileJob(this.historyPathFile, new OutputFileJob() {
+
+			@Override
+			public int workOnFile(OutputStream output) throws Exception {
+
+				PrintWriter historyWriter = new PrintWriter(output);
+
+				for (String command : commands) {
+					historyWriter.println(command);
+				}
+
+				historyWriter.flush();
+
+				return 0;
+			}
+		});
+		
+		
+		this.saved = new Date();
+		
+
+	}
+
+	public void load() {
+
+		commands = new LinkedList<>();
+		
+		if(!this.deviceReference.getFilesystem().isFile(historyPathFile))  // if there is no such history file
+		{
+			Logger.log(Logger.INFO, LoggingCategory.TELNET, "History file: " + historyPathFile + "not found. Using empty history.");
+			return;
+		}
+		
+		
+		this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
+
+			@Override
+			public int workOnFile(InputStream input) throws Exception {
+
+				Scanner sc = new Scanner(input);
+				
+
+				while (sc.hasNextLine()) {
+					commands.add(sc.nextLine().trim());
+				}
+
+				return 0;
+			}
+		});
+
+		this.loaded = new Date();
 	}
 }
