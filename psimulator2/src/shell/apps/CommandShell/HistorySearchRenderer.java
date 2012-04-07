@@ -153,6 +153,9 @@ public class HistorySearchRenderer {
 
 	private boolean checkLastOne() {
 
+		if( !( lastSearchedIndex >=0 && lastSearchedIndex<currentHistory.getCommands().size() ) )  // if it is not a index of array
+			return false;
+		
 		Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
 		return searchPattern.matcher(currentHistory.getCommands().get(lastSearchedIndex)).find();
 
@@ -166,7 +169,7 @@ public class HistorySearchRenderer {
 
 		Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
 
-		for (int i = lastSearchedIndex; i > 0; i--) {
+		for (int i = lastSearchedIndex; i >= 0; i--) {
 			String command = currentHistory.getCommands().get(i);
 
 			if (searchPattern.matcher(command).find()) {  // FOUND COMMAND
@@ -178,7 +181,7 @@ public class HistorySearchRenderer {
 		}
 
 		// DID NOT FOUND
-		lastSearchedIndex = 0;
+		lastSearchedIndex = -1;
 		//currentResult = null;
 		return false;
 
