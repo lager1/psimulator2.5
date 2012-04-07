@@ -217,6 +217,7 @@ public class History {
 		if (!this.deviceReference.getFilesystem().isFile(historyPathFile)) // if there is no such history file
 		{
 			Logger.log(Logger.INFO, LoggingCategory.TELNET, "History file: " + historyPathFile + "not found. Using empty history.");
+			commands = new ArrayList<>();
 			return;
 		}
 

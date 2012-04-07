@@ -192,7 +192,7 @@ public class HistorySearchRenderer {
 	private void handleInput(int inputValue) throws IOException {
 		this.sb.append((char) inputValue);
 
-		System.out.println(lastSearchedIndex);
+		
 
 		boolean updated = this.updateSearch();
 
