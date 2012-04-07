@@ -7,8 +7,6 @@ package shell.apps.CommandShell;
 import exceptions.TelnetConnectionException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.LinkedList;
-import java.util.List;
 import logging.Logger;
 
 import logging.LoggingCategory;
@@ -46,21 +44,23 @@ public class ShellRenderer extends BasicInputField {
 	 * hlavní funkce zobrazování shellu a čtení z terminálu, reakce na různé klávesy ENETER, BACKSCAPE, LEFT ....
 	 *
 	 * @return vrací přečtenou hodnotu z řádku, příkaz
+	 * @throws Exception 
 	 * @throws TelnetConnectionException
 	 */
+	@Override
 	public void run() throws Exception {
 
 		this.clearBuffer();
 		this.returnValue = true;
 		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
-		List<String> nalezenePrikazy = new LinkedList<String>(); // seznam nalezenych příkazů po zmáčknutí tabu
+		
 
 
 		while (!quit) {
 
 			try {
 
-				int inputValue = 0;
+				int inputValue;
 
 				try {
 					inputValue = this.m_IO.read();
@@ -115,10 +115,7 @@ public class ShellRenderer extends BasicInputField {
 					continue; // continue while
 				}
 
-				if (inputValue != TerminalIO.TABULATOR) {
-					nalezenePrikazy = new LinkedList<String>(); // vyčistím pro další hledání
-				}
-
+				
 				if (ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), inputValue)) // if input was signaling control code && handled
 				{
 					switch (inputValue) {
@@ -146,7 +143,7 @@ public class ShellRenderer extends BasicInputField {
 
 					case TerminalIO.TABULATOR:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno TABULATOR");
-						this.handleTabulator(nalezenePrikazy);
+						this.handleTabulator();
 						break;
 
 					case TerminalIO.LEFT:
@@ -248,10 +245,11 @@ public class ShellRenderer extends BasicInputField {
 	}
 
 	/**
-	 * method mostly used by CTRL-R search
+	 * method that replace actual command line, redraw prompt and command line
 	 *
 	 * @param value
 	 */
+	@Override
 	public void setValue(String value) {
 		// set value to stringbuilder + redraw line
 
@@ -345,62 +343,15 @@ public class ShellRenderer extends BasicInputField {
 
 	/**
 	 *
-	 * @param foundCommands seznam nalezených příkazů z předchozího hledání, pokud prázdný, tak jde o první stisk
-	 * tabulatoru
 	 */
-	private void handleTabulator(List<String> foundCommands) throws IOException, TelnetConnectionException {
+	private void handleTabulator()  {
 
-		if (!foundCommands.isEmpty() && foundCommands.size() > 1) { // double tab + more results
-
-			m_IO.write(TerminalIO.CRLF); // new line
-
-			for (String nalezeny : foundCommands) {
-				m_IO.write(nalezeny + "  ");
-			}
-
-			m_IO.write(TerminalIO.CRLF); // new line
-			this.commandShell.printPrompt();
-			m_IO.write(this.sb.toString());
-
-
+		String completeValue = this.commandShell.completeWord(this.sb.toString());
+		
+		if(completeValue == null || completeValue.isEmpty())
 			return;
-		}
-
-
-// nové hledání
-
-		//	String hledanyPrikaz = this.sb.substring(0, cursor);
-//        List<String> prikazy = this.commandShell.getCommandList();
-//
-//
-//        for (String temp : prikazy) {
-//            if (temp.startsWith(hledanyPrikaz)) {
-//                nalezenePrikazy.add(temp);
-//            }
-//
-//        }
-//
-//        if (nalezenePrikazy.isEmpty()) // nic jsem nenašel, nic nedělám :)
-//        {
-//            return;
-//        }
-//
-//
-//        if (nalezenePrikazy.size() == 1) // našel jsem jeden odpovídající příkaz tak ho doplním
-//        {
-//
-//            String nalezenyPrikaz = nalezenePrikazy.get(0);
-//            String doplnenyPrikaz = nalezenyPrikaz.substring(hledanyPrikaz.length(), nalezenyPrikaz.length());
-//
-//            sb.insert(cursor, doplnenyPrikaz);
-//
-//            int tempCursor = cursor;
-//            drawLine();
-//
-//            moveCursorLeft(sb.length() - (tempCursor + doplnenyPrikaz.length()));
-//
-//        }
-//
+		
+		this.setValue(completeValue);
 
 	}
 
