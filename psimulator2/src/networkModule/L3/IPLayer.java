@@ -238,6 +238,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			return;
 		}
 
+		// kdyz je to vuci odchozimu rozhrani broadcast, tak packet poslu na ff:ff:ff:ff:ff:ff a neresim nextHop ARPem - kvuli DHCP
+		if (record.iface.getIpAddress().getBroadcast().equals(packet.dst)) {
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending packet.", packet);
+			netMod.ethernetLayer.sendPacket(packet, record.iface.ethernetInterface, MacAddress.broadcast());
+			return;
+		}
+
 		// zjistit nexHopIp
 		// kdyz RT vrati record s branou, tak je nextHopIp record.brana
 		// kdyz je record bez brany, tak je nextHopIp uz ta hledana IP adresa
