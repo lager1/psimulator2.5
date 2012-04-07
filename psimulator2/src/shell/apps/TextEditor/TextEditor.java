@@ -5,10 +5,16 @@
 package shell.apps.TextEditor;
 
 import device.Device;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.TerminalApplication;
@@ -31,14 +37,16 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 	private boolean quit = false;
 	List<Component> componentsToDraw;
 	private static String originalStatusText = "CTRL+S => SAVE, CTRL+X => QUIT";
+	private String filePath;
 	/**
 	 * queue of quitable components to be called when quiting
 	 */
 	private List<Quitable> quitQueue = new LinkedList<>();
 
-	public TextEditor(BasicTerminalIO terminalIO, Device device) {
+	public TextEditor(BasicTerminalIO terminalIO, Device device, String filePath) {
 		super(terminalIO, device);
 		this.componentsToDraw = new LinkedList<>();
+		this.filePath = filePath;
 	}
 
 	@Override
@@ -83,29 +91,30 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 
 			terminalIO.setCursor(2, 1);
 
-			MyEditArea ea = new MyEditArea(terminalIO, "edit area", terminalIO.getRows() - 2, Integer.MAX_VALUE);
+			final MyEditArea ea = new MyEditArea(terminalIO, "edit area", terminalIO.getRows() - 2, Integer.MAX_VALUE);
 			ea.setComponentReDrawer(this);
 
 			this.quitQueue.add(ea);
-			
-			ArrayList<String> lines = new ArrayList<>(20);
-			lines.add("a");
-			lines.add("b");
-			lines.add("c");
-			lines.add("d");
-			lines.add("e");
-			lines.add("f");
-			lines.add("g");
-			lines.add("h");
-			lines.add("ch");
-			lines.add("i");
-			lines.add("j");
-			lines.add("k");
-			lines.add("l");
-			lines.add("m");
-			lines.add("n");
-			lines.add("o");
 
+			final LinkedList<String> tempLines = new LinkedList<>();
+			
+			this.device.getFilesystem().runInputFileJob(filePath, new InputFileJob() {
+
+				@Override
+				public int workOnFile(InputStream input) throws Exception {
+					
+					Scanner sc = new Scanner(input);
+					
+					while(sc.hasNext()){
+						tempLines.add(sc.nextLine());
+					}
+						
+					return 0;
+				}
+			});
+			
+			ArrayList<String> lines = new ArrayList<>(tempLines);
+			
 			ea.setValue(lines);
 
 			ea.draw();
@@ -125,8 +134,21 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting from textEditor");
 						break;
 					case TerminalIO.CTRL_S:
-						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Saving into file.");
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Saving into file:" + filePath);
 						sb2.setStatusText("Saved");
+						this.device.getFilesystem().runOutputFileJob(filePath, new OutputFileJob() {
+
+							@Override
+							public int workOnFile(OutputStream output) throws Exception {
+								PrintWriter wr = new PrintWriter(output);
+								
+								wr.print(ea.getValue());
+								wr.flush();
+								return 0;
+							}
+						});
+						
+						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Saved into file:" + filePath);
 						sb2.draw();
 						terminalIO.flush();
 						sb2.setStatusText(originalStatusText);
@@ -160,19 +182,17 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 	public int quit() {
 		try {
 			this.quit = true;
-			
+
 			for (Quitable component : this.quitQueue) {
 				component.quit();
 			}
-			
+
 			this.terminalIO.eraseScreen();
 			this.terminalIO.homeCursor();
-			
+
 		} catch (IOException ex) {
 		}
-		
+
 		return 0;
 	}
-
-	
 }

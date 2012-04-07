@@ -64,10 +64,9 @@ public class TelnetSession implements Shell {
 		int retValue = 0;
 
 // TESTING TEXT EDITOR
-//		TextEditor edt = new TextEditor(m_IO, device);
+//		TextEditor edt = new TextEditor(m_IO, device, "/home/user/testFile");
 //		this.rootApplication = edt;
 //		 this.rootApplication.run();
-//		
 
 		//
 		CommandShell cmd = new CommandShell(m_IO, this.device);  // create command shell
