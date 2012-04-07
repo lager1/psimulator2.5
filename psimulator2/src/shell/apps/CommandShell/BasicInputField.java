@@ -114,6 +114,15 @@ public abstract class BasicInputField extends ActiveComponent {
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
 
 	}
+	
+	protected void setValue(String input){
+		
+		this.clearBuffer();
+		this.sb.append(input);
+		this.cursor = sb.length();
+		
+	}
+	
 
 	@Override
 	abstract public void run() throws Exception;

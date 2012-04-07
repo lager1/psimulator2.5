@@ -16,17 +16,15 @@ import logging.LoggingCategory;
  */
 public class History {
 
-	private List<String> commands;
+	private ArrayList<String> commands;
 	private ListIterator<String> commandIterartor;
 	private String historyPathFile;
 	private boolean calledNext = false;
 	private boolean calledPrevious = false;
 	private String activeHistoryLine;
 	private Device deviceReference;
-	
 	private Date loaded;
 	private Date saved;
-	
 
 	public History(String historyPathFile, Device deviceReference) {
 		this.historyPathFile = historyPathFile;
@@ -41,6 +39,10 @@ public class History {
 		return saved;
 	}
 
+	public ArrayList<String> getCommands() {
+		return commands;
+	}
+
 	/**
 	 * reseting history command iteration method. When command is commited or ..
 	 */
@@ -53,10 +55,11 @@ public class History {
 	 * just reset history commands iteration and load data from file if needed
 	 */
 	public void activate() {
-		
-		if(this.loaded == null)
+
+		if (this.loaded == null) {
 			this.load();
-		
+		}
+
 		this.resetIterator();
 	}
 
@@ -200,39 +203,43 @@ public class History {
 				return 0;
 			}
 		});
-		
-		
+
+
 		this.saved = new Date();
-		
+
 
 	}
 
 	public void load() {
 
-		commands = new LinkedList<>();
-		
-		if(!this.deviceReference.getFilesystem().isFile(historyPathFile))  // if there is no such history file
+		final LinkedList<String> tempList = new LinkedList<>();
+
+		if (!this.deviceReference.getFilesystem().isFile(historyPathFile)) // if there is no such history file
 		{
 			Logger.log(Logger.INFO, LoggingCategory.TELNET, "History file: " + historyPathFile + "not found. Using empty history.");
 			return;
 		}
-		
-		
+
+
 		this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
 
 			@Override
 			public int workOnFile(InputStream input) throws Exception {
 
 				Scanner sc = new Scanner(input);
-				
 
 				while (sc.hasNextLine()) {
-					commands.add(sc.nextLine().trim());
+					tempList.add(sc.nextLine().trim());
 				}
 
 				return 0;
 			}
 		});
+
+// copy LINKEDLIST INTO ARRAYLIST -- using temporary linkedlist because of unknown size of list
+		commands = new ArrayList<>(tempList.size() + 20);
+		commands.addAll(tempList);
+		
 
 		this.loaded = new Date();
 	}

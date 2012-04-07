@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * třída pro uchování historií konsole + přístup k nim
+ * class that manage histories objects
  *
  * @author Martin Lukáš
  */

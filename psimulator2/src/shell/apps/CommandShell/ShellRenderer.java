@@ -23,7 +23,6 @@ import telnetd.io.TerminalIO;
 public class ShellRenderer extends BasicInputField {
 
 	private CommandShell commandShell;
-	
 	/**
 	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
 	 */
@@ -33,7 +32,7 @@ public class ShellRenderer extends BasicInputField {
 	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
 		super(termIO, name);
 		this.commandShell = commandShell;
-		
+
 		// this.termIO = termIO;  // no need for this. Parent class Component has same protected member
 	}
 
@@ -141,6 +140,10 @@ public class ShellRenderer extends BasicInputField {
 
 				switch (inputValue) { // HANDLE CONTROL CODES for text manipulation
 
+					case TerminalIO.CTRL_R:
+						handleSearch();
+						break;
+
 					case TerminalIO.TABULATOR:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno TABULATOR");
 						this.handleTabulator(nalezenePrikazy);
@@ -245,7 +248,22 @@ public class ShellRenderer extends BasicInputField {
 	}
 
 	/**
-	 * funkce která překreslí řádek od pozice kurzoru až do jeho konce dle čtecího bufferu
+	 * method mostly used by CTRL-R search
+	 *
+	 * @param value
+	 */
+	public void setValue(String value) {
+		// set value to stringbuilder + redraw line
+
+		this.clearBuffer();
+		this.sb.append(value);
+
+		this.drawLine();
+		returnValue = true;
+	}
+
+	/**
+	 * redraw command area from cursor position to the end
 	 *
 	 * @throws IOException
 	 */
@@ -258,18 +276,40 @@ public class ShellRenderer extends BasicInputField {
 	}
 
 	/**
-	 * překreslí celou řádku, umístí kurzor na konec řádky
+	 * redraw command area without redrawing prompt area
 	 *
 	 * @throws IOException
 	 */
-	private void drawLine() throws IOException {
+	private void drawCommand() {
+		try {
+			moveCursorLeft(cursor);
+			m_IO.eraseToEndOfScreen();
+			this.cursor = 0;
+			m_IO.write(sb.toString());
+			this.cursor = sb.length();
+		} catch (IOException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when drawing command area in ShellRenderer");
+		}
+	}
 
-		moveCursorLeft(cursor);
-		m_IO.eraseToEndOfScreen();
-		this.cursor = 0;
-		m_IO.write(sb.toString());
-		this.cursor = sb.length();
+	/**
+	 * draw entire line, cursor is set at the end of line
+	 *
+	 * @throws IOException
+	 */
+	private void drawLine() {
 
+		try {
+
+			this.eraseLine();
+			this.commandShell.printPrompt();
+			this.cursor = 0;
+			m_IO.write(sb.toString());
+			this.cursor = sb.length();
+
+		} catch (IOException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when drawing line in ShellRenderer");
+		}
 	}
 
 	/**
@@ -284,8 +324,7 @@ public class ShellRenderer extends BasicInputField {
 			return;
 		}
 
-		m_IO.eraseLine();
-		m_IO.moveLeft(100);  // kdyby byla lepsi cesta jak smazat řádku, nenašel jsem
+		this.eraseLine();
 
 		this.commandShell.printPrompt();
 
@@ -298,7 +337,7 @@ public class ShellRenderer extends BasicInputField {
 		}
 
 		m_IO.write(this.sb.toString());
-		m_IO.moveLeft(100);
+		m_IO.moveLeft(m_IO.getColumns());
 		m_IO.moveRight(sb.length() + this.commandShell.prompt.length());
 		this.cursor = sb.length();
 
@@ -306,20 +345,20 @@ public class ShellRenderer extends BasicInputField {
 
 	/**
 	 *
-	 * @param nalezenePrikazy seznam nalezených příkazů z předchozího hledání, pokud prázdný, tak jde o první stisk
+	 * @param foundCommands seznam nalezených příkazů z předchozího hledání, pokud prázdný, tak jde o první stisk
 	 * tabulatoru
 	 */
-	private void handleTabulator(List<String> nalezenePrikazy) throws IOException, TelnetConnectionException {
+	private void handleTabulator(List<String> foundCommands) throws IOException, TelnetConnectionException {
 
-		if (!nalezenePrikazy.isEmpty() && nalezenePrikazy.size() > 1) { // dvakrat zmacknuty tab a mám více než jeden výsledek
+		if (!foundCommands.isEmpty() && foundCommands.size() > 1) { // double tab + more results
 
-			m_IO.write(TerminalIO.CRLF); // nový řádek
+			m_IO.write(TerminalIO.CRLF); // new line
 
-			for (String nalezeny : nalezenePrikazy) {
+			for (String nalezeny : foundCommands) {
 				m_IO.write(nalezeny + "  ");
 			}
 
-			m_IO.write(TerminalIO.CRLF); // nový řádek
+			m_IO.write(TerminalIO.CRLF); // new line
 			this.commandShell.printPrompt();
 			m_IO.write(this.sb.toString());
 
@@ -330,7 +369,7 @@ public class ShellRenderer extends BasicInputField {
 
 // nové hledání
 
-		String hledanyPrikaz = this.sb.substring(0, cursor);
+		//	String hledanyPrikaz = this.sb.substring(0, cursor);
 //        List<String> prikazy = this.commandShell.getCommandList();
 //
 //
@@ -365,12 +404,57 @@ public class ShellRenderer extends BasicInputField {
 
 	}
 
+	private void handleSearch() throws IOException {
+
+		HistorySearchRenderer hSearch = new HistorySearchRenderer(this, m_IO);
+		int ret = hSearch.run(this.commandShell.getHistoryManager().getActiveHistory(), this.sb.toString());
+
+		switch (ret) {
+			case TerminalIO.LEFT:
+			case TerminalIO.RIGHT:
+			case TerminalIO.UP:
+			case TerminalIO.DOWN:
+				this.setValue(hSearch.getResult());
+				break;
+
+			case TerminalIO.ENTER:
+				this.setValue(hSearch.getResult());
+				this.m_IO.write(TerminalIO.CRLF);
+				this.quit();
+				break;
+			case TerminalIO.CTRL_C:
+				this.m_IO.write("^C");
+				this.m_IO.write(TerminalIO.CRLF);
+				this.clearBuffer();
+				this.drawLine();
+				break;
+
+		}
+
+
+	}
+
+	/**
+	 * method that clear entire screen -- like CTRL-L
+	 *
+	 * @throws IOException
+	 * @throws TelnetConnectionException
+	 */
 	private void clearScreen() throws IOException, TelnetConnectionException {
 		this.m_IO.eraseScreen();
 		m_IO.setCursor(0, 0);
 		this.commandShell.printPrompt();
 		this.cursor = 0;
-		drawLine();
+		drawCommand();
+	}
 
+	/**
+	 * method that erase whole line and set cursor at the begining
+	 *
+	 * @throws IOException
+	 */
+	public void eraseLine() throws IOException {
+		m_IO.eraseLine();
+		m_IO.moveLeft(m_IO.getColumns());  // kdyby byla lepsi cesta jak smazat řádku, nenašel jsem
 	}
 }
