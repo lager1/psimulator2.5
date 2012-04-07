@@ -5,7 +5,10 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import java.util.Map;
 import psimulator2.Main;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  *
@@ -65,5 +68,13 @@ class HelpCommand extends CiscoCommand {
                 "  end\n" +
                 "  exit\n\n";
 		printWithDelay(s, 10);
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		completers.get(CommandShell.CISCO_USER_MODE).addCommand("help");
+		completers.get(CommandShell.CISCO_PRIVILEGED_MODE).addCommand("help");
+		completers.get(CommandShell.CISCO_CONFIG_MODE).addCommand("help");
+		completers.get(CommandShell.CISCO_CONFIG_IF_MODE).addCommand("help");
 	}
 }

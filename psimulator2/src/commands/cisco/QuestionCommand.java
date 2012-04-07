@@ -5,12 +5,15 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import shell.apps.CommandShell.CommandShell;
 
 /**
+ * Zvazit zruseni tohoto prikazu - melo by byt spise implementovano pres Completer!
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
@@ -71,4 +74,9 @@ public class QuestionCommand extends CiscoCommand {
             printWithDelay(s, 50);
         }
     }
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		// 
+	}
 }

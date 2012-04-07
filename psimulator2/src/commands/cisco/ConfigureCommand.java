@@ -6,6 +6,9 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.LongTermCommand;
+import commands.completer.Completer;
+import java.util.Map;
+import shell.apps.CommandShell.CommandShell;
 import static shell.apps.CommandShell.CommandShell.CISCO_CONFIG_MODE;
 import shell.apps.CommandShell.ShellMode;
 
@@ -60,7 +63,7 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 			return;
 		}
 
-		printLine("chyba: "+nextWord);
+		debug("chyba: "+nextWord);
 		parser.invalidInputDetected();
 	}
 
@@ -72,5 +75,11 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
 				parser.changeMode(CISCO_CONFIG_MODE);
 				break;
 		}
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_PRIVILEGED_MODE);
+		tmp.addCommand("configure terminal");
 	}
 }

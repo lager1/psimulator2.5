@@ -6,14 +6,11 @@ package applications;
 
 import commands.ApplicationNotifiable;
 import dataStructures.DropItem;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.IcmpPacket;
 import dataStructures.packets.IpPacket;
-import dataStructures.ipAddresses.IpAddress;
 import device.Device;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import logging.Logger;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
@@ -26,20 +23,48 @@ import utils.Wakeable;
  */
 public abstract class TracerouteApplication extends TwoThreadApplication implements Wakeable {
 
+	/**
+	 * Traceroute target.
+	 */
 	protected IpAddress target;
 	protected final ApplicationNotifiable command;
 	protected int payload = 56; // default linux size (without header)
-	protected int maxTTL = 30; // traceroute -m
-	protected int firstTTL = 1; // traceroute -f
-	protected int timeout = 5_000; // traceroute -w
-	protected int queryPerTTL = 3; // traceroute -q
-	protected Method method = Method.ICMP; // na linuxu je defaultne UDP
+	/**
+	 * traceroute -m
+	 */
+	protected int maxTTL = 30;
+	/**
+	 * traceroute -f
+	 */
+	protected int firstTTL = 1;
+	/**
+	 * Timeout in ms.
+	 * traceroute -w
+	 */
+	protected int timeout = 5_000;
+	/**
+	 * Number of queries per TTL
+	 * traceroute -q
+	 */
+	protected int queryPerTTL = 3;
+	/**
+	 * On linux and cisco there is UDP as default, here in simulator ICMP is used.
+	 * UDP maybe in future.
+	 */
+	protected Method method = Method.ICMP;
+	/**
+	 * When target is reached it is set to true.
+	 */
 	protected transient boolean targetReached = false;
 	protected transient int targetTTL = -1;
 
+	/**
+	 * Key - TTL <br />
+	 * Value - at the latest time to print line for TTL (time of sent last packet of given TTL + timeout).
+	 */
 	protected Map<Integer, Double> timeForTTL = new HashMap<>();
 
-	protected List<List<Record>> records;
+	protected Map<Integer, List<Record>> recordsNew;
 
 	protected int printedTTL = 0;
 
@@ -90,17 +115,16 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda doMyWork vlaknem "+Util.threadName(), null);
 		if (buffer.isEmpty()) {
 //			Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, "doMyWork(): spusteno, ale buffer je prazdny!!!  vlaknem "+Util.threadName(), null);
-			if (!timestamps.containsKey(1)) { // nebyl jeste odeslan 1. paket
+			if (!timestamps.containsKey(firstTTL)) { // nebyl jeste odeslan 1. paket s TTL=1
 				return;
 			}
 		}
-
 
 		IcmpPacket packet;
 
 		while (!buffer.isEmpty()) {
 			IpPacket p = buffer.remove(0).packet;
-			double arrivalTime = (double)System.nanoTime()/1_000_000;
+			double arrivalTime = (double) System.nanoTime() / 1_000_000;
 
 			// zkouseni, jestli je ten paket spravnej:
 			if (! (p.data instanceof IcmpPacket)) {
@@ -112,8 +136,6 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			packet = (IcmpPacket) p.data;
 
 			Timestamp t = timestamps.get(packet.seq);
-			// TODO: duplikace
-
 			if (t == null) {
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, "Dropping packet: TracerouteApplication doesn't expect such a PING reply "
 						+ "(IcmpPacket with this seq=" + packet.seq + " was never send OR it was served in a past)", p);
@@ -135,7 +157,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 
 //				try {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pridavam paket: ttl="+t.ttl+", seq="+packet.seq+", seznamu c."+(t.ttl-1), null);
-				records.get(t.ttl - 1).add(new Record(delay, packet, p.src)); // pridavam paket do seznamu indexovanyho dle TTL-1 (indexy zacinaj od 0)
+				recordsNew.get(t.ttl).add(new Record(delay, packet, p.src)); // pridavam paket do spravnyho seznamu
 //				} catch (IndexOutOfBoundsException e) {
 //					Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Paket s TTL: "+t.ttl, null);
 //					Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "timestamp map: "+timestamps, null);
@@ -143,9 +165,9 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 //					e.printStackTrace();
 //				}
 			} else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout.", packet);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout. delay="+delay+", ale timout="+timeout, packet);
 
-				records.get(t.ttl - 1).add(new Record(null, packet, p.src)); // dam tam null, aby se to jednodusejc vypisovalo
+				recordsNew.get(t.ttl).add(new Record(null, packet, p.src)); // dam tam null, aby se to jednodusejc vypisovalo
 			}
 
 			// tak, tady mam vsechny dosud prijate pakety v records
@@ -203,11 +225,11 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			return;
 		}
 
-		if (now - timeTTL > (double) timeout || records.get(ttl - 1).size() == queryPerTTL) { //		ANO - vypsat ji
+		if (now - timeTTL > (double) timeout || recordsNew.get(ttl).size() == queryPerTTL) { //		ANO - vypsat ji
 
 			Record temp = null;
-			if (records.get(ttl - 1).size() > 0) {
-				temp = records.get(ttl - 1).get(0);
+			if (recordsNew.get(ttl).size() > 0) {
+				temp = recordsNew.get(ttl).get(0);
 			}
 			String address;
 			if (temp == null) {
@@ -216,11 +238,11 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 				address = temp.sender.toString();
 			}
 
-			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c."+(ttl-1) + ", size:"+records.get(ttl - 1).size(), null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c."+(ttl-1) + ", size:"+recordsNew.get(ttl).size(), null);
 
 			lineBeginning(ttl, address);
 			int count = 0;
-			for (Record record : records.get(ttl - 1)) { // indexovano od 0, ale TTL zacinaj na 1
+			for (Record record : recordsNew.get(ttl)) { // indexovano od 0, ale TTL zacinaj na 1
 				printPacket(record);
 				count++;
 			}
@@ -230,7 +252,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			lineEnding();
 
 			printedTTL = ttl;
-			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vypisuju radek s ttl="+ttl, null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vypisan radek s ttl="+ttl, null);
 			if (targetReached && targetTTL == printedTTL) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "volam metodu exit, protoze jsem dosahl cile.", null);
 				exit();
@@ -259,7 +281,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 				transportLayer.icmphandler.sendRequest(target, ttl, seq, port, payload);
 				seq++;
 
-				Util.sleep(100); // TODO: pak smazat?
+				Util.sleep(100); // aby se stihlo mezitim neco udelat (napr. at se pocka na prvni ARP request a pak uz pofrci rychlejc)
 			}
 
 			timeForTTL.put(ttl, (double)System.nanoTime()/1_000_000); // spravne pocitani casu
@@ -321,11 +343,11 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 
 		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName()+" atStart()", null);
 
-		records = new ArrayList<>();
-		for (int i = 0; i < maxTTL-firstTTL+1; i++) {
-			records.add(new ArrayList<Record>());
+		recordsNew = new HashMap<>();
+		for (int ttl = firstTTL; ttl <= maxTTL; ttl++) {
+			recordsNew.put(ttl, new ArrayList<Record>());
 		}
-		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vytvoreno tolik TTL seznamu: "+records.size(), null);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vytvoreno tolik TTL seznamu: "+recordsNew.size(), null);
 //		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "TTLka a casy odeslani: "+timeForTTL.toString(), null);
 		vypisMapu();
 
@@ -340,6 +362,10 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 		this.target = target;
 	}
 
+	/**
+	 * Set timout in ms.
+	 * @param timeout
+	 */
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
@@ -352,11 +378,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 		this.maxTTL = maxTTL;
 	}
 
-	public void setMethod(Method method) {
-		this.method = method;
-	}
-
-	public void setQueryPerTTL(int queryPerTTL) {
+	public void setQueriesPerTTL(int queryPerTTL) {
 		this.queryPerTTL = queryPerTTL;
 	}
 
@@ -374,6 +396,36 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			this.delay = arrival;
 			this.packet = packet;
 			this.sender = sender;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Record other = (Record) obj;
+			if (!Objects.equals(this.delay, other.delay)) {
+				return false;
+			}
+			if (!Objects.equals(this.packet, other.packet)) {
+				return false;
+			}
+			if (!Objects.equals(this.sender, other.sender)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 5;
+			hash = 53 * hash + Objects.hashCode(this.delay);
+			hash = 53 * hash + Objects.hashCode(this.packet);
+			hash = 53 * hash + Objects.hashCode(this.sender);
+			return hash;
 		}
 	}
 

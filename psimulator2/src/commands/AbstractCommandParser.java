@@ -6,7 +6,6 @@ package commands;
 import commands.LongTermCommand.Signal;
 import device.Device;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import logging.Loggable;
 import logging.Logger;
@@ -14,6 +13,7 @@ import logging.LoggingCategory;
 import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
 import shell.apps.CommandShell.ShellMode;
+import utils.Util;
 
 /**
  * Abstraktni parser prikazu spolecnej pro linux i pro cisco.
@@ -30,7 +30,7 @@ public abstract class AbstractCommandParser implements Loggable {
 	/**
 	 * Seznam slov v prijatem radku.
 	 */
-	protected List<String> words;
+	protected List<String> words = new ArrayList<>();
 	/**
 	 * Obcas je potreba cely radek.
 	 */
@@ -58,6 +58,17 @@ public abstract class AbstractCommandParser implements Loggable {
 	}
 
 	/**
+	 * Add completers for every mode you want to complete commands.
+	 * Call in constructor of concrete Completer.
+	 */
+	protected abstract void addCompleters();
+	/**
+	 * Add data to completers.
+	 * Call in constructor of concrete Completer.
+	 */
+	protected abstract void addCompletionData();
+
+	/**
 	 * Zpracuje radek.
 	 * Tuto metodu bude volat CommandShell
 	 *
@@ -76,7 +87,8 @@ public abstract class AbstractCommandParser implements Loggable {
 			this.line = line;
 			this.mode = mode;
 			this.ref = 0;
-			splitLine(line);
+			words.clear();
+			words.addAll(Util.splitLine(line));
 
 			if (line.isEmpty()) {
 				return;
@@ -224,23 +236,6 @@ public abstract class AbstractCommandParser implements Loggable {
 			vratit+="^"+s+"^ ";
 		}
 		return vratit;
-	}
-
-	/**
-	 * Tato metoda rozseka vstupni string na jednotlivy words (jako jejich oddelovac se bere mezera) a ulozi je do
-	 * seznamu words, ktery dedi od Abstraktni. @autor Stanislav Řehák
-	 */
-	private void splitLine(String line) {
-		words = new ArrayList<>();
-		line = line.trim(); // rusim bile znaky na zacatku a na konci
-		String[] bileZnaky = {" ", "\t"};
-		for (int i = 0; i < bileZnaky.length; i++) { // odstraneni bylych znaku
-			while (line.contains(bileZnaky[i] + bileZnaky[i])) {
-				line = line.replace(bileZnaky[i] + bileZnaky[i], bileZnaky[i]);
-			}
-		}
-		String[] pole = line.split(" ");
-		words.addAll(Arrays.asList(pole));
 	}
 
 	/**

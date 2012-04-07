@@ -5,13 +5,16 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
 import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  * TODO: IpAddressCommand - vyzkouset a poradne odladit/
@@ -141,4 +144,11 @@ public class IpAddressCommand extends CiscoCommand {
 
         ipLayer.changeIpAddressOnInterface(iface, pomocna);
     }
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
+		tmp.addCommand("ip address");
+		tmp.addCommand("no ip address");
+	}
 }

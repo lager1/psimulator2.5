@@ -3,10 +3,8 @@
  */
 package applications;
 
-import dataStructures.packets.IpPacket;
 import dataStructures.PacketItem;
 import device.Device;
-import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

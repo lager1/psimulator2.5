@@ -8,7 +8,10 @@ import applications.CiscoPingApplication;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
+import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
+import java.util.Map;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  *
@@ -178,6 +181,12 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 	@Override
 	public void applicationFinished() {
 		parser.deleteRunningCommand();
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		completers.get(CommandShell.CISCO_USER_MODE).addCommand("ping");
+		completers.get(CommandShell.CISCO_PRIVILEGED_MODE).addCommand("ping");
 	}
 
 }

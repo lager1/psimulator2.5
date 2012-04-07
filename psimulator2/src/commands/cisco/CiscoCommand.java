@@ -6,6 +6,8 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -111,4 +113,6 @@ public abstract class CiscoCommand extends AbstractCommand {
         }
         return false;
     }
+
+	protected abstract void fillCompleters(Map<Integer, Completer> completers);
 }

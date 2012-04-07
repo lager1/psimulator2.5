@@ -6,6 +6,8 @@ package commands.cisco;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand.Signal;
+import commands.completer.Completer;
+import commands.completer.Node;
 import commands.linux.Ifconfig;
 import commands.linux.Route;
 import device.Device;
@@ -13,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import logging.Loggable;
 import logging.Logger;
@@ -52,6 +55,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	private final CiscoIPLayer ipLayer;
 
+	private List<CiscoCommand> availableCommands = new ArrayList<>();
+
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
 		shell.setPrompt(device.getName()+">");
@@ -66,7 +71,89 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 			this.ipLayer = null; // never happen, because L2 only devices have no telnet access
 		}
 
+		if (device.commandCompleters == null) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "Vytvarim Completery", null);
+			device.commandCompleters = new HashMap<>();
+			addCompleters();
+			addCompletionData();
+
+			Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "completery: \n"+device.commandCompleters.toString(), null);
+		}
+
 		printService("Type command 'help' for list of supported commands.");
+	}
+
+	@Override
+	protected final void addCompleters() {
+		device.commandCompleters.put(CommandShell.CISCO_USER_MODE, new CiscoCompleter());
+		device.commandCompleters.put(CommandShell.CISCO_PRIVILEGED_MODE, new CiscoCompleter());
+		device.commandCompleters.put(CommandShell.CISCO_CONFIG_MODE, new CiscoCompleter());
+		device.commandCompleters.put(CommandShell.CISCO_CONFIG_IF_MODE, new CiscoCompleter());
+		Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "Pocet completeru: "+device.commandCompleters.size(), null);
+	}
+
+	@Override
+	protected final void addCompletionData() {
+		registerCommands();
+		registerParserCommands();
+	}
+
+	/**
+	 * All available cisco commands put here!
+	 */
+	private void registerCommands() {
+		availableCommands.add(new AccessListCommand(this, false));
+		availableCommands.add(new ConfigureCommand(this));
+		availableCommands.add(new HelpCommand(this));
+		availableCommands.add(new IpAddressCommand(this, false));
+		availableCommands.add(new IpCommand(this, false));
+		availableCommands.add(new IpNatCommand(this, false));
+		availableCommands.add(new IpNatInterfaceCommand(this, false));
+		availableCommands.add(new IpRouteCommand(this, false));
+		availableCommands.add(new PingCommand(this));
+		availableCommands.add(new QuestionCommand(this));
+		availableCommands.add(new ShowCommand(this));
+		availableCommands.add(new TracerouteCommand(this));
+
+		for (CiscoCommand cmd : availableCommands) {
+			cmd.fillCompleters(device.commandCompleters);
+		}
+
+		availableCommands.clear(); // no longer neeeded
+	}
+
+	private void registerParserCommands() {
+		Completer user = device.commandCompleters.get(CommandShell.CISCO_USER_MODE);
+		user.addCommand("enable");
+		user.addCommand("exit");
+		user.addCommand("logout");
+
+		Completer privileged = device.commandCompleters.get(CommandShell.CISCO_PRIVILEGED_MODE);
+		privileged.addCommand("enable");
+		privileged.addCommand("disable");
+		privileged.addCommand("exit");
+		privileged.addCommand("logout");
+
+		Completer config = device.commandCompleters.get(CommandShell.CISCO_CONFIG_MODE);
+		config.addCommand("exit");
+		config.addCommand("end");
+		Node iface = new Node("interface");
+
+		for (NetworkInterface rozh : ipLayer.getNetworkIfaces()) {
+			if (rozh.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1,2}")) {
+				int indexOfT = rozh.name.lastIndexOf("t");
+				String shortenedIfaceName = rozh.name.substring(0, indexOfT+1);
+				iface.addChild(new Node(shortenedIfaceName));
+				break;
+			}
+		}
+		config.addCommand(iface);
+
+		Completer configif = device.commandCompleters.get(CommandShell.CISCO_CONFIG_IF_MODE);
+		configif.addCommand("exit");
+		configif.addCommand("end");
+		configif.addCommand("shutdown");
+		configif.addCommand("no shutdown");
 	}
 
 	@Override
@@ -89,6 +176,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         }
 
 		try {
+
+			tryComplete(line);
+
 			if (debug) {
 				if (first.equals("ifconfig")) {
 					command = new Ifconfig(this);
@@ -119,9 +209,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					if (isCommand("traceroute", first)) {
-//                    command = new CiscoTraceroute(pc, kon, slova);
-//					command.run();
-//                    return;
+						command = new TracerouteCommand(this);
+						command.run();
+						return;
 					}
 					if (isCommand("show", first)) {
 						command = new ShowCommand(this);
@@ -148,9 +238,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					if (isCommand("traceroute", first)) {
-//                    command = new CiscoTraceroute(pc, kon, slova);
-//					  command.run();
-//                    return;
+						command = new TracerouteCommand(this);
+						command.run();
+						return;
 					}
 					if (isCommand("configure", first)) {
 						command = new ConfigureCommand(this);
@@ -591,5 +681,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	@Override
 	public String getDescription() {
 		return device.getName()+": CiscoCommandParser: ";
+	}
+
+	private void tryComplete(String line) {
+		if (debug) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, line + " doplneno na '" + device.commandCompleters.get(mode).complete(line, shell) + "'", null);
+		}
 	}
 }

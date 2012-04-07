@@ -93,7 +93,7 @@ public class TransportLayer implements Loggable {
 		} else {
 			Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Dropping packet: There is now app listening on this port: "+port+ ", sending port unreachable to: "+packetItem.packet.src, packetItem.packet);
 			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packetItem.packet, getIpLayer().getNetMod().getDevice().configID));
-//			icmphandler.sendPortUnreachable(packet.src, packet);
+//			icmphandler.sendPortUnreachable(packet.src, packet); // zatim posilat nebudeme, protoze by se nam toho tam posilalo moc
 		}
 	}
 

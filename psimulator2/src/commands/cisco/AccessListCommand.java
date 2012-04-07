@@ -5,10 +5,14 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import commands.completer.Node;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+import java.util.Map;
 import networkModule.L3.nat.NatTable;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  * Trida pro zpracovani prikazu 'access-list 7 permit 1.1.1.0 0.0.0.31'.
@@ -104,4 +108,11 @@ public class AccessListCommand extends CiscoCommand {
 			natTable.lAccess.addAccessList(adr, access);
 		}
     }
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+		tmp.addCommand("access-list");
+		tmp.addCommand("no access-list");
+	}
 }

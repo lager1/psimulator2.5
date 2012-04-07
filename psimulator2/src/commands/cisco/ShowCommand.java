@@ -5,6 +5,9 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import commands.completer.Node;
+import java.util.Map;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.nat.NatTable;
 import networkModule.L3.nat.NatTable.Record;
@@ -64,6 +67,35 @@ public class ShowCommand extends CiscoCommand {
 			start();
 		}
 
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer privileged = completers.get(CommandShell.CISCO_PRIVILEGED_MODE);
+		Completer user = completers.get(CommandShell.CISCO_USER_MODE);
+		Completer config = completers.get(CommandShell.CISCO_CONFIG_MODE);
+
+		user.addCommand("show ip nat translations");
+		privileged.addCommand("show ip nat translations");
+
+		privileged.addCommand("show running-config");
+
+
+		Node show = new Node("show");
+		Node ifaces = new Node("interfaces");
+		show.addChild(ifaces);
+		for (NetworkInterface ifa : ipLayer.getSortedNetworkIfaces()) {
+			if (ifa.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1,2}")) {
+				int indexOfT = ifa.name.lastIndexOf("t");
+				String shortenedIfaceName = ifa.name.substring(0, indexOfT+1);
+				ifaces.addChild(new Node(shortenedIfaceName));
+				break;
+			}
+		}
+		privileged.addCommand(show);
+
+		user.addCommand("show ip route");
+		privileged.addCommand("show ip route");
 	}
 
     enum State {

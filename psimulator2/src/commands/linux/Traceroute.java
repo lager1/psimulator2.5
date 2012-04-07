@@ -68,7 +68,7 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 	private void vykonejPrikaz() {
 		app = new LinuxTracerouteApplication(getDevice(), this);
 		app.setTarget(adr);
-		app.setQueryPerTTL(5);
+		app.setQueriesPerTTL(5);
 		app.setMaxTTL(11);
 		app.start();
 	}

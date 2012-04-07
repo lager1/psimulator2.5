@@ -119,6 +119,10 @@ public enum LoggingCategory {
 	PACKET_DROP,
 
 	DHCP,
+	/**
+	 * Zpravy z doplnovace prikazu.
+	 */
+	COMPLETER,
 
 	// !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 

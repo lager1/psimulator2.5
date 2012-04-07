@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -220,4 +222,21 @@ public class Util {
 		return a;
 	}
 
+	/**
+	 * Tato metoda rozseka vstupni string na jednotlivy words (jako jejich oddelovac se bere mezera) a ulozi je do
+	 * seznamu words, ktery dedi od Abstraktni. @autor Stanislav Řehák
+	 */
+	public static List<String> splitLine(String line) {
+		line = line.trim(); // rusim bile znaky na zacatku a na konci
+		String[] bileZnaky = {" ", "\t"};
+		for (int i = 0; i < bileZnaky.length; i++) { // odstraneni bylych znaku
+			while (line.contains(bileZnaky[i] + bileZnaky[i])) {
+				line = line.replace(bileZnaky[i] + bileZnaky[i], bileZnaky[i]);
+			}
+		}
+		String[] pole = line.split(" ");
+		return Arrays.asList(pole);
+	}
+
+//	public static boolean 
 }

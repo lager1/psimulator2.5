@@ -265,6 +265,15 @@ public class CommandShell extends TerminalApplication {
 
 	}
 
+	public String completeWord(String line) {
+		if (!device.commandCompleters.containsKey(mode)) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "This mode has no Completer created: "+mode);
+			return null;
+		}
+
+		return device.commandCompleters.get(mode).complete(line, this);
+	}
+
 	@Override
 	public final int run() {
 

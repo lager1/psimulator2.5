@@ -7,6 +7,7 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
 import utils.Util;
 import static dataStructures.packets.IcmpPacket.Type.*;
 import static dataStructures.packets.IcmpPacket.Code.*;
+import java.util.Arrays;
 
 /**
  * Represents ICMP packet.
@@ -280,5 +281,47 @@ public class IcmpPacket extends L4Packet {
 			case 6: return DESTINATION_NETWORK_UNKNOWN;
 		}
 		throw new Exception("ICMP code "+t+" cannot be recognized");
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final IcmpPacket other = (IcmpPacket) obj;
+		if (this.type != other.type) {
+			return false;
+		}
+		if (this.code != other.code) {
+			return false;
+		}
+		if (this.id != other.id) {
+			return false;
+		}
+		if (this.seq != other.seq) {
+			return false;
+		}
+		if (!Arrays.equals(this.payload, other.payload)) {
+			return false;
+		}
+		if (this.payloadSize != other.payloadSize) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 67 * hash + (this.type != null ? this.type.hashCode() : 0);
+		hash = 67 * hash + (this.code != null ? this.code.hashCode() : 0);
+		hash = 67 * hash + this.id;
+		hash = 67 * hash + this.seq;
+		hash = 67 * hash + Arrays.hashCode(this.payload);
+		hash = 67 * hash + this.payloadSize;
+		return hash;
 	}
 }

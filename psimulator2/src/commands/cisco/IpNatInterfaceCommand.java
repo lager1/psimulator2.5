@@ -5,7 +5,10 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import java.util.Map;
 import networkModule.L3.IPLayer;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  * Class for handling: 'ip nat (inside|outside)'.
@@ -87,4 +90,13 @@ public class IpNatInterfaceCommand extends CiscoCommand {
 			ipLayer.getNatTable().setOutside(parser.configuredInterface);
         }
     }
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
+		tmp.addCommand("ip nat inside");
+		tmp.addCommand("no nat inside");
+		tmp.addCommand("ip nat outside");
+		tmp.addCommand("no nat outside");
+	}
 }

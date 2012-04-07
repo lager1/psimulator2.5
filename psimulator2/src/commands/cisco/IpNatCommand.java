@@ -5,11 +5,11 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
-import dataStructures.ipAddresses.IPwithNetmask;
+import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
-import logging.Logger;
-import logging.LoggingCategory;
+import java.util.Map;
 import networkModule.L3.nat.NatTable;
+import shell.apps.CommandShell.CommandShell;
 
 /**
  * Trida pro zpracovani prikazu: <br />
@@ -33,6 +33,17 @@ public class IpNatCommand extends CiscoCommand {
     boolean overload = false;
     State stav;
 	private NatTable natTable;
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+		tmp.addCommand("ip nat pool");
+		tmp.addCommand("no ip nat pool");
+		tmp.addCommand("ip nat source list");
+		tmp.addCommand("no ip nat source list");
+		tmp.addCommand("ip nat source static");
+		tmp.addCommand("no ip nat source static");
+	}
 
     private enum State {
 

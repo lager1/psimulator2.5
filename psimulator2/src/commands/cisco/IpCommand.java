@@ -6,6 +6,8 @@ package commands.cisco;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
+import java.util.Map;
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -79,5 +81,14 @@ public class IpCommand extends CiscoCommand {
         if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise isCommandWithoutOutput
             invalidInputDetected();
         }
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+		tmp.addCommand("ip classless");
+		tmp.addCommand("no ip classless");
+
+		// everything else is added through its commands
 	}
 }

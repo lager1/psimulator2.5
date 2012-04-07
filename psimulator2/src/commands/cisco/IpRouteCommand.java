@@ -5,12 +5,15 @@
 package commands.cisco;
 
 import commands.AbstractCommandParser;
+import commands.completer.Completer;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+import java.util.Map;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
+import shell.apps.CommandShell.CommandShell;
 import utils.Util;
 
 /**
@@ -147,5 +150,12 @@ public class IpRouteCommand extends CiscoCommand {
                 printLine("%No matching route to delete");
             }
         }
+	}
+
+	@Override
+	protected void fillCompleters(Map<Integer, Completer> completers) {
+		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+		tmp.addCommand("ip route");
+		tmp.addCommand("no ip route");
 	}
 }

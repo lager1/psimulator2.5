@@ -6,6 +6,7 @@ package device;
 import applications.Application;
 import commands.AbstractCommandParser;
 import commands.cisco.CiscoCommandParser;
+import commands.completer.Completer;
 import commands.linux.LinuxCommandParser;
 import filesystem.FileSystem;
 import java.util.HashMap;
@@ -26,6 +27,13 @@ public class Device {
 	public final DeviceType type;
 	public final PhysicMod physicalModule;
 	private NetMod networkModule;
+	/**
+	 * Completers for all available modes.
+	 *
+	 * Key - mode number - static modes from CommandShell<br />
+	 * Value - Completer
+	 */
+	public Map<Integer, Completer> commandCompleters; // schvalne neinicializovano! vytvari se az v parserech
 	/**
 	 * List of running network applications. <br />
 	 *

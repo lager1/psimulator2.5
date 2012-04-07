@@ -13,6 +13,7 @@ import device.Device;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import logging.*;
 import logging.LoggingCategory;
@@ -36,6 +37,12 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		super(networkDevice, shell);
 		registerCommands();
 		shell.prompt=device.getName()+": ~# ";
+
+		if (device.commandCompleters == null) {
+			device.commandCompleters = new HashMap<>();
+			addCompleters();
+			addCompletionData();
+		}
 	}
 
 
@@ -157,4 +164,16 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
 	}
 
+	@Override
+	protected final void addCompleters() {
+		device.commandCompleters.put(CommandShell.DEFAULT_MODE, new LinuxCompleter());
+	}
+
+	@Override
+	protected final void addCompletionData() {
+		Iterator<String> it = commands.keySet().iterator();
+		while (it.hasNext()) {
+			device.commandCompleters.get(CommandShell.DEFAULT_MODE).addCommand(it.next());
+		}
+	}
 }
