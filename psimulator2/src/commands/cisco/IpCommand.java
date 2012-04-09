@@ -1,7 +1,6 @@
 /*
  * created 6.3.2012
  */
-
 package commands.cisco;
 
 import commands.AbstractCommand;
@@ -33,54 +32,52 @@ public class IpCommand extends CiscoCommand {
 
 		dalsi = nextWord(); // route, classless, nat, address
 
-        if(dalsi.isEmpty()) {
-            incompleteCommand();
-            return;
-        }
+		if (dalsi.isEmpty()) {
+			incompleteCommand();
+			return;
+		}
 
-        if (state == CommandShell.CISCO_CONFIG_MODE) {
+		if (state == CommandShell.CISCO_CONFIG_MODE) {
 
-			if (debug) {
-				if (isCommandWithoutOutput("route", dalsi, 5)) {
-					command = new IpRouteCommand(parser, no);
-					command.run();
-					return;
-				}
+			if (isCommandWithoutOutput("route", dalsi, 5)) {
+				command = new IpRouteCommand(parser, no);
+				command.run();
+				return;
 			}
 
-            if (isCommandWithoutOutput("nat", dalsi, 3)) {
-                command = new IpNatCommand(parser, no);
+			if (isCommandWithoutOutput("nat", dalsi, 3)) {
+				command = new IpNatCommand(parser, no);
 				command.run();
-                return;
-            }
+				return;
+			}
 
-            if (isCommandWithoutOutput("classless", dalsi, 2)) {
-                if (no) {
+			if (isCommandWithoutOutput("classless", dalsi, 2)) {
+				if (no) {
 					getNetMod().ipLayer.routingTable.classless = false;
-                } else {
+				} else {
 					getNetMod().ipLayer.routingTable.classless = true;
-                }
-                return;
-            }
-        }
+				}
+				return;
+			}
+		}
 
-        if (state == CommandShell.CISCO_CONFIG_IF_MODE) {
-            if (isCommandWithoutOutput("address", dalsi, 3)) {
-                command = new IpAddressCommand(parser, no);
+		if (state == CommandShell.CISCO_CONFIG_IF_MODE) {
+			if (isCommandWithoutOutput("address", dalsi, 3)) {
+				command = new IpAddressCommand(parser, no);
 				command.run();
-                return;
-            }
+				return;
+			}
 
-            if (isCommandWithoutOutput("nat", dalsi, 2)) {
+			if (isCommandWithoutOutput("nat", dalsi, 2)) {
 				command = new IpNatInterfaceCommand(parser, no);
 				command.run();
-                return;
-            }
-        }
+				return;
+			}
+		}
 
-        if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise isCommandWithoutOutput
-            invalidInputDetected();
-        }
+		if (dalsi.length() != 0 && ambiguous == false) { // jestli to je prazdny, tak to uz vypise isCommandWithoutOutput
+			invalidInputDetected();
+		}
 	}
 
 	@Override
