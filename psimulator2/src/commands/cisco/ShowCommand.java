@@ -26,24 +26,24 @@ import utils.Util;
  */
 public class ShowCommand extends CiscoCommand {
 
-    private State stavShow = null;
-    private int stavCisco;
+    private State showState = null;
+    private int ciscoState;
 	private final CiscoIPLayer ipLayer;
 
     /**
-     * Pomocne rozhrani pro prikaz 'show interfaces FastEthernet0/0'
+     * Reference on interface in 'show interfaces FastEthernet0/0' command.
      */
     NetworkInterface iface;
 
 	public ShowCommand(AbstractCommandParser parser) {
 		super(parser);
-		this.stavCisco = parser.getShell().getMode();
+		this.ciscoState = parser.getShell().getMode();
 		this.ipLayer = (CiscoIPLayer) getNetMod().ipLayer;
 	}
 
-    // show interfaces (rozhrani 0/0)?
+    // show interfaces (FastEthernet 0/0)?
     private boolean processInterfaces() {
-        stavShow = State.INTERFACES;
+        showState = State.INTERFACES;
 
         String rozh = nextWord();
         if (rozh.isEmpty()) {
@@ -54,6 +54,11 @@ public class ShowCommand extends CiscoCommand {
         iface = null;
         iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
         if (iface == null) {
+			if (ipLayer.existInterfaceNameStartingWith(rozh)) {
+				incompleteCommand();
+				return false;
+			}
+
             invalidInputDetected();
             return false;
         }
@@ -121,11 +126,10 @@ public class ShowCommand extends CiscoCommand {
 
         if (dalsi.equals("?")) {
             String s = "";
-            s += "[PSIMULATOR]: v opravdovem ciscu je tady holy seznam parametru "
-                    + "(bez celeho prikazu jako zde!)\n\n";
+            s += psimulator2.Psimulator.getNameOfProgram()+": in real cisco there is just first word for completion (not the whole command)\n\n";
             s += "  show ip route                   IP routing table\n";
             s += "  show ip nat translations        Translation entries\n";
-            if (stavCisco == CommandShell.CISCO_PRIVILEGED_MODE) {
+            if (ciscoState == CommandShell.CISCO_PRIVILEGED_MODE) {
                 s += "  show running-config             Current operating configuration\n";
             }
             s += "\n";
@@ -134,7 +138,7 @@ public class ShowCommand extends CiscoCommand {
         }
 
         if (dalsi.startsWith("r")) {
-            if (stavCisco == CommandShell.CISCO_USER_MODE) {
+            if (ciscoState == CommandShell.CISCO_USER_MODE) {
                 invalidInputDetected();
                 return false;
             }
@@ -142,11 +146,11 @@ public class ShowCommand extends CiscoCommand {
             if (!isCommand("running-config", dalsi, 3)) {
                 return false;
             }
-            stavShow = State.RUN;
+            showState = State.RUN;
             return true;
         } else {
             if (dalsi.startsWith("in")) {
-                if (stavCisco != CommandShell.CISCO_PRIVILEGED_MODE) {
+                if (ciscoState != CommandShell.CISCO_PRIVILEGED_MODE) {
                     invalidInputDetected();
                     return false;
                 }
@@ -165,27 +169,27 @@ public class ShowCommand extends CiscoCommand {
                 if (!isCommand("route", dalsi, 2)) {
                     return false;
                 }
-                stavShow = State.ROUTE;
+                showState = State.ROUTE;
                 return true;
             } else {
                 if (!isCommand("nat", dalsi, 2)) {
                     return false;
                 }
-                if (stavCisco == CommandShell.CISCO_USER_MODE) {
+                if (ciscoState == CommandShell.CISCO_USER_MODE) {
                     invalidInputDetected();
                     return false;
                 }
                 if (!isCommand("translations", nextWord(), 1)) {
                     return false;
                 }
-                stavShow = State.NAT;
+                showState = State.NAT;
                 return true;
             }
         }
     }
 
     private void start() {
-        switch (stavShow) {
+        switch (showState) {
             case RUN:
                 runningConfig();
                 break;

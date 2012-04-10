@@ -169,11 +169,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
             return;
         }
 
-        if (first.equals("?")) {
-            command = new QuestionCommand(this);
+		if (first.equals("?")) {
+			command = new QuestionCommand(this);
 			command.run();
-            return;
-        }
+			return;
+		}
 
 		try {
 
@@ -257,32 +257,27 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 
-                if (debug) {
-                    if (isCommand("ip", first)) {
-                        command = new IpCommand(this, false);
-						command.run();
-						return;
-                    }
-                    if (isCommand("access-list", first)) {
-						command = new AccessListCommand(this, false);
-						command.run();
-						return;
+					if (debug) {
+						if (isCommand("ip", first)) {
+							command = new IpCommand(this, false);
+							command.run();
+							return;
+						}
+						if (isCommand("access-list", first)) {
+							command = new AccessListCommand(this, false);
+							command.run();
+							return;
+						}
+						if (isCommand("no", first)) {
+							no();
+							return;
+						}
 					}
-                    if (isCommand("no", first)) {
-                        no();
-                        return;
-                    }
-                }
 					break;
 
 				case CISCO_CONFIG_MODE:
 					if (isCommand("exit", first) || first.equals("end")) {
 						changeMode(CISCO_PRIVILEGED_MODE);
-//                    mode = ROOT;
-//                    kon.prompt = pc.jmeno + "#";
-//                    Date d = new Date();
-//                    cekej(100);
-//                    kon.posliRadek(formator.format(d) + ": %SYS-5-CONFIG_I: Configured from console by console");
 						return;
 					}
 					if (isCommand("ip", first)) {
@@ -314,7 +309,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						changeMode(CISCO_PRIVILEGED_MODE);
 						return;
 					}
-//                }
 					if (isCommand("ip", first)) {
 						command = new IpCommand(this, false);
 						command.run();
@@ -590,6 +584,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
 
         if (configuredInterface == null) {
+			if (ipLayer.existInterfaceNameStartingWith(rozhrani)) {
+				incompleteCommand();
+				return;
+			}
+
             invalidInputDetected();
             return;
         }

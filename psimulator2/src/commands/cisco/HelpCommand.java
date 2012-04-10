@@ -27,7 +27,7 @@ class HelpCommand extends CiscoCommand {
                     "It is used only for a hint. This implementation has more commands then real cisco:\n" +
                     " help - writes this hint\n" +
                     " kill - for leaving console from any state of cisco\n" +
-                    " save - for saving current configuration of all computers to XML file, " +
+                    " save - for saving current configuration of all devices to XML file, " +
                     "without paramater it saves to "+Main.configFileName+"\n\n" +
 
                     "These commands are implemented:\n";

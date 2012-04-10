@@ -31,9 +31,9 @@ public class IpRouteCommand extends CiscoCommand {
 
 	private final boolean no;
 
-	private IPwithNetmask adresat;
-    private IpAddress brana;
-    private NetworkInterface rozhrani;
+	private IPwithNetmask target;
+    private IpAddress gateway;
+    private NetworkInterface iface;
 
 	private final CiscoIPLayer ipLayer = (CiscoIPLayer)getNetMod().ipLayer;
 
@@ -57,58 +57,58 @@ public class IpRouteCommand extends CiscoCommand {
                 incompleteCommand();
                 return false;
             }
-            adresat = new IPwithNetmask(adr, maska);
+            target = new IPwithNetmask(adr, maska);
         } catch (BadNetmaskException e) {
-			System.out.println("spatna maska: "+maska);
+			debug("bad mask: "+maska);
 			invalidInputDetected();
 			return false;
-		} catch (BadIpException e) { // SpatnaMaskaException, SpatnaAdresaException
-			System.out.println("spatna adresa: "+adr);
+		} catch (BadIpException e) {
+			debug("bad address: "+adr);
             invalidInputDetected();
             return false;
         } catch (Exception e) {
-			System.out.println(e);
+			debug(Util.stackToString(e));
             invalidInputDetected();
             return false;
 		}
 
-        if (!adresat.isNetworkNumber()) {
+        if (!target.isNetworkNumber()) {
             printLine("%Inconsistent address and mask");
             return false;
         }
 
-        if (IpAddress.isForbiddenIP((adresat.getIp()))) {
+        if (IpAddress.isForbiddenIP((target.getIp()))) {
             printLine("%Invalid destination prefix");
             return false;
         }
 
-        String dalsi = nextWord();
-		debug("dalsi: "+dalsi);
+        String next = nextWord();
+		debug("next: "+next);
 
-        if (Util.zacinaCislem(dalsi)) { // na branu
+        if (Util.zacinaCislem(next)) { // na branu
             try {
-                brana = new IpAddress(dalsi);
+                gateway = new IpAddress(next);
             } catch (BadIpException e) {
                 invalidInputDetected();
                 return false;
             }
 
-            if (IpAddress.isForbiddenIP(brana)) {
+            if (IpAddress.isForbiddenIP(gateway)) {
                 printLine("%Invalid next hop address");
                 return false;
             }
 
-        } else if (!dalsi.equals("")) { // na rozhrani
+        } else if (!next.equals("")) { // na rozhrani
             String posledni = nextWord();
-            dalsi += posledni; // nemuze byt null
+            next += posledni; // nemuze byt null
 
-            rozhrani = getNetMod().ipLayer.getNetworkIntefaceIgnoreCase(dalsi);
-            if (rozhrani == null) { // rozhrani nenalezeno
+            iface = getNetMod().ipLayer.getNetworkIntefaceIgnoreCase(next);
+            if (iface == null) { // rozhrani nenalezeno
                 invalidInputDetected();
                 return false;
             }
 
-        } else { // prazdny
+        } else { // empty
             if (no == false) {
                 incompleteCommand();
                 return false;
@@ -136,16 +136,16 @@ public class IpRouteCommand extends CiscoCommand {
 
 //		if (debug) pc.vypis("pridej="+no);
         if (no == false) {
-            if (brana != null) { // na branu
-                ipLayer.wrapper.addRecord(adresat, brana);
-            } else { // na rozhrani
-                if (rozhrani == null) {
+            if (gateway != null) { // on gateway
+                ipLayer.wrapper.addRecord(target, gateway);
+            } else { // on interface
+                if (iface == null) {
                     return;
                 }
-                ipLayer.wrapper.addRecord(adresat, rozhrani);
+                ipLayer.wrapper.addRecord(target, iface);
             }
-        } else { // mazu
-            int n = ipLayer.wrapper.deleteRecord(adresat, brana, rozhrani);
+        } else { // delete
+            int n = ipLayer.wrapper.deleteRecord(target, gateway, iface);
             if (n == 1) {
                 printLine("%No matching route to delete");
             }

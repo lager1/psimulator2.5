@@ -462,6 +462,20 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	}
 
 	/**
+	 * Returns true iff there is some interface which name starts with namePart.
+	 * @param namePart
+	 * @return
+	 */
+	public boolean existInterfaceNameStartingWith(String namePart) {
+		for (NetworkInterface iface : networkIfaces.values()) {
+			if (iface.name.startsWith(namePart)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns interfaces as collection sorted by interface name.
 	 * @return
 	 */

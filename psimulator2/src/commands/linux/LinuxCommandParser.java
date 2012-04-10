@@ -9,6 +9,7 @@ import commands.LongTermCommand.Signal;
 import commands.Rnetconn;
 import commands.cisco.CiscoCommand;
 import commands.cisco.PingCommand;
+import commands.completer.Node;
 import device.Device;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +18,11 @@ import java.util.Iterator;
 import java.util.Map;
 import logging.*;
 import logging.LoggingCategory;
+import networkModule.L3.CiscoIPLayer;
+import networkModule.L3.IPLayer;
+import networkModule.L3.NetworkInterface;
+import networkModule.NetMod;
+import networkModule.TcpIpNetMod;
 import shell.apps.CommandShell.CommandShell;
 import utils.Util;
 
@@ -159,7 +165,6 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	}
 
-
 	private void log(int logLevel, String message, Object obj){
 		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
 	}
@@ -173,7 +178,21 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	protected final void addCompletionData() {
 		Iterator<String> it = commands.keySet().iterator();
 		while (it.hasNext()) {
-			device.commandCompleters.get(CommandShell.DEFAULT_MODE).addCommand(it.next());
+			String cmd = it.next();
+
+			if (cmd.equals("ifconfig")) {
+				Node ifconfig = new Node("ifconfig");
+
+				NetMod nm = device.getNetworkModule();
+				IPLayer ipLayer = ((TcpIpNetMod) nm).ipLayer;
+
+				for (NetworkInterface iface : ipLayer.getSortedNetworkIfaces()) {
+					ifconfig.addChild(new Node(iface.name));
+				}
+				device.commandCompleters.get(CommandShell.DEFAULT_MODE).addCommand(ifconfig);
+			} else {
+				device.commandCompleters.get(CommandShell.DEFAULT_MODE).addCommand(cmd);
+			}
 		}
 	}
 }
