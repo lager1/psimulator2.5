@@ -44,7 +44,7 @@ public class ShellRenderer extends BasicInputField {
 	 * hlavní funkce zobrazování shellu a čtení z terminálu, reakce na různé klávesy ENETER, BACKSCAPE, LEFT ....
 	 *
 	 * @return vrací přečtenou hodnotu z řádku, příkaz
-	 * @throws Exception 
+	 * @throws Exception
 	 * @throws TelnetConnectionException
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class ShellRenderer extends BasicInputField {
 		this.clearBuffer();
 		this.returnValue = true;
 		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
-		
+
 
 
 		while (!quit) {
@@ -115,7 +115,7 @@ public class ShellRenderer extends BasicInputField {
 					continue; // continue while
 				}
 
-				
+
 				if (ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), inputValue)) // if input was signaling control code && handled
 				{
 					switch (inputValue) {
@@ -137,6 +137,9 @@ public class ShellRenderer extends BasicInputField {
 
 				switch (inputValue) { // HANDLE CONTROL CODES for text manipulation
 
+					case TerminalIO.END_KEY: 
+						handleEnd();
+						break;
 					case TerminalIO.CTRL_R:
 						handleSearch();
 						break;
@@ -342,17 +345,28 @@ public class ShellRenderer extends BasicInputField {
 	}
 
 	/**
-	 *
+	 * handling tabulator -- auto completing command action
 	 */
-	private void handleTabulator()  {
+	private void handleTabulator() {
 
-		String completeValue = this.commandShell.completeWord(this.sb.toString());
-		
-		if(completeValue == null || completeValue.isEmpty())
+		String toCompleteValue = this.sb.substring(0, cursor);
+
+		String completedValue = this.commandShell.completeWord(toCompleteValue);
+
+		if (completedValue == null || completedValue.isEmpty()) {
 			return;
-		
-		this.setValue(completeValue);
+		}
 
+		String restOfLine = this.sb.substring(cursor, this.sb.length());
+
+		if (restOfLine == null || restOfLine.trim().isEmpty()) {
+			this.setValue(completedValue);
+			return;
+		}
+
+		this.setValue(completedValue + restOfLine.trim());
+
+		this.moveCursorLeft(restOfLine.length());
 	}
 
 	private void handleSearch() throws IOException {

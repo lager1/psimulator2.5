@@ -18,8 +18,8 @@ public abstract class BasicInputField extends ActiveComponent {
 	public BasicInputField(BasicTerminalIO io, String name) {
 		super(io, name);
 	}
-	
-	protected void clearBuffer(){
+
+	protected void clearBuffer() {
 		this.sb.setLength(0); // clear string builder
 		this.cursor = 0;
 	}
@@ -82,6 +82,13 @@ public abstract class BasicInputField extends ActiveComponent {
 		}
 	}
 
+	protected void handleEnd() {
+		
+		int toEndPositions = this.sb.length() - this.cursor;
+		this.moveCursorRight(toEndPositions);
+
+	}
+
 	protected void handleBackSpace() throws IOException {
 
 		if (cursor != 0) {
@@ -114,15 +121,14 @@ public abstract class BasicInputField extends ActiveComponent {
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor);
 
 	}
-	
-	protected void setValue(String input){
-		
+
+	protected void setValue(String input) {
+
 		this.clearBuffer();
 		this.sb.append(input);
 		this.cursor = sb.length();
-		
+
 	}
-	
 
 	@Override
 	abstract public void run() throws Exception;

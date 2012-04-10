@@ -32,7 +32,7 @@ import telnetd.io.toolkit.myToolkit.Quitable;
  *
  * @author Martin Lukáš
  */
-public class TextEditor extends TerminalApplication implements ComponentReDrawer, Quitable {
+public class TextEditor extends TerminalApplication implements ComponentReDrawer {
 
 	private boolean quit = false;
 	List<Component> componentsToDraw;
