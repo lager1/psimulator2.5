@@ -132,7 +132,9 @@ public class InputField extends BasicInputField {
 
 	@Override
 	public void draw() throws IOException {
-		return;  // doesnt make any sence to draw something
+		m_IO.eraseToEndOfLine();
+		m_IO.write(sb.substring(cursor, sb.length()));
+		m_IO.moveLeft(sb.length() - cursor);
 	}
 	
 	/**
