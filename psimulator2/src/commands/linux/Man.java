@@ -25,14 +25,13 @@ public class Man extends AbstractCommand {
 	}
 
 
-	
+
 
 	protected void vykonejPrikaz() {
-        parser.printService("Manualove stranky nejsou v simulatoru dostupne. Doporucuji pouzit manualove " +
-                "stranky na webu, napriklad: http://linux.die.net/man/, nebo pouzit google.");
+        parser.printService("Manual pages are not implemented in this simulator. Use manual on the web: " +
+                "http://linux.die.net/man/, or just use google.");
 
-        parser.printService("Seznam prikazu implementovanych v tomto pocitaci vypisete " +
-                "zvlastnim prikazem help.");
+        parser.printService("Use help command for printing all available commands.");
     }
 
 }

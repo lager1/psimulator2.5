@@ -18,8 +18,13 @@ public class LinuxCompleter extends Completer {
 
 	@Override
 	protected void handleMorePossibilities(List<Node> possibilities, CommandShell shell) {
+		shell.printLine("");
 		for (Node node : possibilities) {
 			shell.print(node.value+"\t");
 		}
+		shell.printLine("");
+		shell.printPrompt();
+
+		shell.print(shell.getShellRenderer().getValue());
 	}
 }
