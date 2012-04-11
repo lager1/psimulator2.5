@@ -31,6 +31,16 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 
+		// check jvm version  ... 1.7 or higher
+		
+		Double jvmVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
+		
+		if(jvmVersion < 1.7) // lower versions than JVM 1.7 aka JRE 7 are not supported
+		{
+			System.out.println("Please install JRE 7 or higher.");
+			return;
+		}
+		
 		// nejdriv se nastavi logger:
 		Logger.setLogger();
 
