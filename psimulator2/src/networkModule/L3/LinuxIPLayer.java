@@ -101,11 +101,11 @@ public class LinuxIPLayer extends IPLayer {
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// kdyz je to vuci prichozimu rozhrani broadcast, tak to poslu nahoru (je to pro me) - kvuli DHCP!
-		if (ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
-			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
-			return;
-		}
+//		if (ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
+//			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
+//			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
+//			return;
+//		}
 
 		// odnatovat
 		packet = packetFilter.preRouting(packet, ifaceIn);
