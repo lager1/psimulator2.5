@@ -27,7 +27,6 @@ import utils.WorkerThread;
 public abstract class Application implements SmartRunnable, Loggable {
 
 // parametry aplikace:
-
 	public final int PID;
 	public final String name;
 	protected final Device device;
@@ -52,7 +51,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 		this.PID = device.getFreePID();
 		if (device.getNetworkModule().isStandardTcpIpNetMod()) {
-			this.transportLayer =  ((TcpIpNetMod) device.getNetworkModule()).transportLayer;
+			this.transportLayer = ((TcpIpNetMod) device.getNetworkModule()).transportLayer;
 		} else {
 			Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC_APPLICATION, "Vytvari se sitova aplikace pro device, ktery nema TcpIpNetMod!", null);
 			this.transportLayer = null;
@@ -61,6 +60,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 	/**
 	 * Predavani paketu ze site aplikaci.
+	 *
 	 * @param packet
 	 */
 	public void receivePacket(PacketItem packetItem) {
@@ -145,7 +145,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	/**
 	 * Jen vytazeny spolecny veci ze dvou predchozich metod.
 	 */
-	private void priUkonceni(){
+	private void priUkonceni() {
 		transportLayer.unregisterApplication(port);
 		worker.die();
 		device.unregisterApplication(this);
@@ -173,5 +173,4 @@ public abstract class Application implements SmartRunnable, Loggable {
 	public boolean isRunning() {
 		return running;
 	}
-
 }

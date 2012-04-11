@@ -5,6 +5,7 @@
 package applications;
 
 
+import commands.ApplicationNotifiable;
 import commands.linux.Ping;
 import dataStructures.packets.IcmpPacket;
 import dataStructures.packets.IpPacket;
@@ -20,7 +21,6 @@ import utils.Util;
  */
 public class LinuxPingApplication extends PingApplication {
 
-	Ping ping;
 
 	/**
 	 * Konstruktor.
@@ -36,7 +36,6 @@ public class LinuxPingApplication extends PingApplication {
 	 */
 	public LinuxPingApplication(Device device, Ping command, IpAddress target, int count, int size, int timeout, int interval, int ttl) {
 		super(device, command);
-		ping = (Ping) command;	// je to jako parametr, takze to musi vzdy projit
 		this.target = target;
 		this.count = count;
 		this.payload = size;
@@ -62,15 +61,15 @@ public class LinuxPingApplication extends PingApplication {
 		}
 
 		// vypis nadpisu:
-        ping.printLine("");
-        ping.printLine("--- " + target.toString() + " ping statistics ---");
+        command.printLine("");
+        command.printLine("--- " + target.toString() + " ping statistics ---");
 
 		// vypis radku s vysledkama:
         if (stats.errors == 0) {//errory nebyly - tak se nevypisujou
-            ping.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, " +
+            command.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, " +
                     stats.ztrata + "% packet loss, time " + cas + "ms");
         } else { //vypis i s errorama
-            ping.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, +" + stats.errors + " errors, " +
+            command.printLine(stats.odeslane + " packets transmitted, " + stats.prijate + " received, +" + stats.errors + " errors, " +
                     stats.ztrata + "% packet loss, time " + cas + "ms");	// cas pri errorech je vzdy 0ms
         }
 
@@ -78,7 +77,7 @@ public class LinuxPingApplication extends PingApplication {
         if (stats.prijate > 0) { //aspon jeden prijaty paket - vypisuji se statistiky
             double mdev = Util.zaokrouhli((((stats.avg - stats.min) + (stats.max - stats.avg)) / 2) * 0.666); //ma to bejt stredni odchylka,
             //je tam jen na okrasu, tak si ji pocitam po svym =)
-            ping.printLine("rtt min/avg/max/mdev = " + Util.zaokrouhli(stats.min) + "/" + Util.zaokrouhli(stats.avg) + "/" +
+            command.printLine("rtt min/avg/max/mdev = " + Util.zaokrouhli(stats.min) + "/" + Util.zaokrouhli(stats.avg) + "/" +
                     Util.zaokrouhli(stats.max) + "/" + mdev + " ms");
         } else { // neprijat zadny paket, statistiky se nevypisuji
             // ping.printLine(", pipe 3");	// v dobe bakalarky vypisovala skolni laborka tenhle nesmysl, ted uz ne
@@ -99,24 +98,24 @@ public class LinuxPingApplication extends PingApplication {
 
 		switch (packet.type) {
 			case REPLY:
-				ping.printLine(packet.getSize()+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+
+				command.printLine(packet.getSize()+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+
 						" time="+Util.zaokrouhli(delay)+" ms");
 				break;
 			case TIME_EXCEEDED:
-				ping.printLine("From " + p.src.toString()+ " icmp_seq=" + packet.seq+ " Time to live exceeded");
+				command.printLine("From " + p.src.toString()+ " icmp_seq=" + packet.seq+ " Time to live exceeded");
 				break;
 			case UNDELIVERED:
 				switch (packet.code) {
 					case ZERO:
-						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
                         packet.seq + " Destination Net Unreachable");
 						break;
 					case HOST_UNREACHABLE:
-						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
                         packet.seq + " Destination Host Unreachable");
 						break;
 					default:
-						ping.printLine("From " + p.src.toString() + ": icmp_seq=" +
+						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
                         packet.seq + " Destination Host Unreachable");
 				}
 				break;
@@ -131,7 +130,7 @@ public class LinuxPingApplication extends PingApplication {
 
 	@Override
 	protected void startMessage() {
-		ping.printLine("PING "+target+" ("+target+") "+payload+"("+(payload+28)+") bytes of data.");
+		command.printLine("PING "+target+" ("+target+") "+payload+"("+(payload+28)+") bytes of data.");
 	}
 
 	@Override

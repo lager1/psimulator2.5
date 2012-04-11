@@ -11,7 +11,6 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
-import psimulator2.Psimulator;
 
 /**
  * Implementation of network module of generic simple switch.

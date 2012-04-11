@@ -54,6 +54,10 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 		return ipAddress;
 	}
 
+	/**
+	 * Jen zkratka.
+	 * @return
+	 */
 	public MacAddress getMacAddress() {
 		return ethernetInterface.getMac();
 	}

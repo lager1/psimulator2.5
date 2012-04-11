@@ -129,6 +129,15 @@ public class Device {
 		applications.remove(app.getPID());
 	}
 
+	public Application getAppByName(String name) {
+		for (Application app : applications.values()) {
+			if (app.getName().equals(name)) {
+				return app;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Creates parser according to a DeviceType.
 	 * @param cmd

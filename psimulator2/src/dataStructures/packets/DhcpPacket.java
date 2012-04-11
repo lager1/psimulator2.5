@@ -4,6 +4,7 @@
 
 package dataStructures.packets;
 
+import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
@@ -14,13 +15,25 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
  */
 public class DhcpPacket implements PacketData {
 
-	DhcpType type;
-	int transaction_id;
-	IPwithNetmask assignedClientAddress;
-	IpAddress broadcast;
+	public final DhcpType type;
+	public final int transaction_id;
+	public final IpAddress serverIdentifier;
 
+	public final IPwithNetmask ipToAssign;
+	public final IpAddress broadcast;
+	public final IpAddress router;
+	public final MacAddress clientMac;
 
-
+	public DhcpPacket(DhcpType type, int transaction_id, IpAddress serverIdentifier, IPwithNetmask ipToAssign,
+			IpAddress broadcast, IpAddress router, MacAddress clientMac) {
+		this.type = type;
+		this.transaction_id = transaction_id;
+		this.serverIdentifier = serverIdentifier;
+		this.ipToAssign = ipToAssign;
+		this.broadcast = broadcast;
+		this.clientMac = clientMac;
+		this.router = router;
+	}
 
 	@Override
 	public int getSize() {
@@ -42,7 +55,7 @@ public class DhcpPacket implements PacketData {
 		DISCOVER,
 		REQUEST,
 
-		//server:
+		// server:
 		OFFER,
 		ACK,
 		NAK,
