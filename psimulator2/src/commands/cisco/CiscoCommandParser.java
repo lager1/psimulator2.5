@@ -63,7 +63,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		shell.getPrompt().setSuffix(">");
 		shell.getPrompt().setFileSystemPath("/");
 		shell.getPrompt().showPath(false);
-		
+
 		if (debug) {
 			changeMode(CISCO_PRIVILEGED_MODE);
 		}
@@ -405,12 +405,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		}
 	}
 
-	@Override
-	public String[] getCommands(int mode) {
-		// TODO: getCommands() poresit
-		return new String[0];
-	}
-
 	/**
 	 * Vrati
 	 */
@@ -549,7 +543,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 				shell.setMode(mode);
 //				shell.setPrompt(device.getName() + "(config)#");
 				shell.getPrompt().setSuffix("(config)#");
-				
+
 				if (this.mode == CISCO_PRIVILEGED_MODE) { // jdu z privilegovaneho
 					shell.printLine("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
 	//				configure1 = false;

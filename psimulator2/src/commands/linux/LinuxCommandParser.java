@@ -116,17 +116,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	}
 
-	/**
-	 * Vrati pouzivany prikazy, podle toho shell napovida.
-	 * @param mode
-	 * @return
-	 */
 	@Override
-	public String[] getCommands(int mode) {
-		return (String[]) commands.values().toArray();
-	}
-
-		@Override
 	public String getDescription() {
 		return device.getName()+": LinuxCommandParser";
 	}

@@ -116,14 +116,6 @@ public abstract class AbstractCommandParser implements Loggable {
 
 	public abstract void catchSignal(Signal signal);
 
-	/**
-	 * Jednoducha metoda pro vypsani pouzitelnejch prikazu. Slouzi k jednoduch emu napovidani.
-	 *
-	 * @param mode aktualni mod toho shellu (pro cisco)
-	 * @return
-	 */
-	public abstract String[] getCommands(int mode);
-
 	public CommandShell getShell() {
 		return shell;
 	}
