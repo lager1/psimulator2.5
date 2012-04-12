@@ -61,9 +61,11 @@ public class Loader implements Loggable {
 	 * Cisco potrebuje mit natahane kabely na to, aby mohl nacist nastaveni routovaci tabulky.
 	 */
 	private Map<CiscoIPLayer, RoutingTableConfig> ciscoSettings = new HashMap<>();
+	private String configFilename;
 
-	public Loader(NetworkModel networkModel) {
+	public Loader(NetworkModel networkModel, String configFileName) {
 		this.networkModel = networkModel;
+		this.configFilename=configFileName;
 	}
 
 	/**
@@ -127,11 +129,17 @@ public class Loader implements Loggable {
 		// setup filesystem
 		String pathSeparator = System.getProperty("file.separator");
 		
-		File filesystemDir = new File("filesystems");
+		int projectStartNameIndex = configFilename.lastIndexOf(pathSeparator);
+		
+		if(projectStartNameIndex < 1)
+			projectStartNameIndex = 0;
+		
+		String projectName = configFilename.substring(projectStartNameIndex+1, configFilename.length());
+		
+		File filesystemDir = new File(projectName+"-DATA");
 		
 		if(!filesystemDir.isDirectory() && 	!filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
 			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
-		
 		
 		
 		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + String.valueOf(pc.configID) + "." + ArchiveFileSystem.getFileSystemExtension();

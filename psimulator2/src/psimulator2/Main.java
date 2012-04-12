@@ -87,7 +87,7 @@ public class Main {
 		Psimulator.getPsimulator().lastConfigFile = configFileName;
 
 		// samotnej start systemu z ukladacich struktur
-		Loader loader = new Loader(networkModel);	// vytvari se simulator loader
+		Loader loader = new Loader(networkModel, configFileName);	// vytvari se simulator loader
 		loader.loadFromModel();	// simulator se startuje z tech ukladacich struktur
 
 		// startovani telnetu:
