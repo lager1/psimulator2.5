@@ -6,6 +6,9 @@ package physicalModule;
 import dataStructures.packets.L2Packet;
 import device.Device;
 import java.util.*;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import networkModule.NetMod;
 import utils.SmartRunnable;
 import utils.WorkerThread;
@@ -18,7 +21,7 @@ import utils.WorkerThread;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  * @author Tomas Pitrinec
  */
-public class PhysicMod implements SmartRunnable {
+public class PhysicMod implements SmartRunnable, Loggable{
 
 
 	/**
@@ -71,7 +74,7 @@ public class PhysicMod implements SmartRunnable {
 	}
 
 
-// Verejny metody na posilani paketu: -----------------------------------------------------------------------------------------
+// Verejny metody na posilani paketu - komunikace s ostatnima vrstvama ------------------------------------------------
 
 	/**
 	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
@@ -94,15 +97,14 @@ public class PhysicMod implements SmartRunnable {
 	public void sendPacket(L2Packet packet, int switchportNumber) {
 		Switchport swport = switchports.get(switchportNumber);
 		if(swport == null){
-			ladiciVypisovani("K odeslani bylo zadano cislo switchportu, ktery neexistuje, prosuvih!");
-			System.exit(2);
+			Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL,"K odeslani bylo zadano cislo switchportu, ktery neexistuje, prosuvih!", packet);
 		}
 		sendBuffer.add(new BufferItem(packet, swport));
 		worker.wake();
 	}
 
 
-// Ostatni verejny metody: ------------------------------------------------------------------------------------------------------
+// Samotna prace a ruzny dulezity gettry rozhrani k ostatnim vrstvam (fasada): -----------------------------------------
 
 	@Override
 	public void doMyWork() {
@@ -134,18 +136,33 @@ public class PhysicMod implements SmartRunnable {
 		return vratit;
 	}
 
+	/**
+	 * Pro prikaz rnetconn, kterej se switchportama manipuluje. Nepouzivat v sitovym modulu.
+	 * @return
+	 */
 	public Map<Integer, Switchport> getSwitchports() {
 		return switchports;
 	}
+
+	public boolean isSwitchportConnected (int switchportNumber){
+		Switchport swport = switchports.get(switchportNumber);
+		if(swport==null) return false;
+		else return swport.isConnected();
+	}
+
+
+
+// Pomocny metody a zkratky: -------------------------------------------------------------------------------------------
 
 	@Override
 	public String getDescription() {
 		return device.getName()+": PhysicMod";
 	}
 
+	private NetMod getNetMod(){
+		return device.getNetworkModule();
+	}
 
-
-// Privatni veci: --------------------------------------------------------------------------------------------------
 
 	private class BufferItem {
 
@@ -158,13 +175,4 @@ public class PhysicMod implements SmartRunnable {
 		}
 	}
 
-	private void ladiciVypisovani(String zprava){
-		if (ladiciVypisovani){
-			System.out.println("PhysicMod: "+zprava);
-		}
-	}
-
-	private NetMod getNetMod(){
-		return device.getNetworkModule();
-	}
 }

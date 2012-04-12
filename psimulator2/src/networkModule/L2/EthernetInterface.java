@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import logging.Loggable;
-import physicalModule.Switchport;
 
 /**
  * Representace ethernetovyho interface (sitovy karty) se switchovaci tabulkou. Spolecny pro switch i router. Ma jmeno,
@@ -124,7 +123,7 @@ public class EthernetInterface implements Loggable {
 	 */
 	void transmitPacketOnAllSwitchports(EthernetPacket p, SwitchportSettings incoming) {
 		for (SwitchportSettings switchport : switchports.values()) {
-			if (switchport.isUp && switchport != incoming) {
+			if (switchport.isUp && switchport != incoming && etherLayer.physicMod.isSwitchportConnected(switchport.switchportNumber)) {
 				etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
 			}
 		}
@@ -134,6 +133,23 @@ public class EthernetInterface implements Loggable {
 
 
 // gettry a zjistovaci fce vetsinou mimo sitovou komunikaci ----------------------------------------------------------
+
+	/**
+	 * Returns true, if the interface is on the cable connected to some other interface.
+	 *
+	 * @return
+	 */
+	public boolean isConnected() {
+		for (SwitchportSettings swportsett : switchports.values()) {
+			if(etherLayer.physicMod.isSwitchportConnected(swportsett.switchportNumber)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
 
 	@Override
 	public String getDescription() {
@@ -152,26 +168,9 @@ public class EthernetInterface implements Loggable {
 	}
 
 
-
-	/**
-	 * Returns true, if the interface is on the cable connected to some other interface.
-	 *
-	 * @return
-	 */
-	public boolean isConnected() {
-		for (SwitchportSettings swportsett : switchports.values()) {
-			Switchport swport = etherLayer.physicMod.getSwitchports().get(swportsett.switchportNumber);
-			if (swport.isConnected()) {	// swport by nemel bejt nikdy null, protoze na zacatku behu ethernetovy vrstvy se vola metoda exploreHardware
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-
-
 // Polozka switchovaci tabulky: ----------------------------------------------------------------------------------
+
+
 	private class SwitchTableItem {
 
 		public SwitchportSettings swportSett;

@@ -54,10 +54,10 @@ public class Rnetconn extends AbstractCommand {
 	 */
 	private void listAllRealSwitchports() {
 		printLine("This is the list of all real switchports on all devices in simulated network. Real switchport is the swichport on simulated network device, that can be connect to real computer.");
-		for(Device dev: Psimulator.getPsimulator().devices){
-			for(Switchport swport: dev.physicalModule.getSwitchports().values()){
-				if(swport.isReal()){
-					printSwitchportSettings(dev,(RealSwitchport) swport);
+		for (Device dev : Psimulator.getPsimulator().devices) {
+			for (Switchport swport : dev.physicalModule.getSwitchports().values()) {
+				if (swport.isReal()) {
+					printSwitchportSettings(dev, (RealSwitchport) swport);
 				}
 			}
 		}

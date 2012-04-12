@@ -31,6 +31,12 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 	protected IPwithNetmask ipAddress;
 	public final EthernetInterface ethernetInterface;
 
+	/**
+	 * Only to create temporary interface in commands and tests.
+	 * @param configID
+	 * @param name
+	 * @param iface
+	 */
 	public NetworkInterface(Integer configID, String name, EthernetInterface iface) {
 		this.configID = configID;
 		this.name = name;
