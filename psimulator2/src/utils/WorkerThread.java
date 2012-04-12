@@ -81,9 +81,17 @@ public final class WorkerThread implements Runnable, Loggable {
 	 */
 	@Override
 	public void run() {
+
+
+
 		while (!dieCalled) {	// ma-li se umrit kdyz zrovna nebezi doMyWork, umre se okamzite
-			smartRunnable.doMyWork();
-			if (! dieCalled) {	// ma-li se umrit po metode doMyWork nespousti se sleep, tzn. jde se na zacatek a skonci se
+			try {
+				smartRunnable.doMyWork();
+			} catch (Exception e) {
+				Logger.log(this, Logger.WARNING, LoggingCategory.THREADS, "Some exception occured: "+e.toString(), e);
+			}
+
+			if (!dieCalled) {	// ma-li se umrit po metode doMyWork nespousti se sleep, tzn. jde se na zacatek a skonci se
 				sleep();
 			}
 
