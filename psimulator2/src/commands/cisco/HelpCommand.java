@@ -65,6 +65,7 @@ class HelpCommand extends CiscoCommand {
                 "  (no) ip nat inside\n" +
                 "  (no) ip nat outside\n" +
                 "  (no) shutdown\n" +
+				"  interface\n" +
                 "  end\n" +
                 "  exit\n\n";
 		printWithDelay(s, 10);

@@ -149,11 +149,13 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		}
 		config.addCommand(iface);
 
+
 		Completer configif = device.commandCompleters.get(CommandShell.CISCO_CONFIG_IF_MODE);
 		configif.addCommand("exit");
 		configif.addCommand("end");
 		configif.addCommand("shutdown");
 		configif.addCommand("no shutdown");
+		configif.addCommand(iface);
 	}
 
 	@Override
@@ -320,6 +322,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 					}
 					if (isCommand("shutdown", first)) {
 						shutdown();
+						return;
+					}
+					if (isCommand("interface", first)) {
+						iface();
 						return;
 					}
 					break;
@@ -584,6 +590,19 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
 
         if (configuredInterface == null) {
+			if (rozhrani.matches("[fF].*[0-9]/[0-9]{1,2}")) {
+				int end = rozhrani.indexOf("0");
+				String novy = "FastEthernet";
+				String cislo = rozhrani.substring(end, rozhrani.length());
+				rozhrani = novy+cislo;
+
+				this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
+				if (this.configuredInterface != null) {
+					changeMode(CommandShell.CISCO_CONFIG_IF_MODE);
+					return;
+				}
+			}
+
 			if (ipLayer.existInterfaceNameStartingWith(rozhrani)) {
 				incompleteCommand();
 				return;
