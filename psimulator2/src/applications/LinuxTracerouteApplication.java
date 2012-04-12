@@ -78,9 +78,4 @@ public class LinuxTracerouteApplication extends TracerouteApplication {
 	protected void printTimeout() {
 		cmd.print("* "); // prints timeout without arrival
 	}
-
-	@Override
-	protected void lineEnding() {
-		cmd.print("\n");
-	}
 }

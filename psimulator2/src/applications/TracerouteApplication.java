@@ -260,6 +260,13 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 		}
 	}
 
+	/**
+	 * Prints end of line for one TTL.
+	 */
+	private void lineEnding() {
+		command.print("\n");
+	}
+
 	// metody na delani vlastni prace: ------------------------------------------------------------------------------------
 
 	/**
@@ -305,10 +312,6 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 	 */
 	protected abstract void lineBeginning(int ttl, String address);
 	protected abstract void printPacket(Record record);
-	/**
-	 * Prints end of line for one TTL.
-	 */
-	protected abstract void lineEnding();
 	/**
 	 * Prints string when 1 packet not arrived.
 	 */
