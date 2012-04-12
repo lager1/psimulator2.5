@@ -54,6 +54,18 @@ public class ShowCommand extends CiscoCommand {
         iface = null;
         iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
         if (iface == null) {
+			if (rozh.matches("[fF].*[0-9]/[0-9]{1,2}")) {
+				int end = rozh.indexOf("0");
+				String novy = "FastEthernet";
+				String cislo = rozh.substring(end, rozh.length());
+				rozh = novy+cislo;
+
+				iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
+				if (iface != null) {
+					return true;
+				}
+			}
+
 			if (ipLayer.existInterfaceNameStartingWith(rozh)) {
 				incompleteCommand();
 				return false;

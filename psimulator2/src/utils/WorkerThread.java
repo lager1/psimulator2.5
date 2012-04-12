@@ -82,8 +82,6 @@ public final class WorkerThread implements Runnable, Loggable {
 	@Override
 	public void run() {
 
-
-
 		while (!dieCalled) {	// ma-li se umrit kdyz zrovna nebezi doMyWork, umre se okamzite
 			try {
 				smartRunnable.doMyWork();
