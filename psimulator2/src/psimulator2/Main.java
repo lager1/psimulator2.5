@@ -32,15 +32,14 @@ public class Main {
 	public static void main(String[] args) {
 
 		// check jvm version  ... 1.7 or higher
-		
+
 		Double jvmVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
-		
-		if(jvmVersion < 1.7) // lower versions than JVM 1.7 aka JRE 7 are not supported
-		{
-			System.out.println("Please install JRE 7 or higher.");
-			return;
+
+		if (jvmVersion < 1.7) { // lower versions than JVM 1.7 aka JRE 7 are not supported
+			System.err.println("Please install JRE 7 or higher.");
+			System.exit(1);
 		}
-		
+
 		// nejdriv se nastavi logger:
 		Logger.setLogger();
 
@@ -68,7 +67,7 @@ public class Main {
 				Logger.log(Logger.WARNING, LoggingCategory.XML_LOAD_SAVE, "Third argument "+args[2]+" is not port number. Using default value: " + eventServerPort);
 			}
 		}
-		
+
 		// serializace xml do ukladacich struktur:
 		AbstractNetworkSerializer serializer = new NetworkModelSerializerXML();	// vytvori se serializer
 		NetworkModel networkModel = null;
@@ -105,34 +104,34 @@ public class Main {
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 			Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Error occured when creating telnet servers.");
 		}
-		
+
 		// SETUP EVENT SERVER
 		int tryMark = 0;
 		int maxTryMark = 10;
-		
+
 		while(true){
 			if(Util.availablePort(eventServerPort))
 				break; // break while
-		
+
 			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Port "+eventServerPort+" not available, using:" + (eventServerPort+1) );
-			
+
 			tryMark++;
 			eventServerPort++;
-			
+
 			if(tryMark>maxTryMark)
 				Logger.log(Logger.ERROR, LoggingCategory.EVENTS_SERVER, "Cannot start event server, no port available");
 		}
-		
-		
+
+
 		EventServer eventServer = new EventServer(eventServerPort);
 		Thread thread = new Thread(eventServer);
 		thread.start();
-		
+
 		Psimulator.getPsimulator().eventServer=eventServer;
-		
+
 		Logger.addListener(eventServer.getListener().getPacketTranslator());
 
 		Logger.log(Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "EventServer sucessfully started on port: " + eventServerPort);
-		
+
 	}
 }
