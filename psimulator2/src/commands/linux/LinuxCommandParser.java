@@ -42,7 +42,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	public LinuxCommandParser(Device networkDevice, CommandShell shell) {
 		super(networkDevice, shell);
 		registerCommands();
-		shell.prompt=device.getName()+": ~# ";
+		shell.setPrompt(device.getName()+": ~# ");
 
 		if (device.commandCompleters == null) {
 			device.commandCompleters = new HashMap<>();

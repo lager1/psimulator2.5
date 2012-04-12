@@ -75,6 +75,12 @@ public class CommandShell extends TerminalApplication {
 		this.prompt = prompt;
 	}
 
+	public String getPrompt() {
+		return prompt;
+	}
+
+	
+	
 	public void setMode(int mode) {
 		this.mode = mode;
 	}
@@ -234,7 +240,7 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void printPrompt() {
 		if (this.getParser().isCommandRunning()) {
-			print(prompt);
+			print(getPrompt());
 		}
 	}
 
