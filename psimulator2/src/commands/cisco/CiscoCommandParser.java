@@ -59,7 +59,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	public CiscoCommandParser(Device device, CommandShell shell) {
 		super(device, shell);
-		shell.setPrompt(device.getName()+">");
+		shell.getPrompt().setPrefix(device.getName());
+		shell.getPrompt().setSuffix(">");
+		shell.getPrompt().setFileSystemPath("/");
+		shell.getPrompt().showPath(false);
+		
 		if (debug) {
 			changeMode(CISCO_PRIVILEGED_MODE);
 		}
@@ -527,12 +531,14 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		switch (mode) {
 			case CISCO_USER_MODE:
 				shell.setMode(mode);
-                shell.setPrompt(device.getName() + ">");
+//                shell.setPrompt(device.getName() + ">");
+				shell.getPrompt().setSuffix(">");
 				break;
 
 			case CISCO_PRIVILEGED_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(device.getName() + "#");
+				//shell.setPrompt(device.getName() + "#");
+				shell.getPrompt().setSuffix("#");
 
 				if (this.mode == CISCO_CONFIG_MODE || this.mode == CISCO_CONFIG_IF_MODE) { // jdu z configu
 					shell.printWithDelay(getFormattedTime() + ": %SYS-5-CONFIG_I: Configured from console by console", 100);
@@ -541,7 +547,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 			case CISCO_CONFIG_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(device.getName() + "(config)#");
+//				shell.setPrompt(device.getName() + "(config)#");
+				shell.getPrompt().setSuffix("(config)#");
+				
 				if (this.mode == CISCO_PRIVILEGED_MODE) { // jdu z privilegovaneho
 					shell.printLine("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
 	//				configure1 = false;
@@ -553,7 +561,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 			case CISCO_CONFIG_IF_MODE:
 				shell.setMode(mode);
-				shell.setPrompt(device.getName() + "(config-if)#");
+//				shell.setPrompt(device.getName() + "(config-if)#");
+				shell.getPrompt().setSuffix("(config-if)#");
 				break;
 
 			default:

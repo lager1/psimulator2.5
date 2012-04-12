@@ -29,7 +29,7 @@ public class CommandShell extends TerminalApplication {
 	private ShellRenderer shellRenderer;
 	private NormalRead normalRead;
 	private InputField inputField;
-	public String prompt = "default promt:~# ";
+	private Prompt prompt;
 	private boolean quit = false;
 	private AbstractCommandParser parser;
 	private ShellMode shellMode = ShellMode.COMMAND_READ;
@@ -47,6 +47,7 @@ public class CommandShell extends TerminalApplication {
 		this.thread.setName("CommandShell/Parser thread");
 
 		this.historyManager = new HistoryManager(device);
+		this.prompt = new Prompt("default promt:~# ", "/", "");
 	}
 
 	/**
@@ -71,11 +72,11 @@ public class CommandShell extends TerminalApplication {
 		return historyManager;
 	}
 
-	public void setPrompt(String prompt) {
+	public void setPrompt(Prompt prompt) {
 		this.prompt = prompt;
 	}
 
-	public String getPrompt() {
+	public Prompt getPrompt() {
 		return prompt;
 	}
 
@@ -240,7 +241,7 @@ public class CommandShell extends TerminalApplication {
 	 */
 	public void printPrompt() {
 		if (this.getParser().isCommandRunning()) {
-			print(getPrompt());
+			print(getPrompt().toString());
 		}
 	}
 

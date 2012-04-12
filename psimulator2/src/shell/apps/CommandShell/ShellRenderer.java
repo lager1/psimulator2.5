@@ -339,7 +339,7 @@ public class ShellRenderer extends BasicInputField {
 
 		m_IO.write(this.sb.toString());
 		m_IO.moveLeft(m_IO.getColumns());
-		m_IO.moveRight(sb.length() + this.commandShell.getPrompt().length());
+		m_IO.moveRight(sb.length() + this.commandShell.getPrompt().toString().length());
 		this.cursor = sb.length();
 
 	}
