@@ -238,6 +238,11 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			return;
 		}
 
+		if (packet.dst.isLocalSubnet127()) { // http://tools.ietf.org/html/rfc1700 Internal host loopback address.  Should never appear outside a host.
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: attempt to send packet out with destination "+packet.dst+" which is local!", packet);
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
+		}
+
 		// kdyz je to vuci odchozimu rozhrani broadcast, tak packet poslu na ff:ff:ff:ff:ff:ff a neresim nextHop ARPem - kvuli DHCP
 		if (record.iface.getIpAddress().getBroadcast().equals(packet.dst)) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending packet.", packet);
