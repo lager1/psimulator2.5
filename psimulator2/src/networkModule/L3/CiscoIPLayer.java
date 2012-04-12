@@ -109,11 +109,11 @@ public class CiscoIPLayer extends IPLayer {
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// kdyz je to vuci prichozimu rozhrani broadcast, tak to poslu nahoru (je to pro me) - kvuli DHCP!
-//		if (ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
-//			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
-//			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
-//			return;
-//		}
+		if (ifaceIn != null && ifaceIn.getIpAddress() != null && ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
+			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
+			return;
+		}
 
 		// odnatovat
 		packet = packetFilter.preRouting(packet, ifaceIn);
@@ -150,7 +150,7 @@ public class CiscoIPLayer extends IPLayer {
 		//		a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
 		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+ifaceIn.name, packet);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+(ifaceIn == null ? "null" : ifaceIn.name), packet);
 		processPacket(p, record, ifaceIn);
 	}
 

@@ -70,7 +70,7 @@ public class LinuxIPLayer extends IPLayer {
 	@Override
 	public void handleSendPacket(L4Packet packet, IpAddress dst, int ttl) {
 
-		if (isItMyIpAddress(dst)) {
+		if (isItMyIpAddress(dst) || dst.isLocalSubnet127()) {
 			IpPacket p = new IpPacket(dst, dst, ttl, packet);
 
 			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
@@ -101,11 +101,11 @@ public class LinuxIPLayer extends IPLayer {
 		NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
 		// kdyz je to vuci prichozimu rozhrani broadcast, tak to poslu nahoru (je to pro me) - kvuli DHCP!
-//		if (ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
-//			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
-//			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
-//			return;
-//		}
+		if (ifaceIn != null && ifaceIn.getIpAddress() != null && ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
+			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
+			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
+			return;
+		}
 
 		// odnatovat
 		packet = packetFilter.preRouting(packet, ifaceIn);
@@ -114,7 +114,7 @@ public class LinuxIPLayer extends IPLayer {
 		}
 
 		// je pro me?
-		if (isItMyIpAddress(packet.dst)) {
+		if (isItMyIpAddress(packet.dst) || packet.dst.isLocalSubnet127()) {
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet destined to be mine.", packet);
 			netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
 			return;
@@ -149,7 +149,7 @@ public class LinuxIPLayer extends IPLayer {
 		//		a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
 		IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
-		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+ifaceIn.name, packet);
+		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+(ifaceIn == null ? "null" : ifaceIn.name), packet);
 		processPacket(p, record, ifaceIn);
 	}
 }

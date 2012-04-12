@@ -114,6 +114,18 @@ public class IpAddress {
 		return vratit;
 	}
 
+	/**
+	 * Returns true iff IP addrees is from range 127.0.0.0 - 127.255.255.255.
+	 * @return
+	 */
+	public boolean isLocalSubnet127() {
+		int[] pole = bitsToArray(bits);
+		if (pole[0] == 127) {
+			return true;
+		}
+		return false;
+	}
+
 
 // staticky metody pro ruzny prevadeni a tak: ----------------------------------------------------------------------------------------
 
