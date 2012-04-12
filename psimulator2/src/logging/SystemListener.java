@@ -6,6 +6,10 @@ package logging;
 import dataStructures.packets.L2Packet;
 import dataStructures.packets.L3Packet;
 import dataStructures.packets.L4Packet;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -22,8 +26,20 @@ public class SystemListener implements LoggerListener {
 	 * Value - Logger.{ERROR,WARNING,IMPORTAN,INFO,DEBUG}, if INFO selected all facilities before it are also selected.
 	 */
 	public final Map<LoggingCategory, Integer> configuration = new EnumMap<>(LoggingCategory.class);
+	private DateFormat currentTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	private PrintWriter out;
 
 	public SystemListener() {
+
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String file = format.format(new Date())+"_error_log.txt";
+
+		try {
+			out = new PrintWriter(new FileWriter(file, true));
+		} catch (IOException ex) {
+			System.err.println("Could not create Printwriter to log exceptions to file: "+file);
+			System.exit(2);
+		}
 		ConfigureSystemListener.configure(configuration);
 	}
 
@@ -36,7 +52,13 @@ public class SystemListener implements LoggerListener {
 
 				if (object instanceof Exception) {	// vyjimka
 					System.out.println(zacatek + message);
-					((Exception) object).printStackTrace();
+					Exception ex = (Exception) object;
+					ex.printStackTrace();
+
+					out.println(currentTime.format(new Date()) + " " + caller.getDescription()+": ");
+					ex.printStackTrace(out);
+					out.println();
+					out.flush();
 
 				} else if (object instanceof L2Packet || object instanceof L3Packet || object instanceof L4Packet) {	// paket
 					System.out.println(zacatek + object.toString() + " | " + message);
@@ -50,7 +72,7 @@ public class SystemListener implements LoggerListener {
 
 		} catch (NullPointerException e) {
 			System.out.println("An error occured during logging:-) \n"
-					+ "LoggingCategory was null.");
+					+ "LoggingCategory was maybe null or something..");
 			System.exit(3);
 		}
 	}
