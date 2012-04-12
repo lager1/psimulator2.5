@@ -129,12 +129,12 @@ public class Loader implements Loggable {
 		// setup filesystem
 		String pathSeparator = System.getProperty("file.separator");
 		
-		int projectStartNameIndex = configFilename.lastIndexOf(pathSeparator);
-		
-		if(projectStartNameIndex < 1)
-			projectStartNameIndex = 0;
-		
-		String projectName = configFilename.substring(projectStartNameIndex+1, configFilename.length());
+//		int projectStartNameIndex = configFilename.lastIndexOf(pathSeparator);
+//		
+//		if(projectStartNameIndex < 1)
+//			projectStartNameIndex = 0;
+//		
+		String projectName = configFilename.substring(0, configFilename.length());
 		
 		File filesystemDir = new File(projectName+"-DATA");
 		
