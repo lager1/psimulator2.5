@@ -58,6 +58,8 @@ public class Rnetconn extends AbstractCommand {
 			for (Switchport swport : dev.physicalModule.getSwitchports().values()) {
 				if (swport.isReal()) {
 					printSwitchportSettings(dev, (RealSwitchport) swport);
+
+					
 				}
 			}
 		}

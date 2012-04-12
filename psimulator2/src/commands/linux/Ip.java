@@ -212,7 +212,9 @@ public class Ip extends LinuxCommand {
 				pr = new IpRoute(parser);
 				break;
 		}
-		pr.run();
+		if (pr != null) {	// bez ty podminky to hazelo nullpointer - tak jsem ji sem pridal
+			pr.run();
+		}
 
     }
 

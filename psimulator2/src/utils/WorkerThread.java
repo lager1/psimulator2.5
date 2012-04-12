@@ -83,7 +83,8 @@ public final class WorkerThread implements Runnable, Loggable {
 	public void run() {
 
 		while (!dieCalled) {	// ma-li se umrit kdyz zrovna nebezi doMyWork, umre se okamzite
-			try {
+
+			try { // tohleto try je tady pro odchytavani veskerejch vyjimek, takhle vlakno neumre, ale i pres vyjimku pokracuje dal
 				smartRunnable.doMyWork();
 			} catch (Exception e) {
 				Logger.log(this, Logger.WARNING, LoggingCategory.THREADS, "Some exception occured: "+e.toString(), e);

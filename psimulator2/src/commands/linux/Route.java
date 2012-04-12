@@ -84,9 +84,6 @@ public class Route extends LinuxCommand {
 
 	public Route(AbstractCommandParser parser) {
 		super(parser);
-		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
-			ladiciVypisovani = true;
-		}
 	}
 
 	@Override

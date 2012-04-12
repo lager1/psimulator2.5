@@ -3,12 +3,17 @@
  */
 package commands.linux;
 
+import commands.linux.filesystem.Touch;
+import commands.linux.filesystem.Rm;
+import commands.linux.filesystem.Pwd;
+import commands.linux.filesystem.Mkdir;
+import commands.linux.filesystem.Ls;
+import commands.linux.filesystem.*;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand.Signal;
 import commands.Rnetconn;
 import commands.cisco.CiscoCommand;
-import commands.cisco.PingCommand;
 import commands.completer.Node;
 import device.Device;
 import java.lang.reflect.Constructor;
@@ -18,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 import logging.*;
 import logging.LoggingCategory;
-import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.NetMod;
@@ -71,6 +75,16 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("iptables", Iptables.class);
 		commands.put("rnetconn", Rnetconn.class);
 		commands.put("service", Service.class);
+
+		// prace s filesystemem:
+		commands.put("cat", Cat.class);
+		commands.put("cd", Cd.class);
+		commands.put("ls", Ls.class);
+		commands.put("mkdir", Mkdir.class);
+		commands.put("pwd", Pwd.class);
+		commands.put("rm", Rm.class);
+		commands.put("touch", Touch.class);
+
 	}
 
 

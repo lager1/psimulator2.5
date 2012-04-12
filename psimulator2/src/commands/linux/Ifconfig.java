@@ -491,7 +491,7 @@ public class Ifconfig extends LinuxCommand {
 
     @Override
     public String toString() {
-        String vratit = "  Parametry prikazy ifconfig:"
+        String vratit = "  Parametry prikazu ifconfig:"
 				+ "\n\t"+parser.getWordsAsString()
 				+ "\n\tnavratovyKodParseru: "+ Util.rozlozNaMocniny2(navrKod)
 				+ "\n\tminus_a: "+minus_a;

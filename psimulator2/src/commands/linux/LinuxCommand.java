@@ -17,7 +17,7 @@ import psimulator2.Psimulator;
  */
 public abstract class LinuxCommand extends AbstractCommand {
 
-	protected boolean ladiciVypisovani = false; //pro debug
+	protected boolean ladiciVypisovani; //pro debug
 
 	protected final IPLayer ipLayer;	// zkratka
 
@@ -27,6 +27,9 @@ public abstract class LinuxCommand extends AbstractCommand {
 			ladiciVypisovani = true;
 		}
 		ipLayer = getNetMod().ipLayer;
+		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
+			ladiciVypisovani = true;
+		}
 
 	}
 

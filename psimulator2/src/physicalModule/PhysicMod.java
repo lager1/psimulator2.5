@@ -46,8 +46,6 @@ public class PhysicMod implements SmartRunnable, Loggable{
 	 */
 	public final Device device;
 
-	private boolean ladiciVypisovani = true;
-
 
 // Konstruktory a vytvareni modulu: ----------------------------------------------------------------------------------------------
 
