@@ -142,7 +142,7 @@ public class Loader implements Loggable {
 			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
 		
 		
-		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + String.valueOf(pc.configID) + "." + ArchiveFileSystem.getFileSystemExtension();
+		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
 		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
 
 		return pc;
