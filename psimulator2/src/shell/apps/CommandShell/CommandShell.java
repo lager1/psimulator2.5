@@ -84,6 +84,7 @@ public class CommandShell extends TerminalApplication {
 	
 	public void setMode(int mode) {
 		this.mode = mode;
+		this.historyManager.swapHistory(mode);
 	}
 
 	public int getMode() {

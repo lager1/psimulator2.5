@@ -5,9 +5,8 @@
 package shell.apps.CommandShell;
 
 import device.Device;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * class that manage histories objects
@@ -17,83 +16,82 @@ import java.util.ListIterator;
 public class HistoryManager {
 
 	public static String defaultHistoryPath = "/home/user/history";
-	public static String secondHistoryPath = "/home/user/history2";
-	
 	/**
 	 * curently used history
 	 */
 	private History activeHistory;
-	
 	/**
 	 * internal list of available historys
 	 */
-	private List<History> listOfHistorys;
-	/**
-	 * internal historys iterator
-	 */
-	private ListIterator<History> historysIterator;
-	
-	
+	private Map<Integer, History> mapOfHistorys;
 	private Device deviceReference;
 
 	public HistoryManager(Device device) {
-		
+		int mode = CommandShell.DEFAULT_MODE;
+
 		this.deviceReference = device;
-		this.activeHistory = new History(defaultHistoryPath, deviceReference);
+		this.activeHistory = HistoryManager.createHistoryObject(mode, device);
 		this.activeHistory.activate();
 
-		this.listOfHistorys = new ArrayList<>(2);
-		this.listOfHistorys.add(activeHistory);
-
-		this.historysIterator = listOfHistorys.listIterator();
+		this.mapOfHistorys = new HashMap<>();
+		this.mapOfHistorys.put(mode, activeHistory);
 
 	}
 
 	/**
 	 * GETTER
-	 * @return 
+	 *
+	 * @return
 	 */
 	public History getActiveHistory() {
 		return activeHistory;
 	}
+	
+	
 
 	/**
 	 * set current active history and activate it
-	 * @param activeHistory 
+	 *
+	 * @param activeHistory
 	 */
 	private void setActiveHistory(History activeHistory) {
 		this.activeHistory = activeHistory;
 		activeHistory.activate();
 	}
 
-	// @TODO rename historys => histories, english grammar failure
-	/**
-	 * method, that rotate two historys.	
-	 */
-	public void swapHistory() {
-		if (listOfHistorys.size() == 1) {
-			listOfHistorys.add(new History(secondHistoryPath,this.deviceReference));			// CREATION OF SECOND HISTORY OBJECT !!
-		}
-
-		if (!historysIterator.hasNext()) // reset historys iterator
-		{
-			this.historysIterator = listOfHistorys.listIterator();
-		}
-
-		this.setActiveHistory(historysIterator.next());
-
+	private static History createHistoryObject(int mode, Device device){
+		return new History(defaultHistoryPath + String.valueOf(mode), device);
 	}
 	
+	// @TODO rename historys => histories, english grammar failure
+	/**
+	 * method, that rotate two historys.
+	 *
+	 * @param mode
+	 */
+	public void swapHistory(int mode) {
+		this.saveAllHistory();
+		History histObject = this.mapOfHistorys.get(mode);
+
+		if(histObject == null) // not yet loaded
+		{
+			histObject = createHistoryObject(mode, deviceReference);
+			mapOfHistorys.put(mode, histObject);
+		}
+		
+		this.setActiveHistory(histObject);
+
+	}
+
 	/**
 	 * save all(two) used historys
 	 */
-	public void saveAllHistory(){
-	
-		for (History history : listOfHistorys) {
+	public void saveAllHistory() {
+
+		for (Map.Entry<Integer, History> entry : mapOfHistorys.entrySet()) {
+			History history = entry.getValue();
 			history.save();
+			
 		}
-	
 	}
-	
-	
 }

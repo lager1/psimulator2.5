@@ -25,6 +25,7 @@ public class History {
 	private Device deviceReference;
 	private Date loaded;
 	private Date saved;
+	private int lastSavedSize;
 
 	public History(String historyPathFile, Device deviceReference) {
 		this.historyPathFile = historyPathFile;
@@ -186,6 +187,10 @@ public class History {
 
 	public void save() {
 
+		if (lastSavedSize == this.commands.size()) // nothing to save
+		{
+			return;
+		}
 
 		this.deviceReference.getFilesystem().runOutputFileJob(this.historyPathFile, new OutputFileJob() {
 
@@ -204,7 +209,7 @@ public class History {
 			}
 		});
 
-
+		this.lastSavedSize = this.commands.size();
 		this.saved = new Date();
 
 
@@ -240,7 +245,7 @@ public class History {
 // copy LINKEDLIST INTO ARRAYLIST -- using temporary linkedlist because of unknown size of list
 		commands = new ArrayList<>(tempList.size() + 20);
 		commands.addAll(tempList);
-		
+
 
 		this.loaded = new Date();
 	}
