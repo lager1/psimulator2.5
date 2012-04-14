@@ -29,7 +29,7 @@ public class SystemListener implements LoggerListener {
 	private DateFormat currentTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private PrintWriter out;
 	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	private String file = psimulator2.Psimulator.getNameOfProgram()+"_"+format.format(new Date())+"_exceptions.txt";
+	private String file = psimulator2.Psimulator.getNameOfProgram()+"_exceptions_"+format.format(new Date())+".txt";
 
 	public SystemListener() {
 		ConfigureSystemListener.configure(configuration);
