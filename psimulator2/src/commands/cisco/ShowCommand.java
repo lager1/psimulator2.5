@@ -7,6 +7,7 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
 import commands.completer.Node;
+import java.util.Iterator;
 import java.util.Map;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
@@ -93,7 +94,9 @@ public class ShowCommand extends CiscoCommand {
 		Completer config = completers.get(CommandShell.CISCO_CONFIG_MODE);
 
 		user.addCommand("show ip nat translations");
+		user.addCommand("show ip interface brief");
 		privileged.addCommand("show ip nat translations");
+		privileged.addCommand("show ip interface brief");
 
 		privileged.addCommand("show running-config");
 
@@ -112,6 +115,7 @@ public class ShowCommand extends CiscoCommand {
 		privileged.addCommand(show);
 
 		user.addCommand("show ip route");
+
 		privileged.addCommand("show ip route");
 	}
 
@@ -122,6 +126,8 @@ public class ShowCommand extends CiscoCommand {
         NAT,
         QUESTION_MARK,
         INTERFACES,
+		IP_INTERFACE,
+		IP_INTERFACE_BRIEF,
     };
 
     private boolean process() {
@@ -129,6 +135,8 @@ public class ShowCommand extends CiscoCommand {
         // show running-config      - jen v ROOT rezimu
         // show interfaces          - jen v ROOT rezimu
         // show ip nat translations
+		// show ip interface
+		// show ip interface brief
 
         String dalsi = nextWord(); // druhe slovo
         if (dalsi.isEmpty()) {
@@ -184,18 +192,36 @@ public class ShowCommand extends CiscoCommand {
                 showState = State.ROUTE;
                 return true;
             } else {
-                if (!isCommand("nat", dalsi, 2)) {
-                    return false;
-                }
-                if (ciscoState == CommandShell.CISCO_USER_MODE) {
-                    invalidInputDetected();
-                    return false;
-                }
-                if (!isCommand("translations", nextWord(), 1)) {
-                    return false;
-                }
-                showState = State.NAT;
-                return true;
+				if (dalsi.startsWith("i")) { // interface
+					if (!isCommand("interface", dalsi, 3)) {
+						return false;
+					}
+
+					dalsi = nextWord();
+					if (dalsi.isEmpty()) {
+						showState = State.IP_INTERFACE;
+						return true;
+					}
+
+					if (!isCommand("brief", dalsi, 2)) {
+						return false;
+					}
+					showState = State.IP_INTERFACE_BRIEF;
+					return true;
+				} else {
+					if (!isCommand("nat", dalsi, 2)) {
+						return false;
+					}
+					if (ciscoState == CommandShell.CISCO_USER_MODE) {
+						invalidInputDetected();
+						return false;
+					}
+					if (!isCommand("translations", nextWord(), 1)) {
+						return false;
+					}
+					showState = State.NAT;
+					return true;
+				}
             }
         }
     }
@@ -214,6 +240,12 @@ public class ShowCommand extends CiscoCommand {
             case INTERFACES:
                 interfaces();
                 break;
+			case IP_INTERFACE:
+				ipInterface();
+				break;
+			case IP_INTERFACE_BRIEF:
+				ipInterfaceBrief();
+				break;
         }
     }
 
@@ -230,6 +262,76 @@ public class ShowCommand extends CiscoCommand {
         }
         printWithDelay(getInterfaceReport(iface), 30);
     }
+
+	/**
+	 * show ip interface
+	 */
+	private void ipInterface() {
+		String s = "";
+		NetworkInterface nIface;
+		Iterator<NetworkInterface> it = ipLayer.getSortedNetworkIfaces().iterator();
+		
+		while (it.hasNext()) {
+			nIface = it.next();
+			s += nIface.name + " is ";
+			if (nIface.isUp) {
+				s += "up, line protocol is up\n";
+			} else {
+				s += "administratively down, line protocol is down\n";
+			}
+
+			if (nIface.getIpAddress() != null) {
+				s += "  Internet address is " + nIface.getIpAddress().toString()+"\n";
+				s += "  Broadcast address is 255.255.255.255\n";
+				s += "  Address determined by setup command\n";
+				s += "  MTU is 1500 bytes\n";
+				s += "  Helper address is not set\n";
+				s += "  Security level is default\n";
+				s += "  ICMP unreachables are always sent\n";
+				s += "  ICMP mask replies are never sent\n";
+				s += "  Router Discovery is disabled\n";
+				s += "  IP output packet accounting is disabled\n";
+				s += "  TCP/IP header compression is disabled\n";
+				s += "  RTP/IP header compression is disabled\n";
+				s += "  BGP Policy Mapping is disabled\n";
+				s += "  WCCP Redirect outbound is disabled\n";
+				s += "  WCCP Redirect inbound is disabled\n";
+				s += "  WCCP Redirect exclude is disabled";
+			} else {
+				s += "  Internet protocol processing disabled";
+			}
+			if (it.hasNext()) {
+				s += "\n";
+			}
+		}
+
+		printWithDelay(s, 50);
+	}
+
+	/**
+	 * show ip interface brief
+	 */
+	private void ipInterfaceBrief() {
+		String s = "";
+		s += Util.zarovnej("Interface", 28);
+		s += Util.zarovnej("Ip-Address", 17);
+		s += Util.zarovnej("OK?", 4);
+		s += Util.zarovnej("Method", 7);
+		s += Util.zarovnej("Status", 23);
+		s += "Protocol\n";
+
+		for (NetworkInterface nIface : ipLayer.getSortedNetworkIfaces()) {
+			s += Util.zarovnej(nIface.name, 28);
+			s += Util.zarovnej((nIface.getIpAddress() != null ? nIface.getIpAddress().getIp().toString() : "unassigned"), 17);
+			s += Util.zarovnej("YES", 4);
+			s += Util.zarovnej("manual", 7);
+			s += Util.zarovnej((nIface.isUp ? "up" : "administratively down"), 23);
+			s += nIface.isUp ? "up" : "down"; // TODO: this is probably wrong, do a research what it means
+			s += "\n";
+		}
+
+		printWithDelay(s, 50);
+	}
 
     /**
      * Posle vypis pro prikaz 'show ip nat translations.
