@@ -705,7 +705,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 	@Override
 	public String getDescription() {
-		return device.getName()+": CiscoCommandParser: ";
+		return device.getName()+": CiscoCommandParser";
 	}
 
 	private void tryComplete(String line) {

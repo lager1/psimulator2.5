@@ -28,18 +28,10 @@ public class SystemListener implements LoggerListener {
 	public final Map<LoggingCategory, Integer> configuration = new EnumMap<>(LoggingCategory.class);
 	private DateFormat currentTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private PrintWriter out;
+	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	private String file = psimulator2.Psimulator.getNameOfProgram()+"_"+format.format(new Date())+"_exceptions.txt";
 
 	public SystemListener() {
-
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String file = format.format(new Date())+"_error_log.txt";
-
-		try {
-			out = new PrintWriter(new FileWriter(file, true));
-		} catch (IOException ex) {
-			System.err.println("Could not create Printwriter to log exceptions to file: "+file);
-			System.exit(2);
-		}
 		ConfigureSystemListener.configure(configuration);
 	}
 
@@ -48,25 +40,30 @@ public class SystemListener implements LoggerListener {
 		try {
 
 			if (logLevel <= configuration.get(category)) {
-				String zacatek = "[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
+				String begin = "[" + Logger.logLevelToString(logLevel) + "] " + category + ": " + caller.getDescription() + ": ";
 
 				if (object instanceof Exception) {	// vyjimka
-					System.out.println(zacatek + message);
+					System.out.println(begin + message);
 					Exception ex = (Exception) object;
 					ex.printStackTrace();
 
+					try {
+						out = new PrintWriter(new FileWriter(file, true));
+					} catch (IOException exs) {
+						System.err.println("Could not create Printwriter to log exceptions to file: " + file+", so this exception is not logged to a file.");
+					}
 					out.println(currentTime.format(new Date()) + " " + caller.getDescription()+": ");
 					ex.printStackTrace(out);
 					out.println();
 					out.flush();
 
 				} else if (object instanceof L2Packet || object instanceof L3Packet || object instanceof L4Packet) {	// paket
-					System.out.println(zacatek + object.toString() + " | " + message);
+					System.out.println(begin + object.toString() + " | " + message);
 
 				} else if (object != null) {	// nejakej jinej object, ten se vypisuje na konec
-					System.out.println(zacatek + message+" (" + object.toString()+")");
+					System.out.println(begin + message+" (" + object.toString()+")");
 				} else {
-					System.out.println(zacatek + message);
+					System.out.println(begin + message);
 				}
 			}
 
