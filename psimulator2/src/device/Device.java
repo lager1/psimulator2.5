@@ -139,6 +139,15 @@ public class Device {
 	}
 
 	/**
+	 * Adds command to all registered completers.
+	 */
+	public void addCommandToAllCompleters(String command) {
+		for (Completer completer : commandCompleters.values()) {
+			completer.addCommand(command);
+		}
+	}
+
+	/**
 	 * Creates parser according to a DeviceType.
 	 * @param cmd
 	 * @return

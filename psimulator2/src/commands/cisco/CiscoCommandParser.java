@@ -127,22 +127,22 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	private void registerParserCommands() {
+		// user mode
 		Completer user = device.commandCompleters.get(CommandShell.CISCO_USER_MODE);
 		user.addCommand("enable");
-		user.addCommand("exit");
 		user.addCommand("logout");
 
+		// privileged mode
 		Completer privileged = device.commandCompleters.get(CommandShell.CISCO_PRIVILEGED_MODE);
 		privileged.addCommand("enable");
 		privileged.addCommand("disable");
-		privileged.addCommand("exit");
 		privileged.addCommand("logout");
 
+		// config mode
 		Completer config = device.commandCompleters.get(CommandShell.CISCO_CONFIG_MODE);
-		config.addCommand("exit");
 		config.addCommand("end");
-		Node iface = new Node("interface");
 
+		Node iface = new Node("interface");
 		for (NetworkInterface rozh : ipLayer.getNetworkIfaces()) {
 			if (rozh.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1,2}")) {
 				int indexOfT = rozh.name.lastIndexOf("t");
@@ -153,13 +153,17 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		}
 		config.addCommand(iface);
 
-
+		// config-if mode
 		Completer configif = device.commandCompleters.get(CommandShell.CISCO_CONFIG_IF_MODE);
-		configif.addCommand("exit");
 		configif.addCommand("end");
 		configif.addCommand("shutdown");
 		configif.addCommand("no shutdown");
 		configif.addCommand(iface);
+
+		// all modes
+		device.addCommandToAllCompleters("exit");
+		device.addCommandToAllCompleters("save");
+		device.addCommandToAllCompleters("help");
 	}
 
 	@Override
