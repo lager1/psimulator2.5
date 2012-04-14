@@ -378,6 +378,11 @@ public class NatTable implements Loggable {
 	 * @return
 	 */
 	public IpPacket backwardTranlate(IpPacket packet, NetworkInterface in) {
+		if (in == null) {
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming iface is null.", packet);
+			return packet;
+		}
+
 		if (outside == null) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: outside is null.", packet);
 			return packet;
