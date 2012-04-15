@@ -105,8 +105,13 @@ public class CommandShell extends TerminalApplication {
 			this.getShellRenderer().run();
 		} catch (InterruptedException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Blocking IO operation stopped");
-		} catch (Exception ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Connection with user lost");
+		} catch (IOException ex) {
+			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Connection with user lost");
+			this.quit();
+			return null;
+		}catch(Exception ex){
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unknown exception occured: " + ex.toString());
+			Logger.log(Logger.WARNING, LoggingCategory.THREADS, "readCommand exception occured "+ex.toString());
 			this.quit();
 			return null;
 		}
