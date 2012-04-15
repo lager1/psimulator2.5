@@ -221,7 +221,7 @@ public class ShellRenderer extends BasicInputField {
 					return;
 				}
 				quit = true;
-				Logger.log(Logger.WARNING, LoggingCategory.TELNET, ex.toString());
+				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, ex.toString());
 				ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), TerminalIO.CTRL_D);  //  CLOSING SESSION SIGNAL
 				this.commandShell.quit();
 			} catch (UnsupportedOperationException ex) {
