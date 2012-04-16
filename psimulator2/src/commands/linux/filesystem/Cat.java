@@ -5,8 +5,11 @@ package commands.linux.filesystem;
 
 import commands.AbstractCommandParser;
 import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.exceptions.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Linux command cat. No options are supported.
@@ -31,19 +34,23 @@ public class Cat extends FileSystemCommand {
 	protected void executeCommand() {
 
 		for (String fileName : files) {
-			parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
+			try {
+				parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
 
-				@Override
-				public int workOnFile(InputStream input) throws Exception {
-					Scanner sc = new Scanner(input);
+					@Override
+					public int workOnFile(InputStream input) throws Exception {
+						Scanner sc = new Scanner(input);
 
-					while (sc.hasNextLine()) {
-						parser.getShell().printLine(sc.nextLine());
+						while (sc.hasNextLine()) {
+							parser.getShell().printLine(sc.nextLine());
+						}
+
+						return 0;
 					}
-
-					return 0;
-				}
-			});
+				});
+			} catch (FileNotFoundException ex) {
+				parser.getShell().printLine("cat: " + fileName + ": file not found");
+			}
 		}
 
 

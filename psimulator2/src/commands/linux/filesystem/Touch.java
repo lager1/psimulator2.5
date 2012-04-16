@@ -4,8 +4,8 @@
 
 package commands.linux.filesystem;
 
-import commands.linux.filesystem.FileSystemCommand;
 import commands.AbstractCommandParser;
+import filesystem.exceptions.FileNotFoundException;
 
 /**
  *
@@ -27,7 +27,16 @@ public class Touch extends FileSystemCommand {
 	 */
 	@Override
 	protected void executeCommand() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		
+		for (String fileName : files) {
+			try {
+				if(!parser.device.getFilesystem().createNewFile(fileName) && !parser.device.getFilesystem().exists(fileName)) // if new file was not created and doesnt already exist
+					this.parser.getShell().printLine("touch: " + fileName + " touching file failed");
+			} catch (FileNotFoundException ex) {
+				this.parser.getShell().printLine("touch: " + fileName + " touching file failed. Parent directory doesnt exist");
+			}
+		}
+		
 	}
 
 

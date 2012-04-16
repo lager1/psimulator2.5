@@ -1,6 +1,10 @@
 package filesystem;
 
-import de.schlichtherle.truezip.file.*;
+import de.schlichtherle.truezip.file.TArchiveDetector;
+import de.schlichtherle.truezip.file.TConfig;
+import de.schlichtherle.truezip.file.TFile;
+import de.schlichtherle.truezip.file.TVFS;
+import de.schlichtherle.truezip.fs.FsEntryNotFoundException;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
 import de.schlichtherle.truezip.nio.file.TPath;
@@ -8,6 +12,7 @@ import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,11 +60,11 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public boolean rm_r(String path) {
-		TFile file = new TFile(pathToFileSystem + path);
+	public boolean rm_r(String path) throws FileNotFoundException {
+		TFile file = getRelativeTFile(path);
 
 		if (!file.exists()) {
-			return false;
+			throw new FileNotFoundException();
 		}
 
 		try {
@@ -110,12 +115,12 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public Node[] listDir(String path) {
+	public Node[] listDir(String path) throws FileNotFoundException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public int runInputFileJob(String path, InputFileJob job) {
+	public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException{
 
 		while (Thread.interrupted()) {  // clear threat interrupted status
 		}
@@ -129,6 +134,8 @@ public class ArchiveFileSystem implements FileSystem {
 			input = Files.newInputStream(pat);
 			job.workOnFile(input);
 			return 0;
+		}catch (FsEntryNotFoundException ex) {
+			throw new FileNotFoundException();
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Exception occured when running inputFileJob: " + ex.toString());
 		} finally {
@@ -168,5 +175,28 @@ public class ArchiveFileSystem implements FileSystem {
 		}
 
 		return -1;
+	}
+
+	@Override
+	public boolean createNewFile(String path) throws FileNotFoundException {
+		
+		if(path.endsWith("/"))
+			return false;
+		try {
+			
+			TFile file = getRelativeTFile(path);
+			
+			if(!file.getParentFile().isDirectory())
+				throw  new FileNotFoundException();
+			
+			return file.createNewFile();
+		} catch (IOException ex) {
+			return false;
+		}
+		
+	}
+	
+	private TFile getRelativeTFile(String path){
+		return new TFile(pathToFileSystem + path);
 	}
 }

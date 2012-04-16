@@ -3,10 +3,12 @@ package shell.apps.CommandShell;
 import device.Device;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -225,22 +227,25 @@ public class History {
 			commands = new ArrayList<>();
 			return;
 		}
+		try {
+			this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
 
+				@Override
+				public int workOnFile(InputStream input) throws Exception {
 
-		this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
+					Scanner sc = new Scanner(input);
 
-			@Override
-			public int workOnFile(InputStream input) throws Exception {
+					while (sc.hasNextLine()) {
+						tempList.add(sc.nextLine().trim());
+					}
 
-				Scanner sc = new Scanner(input);
-
-				while (sc.hasNextLine()) {
-					tempList.add(sc.nextLine().trim());
+					return 0;
 				}
-
-				return 0;
-			}
-		});
+			});
+		} catch (FileNotFoundException ex) {
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Something weird. Catched FileNotFoundException but file existence was confirmed. Using empty history.");
+			commands = new ArrayList<>();
+		}
 
 // copy LINKEDLIST INTO ARRAYLIST -- using temporary linkedlist because of unknown size of list
 		commands = new ArrayList<>(tempList.size() + 20);

@@ -7,6 +7,7 @@ package shell.apps.TextEditor;
 import device.Device;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.TerminalApplication;
@@ -71,6 +73,38 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 	@Override
 	public int run() {
 		try {
+
+			final LinkedList<String> tempLines = new LinkedList<>();
+			try {
+				this.device.getFilesystem().runInputFileJob(filePath, new InputFileJob() {
+
+					@Override
+					public int workOnFile(InputStream input) throws Exception {
+
+						Scanner sc = new Scanner(input);
+
+						while (sc.hasNext()) {
+							tempLines.add(sc.nextLine());
+						}
+
+						return 0;
+					}
+				});
+			} catch (FileNotFoundException ex) {
+				try {
+					if (this.device.getFilesystem().createNewFile(filePath)) {
+						tempLines.add("new file created: " + filePath);
+					} else {
+						terminalIO.write("New file cannot be created in destination: " + filePath + TerminalIO.CRLF);
+						return -1;
+					}
+				} catch (FileNotFoundException ex1) {
+						terminalIO.write("New file cannot be created in destination: " + filePath + TerminalIO.CRLF);
+						return -1;
+				}
+			}
+
+
 			terminalIO.eraseScreen();
 			terminalIO.homeCursor();
 			//myio.flush();
@@ -96,25 +130,8 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 
 			this.quitQueue.add(ea);
 
-			final LinkedList<String> tempLines = new LinkedList<>();
-			
-			this.device.getFilesystem().runInputFileJob(filePath, new InputFileJob() {
-
-				@Override
-				public int workOnFile(InputStream input) throws Exception {
-					
-					Scanner sc = new Scanner(input);
-					
-					while(sc.hasNext()){
-						tempLines.add(sc.nextLine());
-					}
-						
-					return 0;
-				}
-			});
-			
 			ArrayList<String> lines = new ArrayList<>(tempLines);
-			
+
 			ea.setValue(lines);
 
 			ea.draw();
@@ -141,13 +158,13 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
 							@Override
 							public int workOnFile(OutputStream output) throws Exception {
 								PrintWriter wr = new PrintWriter(output);
-								
+
 								wr.print(ea.getValue());
 								wr.flush();
 								return 0;
 							}
 						});
-						
+
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Saved into file:" + filePath);
 						sb2.draw();
 						terminalIO.flush();

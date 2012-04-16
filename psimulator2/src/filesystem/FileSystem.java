@@ -7,6 +7,7 @@ package filesystem;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.FileNotFoundException;
 
 /**
  *
@@ -19,8 +20,9 @@ public interface FileSystem {
 	 *
 	 * @param path path to the file or directory
 	 * @return true if file was sucessfully deleted, false otherwise
+	 * @throws FileNotFoundException  
 	 */
-	public boolean rm_r(String path);
+	public boolean rm_r(String path) throws FileNotFoundException;
 
 	/**
 	 * find out if path is file
@@ -51,16 +53,26 @@ public interface FileSystem {
 	 *
 	 * @param path path to the directory or file. If path pointing to the file,then single Node is returned;
 	 * @return names of files or directories
+	 * @throws FileNotFoundException  
 	 */
-	public Node[] listDir(String path);
+	public Node[] listDir(String path) throws FileNotFoundException;
+	
+	/**
+	 * 
+	 * @param path
+	 * @return  true = success, false otherwise
+	 * @throws FileNotFoundException  if parent directory was not found
+	 */
+	public boolean createNewFile(String path) throws FileNotFoundException;
 
 	/**
 	 * 
 	 * @param path path to the file to work on
 	 * @param job job to do
-	 * @return 
+	 * @return 0 success  -1 otherwise
+	 * @throws FileNotFoundException  
 	 */
-	public int runInputFileJob(String path, InputFileJob job);
+	public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException;
 
 	/**
 	 * 

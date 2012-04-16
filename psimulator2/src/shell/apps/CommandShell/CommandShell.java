@@ -111,7 +111,7 @@ public class CommandShell extends TerminalApplication {
 			return null;
 		}catch(Exception ex){
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unknown exception occured: " + ex.toString());
-			Logger.log(Logger.WARNING, LoggingCategory.THREADS, "readCommand exception occured "+ex.toString());
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "readCommand exception occured "+ex.toString());
 			this.quit();
 			return null;
 		}
