@@ -1,14 +1,20 @@
 /*
  * Erstellt am 12.4.2012.
  */
-
 package commands.linux.filesystem;
 
 import commands.linux.filesystem.FileSystemCommand;
 import commands.AbstractCommandParser;
+import filesystem.dataStructures.Node;
+import filesystem.dataStructures.NodesWrapper;
+import filesystem.exceptions.FileNotFoundException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Linux command ls. Supported options are -a, -l.
+ *
  * @author Tomas Pitrinec
  */
 public class Ls extends FileSystemCommand {
@@ -36,13 +42,25 @@ public class Ls extends FileSystemCommand {
 	 */
 	@Override
 	protected void executeCommand() {
-		throw new UnsupportedOperationException("Not supported yet.");
+
+		if (opt_a || opt_l) {
+			parser.getShell().printLine("Sorry unimplemented funcionality");
+			return;
+		}
+
+
+		for (String filePath : files) {
+			try {
+				NodesWrapper nodes = parser.device.getFilesystem().listDir(filePath);
+				
+				for (Node node : nodes.getNodesSortedByTypeAndName()) {
+					parser.getShell().printLine(node.toString());
+				}
+				
+			} catch (FileNotFoundException ex) {
+				parser.getShell().printLine("ls: " + filePath + " directory not found");
+			}
+		}
+
 	}
-
-
-
-
-
-
-
 }

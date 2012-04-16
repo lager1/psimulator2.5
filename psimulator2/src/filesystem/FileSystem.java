@@ -5,9 +5,11 @@
 package filesystem;
 
 import filesystem.dataStructures.Node;
+import filesystem.dataStructures.NodesWrapper;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+import java.util.List;
 
 /**
  *
@@ -55,7 +57,7 @@ public interface FileSystem {
 	 * @return names of files or directories
 	 * @throws FileNotFoundException  
 	 */
-	public Node[] listDir(String path) throws FileNotFoundException;
+	public NodesWrapper listDir(String path) throws FileNotFoundException;
 	
 	/**
 	 * 

@@ -9,7 +9,10 @@ import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
 import de.schlichtherle.truezip.nio.file.TPath;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
+import filesystem.dataStructures.Directory;
+import filesystem.dataStructures.File;
 import filesystem.dataStructures.Node;
+import filesystem.dataStructures.NodesWrapper;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
@@ -17,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.LinkedList;
+import java.util.List;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -115,26 +120,63 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public Node[] listDir(String path) throws FileNotFoundException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public NodesWrapper listDir(String path) throws FileNotFoundException {
+
+		TFile dir = getRelativeTFile(path);
+
+		if (dir.isFile()) {
+			List<Node> singleFile = new LinkedList<>();
+			File file = new File();
+			file.setName(dir.getName());
+			singleFile.add(file);
+			return new NodesWrapper(singleFile);
+		}
+
+		if (!dir.isDirectory()) // path is not directory
+		{
+			throw new FileNotFoundException();
+		}
+
+
+		TFile[] files = dir.listFiles();
+		LinkedList<Node> ret = new LinkedList<>();
+
+
+		for (int i = 0; i < files.length; i++) {
+			TFile tFile = files[i];
+
+			if (tFile.isDirectory()) {
+				Directory add = new Directory();
+				add.setName(tFile.getName());
+				ret.add(add);
+			} else {
+				File add = new File();
+				add.setName(tFile.getName());
+				ret.add(add);
+			}
+		}
+
+		return new NodesWrapper(ret);
+
+
 	}
 
 	@Override
-	public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException{
+	public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException {
 
 		while (Thread.interrupted()) {  // clear threat interrupted status
 		}
-		
+
 		InputStream input = null;
 
 		try {
-			
+
 			TPath pat = new TPath(this.pathToFileSystem, path);
-			
+
 			input = Files.newInputStream(pat);
 			job.workOnFile(input);
 			return 0;
-		}catch (FsEntryNotFoundException ex) {
+		} catch (FsEntryNotFoundException ex) {
 			throw new FileNotFoundException();
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Exception occured when running inputFileJob: " + ex.toString());
@@ -179,24 +221,26 @@ public class ArchiveFileSystem implements FileSystem {
 
 	@Override
 	public boolean createNewFile(String path) throws FileNotFoundException {
-		
-		if(path.endsWith("/"))
+
+		if (path.endsWith("/")) {
 			return false;
+		}
 		try {
-			
+
 			TFile file = getRelativeTFile(path);
-			
-			if(!file.getParentFile().isDirectory())
-				throw  new FileNotFoundException();
-			
+
+			if (!file.getParentFile().isDirectory()) {
+				throw new FileNotFoundException();
+			}
+
 			return file.createNewFile();
 		} catch (IOException ex) {
 			return false;
 		}
-		
+
 	}
-	
-	private TFile getRelativeTFile(String path){
+
+	private TFile getRelativeTFile(String path) {
 		return new TFile(pathToFileSystem + path);
 	}
 }
