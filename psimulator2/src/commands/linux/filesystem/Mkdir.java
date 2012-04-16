@@ -4,7 +4,6 @@
 
 package commands.linux.filesystem;
 
-import commands.linux.filesystem.FileSystemCommand;
 import commands.AbstractCommandParser;
 
 /**
@@ -28,6 +27,13 @@ public class Mkdir extends FileSystemCommand {
 
 		invalidOption(c);
 
+	}
+
+	@Override
+	protected void controlComand() {
+		if(files.isEmpty()){
+			missingOperand();
+		}
 	}
 
 

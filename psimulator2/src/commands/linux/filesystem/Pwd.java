@@ -4,7 +4,6 @@
 
 package commands.linux.filesystem;
 
-import commands.linux.filesystem.FileSystemCommand;
 import commands.AbstractCommandParser;
 
 /**
@@ -26,6 +25,11 @@ public class Pwd  extends FileSystemCommand {
 	@Override
 	protected void parseOption(char c) {
 		invalidOption(c);
+	}
+
+	@Override
+	protected void controlComand() {
+		// nothing to control
 	}
 
 

@@ -72,7 +72,14 @@ public class Rm extends FileSystemCommand {
 			if(!deleted){
 				parser.getShell().printLine("rm: " + filePath + "deletion failed. Unknown reason");
 			}
-			
+
+		}
+	}
+
+	@Override
+	protected void controlComand() {
+		if(files.isEmpty()){
+			missingOperand();
 		}
 	}
 }

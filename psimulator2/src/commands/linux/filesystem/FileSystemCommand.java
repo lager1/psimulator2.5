@@ -39,6 +39,10 @@ public abstract class FileSystemCommand extends LinuxCommand {
 		if(ladiciVypisovani){
 			printLine(toString());
 		}
+
+		if (!parserError) {
+			controlComand();	// pokud by prisel na chybu, nastavil by parserError na true
+		}
 		if (!parserError) {
 			executeCommand();
 		}
@@ -65,6 +69,9 @@ public abstract class FileSystemCommand extends LinuxCommand {
 		// pak zavolam jejich zpracovani:
 		for(Character c: optionsSet){
 			parseOption(c);
+			if(parserError){
+				break;
+			}
 		}
 	}
 
@@ -79,10 +86,23 @@ public abstract class FileSystemCommand extends LinuxCommand {
 		printLine(commandName+": invalid option -- '"+c+"'");
 	}
 
+	protected void missingOperand(){
+		parserError = true;
+		printLine(commandName+": missing operand");
+		printLine("Try `"+commandName+" --help' for more information. ");
+	}
+
 	/**
 	 * Vykona prikaz.
 	 */
 	protected abstract void executeCommand();
+
+	/**
+	 * Pokud potreba, zkontroluje prikaz (napriklad byl-li zadan soubor k vytvoreni a tak).
+	 * Provadi se po parseru a kontroluje ty veci, ktery jsou kazdymu prikazu specificky. Pokud prijde na chybu, nastavi
+	 * parserError na true. Neni-li potreba konrolovat (napr. ls), necha se prazdna.
+	 */
+	protected abstract void controlComand();
 
 	@Override
 	public String toString(){

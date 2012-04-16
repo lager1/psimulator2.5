@@ -8,8 +8,6 @@ import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Linux command cat. No options are supported.
@@ -25,6 +23,13 @@ public class Cat extends FileSystemCommand {
 	@Override
 	protected void parseOption(char c) {
 		invalidOption(c);
+	}
+
+	@Override
+	protected void controlComand() {
+		if(files.isEmpty()){
+			missingOperand();
+		}
 	}
 
 	/**
@@ -52,9 +57,6 @@ public class Cat extends FileSystemCommand {
 				parser.getShell().printLine("cat: " + fileName + ": file not found");
 			}
 		}
-
-
-
 
 	}
 }

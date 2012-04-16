@@ -21,9 +21,17 @@ public class Editor extends FileSystemCommand {
 		invalidOption(c);
 	}
 
-	// TODO implementovat
+	@Override
+	protected void controlComand() {
+		if(files.isEmpty()){
+			missingOperand();
+		}
+	}
+
+
 	@Override
 	protected void executeCommand() {
+		// TODO tady to doimplementuj:
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

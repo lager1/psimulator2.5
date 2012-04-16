@@ -30,4 +30,9 @@ public class Cd extends FileSystemCommand {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	@Override
+	protected void controlComand() {
+		// nothing to control
+	}
+
 }

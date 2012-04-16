@@ -22,12 +22,19 @@ public class Touch extends FileSystemCommand {
 		invalidOption(c);
 	}
 
+	@Override
+	protected void controlComand() {
+		if(files.isEmpty()){
+			missingOperand();
+		}
+	}
+
 	/**
 	 * TODO: Soubory k vytvoreni jsou v promenny files.
 	 */
 	@Override
 	protected void executeCommand() {
-		
+
 		for (String fileName : files) {
 			try {
 				if(!parser.device.getFilesystem().createNewFile(fileName) && !parser.device.getFilesystem().exists(fileName)) // if new file was not created and doesnt already exist
@@ -36,7 +43,7 @@ public class Touch extends FileSystemCommand {
 				this.parser.getShell().printLine("touch: " + fileName + " touching file failed. Parent directory doesnt exist");
 			}
 		}
-		
+
 	}
 
 

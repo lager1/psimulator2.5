@@ -52,15 +52,20 @@ public class Ls extends FileSystemCommand {
 		for (String filePath : files) {
 			try {
 				NodesWrapper nodes = parser.device.getFilesystem().listDir(filePath);
-				
+
 				for (Node node : nodes.getNodesSortedByTypeAndName()) {
 					parser.getShell().printLine(node.toString());
 				}
-				
+
 			} catch (FileNotFoundException ex) {
 				parser.getShell().printLine("ls: " + filePath + " directory not found");
 			}
 		}
 
+	}
+
+	@Override
+	protected void controlComand() {
+		// nothing to control
 	}
 }
