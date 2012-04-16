@@ -84,6 +84,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("pwd", Pwd.class);
 		commands.put("rm", Rm.class);
 		commands.put("touch", Touch.class);
+		commands.put("editor",Editor.class); commands.put("mcedit",Editor.class);
 
 	}
 
@@ -123,7 +124,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			}
 
 		} catch (Exception ex) {
-			log(Logger.WARNING, "Nejaka chyba v linuxovejch prikazech.", null);
+			log(Logger.WARNING, "Some error in linux commands.", null);
 			log(Logger.DEBUG, "Byla vyhozena vyjimka.", ex);
 		}
 		//log(Logger.DEBUG,"konec metody processLineForParsers",null);
