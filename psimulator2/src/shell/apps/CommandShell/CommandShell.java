@@ -47,7 +47,7 @@ public class CommandShell extends TerminalApplication {
 		this.thread.setName("CommandShell/Parser thread");
 
 		this.historyManager = new HistoryManager(device);
-		this.prompt = new Prompt("default promt:~# ", "/", "");
+		this.prompt = new Prompt("default promt: ", "/", "~#");
 	}
 
 	/**

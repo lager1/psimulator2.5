@@ -7,13 +7,13 @@ package shell.apps.CommandShell;
 public class Prompt {
 
 	private String prefix;
-	private String fileSystemPath;
+	private String currentPath;
 	private String suffix;
 	private boolean showPath;
 
 	public Prompt(String prefix, String fileSystemPath, String suffix) {
 		this.prefix = prefix;
-		this.fileSystemPath = fileSystemPath;
+		this.currentPath = fileSystemPath;
 		this.suffix = suffix;
 		this.showPath = false;
 	}
@@ -27,12 +27,12 @@ public class Prompt {
 		this.showPath = showPath;
 	}
 
-	public String getFileSystemPath() {
-		return fileSystemPath;
+	public String getCurrentPath() {
+		return currentPath;
 	}
 
-	public void setFileSystemPath(String fileSystemPath) {
-		this.fileSystemPath = fileSystemPath;
+	public void setCurrentPath(String fileSystemPath) {
+		this.currentPath = fileSystemPath;
 	}
 
 	public String getPrefix() {
@@ -59,14 +59,14 @@ public class Prompt {
 		if (prefix == null) {
 			prefix = "";
 		}
-		if (fileSystemPath == null) {
-			fileSystemPath = "";
+		if (currentPath == null) {
+			currentPath = "";
 		}
 		if (suffix == null) {
 			suffix = "";
 		}
 
 
-		return prefix + (this.showPath ? fileSystemPath : "") + suffix;
+		return prefix + (this.showPath ? currentPath : "") + suffix;
 	}
 }

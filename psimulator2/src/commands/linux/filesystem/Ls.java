@@ -8,9 +8,6 @@ import commands.AbstractCommandParser;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
 import filesystem.exceptions.FileNotFoundException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Linux command ls. Supported options are -a, -l.
@@ -46,6 +43,10 @@ public class Ls extends FileSystemCommand {
 		if (opt_a || opt_l) {
 			parser.getShell().printLine("Sorry unimplemented funcionality");
 			return;
+		}
+		
+		if(files.isEmpty()){ // no dir to list => list current directory
+			files.add(parser.getShell().getPrompt().getCurrentPath());
 		}
 
 

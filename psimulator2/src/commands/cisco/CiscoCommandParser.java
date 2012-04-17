@@ -61,7 +61,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		super(device, shell);
 		shell.getPrompt().setPrefix(device.getName());
 		shell.getPrompt().setSuffix(">");
-		shell.getPrompt().setFileSystemPath("/");
+		shell.getPrompt().setCurrentPath("/");
 		shell.getPrompt().showPath(false);
 
 		if (debug) {

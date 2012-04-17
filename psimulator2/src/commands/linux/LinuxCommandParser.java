@@ -47,7 +47,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		super(networkDevice, shell);
 		registerCommands();
 		shell.getPrompt().setPrefix(device.getName()+":");
-		shell.getPrompt().setFileSystemPath("~");
+		shell.getPrompt().setCurrentPath("/");
+		shell.getPrompt().showPath(true);
 		shell.getPrompt().setSuffix("#");
 
 		if (device.commandCompleters == null) {
