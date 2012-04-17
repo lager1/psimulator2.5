@@ -7,7 +7,7 @@ package commands.linux.filesystem;
 import commands.AbstractCommandParser;
 
 /**
- *
+ * just print current path
  * @author Tomas Pitrinec
  */
 public class Pwd  extends FileSystemCommand {
@@ -19,7 +19,7 @@ public class Pwd  extends FileSystemCommand {
 
 	@Override
 	protected void executeCommand() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		parser.getShell().printLine(parser.getShell().getPrompt().getCurrentPath());
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class Pwd  extends FileSystemCommand {
 
 	@Override
 	protected void controlComand() {
-		// nothing to control
+		
 	}
 
 

@@ -51,6 +51,13 @@ public interface FileSystem {
 	public boolean exists(String path);
 
 	/**
+	 * 
+	 * @param path
+	 * @return null if file or dir do not exist, else absolute path
+	 */
+	public String resolveAbsolutePath(String path);
+	
+	/**
 	 * list directory as array of Nodes
 	 *
 	 * @param path path to the directory or file. If path pointing to the file,then single Node is returned;

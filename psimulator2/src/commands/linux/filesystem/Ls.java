@@ -46,13 +46,20 @@ public class Ls extends FileSystemCommand {
 		}
 		
 		if(files.isEmpty()){ // no dir to list => list current directory
-			files.add(parser.getShell().getPrompt().getCurrentPath());
+			files.add("");
 		}
 
+		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
 
 		for (String filePath : files) {
 			try {
-				NodesWrapper nodes = parser.device.getFilesystem().listDir(filePath);
+				
+				String absFile = parser.device.getFilesystem().resolveAbsolutePath(currentDir + filePath);
+				
+				if(absFile==null)
+					throw new FileNotFoundException();
+				
+				NodesWrapper nodes = parser.device.getFilesystem().listDir(absFile);
 
 				for (Node node : nodes.getNodesSortedByTypeAndName()) {
 					parser.getShell().printLine(node.toString());

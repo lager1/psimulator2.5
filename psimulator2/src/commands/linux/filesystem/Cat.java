@@ -27,7 +27,7 @@ public class Cat extends FileSystemCommand {
 
 	@Override
 	protected void controlComand() {
-		if(files.isEmpty()){
+		if (files.isEmpty()) {
 			missingOperand();
 		}
 	}
@@ -38,9 +38,17 @@ public class Cat extends FileSystemCommand {
 	@Override
 	protected void executeCommand() {
 
+		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+
 		for (String fileName : files) {
 			try {
-				parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
+
+				String absFile = parser.device.getFilesystem().resolveAbsolutePath(currentDir + fileName);
+				
+				if(absFile==null)
+					throw new FileNotFoundException();
+
+				parser.device.getFilesystem().runInputFileJob(absFile, new InputFileJob() {
 
 					@Override
 					public int workOnFile(InputStream input) throws Exception {
@@ -54,7 +62,7 @@ public class Cat extends FileSystemCommand {
 					}
 				});
 			} catch (FileNotFoundException ex) {
-				parser.getShell().printLine("cat: " + fileName + ": file not found");
+				parser.getShell().printLine("cat: " + currentDir+fileName + ": file not found");
 			}
 		}
 

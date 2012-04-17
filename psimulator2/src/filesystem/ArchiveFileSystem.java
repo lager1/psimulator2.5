@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -40,7 +41,7 @@ public class ArchiveFileSystem implements FileSystem {
 
 	public ArchiveFileSystem(String pathToFileSystem) {
 
-		this.pathToFileSystem = pathToFileSystem;
+
 		TConfig config = TConfig.get();
 		config.setArchiveDetector(new TArchiveDetector(
 				getFileSystemExtension(), // file system file extension
@@ -61,12 +62,20 @@ public class ArchiveFileSystem implements FileSystem {
 		if (!archiveFile.isArchive() || !archiveFile.isDirectory()) {
 			System.err.println("file: " + pathToFileSystem + " is not compatible archive ");
 		}
-
+		try {
+			this.pathToFileSystem = archiveFile.getCanonicalPath();
+		} catch (IOException ex) {
+			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Fatal error, cannot resolve canonical path to filesystem archive");
+		}
 	}
 
 	@Override
 	public boolean rm_r(String path) throws FileNotFoundException {
-		TFile file = getRelativeTFile(path);
+		TFile file = getCheckedTFile(path);
+
+		if (file == null) {
+			return false;
+		}
 
 		if (!file.exists()) {
 			throw new FileNotFoundException();
@@ -83,7 +92,11 @@ public class ArchiveFileSystem implements FileSystem {
 
 	@Override
 	public boolean isFile(String path) {
-		TFile file = new TFile(pathToFileSystem + path);
+		TFile file = getCheckedTFile(path);
+
+		if (file == null) {
+			return false;
+		}
 
 		if (!file.exists()) {
 			return false;
@@ -94,7 +107,13 @@ public class ArchiveFileSystem implements FileSystem {
 
 	@Override
 	public boolean isDir(String path) {
-		TFile file = new TFile(pathToFileSystem + path);
+
+
+		TFile file = getCheckedTFile(path);
+
+		if (file == null) {
+			return false;
+		}
 
 		if (!file.exists()) {
 			return false;
@@ -106,7 +125,13 @@ public class ArchiveFileSystem implements FileSystem {
 	@Override
 	public boolean exists(String path) {
 
-		return new TFile(pathToFileSystem + path).exists();
+		TFile file = getCheckedTFile(path);
+
+		if (file == null) {
+			return false;
+		}
+
+		return file.exists();
 	}
 
 	@Override
@@ -122,7 +147,12 @@ public class ArchiveFileSystem implements FileSystem {
 	@Override
 	public NodesWrapper listDir(String path) throws FileNotFoundException {
 
-		TFile dir = getRelativeTFile(path);
+		TFile dir = getCheckedTFile(path);
+
+		if (dir == null) {
+			throw new FileNotFoundException();
+		}
+
 
 		if (dir.isFile()) {
 			List<Node> singleFile = new LinkedList<>();
@@ -171,7 +201,13 @@ public class ArchiveFileSystem implements FileSystem {
 
 		try {
 
-			TPath pat = new TPath(this.pathToFileSystem, path);
+			TFile file = getCheckedTFile(path);
+
+			if (file == null) {
+				return -1;
+			}
+
+			TPath pat = new TPath(file);
 
 			input = Files.newInputStream(pat);
 			job.workOnFile(input);
@@ -201,7 +237,13 @@ public class ArchiveFileSystem implements FileSystem {
 		OutputStream output = null;
 
 		try {
-			TPath pat = new TPath(this.pathToFileSystem, path);
+			TFile file = getCheckedTFile(path);
+
+			if (file == null) {
+				return -1;
+			}
+
+			TPath pat = new TPath(file);
 
 			output = Files.newOutputStream(pat);
 			job.workOnFile(output);
@@ -227,8 +269,11 @@ public class ArchiveFileSystem implements FileSystem {
 		}
 		try {
 
-			TFile file = getRelativeTFile(path);
+			TFile file = getCheckedTFile(path);
 
+			if(file == null)
+				file = getRelativeTFile(path);
+			
 			if (!file.getParentFile().isDirectory()) {
 				throw new FileNotFoundException();
 			}
@@ -240,7 +285,48 @@ public class ArchiveFileSystem implements FileSystem {
 
 	}
 
+	private TFile getCheckedTFile(String path) {
+
+		String checkedPath = resolveAbsolutePath(path);
+
+		if (checkedPath == null) {
+			return null;
+		}
+
+		return getRelativeTFile(path);
+
+	}
+
 	private TFile getRelativeTFile(String path) {
 		return new TFile(pathToFileSystem + path);
+	}
+
+	@Override
+	public String resolveAbsolutePath(String path) {
+
+		TFile file = getRelativeTFile(path);
+
+
+		if (file.isFileSystemRoot() || file.isTopLevelArchive()) {
+			return "/";
+		}
+
+		try {
+
+			String canPath = file.getCanonicalPath();
+
+			if (canPath.length() < pathToFileSystem.length()) {
+				return "/";
+			}
+		} catch (IOException ex) {
+			return "/";
+		}
+
+		if (!file.exists()) {
+			return null;
+		}
+
+		return "/" + file.getInnerEntryName();
+
 	}
 }
