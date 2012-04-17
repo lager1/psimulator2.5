@@ -54,7 +54,15 @@ public class Ls extends FileSystemCommand {
 		for (String filePath : files) {
 			try {
 				
-				NodesWrapper nodes = parser.device.getFilesystem().listDir(currentDir+filePath);
+				String resolvedPath;
+				
+				if(filePath.startsWith("/")) // absolute resolving
+					resolvedPath=filePath;
+				else{
+					resolvedPath=currentDir+filePath;
+				}
+				
+				NodesWrapper nodes = parser.device.getFilesystem().listDir(resolvedPath);
 
 				for (Node node : nodes.getNodesSortedByTypeAndName()) {
 					parser.getShell().printLine(node.toString());

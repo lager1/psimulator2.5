@@ -33,62 +33,30 @@ public class Cd extends FileSystemCommand {
 			return;
 		}
 
+		String currentDirectory = parser.getShell().getPrompt().getCurrentPath();
+		
 		StringBuilder processPath = new StringBuilder(files.get(0));
-
 		StringBuilder pathToSet;
 
 		if (processPath.toString().startsWith("/")) // absolute path
 		{
 			pathToSet = processPath;
-		} else {
-			pathToSet = new StringBuilder(parser.getShell().getPrompt().getCurrentPath());
+		} else {  // relative resolving
+			pathToSet = new StringBuilder(currentDirectory);  // set current directory
 
-			if (!pathToSet.toString().endsWith("/")) {
+			if (!pathToSet.toString().endsWith("/")) {  // append "/" if needed
 				pathToSet.append("/");
 			}
 
-			pathToSet.append(processPath);
+			pathToSet.append(processPath);   // append rest if relative path
 		}
 
-//		boolean processed = false;
-//
-//		while (processPath.toString().startsWith(".")) {  // resolving relative path
-//
-//			processed = true;
-//
-//			if (processPath.toString().startsWith("./")) // path to set is not changed
-//			{
-//				processPath.delete(0, 2);  // aka delete "./"
-//				continue;
-//			} else if (processPath.toString().startsWith("../")) // 
-//			{
-//				processPath.delete(0, 3);  // aka delete "../"
-//
-//				int lastPathDelimiter = pathToSet.lastIndexOf("/");
-//				pathToSet.delete(lastPathDelimiter, pathToSet.length());  // skip into parent directory
-//
-//				if (pathToSet.length() < 2) {  // if path is in root of filesystem => no skipping
-//					pathToSet = new StringBuilder("/");
-//				}
-//				continue;
-//			}
-//
-//			break;
-//		}
-//
-//		if (processed) {
-//			pathToSet.append(processPath);  // append what left after processing path
-//		}else{
-//			pathToSet = processPath;  // if no processing was made => absolute path was entered
-//		}
-
-		String normalizedPath;
-
+		
 		if (pathToSet.toString().contentEquals("/../")) {
 			return;
 		}
 
-		normalizedPath = parser.device.getFilesystem().normalize(pathToSet.toString());
+		String normalizedPath = parser.device.getFilesystem().normalize(pathToSet.toString());
 
 		if (normalizedPath != null && parser.device.getFilesystem().isDir(normalizedPath)) // if path is a directory => ok
 		{

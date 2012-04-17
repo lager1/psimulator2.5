@@ -1,7 +1,6 @@
 /*
  * Erstellt am 12.4.2012.
  */
-
 package commands.linux.filesystem;
 
 import commands.AbstractCommandParser;
@@ -24,7 +23,7 @@ public class Touch extends FileSystemCommand {
 
 	@Override
 	protected void controlComand() {
-		if(files.isEmpty()){
+		if (files.isEmpty()) {
 			missingOperand();
 		}
 	}
@@ -35,22 +34,28 @@ public class Touch extends FileSystemCommand {
 	@Override
 	protected void executeCommand() {
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath()+"/";
-		
+		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+
 		for (String fileName : files) {
-			
-			String absFile = currentDir+fileName;
-			
+
+			String resolvedPath;
+
+			if (fileName.startsWith("/")) // absolute resolving
+			{
+				resolvedPath = fileName;
+			} else {
+				resolvedPath = currentDir + fileName;
+			}
+
 			try {
-				if((!parser.device.getFilesystem().createNewFile(absFile) && !parser.device.getFilesystem().exists(absFile))) // if new file was not created and doesnt already exist
-					this.parser.getShell().printLine("touch: " + absFile + " touching file failed");
+				if ((!parser.device.getFilesystem().createNewFile(resolvedPath) && !parser.device.getFilesystem().exists(resolvedPath))) // if new file was not created and doesnt already exist
+				{
+					this.parser.getShell().printLine("touch: " + resolvedPath + " touching file failed");
+				}
 			} catch (FileNotFoundException ex) {
-				this.parser.getShell().printLine("touch: " + absFile + " touching file failed. Parent directory doesnt exist");
+				this.parser.getShell().printLine("touch: " + resolvedPath + " touching file failed. Parent directory doesnt exist");
 			}
 		}
 
 	}
-
-
-
 }
