@@ -71,7 +71,7 @@ public class ArchiveFileSystem implements FileSystem {
 
 	@Override
 	public boolean rm_r(String path) throws FileNotFoundException {
-		TFile file = getCheckedTFile(path);
+		TFile file = getRelativeTFile(path);
 
 		if (file == null) {
 			return false;
@@ -92,15 +92,7 @@ public class ArchiveFileSystem implements FileSystem {
 
 	@Override
 	public boolean isFile(String path) {
-		TFile file = getCheckedTFile(path);
-
-		if (file == null) {
-			return false;
-		}
-
-		if (!file.exists()) {
-			return false;
-		}
+		TFile file = getRelativeTFile(path);
 
 		return file.isFile();
 	}
@@ -109,7 +101,7 @@ public class ArchiveFileSystem implements FileSystem {
 	public boolean isDir(String path) {
 
 
-		TFile file = getCheckedTFile(path);
+		TFile file = getRelativeTFile(path);
 
 		if (file == null) {
 			return false;
@@ -125,7 +117,7 @@ public class ArchiveFileSystem implements FileSystem {
 	@Override
 	public boolean exists(String path) {
 
-		TFile file = getCheckedTFile(path);
+		TFile file = getRelativeTFile(path);
 
 		if (file == null) {
 			return false;
@@ -147,12 +139,7 @@ public class ArchiveFileSystem implements FileSystem {
 	@Override
 	public NodesWrapper listDir(String path) throws FileNotFoundException {
 
-		TFile dir = getCheckedTFile(path);
-
-		if (dir == null) {
-			throw new FileNotFoundException();
-		}
-
+		TFile dir = getRelativeTFile(path);
 
 		if (dir.isFile()) {
 			List<Node> singleFile = new LinkedList<>();
@@ -201,9 +188,9 @@ public class ArchiveFileSystem implements FileSystem {
 
 		try {
 
-			TFile file = getCheckedTFile(path);
+			TFile file = getRelativeTFile(path);
 
-			if (file == null) {
+			if (!file.exists()) {
 				return -1;
 			}
 
@@ -237,9 +224,9 @@ public class ArchiveFileSystem implements FileSystem {
 		OutputStream output = null;
 
 		try {
-			TFile file = getCheckedTFile(path);
+			TFile file = getRelativeTFile(path);
 
-			if (file == null) {
+			if (!file.exists()) {
 				return -1;
 			}
 
@@ -261,6 +248,13 @@ public class ArchiveFileSystem implements FileSystem {
 		return -1;
 	}
 
+	/**
+	 * create new file
+	 *
+	 * @param path string like /home/user/xyz creates xyz file
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	@Override
 	public boolean createNewFile(String path) throws FileNotFoundException {
 
@@ -269,12 +263,9 @@ public class ArchiveFileSystem implements FileSystem {
 		}
 		try {
 
-			TFile file = getCheckedTFile(path);
+			TFile file = getRelativeTFile(path);
 
-			if(file == null)
-				file = getRelativeTFile(path);
-			
-			if (!file.getParentFile().isDirectory()) {
+			if (file.getParentFile() == null || !file.getParentFile().isDirectory()) {
 				throw new FileNotFoundException();
 			}
 
@@ -285,48 +276,60 @@ public class ArchiveFileSystem implements FileSystem {
 
 	}
 
-	private TFile getCheckedTFile(String path) {
-
-		String checkedPath = resolveAbsolutePath(path);
-
-		if (checkedPath == null) {
-			return null;
-		}
-
-		return getRelativeTFile(path);
-
+	/**
+	 * create TFile object from path like /home/user/./../
+	 *
+	 * @param path
+	 * @return
+	 */
+	private TFile getRelativeTFile(String path) {
+		return new TFile(pathToFileSystem + normalize(path));
 	}
 
-	private TFile getRelativeTFile(String path) {
-		return new TFile(pathToFileSystem + path);
+	/**
+	 * normalize path like /home/user/./../ to /home/
+	 *
+	 * @param path
+	 * @return
+	 */
+	@Override
+	public String normalize(String path) {
+
+		TPath tpath = new TPath(this.pathToFileSystem);
+
+		String normalized = tpath.getFileSystem().getPath(path).normalize().toString();
+
+
+		StringBuilder sb = new StringBuilder(normalized);
+		
+		while (sb.toString().startsWith(".") || sb.toString().startsWith("/")) {
+
+			while (sb.toString().startsWith(".")) {
+				sb.delete(0, 1);
+			}
+
+			while (sb.toString().startsWith("/")) {
+				sb.delete(0, 1);
+			}
+
+		}
+
+		return "/" + sb.toString();
 	}
 
 	@Override
-	public String resolveAbsolutePath(String path) {
+	public boolean createNewDir(String path) throws FileNotFoundException {
+
+		if (path.endsWith("/")) {
+			return false;
+		}
 
 		TFile file = getRelativeTFile(path);
 
-
-		if (file.isFileSystemRoot() || file.isTopLevelArchive()) {
-			return "/";
+		if (file.getParentFile() == null || !file.getParentFile().isDirectory()) {
+			throw new FileNotFoundException();
 		}
 
-		try {
-
-			String canPath = file.getCanonicalPath();
-
-			if (canPath.length() < pathToFileSystem.length()) {
-				return "/";
-			}
-		} catch (IOException ex) {
-			return "/";
-		}
-
-		if (!file.exists()) {
-			return null;
-		}
-
-		return "/" + file.getInnerEntryName();
-
+		return file.mkdirs();
 	}
 }

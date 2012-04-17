@@ -54,12 +54,7 @@ public class Ls extends FileSystemCommand {
 		for (String filePath : files) {
 			try {
 				
-				String absFile = parser.device.getFilesystem().resolveAbsolutePath(currentDir + filePath);
-				
-				if(absFile==null)
-					throw new FileNotFoundException();
-				
-				NodesWrapper nodes = parser.device.getFilesystem().listDir(absFile);
+				NodesWrapper nodes = parser.device.getFilesystem().listDir(currentDir+filePath);
 
 				for (Node node : nodes.getNodesSortedByTypeAndName()) {
 					parser.getShell().printLine(node.toString());

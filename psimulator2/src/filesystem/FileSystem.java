@@ -55,7 +55,7 @@ public interface FileSystem {
 	 * @param path
 	 * @return null if file or dir do not exist, else absolute path
 	 */
-	public String resolveAbsolutePath(String path);
+	public String normalize(String path);
 	
 	/**
 	 * list directory as array of Nodes
@@ -73,6 +73,14 @@ public interface FileSystem {
 	 * @throws FileNotFoundException  if parent directory was not found
 	 */
 	public boolean createNewFile(String path) throws FileNotFoundException;
+	
+	/**
+	 * 
+	 * @param path
+	 * @return  true = success, false otherwise
+	 * @throws FileNotFoundException  if parent directory was not found
+	 */
+	public boolean createNewDir(String path) throws FileNotFoundException;
 
 	/**
 	 * 

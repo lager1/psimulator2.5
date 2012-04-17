@@ -82,19 +82,19 @@ public class Cd extends FileSystemCommand {
 //			pathToSet = processPath;  // if no processing was made => absolute path was entered
 //		}
 
-		String absolutePath;
+		String normalizedPath;
 
 		if (pathToSet.toString().contentEquals("/../")) {
 			return;
 		}
 
-		absolutePath = parser.device.getFilesystem().resolveAbsolutePath(pathToSet.toString());
+		normalizedPath = parser.device.getFilesystem().normalize(pathToSet.toString());
 
-		if (absolutePath != null && parser.device.getFilesystem().isDir(absolutePath)) // if path is a directory => ok
+		if (normalizedPath != null && parser.device.getFilesystem().isDir(normalizedPath)) // if path is a directory => ok
 		{
-			parser.getShell().getPrompt().setCurrentPath(absolutePath);
+			parser.getShell().getPrompt().setCurrentPath(normalizedPath);
 		} else { // not ok
-			parser.getShell().printLine("ls: " + pathToSet.toString() + " directory not found");
+			parser.getShell().printLine("cd: " + pathToSet.toString() + " directory not found");
 		}
 	}
 
