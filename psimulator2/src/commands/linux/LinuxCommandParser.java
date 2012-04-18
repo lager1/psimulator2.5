@@ -21,10 +21,7 @@ import filesystem.exceptions.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import logging.*;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
@@ -44,6 +41,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	 * Mapa mezi nazvama prikazu a jejich tridou.
 	 */
 	private Map<String, Class> commands = new HashMap<>();
+
+	private List<String> scriptCommands;
 
 
 
@@ -125,7 +124,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 				} else if(commandName.startsWith("#")){ // komentar - nic se nedeje
 					// nic nedelam
 				} else if(commandName.contains("/")){ //obsahuje to lomitko, mohla by to bejt cesta
-					zkusSpustitSkript(commandName);
+					nactiSkript(commandName);
 				} else {
 					shell.printLine("bash: " + commandName + ": command not found");
 				}
@@ -138,6 +137,15 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		}
 		//log(Logger.DEBUG,"konec metody processLineForParsers",null);
 
+	}
+
+	/**
+	 * Jen to tyhle metody pridavam volani pripadnyho skriptu.
+	 */
+	@Override
+	public void deleteRunningCommand() {
+		super.deleteRunningCommand();
+		vykonejSkript();
 	}
 
 	@Override
@@ -186,8 +194,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	 * Metoda na spusteni skriptu. Praci s filesystemem jsem zkopiroval z Cat.java.
 	 * @param fileName
 	 */
-	private void zkusSpustitSkript(String fileName) {
-		getShell().printLine("Spustena metoda na spusteni skriptu.");
+	private void nactiSkript(String fileName) {
+//		getShell().printLine("Spustena metoda na spusteni skriptu.");
 		String currentDir = getShell().getPrompt().getCurrentPath() + "/";
 		try {
 
@@ -204,18 +212,19 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 				@Override
 				public int workOnFile(InputStream input) throws Exception {
+					scriptCommands = new LinkedList<>();
 					Scanner sc = new Scanner(input);
-					log(Logger.DEBUG, "Jdu zacit vykonavat skript.", null);
-					getShell().printLine("Zacinam vykonavat skript");
+//					log(Logger.DEBUG, "Jdu zacit vykonavat skript.", null);
+//					getShell().printLine("Zacinam vykonavat skript");
 					while (sc.hasNextLine()) {
-						processLine(sc.nextLine(), mode);
-							// -> na tohle pozor, v parseru spustenim nad konkretnim radkem volam ten samej parser - mohlo by to delat neplechu
+						scriptCommands.add(sc.nextLine());
 					}
-					getShell().printLine("Koncim vykonavat skript");
-					log(Logger.DEBUG, "Koncim vykonavat skript.", null);
+//					getShell().printLine("Koncim vykonavat skript");
+//					log(Logger.DEBUG, "Koncim vykonavat skript.", null);
 					return 0;
 				}
 			});
+			vykonejSkript();
 		} catch (FileNotFoundException ex) {
 			log(Logger.DEBUG,"Byla chycena vyjimka.", null);
 			getShell().printLine("bash: " + currentDir + fileName + ": No such file or directory");
@@ -223,6 +232,13 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 	}
 
+	private void vykonejSkript(){
+		while(scriptCommands != null && !scriptCommands.isEmpty() && runningCommand == null){
+			String radek = scriptCommands.remove(0);
+			processLine(radek, mode);
+				// -> na tohle pozor, v parseru spustenim nad konkretnim radkem volam ten samej parser - mohlo by to delat neplechu
+		}
+	}
 
 
 	private void log(int logLevel, String message, Object obj){
