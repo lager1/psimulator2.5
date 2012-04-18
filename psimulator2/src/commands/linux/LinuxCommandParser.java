@@ -16,11 +16,15 @@ import commands.Rnetconn;
 import commands.cisco.CiscoCommand;
 import commands.completer.Node;
 import device.Device;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.exceptions.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 import logging.*;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
@@ -116,8 +120,12 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			if (!commandName.isEmpty()) {	// kdyz je nejakej prikaz vubec poslanej, nejradsi bych posilani niceho zrusil
 
 				AbstractCommand command = getLinuxCommand(commandName);
-				if (command != null) {
+				if (command != null) { // pokud je to normalni prikaz
 					command.run();
+				} else if(commandName.startsWith("#")){ // komentar - nic se nedeje
+					// nic nedelam
+				} else if(commandName.contains("/")){ //obsahuje to lomitko, mohla by to bejt cesta
+					zkusSpustitSkript(commandName);
 				} else {
 					shell.printLine("bash: " + commandName + ": command not found");
 				}
@@ -173,6 +181,49 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
 
 	}
+
+	/**
+	 * Metoda na spusteni skriptu. Praci s filesystemem jsem zkopiroval z Cat.java.
+	 * @param fileName
+	 */
+	private void zkusSpustitSkript(String fileName) {
+		getShell().printLine("Spustena metoda na spusteni skriptu.");
+		String currentDir = getShell().getPrompt().getCurrentPath() + "/";
+		try {
+
+			String resolvedPath;
+
+			if (fileName.startsWith("/")) // absolute resolving
+			{
+				resolvedPath = fileName;
+			} else {
+				resolvedPath = currentDir + fileName;
+			}
+
+			device.getFilesystem().runInputFileJob(resolvedPath, new InputFileJob() {
+
+				@Override
+				public int workOnFile(InputStream input) throws Exception {
+					Scanner sc = new Scanner(input);
+					log(Logger.DEBUG, "Jdu zacit vykonavat skript.", null);
+					getShell().printLine("Zacinam vykonavat skript");
+					while (sc.hasNextLine()) {
+						processLine(sc.nextLine(), mode);
+							// -> na tohle pozor, v parseru spustenim nad konkretnim radkem volam ten samej parser - mohlo by to delat neplechu
+					}
+					getShell().printLine("Koncim vykonavat skript");
+					log(Logger.DEBUG, "Koncim vykonavat skript.", null);
+					return 0;
+				}
+			});
+		} catch (FileNotFoundException ex) {
+			log(Logger.DEBUG,"Byla chycena vyjimka.", null);
+			getShell().printLine("bash: " + currentDir + fileName + ": No such file or directory");
+		}
+
+	}
+
+
 
 	private void log(int logLevel, String message, Object obj){
 		Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);

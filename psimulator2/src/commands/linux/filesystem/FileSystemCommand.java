@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public abstract class FileSystemCommand extends LinuxCommand {
 
-	private final String commandName;
+	protected final String commandName;
 
 	protected boolean parserError;
 
@@ -107,10 +107,12 @@ public abstract class FileSystemCommand extends LinuxCommand {
 	@Override
 	public String toString(){
 
-        String vratit = "  Parametry prikazu "+commandName
+        String vratit = "----------------------------------\n"
+				+"  Parametry prikazu "+commandName
 				+ "\n\t"+parser.getWordsAsString()
 				+ "\n\t"+ files
-				+ "\n\t"+options;
+				+ "\n\t"+options
+				+ "\n----------------------------------";
 
         return vratit;
 

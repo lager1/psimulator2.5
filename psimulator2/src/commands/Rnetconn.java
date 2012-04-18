@@ -31,7 +31,7 @@ public class Rnetconn extends AbstractCommand {
 		String prikaz = nextWord();
 
 		if (prikaz.equals("")) {
-			parser.printService("This command is'n present on real cisco or linux device. It's in this simulator to manage connection to real network.\n");
+			parser.printService("This command isn't present on real cisco or linux device. It's in this simulator to manage connection to real network.\n");
 			printHelp();
 		} else if (prikaz.equals("list")) {
 			listAllRealSwitchports();
