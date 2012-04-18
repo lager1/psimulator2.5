@@ -38,7 +38,7 @@ public class Cat extends FileSystemCommand {
 	@Override
 	protected void executeCommand() {
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 		for (String fileName : files) {
 			try {
@@ -46,7 +46,7 @@ public class Cat extends FileSystemCommand {
 				fileName = resolvePath(currentDir, fileName);
 				
 				
-				parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
+			int ret = parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
 
 					@Override
 					public int workOnFile(InputStream input) throws Exception {
@@ -59,8 +59,12 @@ public class Cat extends FileSystemCommand {
 						return 0;
 					}
 				});
+			
+			if(ret < 0)
+				throw new FileNotFoundException();
+			
 			} catch (FileNotFoundException ex) {
-				parser.getShell().printLine("cat: " + currentDir+fileName + ": file not found");
+				parser.getShell().printLine("cat: " + fileName + ": file not found");
 			}
 		}
 

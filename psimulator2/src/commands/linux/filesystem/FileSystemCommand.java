@@ -147,4 +147,16 @@ public abstract class FileSystemCommand extends LinuxCommand {
 
 		return resolvedPath;
 	}
+
+	protected String getCurrentDir() {
+
+		String currentDir = parser.getShell().getPrompt().getCurrentPath();
+
+		if (currentDir.endsWith("/")) {
+			return currentDir;
+		} else {
+			return currentDir + "/";
+		}
+
+	}
 }

@@ -34,7 +34,7 @@ public class Touch extends FileSystemCommand {
 	@Override
 	protected void executeCommand() {
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 		for (String fileName : files) {
 

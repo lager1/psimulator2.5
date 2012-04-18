@@ -50,7 +50,7 @@ public class Ls extends FileSystemCommand {
 			files.add("");
 		}
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 		for (String filePath : files) {
 			try {

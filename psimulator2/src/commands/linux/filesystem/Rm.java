@@ -51,7 +51,7 @@ public class Rm extends FileSystemCommand {
 			return;
 		}
 		
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 		for (String filePath : files) {
 			

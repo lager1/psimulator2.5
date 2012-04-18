@@ -40,7 +40,7 @@ public class Mkdir extends FileSystemCommand {
 	protected void executeCommand() {
 
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 		for (String filePath : files) {
 

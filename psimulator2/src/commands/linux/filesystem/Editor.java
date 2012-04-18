@@ -44,7 +44,7 @@ public class Editor extends FileSystemCommand {
 			return;
 		}
 
-		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
+		String currentDir = getCurrentDir();
 
 
 	filePath = resolvePath(currentDir, filePath);
