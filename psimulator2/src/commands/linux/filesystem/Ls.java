@@ -3,11 +3,12 @@
  */
 package commands.linux.filesystem;
 
-import commands.linux.filesystem.FileSystemCommand;
 import commands.AbstractCommandParser;
+import filesystem.dataStructures.Directory;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
 import filesystem.exceptions.FileNotFoundException;
+import java.util.List;
 
 /**
  * Linux command ls. Supported options are -a, -l.
@@ -44,8 +45,8 @@ public class Ls extends FileSystemCommand {
 			parser.getShell().printLine("Sorry unimplemented funcionality");
 			return;
 		}
-		
-		if(files.isEmpty()){ // no dir to list => list current directory
+
+		if (files.isEmpty()) { // no dir to list => list current directory
 			files.add("");
 		}
 
@@ -53,20 +54,39 @@ public class Ls extends FileSystemCommand {
 
 		for (String filePath : files) {
 			try {
-				
-				String resolvedPath;
-				
-				if(filePath.startsWith("/")) // absolute resolving
-					resolvedPath=filePath;
-				else{
-					resolvedPath=currentDir+filePath;
-				}
-				
-				NodesWrapper nodes = parser.device.getFilesystem().listDir(resolvedPath);
 
-				for (Node node : nodes.getNodesSortedByTypeAndName()) {
-					parser.getShell().printLine(node.toString());
+				String resolvedPath;
+
+				if (filePath.startsWith("/")) // absolute resolving
+				{
+					resolvedPath = filePath;
+				} else {
+					resolvedPath = currentDir + filePath;
 				}
+
+				NodesWrapper nodeswrap = parser.device.getFilesystem().listDir(resolvedPath);
+
+				List<Node> nodes = nodeswrap.getNodesSortedByTypeAndName();
+
+				int i = 0;
+				for (Node node : nodes) {
+					
+					if (i % 4 == 0) {
+						parser.getShell().printLine("");
+					}
+					i++;
+
+					parser.getShell().print(node.getName());
+
+					if (node instanceof Directory) {
+						parser.getShell().print("/");
+					}
+
+					parser.getShell().print("\t");
+					
+				}
+
+				parser.getShell().printLine("");
 
 			} catch (FileNotFoundException ex) {
 				parser.getShell().printLine("ls: " + filePath + " directory not found");

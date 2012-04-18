@@ -6,7 +6,12 @@ package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
 import device.Device;
+import filesystem.dataStructures.Node;
+import filesystem.dataStructures.NodesWrapper;
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -58,9 +63,8 @@ public class CommandShell extends TerminalApplication {
 	public ShellMode getShellMode() {
 		return shellMode;
 	}
-	
-	
-	public BasicTerminalIO getTerminalIO(){
+
+	public BasicTerminalIO getTerminalIO() {
 		return terminalIO;
 	}
 
@@ -85,8 +89,6 @@ public class CommandShell extends TerminalApplication {
 		return prompt;
 	}
 
-	
-	
 	public void setMode(int mode) {
 		this.mode = mode;
 		this.historyManager.swapHistory(mode);
@@ -114,9 +116,9 @@ public class CommandShell extends TerminalApplication {
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Connection with user lost");
 			this.quit();
 			return null;
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unknown exception occured: " + ex.toString());
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "readCommand exception occured "+ex.toString());
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "readCommand exception occured " + ex.toString());
 			this.quit();
 			return null;
 		}
@@ -212,7 +214,8 @@ public class CommandShell extends TerminalApplication {
 		try {
 
 			terminalIO.write(text);
-			terminalIO.flush();
+			if(!terminalIO.isAutoflushing())
+				terminalIO.flush();
 
 			Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
 		} catch (IOException ex) {
@@ -284,12 +287,85 @@ public class CommandShell extends TerminalApplication {
 	}
 
 	public String completeWord(String line) {
+
+		// pass the line to device completer
 		if (!device.commandCompleters.containsKey(mode)) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "This mode has no Completer created: "+mode);
+			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "This mode has no Completer created: " + mode);
 			return null;
 		}
 
 		return device.commandCompleters.get(mode).complete(line, this);
+	}
+
+	/**
+	 * try to complete filesystem path. if line last work doesnt look like path, then null is returned.
+	 *
+	 * @param line
+	 * @return NodesWrapper ... always contain at last one node
+	 */
+	public NodesWrapper completePath(String line) {
+
+		// get last work of line
+		String[] words = line.split("\\s+");
+		String lastWord = words[words.length - 1];
+
+		if (lastWord.isEmpty() || !lastWord.contains("/")) // if last last word contain path delimiter, then it is a sign of path
+		{
+			return null;
+		}
+
+		int lastDelimOccurence = lastWord.lastIndexOf("/");
+		String directory = lastWord.substring(0, lastDelimOccurence);
+		String searchName = lastWord.substring(lastDelimOccurence, lastWord.length());
+
+		if (directory.isEmpty() || directory.length() < 1) {
+			directory = "/";
+		}
+
+		if (searchName.isEmpty() || searchName.trim().length() < 1) {
+			return null;
+		}
+
+		while (searchName.startsWith("/")) {
+			searchName = searchName.substring(1, searchName.length());
+		}
+
+		String resolvedPath;
+
+		if (directory.startsWith("/")) // absolute resolving
+		{
+			resolvedPath = directory;
+		} else {
+			resolvedPath = getPrompt().getCurrentPath() + "/" + directory;
+		}
+
+		directory = resolvedPath;
+		NodesWrapper nodes;
+
+		try {
+			nodes = device.getFilesystem().listDir(directory);
+		} catch (filesystem.exceptions.FileNotFoundException ex) {
+			return null;
+		}
+
+		List<Node> nodesList = nodes.getNodes();
+		List<Node> possibleNodes = new LinkedList<>();
+
+		for (Node node : nodesList) {
+			if (node.getName().startsWith(searchName)) {
+				possibleNodes.add(node);
+			}
+		}
+
+		if (possibleNodes.size() < 1) // nothing found
+		{
+			return null;
+		}
+
+		NodesWrapper ret = new NodesWrapper(possibleNodes);
+
+		return ret;
+
 	}
 
 	@Override
@@ -308,7 +384,7 @@ public class CommandShell extends TerminalApplication {
 		String line;
 
 		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
-		
+
 
 		// load history
 		if (historyManager == null || historyManager.getActiveHistory() == null) {
@@ -330,7 +406,7 @@ public class CommandShell extends TerminalApplication {
 						if (line != null) {
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "COMMAND READ:" + line);
 							this.getParser().processLine(line, mode);
-							
+
 						}
 						break;
 					case NORMAL_READ:
@@ -379,21 +455,22 @@ public class CommandShell extends TerminalApplication {
 		if (this.shellRenderer != null) {
 			this.shellRenderer.quit();
 		}
-		
-		if(this.childProcess !=null)  // quit child process
+
+		if (this.childProcess != null) // quit child process
+		{
 			this.childProcess.quit();
+		}
 
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;
 	}
-	
-	public void clearScreen(){
+
+	public void clearScreen() {
 		try {
 			this.getShellRenderer().clearScreen();
 		} catch (Exception ex) {
-		} 
-	
+		}
+
 	}
-	
 }

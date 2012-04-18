@@ -145,7 +145,7 @@ public class ArchiveFileSystem implements FileSystem {
 			List<Node> singleFile = new LinkedList<>();
 			File file = new File();
 			file.setName(dir.getName());
-			singleFile.add(file);
+			singleFile.add(file); 
 			return new NodesWrapper(singleFile);
 		}
 

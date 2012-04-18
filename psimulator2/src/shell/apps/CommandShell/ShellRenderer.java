@@ -5,10 +5,14 @@
 package shell.apps.CommandShell;
 
 import exceptions.TelnetConnectionException;
+import filesystem.dataStructures.Directory;
+import filesystem.dataStructures.Node;
+import filesystem.dataStructures.NodesWrapper;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.List;
+import java.util.logging.Level;
 import logging.Logger;
-
 import logging.LoggingCategory;
 import shell.ShellUtils;
 import telnetd.io.BasicTerminalIO;
@@ -19,24 +23,25 @@ import telnetd.io.TerminalIO;
  * @author Martin Lukáš
  */
 public class ShellRenderer extends BasicInputField {
-
+	
 	private CommandShell commandShell;
 	/**
 	 * flag signaling if line is returned... if ctrl+c is read then no line is returned
 	 */
 	private boolean returnValue = true;
 	private boolean quit;
-
+	private NodesWrapper tabPathSearchBuffer;
+	
 	public ShellRenderer(CommandShell commandShell, BasicTerminalIO termIO, String name) {
 		super(termIO, name);
 		this.commandShell = commandShell;
 
 		// this.termIO = termIO;  // no need for this. Parent class Component has same protected member
 	}
-
+	
 	public int quit() {
 		this.quit = true;
-
+		
 		return 0;
 	}
 
@@ -54,20 +59,20 @@ public class ShellRenderer extends BasicInputField {
 		this.returnValue = true;
 		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
 
-
-
+		
+		
 		while (!quit) {
-
+			
 			try {
-
+				
 				int inputValue;
-
+				
 				try {
 					inputValue = this.m_IO.read();
 				} catch (SocketTimeoutException ex) {
 					inputValue = 0;
 				}
-
+				
 				if (inputValue == 0) {
 					continue;
 				}
@@ -109,13 +114,18 @@ public class ShellRenderer extends BasicInputField {
 //				}
 
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
-
+				
+				if (inputValue != TerminalIO.TABULATOR) // if it is not tabulator => clear tab buffer
+				{
+					this.tabPathSearchBuffer = null;
+				}
+				
 				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
 					handleInput(inputValue);
 					continue; // continue while
 				}
-
-
+				
+				
 				if (ShellUtils.handleSignalControlCodes(this.commandShell.getParser(), inputValue)) // if input was signaling control code && handled
 				{
 					switch (inputValue) {
@@ -129,26 +139,26 @@ public class ShellRenderer extends BasicInputField {
 							returnValue = false;
 							m_IO.write("BYE");
 							break;
-
+						
 					}
-
+					
 					continue;  // continue while cycle
 				}
-
+				
 				switch (inputValue) { // HANDLE CONTROL CODES for text manipulation
 
-					case TerminalIO.END_KEY: 
+					case TerminalIO.END_KEY:
 						handleEnd();
 						break;
 					case TerminalIO.CTRL_R:
 						handleSearch();
 						break;
-
+					
 					case TerminalIO.TABULATOR:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno TABULATOR");
 						this.handleTabulator();
 						break;
-
+					
 					case TerminalIO.LEFT:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno LEFT");
 						moveCursorLeft(1);
@@ -165,13 +175,13 @@ public class ShellRenderer extends BasicInputField {
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno DOWN");
 						this.handleHistory(TerminalIO.DOWN);
 						break;
-
+					
 					case TerminalIO.DEL:
 					case TerminalIO.DELETE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno DEL/DELETE");
 						handleDelete();
 						break;
-
+					
 					case TerminalIO.BACKSPACE:
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno BACKSPACE");
 						handleBackSpace();
@@ -183,12 +193,12 @@ public class ShellRenderer extends BasicInputField {
 							moveCursorLeft(1);
 							draw();
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "CTRL+W upravil pozici kurzoru na: " + cursor);
-
+							
 							if (cursor != 0 && Character.isSpaceChar(sb.charAt(cursor - 1))) // delete until space is found
 							{
 								break; // break while
 							}
-
+							
 						}
 						break; // break switch
 
@@ -196,25 +206,25 @@ public class ShellRenderer extends BasicInputField {
 						Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+L");
 						this.clearScreen();
 						break;
-
+					
 					case TerminalIO.ENTER:
 						quit = true;
 						this.commandShell.getHistoryManager().getActiveHistory().addCommand(this.getValue());
 						m_IO.write(BasicTerminalIO.CRLF);
 						break;
-
+					
 					case -1:
 					case -2:
 						Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Shell renderer read Input(Code):" + inputValue);
 						quit = true;
 						break;
 				}
-
+				
 				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Pozice kurzoru: " + cursor + "Interpretován řídící kod: " + inputValue);
-
-
+				
+				
 			} catch (IOException ex) {
-
+				
 				if (this.quit) // ok no problem, outer program code probably closed socket
 				{
 					Logger.log(Logger.INFO, LoggingCategory.TELNET, "Closing ShellRenderer");
@@ -227,11 +237,11 @@ public class ShellRenderer extends BasicInputField {
 			} catch (UnsupportedOperationException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unsuported exception catched in ShellRenderer: " + ex.toString());
 			}
-
+			
 		}
-
-
-
+		
+		
+		
 	}
 
 	/**
@@ -258,7 +268,7 @@ public class ShellRenderer extends BasicInputField {
 
 		this.clearBuffer();
 		this.sb.append(value);
-
+		
 		this.drawLine();
 		returnValue = true;
 	}
@@ -270,7 +280,7 @@ public class ShellRenderer extends BasicInputField {
 	 */
 	@Override
 	public void draw() throws IOException {
-
+		
 		m_IO.eraseToEndOfScreen();
 		m_IO.write(sb.substring(cursor, sb.length()));
 		m_IO.moveLeft(sb.length() - cursor);
@@ -299,15 +309,15 @@ public class ShellRenderer extends BasicInputField {
 	 * @throws IOException
 	 */
 	private void drawLine() {
-
+		
 		try {
-
+			
 			this.eraseLine();
 			this.commandShell.printPrompt();
 			this.cursor = 0;
 			m_IO.write(sb.toString());
 			this.cursor = sb.length();
-
+			
 		} catch (IOException ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when drawing line in ShellRenderer");
 		}
@@ -324,11 +334,11 @@ public class ShellRenderer extends BasicInputField {
 		{
 			return;
 		}
-
+		
 		this.eraseLine();
-
+		
 		this.commandShell.printPrompt();
-
+		
 		if (key == TerminalIO.UP) {
 			//  this.sb.setLength(0);
 			this.commandShell.getHistoryManager().getActiveHistory().handlePrevious(this.sb);
@@ -336,44 +346,97 @@ public class ShellRenderer extends BasicInputField {
 			//  this.sb.setLength(0);
 			this.commandShell.getHistoryManager().getActiveHistory().handleNext(this.sb);
 		}
-
+		
 		m_IO.write(this.sb.toString());
 		m_IO.moveLeft(m_IO.getColumns());
 		m_IO.moveRight(sb.length() + this.commandShell.getPrompt().toString().length());
 		this.cursor = sb.length();
-
+		
 	}
 
 	/**
 	 * handling tabulator -- auto completing command action
 	 */
 	private void handleTabulator() {
-
+		
+		
 		String toCompleteValue = this.sb.substring(0, cursor);
-
-		String completedValue = this.commandShell.completeWord(toCompleteValue);
-
+		String completedValue = null;
+		
+		if (this.tabPathSearchBuffer != null && tabPathSearchBuffer.getNodes().size() > 1) // double tab action
+		{
+			
+			List<Node> nodes = tabPathSearchBuffer.getNodesSortedByTypeAndName();
+			
+			int i = 0;
+			for (Node node : nodes) {
+				if (i % 4 == 0) {
+					commandShell.printLine("");
+				}
+				i++;
+				
+				commandShell.print(node.getName());
+				
+				if (node instanceof Directory) {
+					commandShell.print("/");
+				}
+				
+				commandShell.print("\t");
+				
+				
+				
+				
+			}
+			
+			commandShell.printLine("");
+			this.tabPathSearchBuffer = null;
+			this.drawLine();
+			
+			return;
+		}
+		
+		this.tabPathSearchBuffer = this.commandShell.completePath(toCompleteValue);
+		
+		if (this.tabPathSearchBuffer != null && this.tabPathSearchBuffer.getNodes().size() == 1) // only one node to complete => complete line
+		{
+			String fileName = this.tabPathSearchBuffer.getNodes().get(0).getName();
+			if (this.tabPathSearchBuffer.getNodes().get(0) instanceof Directory) {
+				fileName += "/";
+			}
+			int pathStringIndex = toCompleteValue.lastIndexOf("/");
+			
+			if (pathStringIndex < toCompleteValue.length() - 1) {
+				pathStringIndex++;
+			}
+			
+			completedValue = toCompleteValue.substring(0, pathStringIndex) + fileName;
+		}
+		
+		if (completedValue == null) {
+			completedValue = this.commandShell.completeWord(toCompleteValue);
+		}
+		
 		if (completedValue == null || completedValue.isEmpty()) {
 			return;
 		}
-
+		
 		String restOfLine = this.sb.substring(cursor, this.sb.length());
-
+		
 		if (restOfLine == null || restOfLine.trim().isEmpty()) {
 			this.setValue(completedValue);
 			return;
 		}
-
+		
 		this.setValue(completedValue + restOfLine.trim());
-
+		
 		this.moveCursorLeft(restOfLine.length());
 	}
-
+	
 	private void handleSearch() throws IOException {
-
+		
 		HistorySearchRenderer hSearch = new HistorySearchRenderer(this, m_IO);
 		int ret = hSearch.run(this.commandShell.getHistoryManager().getActiveHistory(), this.sb.toString());
-
+		
 		switch (ret) {
 			case TerminalIO.LEFT:
 			case TerminalIO.RIGHT:
@@ -381,7 +444,7 @@ public class ShellRenderer extends BasicInputField {
 			case TerminalIO.DOWN:
 				this.setValue(hSearch.getResult());
 				break;
-
+			
 			case TerminalIO.ENTER:
 				this.setValue(hSearch.getResult());
 				this.m_IO.write(TerminalIO.CRLF);
@@ -393,10 +456,10 @@ public class ShellRenderer extends BasicInputField {
 				this.clearBuffer();
 				this.drawLine();
 				break;
-
+			
 		}
-
-
+		
+		
 	}
 
 	/**
