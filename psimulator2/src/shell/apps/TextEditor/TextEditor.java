@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.TerminalApplication;

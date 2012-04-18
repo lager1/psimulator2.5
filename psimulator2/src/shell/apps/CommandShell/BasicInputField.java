@@ -130,9 +130,9 @@ public abstract class BasicInputField extends ActiveComponent {
 
 	}
 
-	@Override
+	
 	abstract public void run() throws Exception;
 
-	@Override
+	
 	abstract public void draw() throws IOException;
 }

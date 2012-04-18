@@ -58,6 +58,11 @@ public class CommandShell extends TerminalApplication {
 	public ShellMode getShellMode() {
 		return shellMode;
 	}
+	
+	
+	public BasicTerminalIO getTerminalIO(){
+		return terminalIO;
+	}
 
 	/**
 	 * set active shell mode
@@ -303,8 +308,7 @@ public class CommandShell extends TerminalApplication {
 		String line;
 
 		this.shellMode = ShellMode.COMMAND_READ; // default start reading a command
-		//this.shellMode = ShellMode.NORMAL_READ; // testing purposes
-		//	this.shellMode = ShellMode.INPUT_FIELD; // testing purposes
+		
 
 		// load history
 		if (historyManager == null || historyManager.getActiveHistory() == null) {
@@ -326,6 +330,7 @@ public class CommandShell extends TerminalApplication {
 						if (line != null) {
 							Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "COMMAND READ:" + line);
 							this.getParser().processLine(line, mode);
+							
 						}
 						break;
 					case NORMAL_READ:
@@ -374,9 +379,21 @@ public class CommandShell extends TerminalApplication {
 		if (this.shellRenderer != null) {
 			this.shellRenderer.quit();
 		}
+		
+		if(this.childProcess !=null)  // quit child process
+			this.childProcess.quit();
 
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
 		return 0;
 	}
+	
+	public void clearScreen(){
+		try {
+			this.getShellRenderer().clearScreen();
+		} catch (Exception ex) {
+		} 
+	
+	}
+	
 }

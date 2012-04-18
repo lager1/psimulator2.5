@@ -49,7 +49,7 @@ public class ShellRenderer extends BasicInputField {
 	 */
 	@Override
 	public void run() throws Exception {
-
+		this.m_IO.setAutoflushing(true);
 		this.clearBuffer();
 		this.returnValue = true;
 		this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
@@ -405,7 +405,7 @@ public class ShellRenderer extends BasicInputField {
 	 * @throws IOException
 	 * @throws TelnetConnectionException
 	 */
-	private void clearScreen() throws IOException, TelnetConnectionException {
+	public void clearScreen() throws IOException, TelnetConnectionException {
 		this.m_IO.eraseScreen();
 		m_IO.setCursor(0, 0);
 		this.commandShell.printPrompt();

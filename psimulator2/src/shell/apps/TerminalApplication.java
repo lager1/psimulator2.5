@@ -34,4 +34,14 @@ public abstract class TerminalApplication {
 	
 	public abstract int quit();
 
+	public TerminalApplication getChildProcess() {
+		return childProcess;
+	}
+
+	public void setChildProcess(TerminalApplication childProcess) {
+		this.childProcess = childProcess;
+	}
+	
+	 
+
 }

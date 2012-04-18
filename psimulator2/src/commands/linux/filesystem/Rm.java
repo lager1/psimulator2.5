@@ -50,21 +50,34 @@ public class Rm extends FileSystemCommand {
 			parser.getShell().printLine("Sorry unimplemented funcionality");
 			return;
 		}
+		
+		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
 
 		for (String filePath : files) {
+			
+			
+			String resolvedPath;
 
-			if (!parser.device.getFilesystem().exists(filePath)) {
+			if (filePath.startsWith("/")) // absolute resolving
+			{
+				resolvedPath = filePath;
+			} else {
+				resolvedPath = currentDir + filePath;
+			}
+			
+
+			if (!parser.device.getFilesystem().exists(resolvedPath)) {
 				parser.getShell().printLine("rm: " + filePath + "file doesn't exist");
 				continue;
 			}
 
-			if (parser.device.getFilesystem().isDir(filePath) && !opt_r) {  // if path is a directory and -r parameter is not activated
+			if (parser.device.getFilesystem().isDir(resolvedPath) && !opt_r) {  // if path is a directory and -r parameter is not activated
 				parser.getShell().printLine("rm: " + filePath + "path is a directory, use -r parametr");
 				continue;
 			}
 			boolean deleted = false;
 			try {
-				deleted = parser.device.getFilesystem().rm_r(filePath);
+				deleted = parser.device.getFilesystem().rm_r(resolvedPath);
 			} catch (FileNotFoundException ex) {
 				Logger.log(Logger.WARNING, LoggingCategory.LINUX_COMMANDS, "Cannot delete file. File is not found, but file existence was confirmed.");
 			}
