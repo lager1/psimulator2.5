@@ -47,24 +47,17 @@ public class Editor extends FileSystemCommand {
 		String currentDir = parser.getShell().getPrompt().getCurrentPath() + "/";
 
 
-		String resolvedPath;
+	filePath = resolvePath(currentDir, filePath);
 
-		if (filePath.startsWith("/")) // absolute resolving
-		{
-			resolvedPath = filePath;
-		} else {
-			resolvedPath = currentDir + filePath;
-		}
-
-		if (!parser.device.getFilesystem().isFile(resolvedPath)) {  // if path is not existing file
+		if (!parser.device.getFilesystem().isFile(filePath)) {  // if path is not existing file
 			try {
 
-				if (!parser.device.getFilesystem().createNewFile(resolvedPath)) {  // if file cannot be even created
-					parser.getShell().printLine("Cannot create new empty file with your path: " + resolvedPath);
+				if (!parser.device.getFilesystem().createNewFile(filePath)) {  // if file cannot be even created
+					parser.getShell().printLine("Cannot create new empty file with your path: " + filePath);
 					return;
 				}
 			} catch (FileNotFoundException ex) {
-				parser.getShell().printLine("Cannot create new empty file with your path: " + resolvedPath);
+				parser.getShell().printLine("Cannot create new empty file with your path: " + filePath);
 					return;
 			}
 		}
@@ -73,7 +66,7 @@ public class Editor extends FileSystemCommand {
 		
 		// OK resolved path should be now poining to regular file. time to start texteditor
 
-		TextEditor editor = new TextEditor(parser.getShell().getTerminalIO(), parser.device, resolvedPath);
+		TextEditor editor = new TextEditor(parser.getShell().getTerminalIO(), parser.device, filePath);
 
 		try {
 			parser.getShell().setChildProcess(editor);

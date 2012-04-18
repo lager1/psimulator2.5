@@ -43,15 +43,10 @@ public class Cat extends FileSystemCommand {
 		for (String fileName : files) {
 			try {
 
-				String resolvedPath;
+				fileName = resolvePath(currentDir, fileName);
 				
-				if(fileName.startsWith("/")) // absolute resolving
-					resolvedPath=fileName;
-				else{
-					resolvedPath=currentDir+fileName;
-				}
 				
-				parser.device.getFilesystem().runInputFileJob(resolvedPath, new InputFileJob() {
+				parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
 
 					@Override
 					public int workOnFile(InputStream input) throws Exception {

@@ -55,16 +55,9 @@ public class Ls extends FileSystemCommand {
 		for (String filePath : files) {
 			try {
 
-				String resolvedPath;
+				filePath = resolvePath(currentDir, filePath);
 
-				if (filePath.startsWith("/")) // absolute resolving
-				{
-					resolvedPath = filePath;
-				} else {
-					resolvedPath = currentDir + filePath;
-				}
-
-				NodesWrapper nodeswrap = parser.device.getFilesystem().listDir(resolvedPath);
+				NodesWrapper nodeswrap = parser.device.getFilesystem().listDir(filePath);
 
 				List<Node> nodes = nodeswrap.getNodesSortedByTypeAndName();
 

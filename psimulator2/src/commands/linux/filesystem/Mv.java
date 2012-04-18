@@ -5,6 +5,7 @@
 package commands.linux.filesystem;
 
 import commands.AbstractCommandParser;
+import filesystem.exceptions.FileNotFoundException;
 
 /**
  *
@@ -17,9 +18,19 @@ public class Mv extends MvOrCp {
 	}
 
 	@Override
-	protected void processFile() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	protected int processFile(String source, String target) {
+		try {
+			parser.device.getFilesystem().mv(source, target);
+			
+			return 0;
+		} catch (FileNotFoundException ex) {
+			printLine("mv: "+ source + " to " + target + "failed. Directory or file doesnt exist" );
+			return -1;
+		}
+	
 	}
+
+	
 
 
 

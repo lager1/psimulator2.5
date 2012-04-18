@@ -38,22 +38,15 @@ public class Touch extends FileSystemCommand {
 
 		for (String fileName : files) {
 
-			String resolvedPath;
-
-			if (fileName.startsWith("/")) // absolute resolving
-			{
-				resolvedPath = fileName;
-			} else {
-				resolvedPath = currentDir + fileName;
-			}
+			fileName = resolvePath(currentDir, fileName);
 
 			try {
-				if ((!parser.device.getFilesystem().createNewFile(resolvedPath) && !parser.device.getFilesystem().exists(resolvedPath))) // if new file was not created and doesnt already exist
+				if ((!parser.device.getFilesystem().createNewFile(fileName) && !parser.device.getFilesystem().exists(fileName))) // if new file was not created and doesnt already exist
 				{
-					this.parser.getShell().printLine("touch: " + resolvedPath + " touching file failed");
+					this.parser.getShell().printLine("touch: " + fileName + " touching file failed");
 				}
 			} catch (FileNotFoundException ex) {
-				this.parser.getShell().printLine("touch: " + resolvedPath + " touching file failed. Parent directory doesnt exist");
+				this.parser.getShell().printLine("touch: " + fileName + " touching file failed. Parent directory doesnt exist");
 			}
 		}
 

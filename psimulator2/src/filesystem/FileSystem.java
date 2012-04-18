@@ -4,12 +4,10 @@
  */
 package filesystem;
 
-import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
-import java.util.List;
 
 /**
  *
@@ -25,6 +23,8 @@ public interface FileSystem {
 	 * @throws FileNotFoundException  
 	 */
 	public boolean rm_r(String path) throws FileNotFoundException;
+	public boolean cp_r(String source, String target) throws FileNotFoundException;
+	public boolean mv(String source, String target) throws FileNotFoundException;
 
 	/**
 	 * find out if path is file

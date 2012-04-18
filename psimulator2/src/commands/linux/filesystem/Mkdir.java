@@ -44,27 +44,20 @@ public class Mkdir extends FileSystemCommand {
 
 		for (String filePath : files) {
 
-			String resolvedPath;
-
-			if (filePath.startsWith("/")) // absolute resolving
-			{
-				resolvedPath = filePath;
-			} else {
-				resolvedPath = currentDir + filePath;
-			}
+			filePath = resolvePath(currentDir, filePath);
 
 
 			try {
-				boolean mkdir = parser.device.getFilesystem().createNewDir(resolvedPath);
+				boolean mkdir = parser.device.getFilesystem().createNewDir(filePath);
 
 				if (mkdir) {
 					continue;
 				} else {
-					parser.getShell().printLine("mkdir: " + resolvedPath + "directory creation failed");
+					parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
 				}
 
 			} catch (FileNotFoundException ex) {
-				parser.getShell().printLine("mkdir: " + resolvedPath + "directory creation failed");
+				parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
 
 			}
 

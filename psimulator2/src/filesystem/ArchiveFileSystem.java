@@ -145,7 +145,7 @@ public class ArchiveFileSystem implements FileSystem {
 			List<Node> singleFile = new LinkedList<>();
 			File file = new File();
 			file.setName(dir.getName());
-			singleFile.add(file); 
+			singleFile.add(file);
 			return new NodesWrapper(singleFile);
 		}
 
@@ -301,7 +301,7 @@ public class ArchiveFileSystem implements FileSystem {
 
 
 		StringBuilder sb = new StringBuilder(normalized);
-		
+
 		while (sb.toString().startsWith(".") || sb.toString().startsWith("/")) {
 
 			while (sb.toString().startsWith(".")) {
@@ -331,5 +331,51 @@ public class ArchiveFileSystem implements FileSystem {
 		}
 
 		return file.mkdirs();
+	}
+
+	@Override
+	public boolean cp_r(String source, String target) throws FileNotFoundException {
+		TFile file = getRelativeTFile(source);
+
+		if (file == null) {
+			return false;
+		}
+
+		if (!file.exists()) {
+			throw new FileNotFoundException();
+		}
+
+		try {
+
+			TFile targetFile = new TFile(target);
+			file.cp_r(targetFile);
+		} catch (IOException ex) {
+			throw new FileNotFoundException();
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean mv(String source, String target) throws FileNotFoundException {
+		TFile file = getRelativeTFile(source);
+
+		if (file == null) {
+			return false;
+		}
+
+		if (!file.exists()) {
+			throw new FileNotFoundException();
+		}
+
+		try {
+
+			TFile targetFile = new TFile(target);
+			file.mv(targetFile);
+		} catch (IOException ex) {
+			throw new FileNotFoundException();
+		}
+
+		return true;
 	}
 }
