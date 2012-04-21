@@ -87,6 +87,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("mkdir", Mkdir.class);
 		commands.put("pwd", Pwd.class);
 		commands.put("rm", Rm.class);
+		commands.put("mv", Mv.class);
+		commands.put("cp", Cp.class);
 		commands.put("touch", Touch.class);
 		commands.put("editor",Editor.class); commands.put("mcedit",Editor.class);
 
@@ -140,7 +142,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 	}
 
 	/**
-	 * Jen to tyhle metody pridavam volani pripadnyho skriptu.
+	 * Jen do tyhle metody pridavam volani pripadnyho skriptu.
+	 * POZOR: metoda muze volana z vlakna nejaky aplikace, pak i ten skript muze byt odtamtud volanej.
 	 */
 	@Override
 	public void deleteRunningCommand() {
