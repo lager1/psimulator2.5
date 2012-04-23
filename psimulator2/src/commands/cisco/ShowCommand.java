@@ -9,6 +9,9 @@ import commands.completer.Completer;
 import commands.completer.Node;
 import java.util.Iterator;
 import java.util.Map;
+import networkModule.L3.ArpCache;
+import networkModule.L3.ArpCache.ArpRecord;
+import networkModule.L3.ArpCache.Target;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.AccessList;
@@ -42,49 +45,12 @@ public class ShowCommand extends CiscoCommand {
 		this.ipLayer = (CiscoIPLayer) getNetMod().ipLayer;
 	}
 
-    // show interfaces (FastEthernet 0/0)?
-    private boolean processInterfaces() {
-        showState = State.INTERFACES;
-
-        String rozh = nextWord();
-        if (rozh.isEmpty()) {
-            return true;
-        }
-        rozh += nextWord();
-
-        iface = null;
-        iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
-        if (iface == null) {
-			if (rozh.matches("[fF].*[0-9]/[0-9]{1,2}")) {
-				int end = rozh.indexOf("0");
-				String novy = "FastEthernet";
-				String cislo = rozh.substring(end, rozh.length());
-				rozh = novy+cislo;
-
-				iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
-				if (iface != null) {
-					return true;
-				}
-			}
-
-			if (ipLayer.existInterfaceNameStartingWith(rozh)) {
-				incompleteCommand();
-				return false;
-			}
-
-            invalidInputDetected();
-            return false;
-        }
-        return true;
-    }
-
 	@Override
 	public void run() {
 		boolean cont = process();
 		if (cont) {
 			start();
 		}
-
 	}
 
 	@Override
@@ -95,8 +61,10 @@ public class ShowCommand extends CiscoCommand {
 
 		user.addCommand("show ip nat translations");
 		user.addCommand("show ip interface brief");
+		user.addCommand("show arp");
 		privileged.addCommand("show ip nat translations");
 		privileged.addCommand("show ip interface brief");
+		privileged.addCommand("show arp");
 
 		privileged.addCommand("show running-config");
 
@@ -115,12 +83,12 @@ public class ShowCommand extends CiscoCommand {
 		privileged.addCommand(show);
 
 		user.addCommand("show ip route");
-
 		privileged.addCommand("show ip route");
 	}
 
     enum State {
 
+		ARP,
         RUN,
         ROUTE,
         NAT,
@@ -130,6 +98,32 @@ public class ShowCommand extends CiscoCommand {
 		IP_INTERFACE_BRIEF,
     };
 
+	private void start() {
+        switch (showState) {
+			case ARP:
+				arp();
+				break;
+            case RUN:
+                runningConfig();
+                break;
+            case ROUTE:
+                ipRoute();
+                break;
+            case NAT:
+                ipNatTranslations();
+                break;
+            case INTERFACES:
+                interfaces();
+                break;
+			case IP_INTERFACE:
+				ipInterface();
+				break;
+			case IP_INTERFACE_BRIEF:
+				ipInterfaceBrief();
+				break;
+        }
+    }
+
     private boolean process() {
         // show ip route
         // show running-config      - jen v ROOT rezimu
@@ -137,6 +131,7 @@ public class ShowCommand extends CiscoCommand {
         // show ip nat translations
 		// show ip interface
 		// show ip interface brief
+		// show arp
 
         String dalsi = nextWord(); // druhe slovo
         if (dalsi.isEmpty()) {
@@ -156,6 +151,15 @@ public class ShowCommand extends CiscoCommand {
             printWithDelay(s, 50);
             return false;
         }
+
+		if (dalsi.startsWith("a") && ciscoState == CommandShell.CISCO_PRIVILEGED_MODE) {
+			if (!isCommand("arp", dalsi, 2)) {
+                return false;
+            }
+
+			showState = State.ARP;
+			return true;
+		}
 
         if (dalsi.startsWith("r")) {
             if (ciscoState == CommandShell.CISCO_USER_MODE) {
@@ -226,27 +230,40 @@ public class ShowCommand extends CiscoCommand {
         }
     }
 
-    private void start() {
-        switch (showState) {
-            case RUN:
-                runningConfig();
-                break;
-            case ROUTE:
-                ipRoute();
-                break;
-            case NAT:
-                ipNatTranslations();
-                break;
-            case INTERFACES:
-                interfaces();
-                break;
-			case IP_INTERFACE:
-				ipInterface();
-				break;
-			case IP_INTERFACE_BRIEF:
-				ipInterfaceBrief();
-				break;
+	// show interfaces (FastEthernet 0/0)?
+    private boolean processInterfaces() {
+        showState = State.INTERFACES;
+
+        String rozh = nextWord();
+        if (rozh.isEmpty()) {
+            return true;
         }
+        rozh += nextWord();
+
+        iface = null;
+        iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
+        if (iface == null) {
+			if (rozh.matches("[fF].*[0-9]/[0-9]{1,2}")) {
+				int end = rozh.indexOf("0");
+				String novy = "FastEthernet";
+				String cislo = rozh.substring(end, rozh.length());
+				rozh = novy+cislo;
+
+				iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
+				if (iface != null) {
+					return true;
+				}
+			}
+
+			if (ipLayer.existInterfaceNameStartingWith(rozh)) {
+				incompleteCommand();
+				return false;
+			}
+
+            invalidInputDetected();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -264,13 +281,46 @@ public class ShowCommand extends CiscoCommand {
     }
 
 	/**
+	 * show arp
+	 */
+	private void arp() {
+		String s = "";
+		Map<Target, ArpRecord> arp = ipLayer.getArpCache();
+		ipLayer.checkArpRecords();
+
+		s += "Protocol  Address          Age (sec)  Hardware Addr   Type   Interface\n";
+
+		Iterator<Target> it = arp.keySet().iterator();
+		Target target;
+
+		while (it.hasNext()) {
+			target = it.next();
+
+			ArpRecord record = arp.get(target);
+
+			s += Util.zarovnej("Internet", 10);
+			s += Util.zarovnej(target.address.toString(), 17);
+			s += Util.zarovnej(""+(System.currentTimeMillis()-record.timeStamp)/1_000, 11);
+			s += Util.zarovnej(record.mac.getCiscoRepresentation(), 16);
+			s += Util.zarovnej("ARPA", 7);
+			s += target.iface.name;
+
+			if (it.hasNext()) {
+				s += "\n";
+			}
+		}
+
+		printWithDelay(s, 50);
+	}
+
+	/**
 	 * show ip interface
 	 */
 	private void ipInterface() {
 		String s = "";
 		NetworkInterface nIface;
 		Iterator<NetworkInterface> it = ipLayer.getSortedNetworkIfaces().iterator();
-		
+
 		while (it.hasNext()) {
 			nIface = it.next();
 			s += nIface.name + " is ";

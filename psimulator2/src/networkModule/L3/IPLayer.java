@@ -3,14 +3,11 @@
  */
 package networkModule.L3;
 
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.L4Packet;
-import dataStructures.packets.L3Packet;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.ArpPacket;
-import dataStructures.*;
+import dataStructures.DropItem;
+import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+import dataStructures.packets.*;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
@@ -98,7 +95,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 *
 	 * @return
 	 */
-	public HashMap<Target, ArpCache.ArpRecord> getArpCache() {
+	public Map<Target, ArpCache.ArpRecord> getArpCache() {
 		return arpCache.getCache();
 	}
 
@@ -350,6 +347,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 */
 	public void changeIpAddressOnInterface(NetworkInterface iface, IPwithNetmask ipAddress) {
 		iface.ipAddress = ipAddress;
+	}
+
+	/**
+	 * Deletes timed out ARP records.
+	 */
+	public void checkArpRecords() {
+		arpCache.checkArpRecords();
 	}
 
 	/**
