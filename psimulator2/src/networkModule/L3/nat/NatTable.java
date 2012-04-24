@@ -141,17 +141,6 @@ public class NatTable implements Loggable {
 	//--------------------------------------------- forward translation ---------------------------------------------
 
 	/**
-     * Dle teto metody se bude pocitac rozhodovat, co delat s paketem.
-     * Nevola se hned zanatuj, pac musime rozlisovat, kdy natovat, kdy nenatovat a kdy vratit Destination Host Unreachable.
-     * @param zdroj
-     * @return 0 - ano natovat se bude <br />
-     *         1 - ne, nemam pool - vrat zpatky Destination Host Unreachable <br />
-     *         2 - ne, dosli IP adresy z poolu - vrat zpatky Destination Host Unreachable
-     *         3 - ne, vstupni neni soukrome nebo vystupni neni verejne <br />
-     *         4 - ne, zdrojova Ip neni v seznamu access-listu, tak nechat normalne projit bez natovani <br />
-     *         5 - ne, neni nastaveno outside rozhrani
-     */
-	/**
 	 * Executes forward translation of packet.
 	 *
 	 * @param packet to translate
@@ -327,7 +316,7 @@ public class NatTable implements Loggable {
 		freePorts.remove(srcPortNew); // port je obsazen
 
 		InnerRecord newDynamic = new InnerRecord(srcIpNew, srcPortNew, tempRecord.protocol);
-		Record r = new Record(tempRecord, newDynamic);
+		Record r = new Record(tempRecord, newDynamic, packet.dst);
 
 		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "New dynamic record created: ", r);
 		table.add(r);
@@ -690,7 +679,7 @@ public class NatTable implements Loggable {
          */
         public final InnerRecord out;
         /**
-         * Potreba pro vypis v ciscu. Je null, kdyz se vkladaji staticka pravidla.
+         * Potreba pro vypis v ciscu.
          */
         public final IpAddress target;
         /**
@@ -698,17 +687,10 @@ public class NatTable implements Loggable {
          */
         private long timestamp;
 
-        public Record(InnerRecord in, InnerRecord out) {
+        public Record(InnerRecord in, InnerRecord out, IpAddress target) {
             this.in = in;
             this.out = out;
-            this.target = null;
-            this.timestamp = System.currentTimeMillis();
-        }
-
-        public Record(InnerRecord in, InnerRecord out, IpAddress cil) {
-            this.in = in;
-            this.out = out;
-            this.target = cil;
+            this.target = target;
             this.timestamp = System.currentTimeMillis();
         }
 
@@ -717,7 +699,7 @@ public class NatTable implements Loggable {
         }
 
         /**
-         * Obnovi zaznam na dalsich 10s.
+         * Obnovi zaznam na dalsich natRecordLife sekund.
          */
         public void touch() {
             this.timestamp = System.currentTimeMillis();

@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -24,7 +25,7 @@ import telnetd.io.BasicTerminalIO;
  *
  * @author Martin Lukáš
  */
-public class CommandShell extends TerminalApplication {
+public class CommandShell extends TerminalApplication implements Loggable {
 
 	public static final int DEFAULT_MODE = 0;
 	public static final int CISCO_USER_MODE = 0; // alias na ten defaultni
@@ -118,7 +119,7 @@ public class CommandShell extends TerminalApplication {
 			return null;
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Unknown exception occured: " + ex.toString());
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "readCommand exception occured " + ex.toString());
+			Logger.log(this, Logger.WARNING, LoggingCategory.TELNET, "readCommand exception occured ", ex);
 			this.quit();
 			return null;
 		}
@@ -472,5 +473,10 @@ public class CommandShell extends TerminalApplication {
 		} catch (Exception ex) {
 		}
 
+	}
+
+	@Override
+	public String getDescription() {
+		return device.getName() + ": CommandShell";
 	}
 }
