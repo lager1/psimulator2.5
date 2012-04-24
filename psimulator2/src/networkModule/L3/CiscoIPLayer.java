@@ -16,7 +16,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.RoutingTable.Record;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 
 /**
  * Cisco-specific IPLayer.
@@ -27,7 +27,7 @@ public class CiscoIPLayer extends IPLayer {
 
 	public final CiscoWrapperRT wrapper;
 
-	public CiscoIPLayer(TcpIpNetMod netMod) {
+	public CiscoIPLayer(IpNetworkModule netMod) {
 		super(netMod);
 		this.ttl = 255;
 		wrapper = new CiscoWrapperRT(netMod.getDevice(), this);

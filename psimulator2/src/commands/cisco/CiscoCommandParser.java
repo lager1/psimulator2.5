@@ -22,8 +22,8 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
-import networkModule.NetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.IpNetworkModule;
 import shell.apps.CommandShell.CommandShell;
 import static shell.apps.CommandShell.CommandShell.*;
 import utils.Util;
@@ -68,9 +68,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 			changeMode(CISCO_PRIVILEGED_MODE);
 		}
 
-		NetMod nm = device.getNetworkModule();
+		NetworkModule nm = device.getNetworkModule();
 		if (nm.isStandardTcpIpNetMod()) {
-			this.ipLayer = (CiscoIPLayer) ((TcpIpNetMod) nm).ipLayer;
+			this.ipLayer = (CiscoIPLayer) ((IpNetworkModule) nm).ipLayer;
 		} else {
 			this.ipLayer = null; // never happen, because L2 only devices have no telnet access
 		}

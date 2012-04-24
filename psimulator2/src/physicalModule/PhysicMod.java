@@ -9,7 +9,7 @@ import java.util.*;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.NetMod;
+import networkModule.NetworkModule;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -157,7 +157,7 @@ public class PhysicMod implements SmartRunnable, Loggable{
 		return device.getName()+": PhysicMod";
 	}
 
-	private NetMod getNetMod(){
+	private NetworkModule getNetMod(){
 		return device.getNetworkModule();
 	}
 

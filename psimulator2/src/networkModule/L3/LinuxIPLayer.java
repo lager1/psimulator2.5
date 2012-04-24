@@ -13,7 +13,7 @@ import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 
 /**
  * Linux-specific IPLayer.
@@ -28,7 +28,7 @@ public class LinuxIPLayer extends IPLayer {
 	 */
 	public boolean ip_forward = true;
 
-	public LinuxIPLayer(TcpIpNetMod netMod) {
+	public LinuxIPLayer(IpNetworkModule netMod) {
 		super(netMod);
 		this.ttl = 64;
 	}

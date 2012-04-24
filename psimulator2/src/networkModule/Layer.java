@@ -12,14 +12,14 @@ import utils.WorkerThread;
  */
 public abstract class Layer {
 
-    protected NetMod netMod;
+    protected NetworkModule netMod;
 
-    public Layer(NetMod netMod) {
+    public Layer(NetworkModule netMod) {
         this.netMod = netMod;
-        
+
     }
 
-    public NetMod getNetMod() {
+    public NetworkModule getNetMod() {
         return netMod;
     }
 }

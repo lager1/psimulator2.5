@@ -17,7 +17,7 @@ import networkModule.L2.EthernetLayer;
  * Predpoklada protokol ethernet na vsech rozhranich, ostatni pakety zahazuje.
  * @author neiss
  */
-public class SimpleSwitchNetMod extends NetMod  implements Loggable{
+public class SwitchNetworkModule extends NetworkModule  implements Loggable{
 
 	public final EthernetLayer ethernetLayer;
 
@@ -25,7 +25,7 @@ public class SimpleSwitchNetMod extends NetMod  implements Loggable{
 	 * Konstruktor sitovyho modulu predpoklada uz hotovej fysickej modul, protoze zkouma jeho nastaveni.
 	 * @param device
 	 */
-    public SimpleSwitchNetMod(Device device) {
+    public SwitchNetworkModule(Device device) {
 		super(device);
 		ethernetLayer = new EthernetLayer(this);
 	}

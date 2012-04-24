@@ -13,7 +13,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L4.IcmpHandler;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 
 /**
  * Represent's switchport on layer 2.
@@ -84,7 +84,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 				firstTime = false;
 				hasL3module = physicMod.device.getNetworkModule().isStandardTcpIpNetMod();
 				if (hasL3module) {
-					icmpHandler = ((TcpIpNetMod) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
+					icmpHandler = ((IpNetworkModule) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
 				}
 			}
 

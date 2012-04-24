@@ -11,7 +11,7 @@ import commands.linux.LinuxCommandParser;
 import filesystem.FileSystem;
 import java.util.HashMap;
 import java.util.Map;
-import networkModule.NetMod;
+import networkModule.NetworkModule;
 import physicalModule.PhysicMod;
 import shell.apps.CommandShell.CommandShell;
 import telnetd.pridaneTridy.TelnetProperties;
@@ -26,7 +26,7 @@ public class Device {
 	private String name;
 	public final DeviceType type;
 	public final PhysicMod physicalModule;
-	private NetMod networkModule;
+	private NetworkModule networkModule;
 	/**
 	 * Completers for all available modes.
 	 *
@@ -92,7 +92,7 @@ public class Device {
 		return name;
 	}
 
-	public NetMod getNetworkModule() {
+	public NetworkModule getNetworkModule() {
 		return networkModule;
 	}
 
@@ -101,7 +101,7 @@ public class Device {
 	 *
 	 * @param networkModule
 	 */
-	public void setNetworkModule(NetMod networkModule) {
+	public void setNetworkModule(NetworkModule networkModule) {
 		this.networkModule = networkModule;
 	}
 

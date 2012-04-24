@@ -5,9 +5,9 @@ package ostatni;
  */
 
 import device.Device;
-import networkModule.NetMod;
-import networkModule.SimpleSwitchNetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.SwitchNetworkModule;
+import networkModule.IpNetworkModule;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -38,14 +38,14 @@ public class JenPokus {
 
 	@Test
 	public void testIsAssignableFrom(){
-		SimpleSwitchNetMod ss = new SimpleSwitchNetMod(new Device(1, "name1", Device.DeviceType.cisco_router));
-		TcpIpNetMod ip = new TcpIpNetMod(new Device(1, "name2", Device.DeviceType.cisco_router));
+		SwitchNetworkModule ss = new SwitchNetworkModule(new Device(1, "name1", Device.DeviceType.cisco_router));
+		IpNetworkModule ip = new IpNetworkModule(new Device(1, "name2", Device.DeviceType.cisco_router));
 
-//		System.out.println(ss.getClass().isAssignableFrom(TcpIpNetMod.class));	//true
+//		System.out.println(ss.getClass().isAssignableFrom(IpNetworkModule.class));	//true
 //		System.out.println(ip.getClass().isAssignableFrom(ss.getClass()));	// false
-//		System.out.println(ss.getClass().isAssignableFrom(NetMod.class));	// false
-//		System.out.println(NetMod.class.isAssignableFrom(ip.getClass()));	// true
-//		System.out.println(NetMod.class.isAssignableFrom(ss.getClass()));	// true
+//		System.out.println(ss.getClass().isAssignableFrom(NetworkModule.class));	// false
+//		System.out.println(NetworkModule.class.isAssignableFrom(ip.getClass()));	// true
+//		System.out.println(NetworkModule.class.isAssignableFrom(ss.getClass()));	// true
 
 		System.out.println("Tedka skutecny pouziti:");
 		assertFalse(ss.isStandardTcpIpNetMod());

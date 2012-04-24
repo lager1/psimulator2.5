@@ -19,11 +19,11 @@ import physicalModule.PhysicMod;
  */
 
 
-public abstract class NetMod {
+public abstract class NetworkModule {
 
     protected Device device;
 
-	public NetMod(Device device) {
+	public NetworkModule(Device device) {
 		assert device != null;
 		this.device = device;
 	}
@@ -55,7 +55,7 @@ public abstract class NetMod {
 	 * @return true, kdyz je potomkem nebo instanci tridy TcpIpNetmod
 	 */
 	public final boolean isStandardTcpIpNetMod(){
-		return TcpIpNetMod.class.isAssignableFrom(this.getClass());	// funguje to, mam to otestovany
+		return IpNetworkModule.class.isAssignableFrom(this.getClass());	// funguje to, mam to otestovany
 	}
 
 }

@@ -40,6 +40,38 @@
     </cablesMap>
     <componentsMap>
         <entry>
+            <key>34</key>
+            <value idAsString="34">
+                <defaultZoomXPos>1186</defaultZoomXPos>
+                <defaultZoomYPos>124</defaultZoomYPos>
+                <devSettings>
+                    <natConfig/>
+                    <netModType>tcp_ip_netmod</netModType>
+                    <routingTabConfig/>
+                </devSettings>
+                <hwType>CISCO_ROUTER</hwType>
+                <id>34</id>
+                <interface hwComponent="34" idAsString="35">
+                    <cable>37</cable>
+                    <hwType>CISCO_ROUTER</hwType>
+                    <id>35</id>
+                    <ipAddress>10.0.0.2/29</ipAddress>
+                    <isUp>true</isUp>
+                    <macAddress>AA-11-E0-00-00-11</macAddress>
+                    <name>FastEthernet0/0</name>
+                </interface>
+                <interface hwComponent="34" idAsString="36">
+                    <hwType>CISCO_ROUTER</hwType>
+                    <id>36</id>
+                    <ipAddress></ipAddress>
+                    <isUp>false</isUp>
+                    <macAddress>AA-11-E0-00-00-12</macAddress>
+                    <name>FastEthernet0/1</name>
+                </interface>
+                <name>cisco2</name>
+            </value>
+        </entry>
+        <entry>
             <key>0</key>
             <value idAsString="0">
                 <defaultZoomXPos>70</defaultZoomXPos>
@@ -71,38 +103,6 @@
                     <name>eth0</name>
                 </interface>
                 <name>linux1</name>
-            </value>
-        </entry>
-        <entry>
-            <key>34</key>
-            <value idAsString="34">
-                <defaultZoomXPos>1186</defaultZoomXPos>
-                <defaultZoomYPos>124</defaultZoomYPos>
-                <devSettings>
-                    <natConfig/>
-                    <netModType>tcp_ip_netmod</netModType>
-                    <routingTabConfig/>
-                </devSettings>
-                <hwType>CISCO_ROUTER</hwType>
-                <id>34</id>
-                <interface hwComponent="34" idAsString="35">
-                    <cable>37</cable>
-                    <hwType>CISCO_ROUTER</hwType>
-                    <id>35</id>
-                    <ipAddress>10.0.0.2/29</ipAddress>
-                    <isUp>true</isUp>
-                    <macAddress>AA-11-E0-00-00-11</macAddress>
-                    <name>FastEthernet0/0</name>
-                </interface>
-                <interface hwComponent="34" idAsString="36">
-                    <hwType>CISCO_ROUTER</hwType>
-                    <id>36</id>
-                    <ipAddress></ipAddress>
-                    <isUp>false</isUp>
-                    <macAddress>AA-11-E0-00-00-12</macAddress>
-                    <name>FastEthernet0/1</name>
-                </interface>
-                <name>cisco2</name>
             </value>
         </entry>
         <entry>
@@ -233,7 +233,7 @@
     <id>-1</id>
     <lastEditTimestamp>1333545462920</lastEditTimestamp>
     <counter>
-        <nextId>38</nextId>
+        <nextId>42</nextId>
         <nextMacAddress>19</nextMacAddress>
         <nextNumberMap>
             <entry>
@@ -245,19 +245,19 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_ETHERNET</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>LINUX_ROUTER</key>
                 <value>7</value>
+            </entry>
+            <entry>
+                <key>CABLE_ETHERNET</key>
+                <value>0</value>
             </entry>
             <entry>
                 <key>CISCO_ROUTER</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
+                <key>CISCO_SWITCH</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -265,15 +265,15 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>REAL_PC</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>END_DEVICE_PC</key>
                 <value>1</value>
             </entry>
             <entry>
-                <key>CISCO_SWITCH</key>
+                <key>REAL_PC</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>

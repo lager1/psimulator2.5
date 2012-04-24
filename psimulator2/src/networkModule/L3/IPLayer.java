@@ -17,7 +17,7 @@ import networkModule.L3.ArpCache.Target;
 import networkModule.L3.RoutingTable.Record;
 import networkModule.L3.nat.NatTable;
 import networkModule.L4.IcmpHandler;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.Util;
@@ -59,7 +59,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	/**
 	 * Link to network module.
 	 */
-	protected final TcpIpNetMod netMod;
+	protected final IpNetworkModule netMod;
 	/**
 	 * When some ARP reply arrives this is set to true so doMyWork() can process storeBuffer. After processing
 	 * storeBuffer it is set to false.
@@ -84,7 +84,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * Empty routing table is also created.
 	 * @param netMod
 	 */
-	public IPLayer(TcpIpNetMod netMod) {
+	public IPLayer(IpNetworkModule netMod) {
 		this.netMod = netMod;
 		this.arpCache = new ArpCache(netMod.getDevice());
 		this.worker = new WorkerThread(this);
@@ -107,7 +107,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		return packetFilter.getNatTable();
 	}
 
-	public TcpIpNetMod getNetMod() {
+	public IpNetworkModule getNetMod() {
 		return netMod;
 	}
 

@@ -9,8 +9,8 @@ import dataStructures.MacAddress;
 import java.util.*;
 import logging.*;
 import networkModule.Layer;
-import networkModule.NetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.IpNetworkModule;
 import physicalModule.PhysicMod;
 import utils.SmartRunnable;
 import utils.Util;
@@ -33,7 +33,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
 // Konstruktory a nastavovani pri startu: -------------------------------------------------------------------------------------------------
 
-	public EthernetLayer(NetMod netMod) {
+	public EthernetLayer(NetworkModule netMod) {
 		super(netMod);
 		exploreHardware();
 		this.physicMod=netMod.getPhysicMod();
@@ -221,7 +221,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 				linkDebug("Prijal jsem paket pro me ale nepredavam ho vyssi vrstve, protoze je neznamyho typu. ", packet);
 			} else {
 				linkDebug("Prijal jsem paket pro me a jdu ho predat vyssi vrstve. ", packet);
-				((TcpIpNetMod) netMod).ipLayer.receivePacket(packet.data, iface);
+				((IpNetworkModule) netMod).ipLayer.receivePacket(packet.data, iface);
 			}
 		}
 	}

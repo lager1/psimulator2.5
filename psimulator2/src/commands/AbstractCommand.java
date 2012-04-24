@@ -7,8 +7,8 @@ import device.Device;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.NetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.IpNetworkModule;
 
 /**
  * Parent of all commands in parsing system.
@@ -74,10 +74,10 @@ public abstract class AbstractCommand implements Loggable {
 	 *
 	 * @return
 	 */
-	protected TcpIpNetMod getNetMod() {
-		NetMod nm = parser.device.getNetworkModule();
+	protected IpNetworkModule getNetMod() {
+		NetworkModule nm = parser.device.getNetworkModule();
 		if (nm.isStandardTcpIpNetMod()) {
-			return (TcpIpNetMod) nm;
+			return (IpNetworkModule) nm;
 		} else {
 			Logger.log(getDescription(), Logger.ERROR, LoggingCategory.GENERIC_COMMANDS, "Prikaz zavolal TcpIpNetmod, kterej ale device nema.");
 			return null;

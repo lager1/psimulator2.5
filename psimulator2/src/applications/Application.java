@@ -12,7 +12,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L4.TransportLayer;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -51,7 +51,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 
 		this.PID = device.getFreePID();
 		if (device.getNetworkModule().isStandardTcpIpNetMod()) {
-			this.transportLayer = ((TcpIpNetMod) device.getNetworkModule()).transportLayer;
+			this.transportLayer = ((IpNetworkModule) device.getNetworkModule()).transportLayer;
 		} else {
 			Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC_APPLICATION, "Vytvari se sitova aplikace pro device, ktery nema TcpIpNetMod!", null);
 			this.transportLayer = null;

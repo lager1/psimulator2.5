@@ -14,7 +14,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 import utils.Util;
 
 /**
@@ -27,7 +27,7 @@ import utils.Util;
  */
 public class TransportLayer implements Loggable {
 
-	public final TcpIpNetMod netMod;
+	public final IpNetworkModule netMod;
 	public final IcmpHandler icmphandler;
 	/**
 	 * List of registred applications. <br />
@@ -39,7 +39,7 @@ public class TransportLayer implements Loggable {
 	private int portCounter = 1025;
 	private static final int portMAX = 65_535;
 
-	public TransportLayer(TcpIpNetMod netMod) {
+	public TransportLayer(IpNetworkModule netMod) {
 		this.netMod = netMod;
 		this.icmphandler = new IcmpHandler(this);
 	}

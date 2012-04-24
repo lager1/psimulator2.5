@@ -5,11 +5,11 @@
 package networkModule.L3.nat;
 
 import dataStructures.DropItem;
+import dataStructures.ipAddresses.IPwithNetmask;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.IpPacket;
 import dataStructures.packets.L4Packet;
 import dataStructures.packets.L4Packet.L4PacketType;
-import dataStructures.ipAddresses.IPwithNetmask;
-import dataStructures.ipAddresses.IpAddress;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;

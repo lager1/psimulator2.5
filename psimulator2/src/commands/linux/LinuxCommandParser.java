@@ -26,8 +26,8 @@ import logging.*;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
-import networkModule.NetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.IpNetworkModule;
 import shell.apps.CommandShell.CommandShell;
 import utils.Util;
 
@@ -262,8 +262,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			if (cmd.equals("ifconfig")) {
 				Node ifconfig = new Node("ifconfig");
 
-				NetMod nm = device.getNetworkModule();
-				IPLayer ipLayer = ((TcpIpNetMod) nm).ipLayer;
+				NetworkModule nm = device.getNetworkModule();
+				IPLayer ipLayer = ((IpNetworkModule) nm).ipLayer;
 
 				for (NetworkInterface iface : ipLayer.getSortedNetworkIfaces()) {
 					ifconfig.addChild(new Node(iface.name));

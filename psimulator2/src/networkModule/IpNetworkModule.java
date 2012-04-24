@@ -14,10 +14,10 @@ import networkModule.L4.TransportLayer;
 
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
- * Dedi od SimpleSwitchNetMod, tedy se v tyhle tride resi spis komunikace nahoru.
+ * Dedi od SwitchNetworkModule, tedy se v tyhle tride resi spis komunikace nahoru.
  * @author neiss
  */
-public class TcpIpNetMod extends SimpleSwitchNetMod {
+public class IpNetworkModule extends SwitchNetworkModule {
 
 
 	public final IPLayer ipLayer;
@@ -28,7 +28,7 @@ public class TcpIpNetMod extends SimpleSwitchNetMod {
 	 * Predpoklada uz hotovej pocitac a fysickej modul, protoze zkouma jeho nastaveni.
 	 * @param device
 	 */
-	public TcpIpNetMod(Device device) {
+	public IpNetworkModule(Device device) {
 		super(device);
 		switch (device.type) {
 			case cisco_router:

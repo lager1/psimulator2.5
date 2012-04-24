@@ -21,9 +21,9 @@ import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.CiscoWrapperRT;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.NatTable;
-import networkModule.NetMod;
-import networkModule.SimpleSwitchNetMod;
-import networkModule.TcpIpNetMod;
+import networkModule.NetworkModule;
+import networkModule.SwitchNetworkModule;
+import networkModule.IpNetworkModule;
 import physicalModule.Cable;
 import physicalModule.PhysicMod;
 import physicalModule.SimulatorSwitchport;
@@ -123,25 +123,25 @@ public class Loader implements Loggable {
 		}
 
 		// nastaveni sitovyho modulu
-		NetMod nm = createNetMod(model, pc);
+		NetworkModule nm = createNetMod(model, pc);
 		pc.setNetworkModule(nm);
 
 		// setup filesystem
 		String pathSeparator = System.getProperty("file.separator");
-		
+
 //		int projectStartNameIndex = configFilename.lastIndexOf(pathSeparator);
-//		
+//
 //		if(projectStartNameIndex < 1)
 //			projectStartNameIndex = 0;
-//		
+//
 		String projectName = configFilename.substring(0, configFilename.length());
-		
+
 		File filesystemDir = new File(projectName+"-DATA");
-		
+
 		if(!filesystemDir.isDirectory() && 	!filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
 			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
-		
-		
+
+
 		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getIDAsString() + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
 		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
 
@@ -175,7 +175,7 @@ public class Loader implements Loggable {
 	 * @param pc odkaz na uz hotovej pocitac
 	 * @return
 	 */
-	private NetMod createNetMod(HwComponentModel model, Device pc) {
+	private NetworkModule createNetMod(HwComponentModel model, Device pc) {
 
 		DeviceSettings.NetworkModuleType netModType;
 
@@ -213,8 +213,8 @@ public class Loader implements Loggable {
 	 * @param pc
 	 * @return
 	 */
-	private TcpIpNetMod createTcpIpNetMod(HwComponentModel model, Device pc) {
-		TcpIpNetMod nm = new TcpIpNetMod(pc);	// vytvoreni sitovyho modulu, pri nem se
+	private IpNetworkModule createTcpIpNetMod(HwComponentModel model, Device pc) {
+		IpNetworkModule nm = new IpNetworkModule(pc);	// vytvoreni sitovyho modulu, pri nem se
 
 		//nahrani interfacu:
 		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {	// pro kazdy rozhrani
@@ -330,8 +330,8 @@ public class Loader implements Loggable {
 	 * @param pc
 	 * @return
 	 */
-	private NetMod createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
-		SimpleSwitchNetMod nm = new SimpleSwitchNetMod(pc);
+	private NetworkModule createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
+		SwitchNetworkModule nm = new SwitchNetworkModule(pc);
 		EthernetInterface ethIface = nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
 			// -> switchi se priradi jedno rozhrani a da se mu nahodna mac
 		nm.ethernetLayer.addAllSwitchportsToGivenInterface(ethIface);

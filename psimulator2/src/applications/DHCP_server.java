@@ -14,7 +14,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
 import networkModule.L3.NetworkInterface;
-import networkModule.SimpleSwitchNetMod;
+import networkModule.SwitchNetworkModule;
 
 /**
  * Implementace DHCP serveru. Zatim jen takova dost pofiderni implementace, vubec se neukladaj prirazeny adresy, na
@@ -38,7 +38,7 @@ public class DHCP_server extends Application {
 	public DHCP_server(Device device) {
 		super("dhcpd", device);	// jmeno jako u me na linuxu
 		port = server_port;
-		ethLayer = ((SimpleSwitchNetMod) device.getNetworkModule()).ethernetLayer;
+		ethLayer = ((SwitchNetworkModule) device.getNetworkModule()).ethernetLayer;
 	}
 
 	@Override

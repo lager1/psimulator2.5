@@ -15,7 +15,7 @@ import networkModule.L3.nat.AccessList;
 import networkModule.L3.nat.NatTable;
 import networkModule.L3.nat.Pool;
 import networkModule.L3.nat.PoolAccess;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 import psimulator2.Psimulator;
 import shared.Components.EthInterfaceModel;
 import shared.Components.HwComponentModel;
@@ -49,9 +49,9 @@ public class Saver {
 			saveInterfaces(hwComponentModel, device);
 
 			if (device.getNetworkModule().isStandardTcpIpNetMod()) {
-				saveRoutingTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
+				saveRoutingTable((IpNetworkModule) (device.getNetworkModule()), hwComponentModel);
 
-				saveNatTable((TcpIpNetMod) (device.getNetworkModule()), hwComponentModel);
+				saveNatTable((IpNetworkModule) (device.getNetworkModule()), hwComponentModel);
 			}
 		}
 	}
@@ -64,12 +64,12 @@ public class Saver {
 	 */
 	private void saveInterfaces(HwComponentModel hwComponentModel, Device device) {
 		if (!(device.getNetworkModule().isStandardTcpIpNetMod())) {
-				// -> Zatim se uklada sitovy modul jen tehdy, pokud to je TcpIpNetMod, navic se uklada zatim jen IPLayer.
+				// -> Zatim se uklada sitovy modul jen tehdy, pokud to je IpNetworkModule, navic se uklada zatim jen IPLayer.
 			hwComponentModel.getDevSettings().setNetModType(DeviceSettings.NetworkModuleType.simple_switch_netMod);
 			return;
 		}
 
-		TcpIpNetMod netMod = (TcpIpNetMod) device.getNetworkModule();
+		IpNetworkModule netMod = (IpNetworkModule) device.getNetworkModule();
 		hwComponentModel.getDevSettings().setNetModType(DeviceSettings.NetworkModuleType.tcp_ip_netmod);
 
 		for (NetworkInterface iface : netMod.ipLayer.getNetworkIfaces()) {
@@ -81,7 +81,7 @@ public class Saver {
 		}
 	}
 
-	private void saveRoutingTable(TcpIpNetMod netMod, HwComponentModel model) {
+	private void saveRoutingTable(IpNetworkModule netMod, HwComponentModel model) {
 		RoutingTableConfig rtc = new RoutingTableConfig();	// vytvorim novou prazdnou konfiguraci routovaci tabulky
 		model.getDevSettings().setRoutingTabConfig(rtc);	// priradim tu novou konfiguraci do nastaveni pocitace
 		RoutingTable rt = netMod.ipLayer.routingTable;
@@ -108,7 +108,7 @@ public class Saver {
 		}
 	}
 
-	private void saveNatTable(TcpIpNetMod netMod, HwComponentModel model) {
+	private void saveNatTable(IpNetworkModule netMod, HwComponentModel model) {
 		NatConfig config = new NatConfig();
 		model.getDevSettings().setNatConfig(config);
 

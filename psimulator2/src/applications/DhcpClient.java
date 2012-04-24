@@ -17,12 +17,12 @@ import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
 import networkModule.L3.NetworkInterface;
-import networkModule.SimpleSwitchNetMod;
+import networkModule.SwitchNetworkModule;
 import psimulator2.Psimulator;
 import utils.Wakeable;
 import static dataStructures.packets.DhcpPacket.DhcpType.*;
 import networkModule.L3.IPLayer;
-import networkModule.TcpIpNetMod;
+import networkModule.IpNetworkModule;
 
 /**
  *
@@ -63,8 +63,8 @@ public class DhcpClient extends Application implements Wakeable {
 		this.command = command;
 		this.iface = iface;
 		transaction_id = ((int) Math.random()) * Integer.MAX_VALUE; //nahodne se generuje 32-bitovy transaction ID
-		ethLayer = ((SimpleSwitchNetMod) device.getNetworkModule()).ethernetLayer;
-		ipLayer = ((TcpIpNetMod) device.getNetworkModule()).ipLayer;
+		ethLayer = ((SwitchNetworkModule) device.getNetworkModule()).ethernetLayer;
+		ipLayer = ((IpNetworkModule) device.getNetworkModule()).ipLayer;
 		myMac = iface.getMacAddress();
 
 	}

@@ -54,7 +54,7 @@ public class ShowCommand extends CiscoCommand {
 	protected void fillCompleters(Map<Integer, Completer> completers) {
 		Completer privileged = completers.get(CommandShell.CISCO_PRIVILEGED_MODE);
 		Completer user = completers.get(CommandShell.CISCO_USER_MODE);
-		Completer config = completers.get(CommandShell.CISCO_CONFIG_MODE);
+//		Completer config = completers.get(CommandShell.CISCO_CONFIG_MODE);
 
 		user.addCommand("show ip nat translations");
 		user.addCommand("show ip interface brief");
