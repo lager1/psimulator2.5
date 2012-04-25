@@ -74,11 +74,13 @@ public class CiscoIPLayer extends IPLayer {
 	/**
 	 * Na ciscu, kdyz se odesila novy packet (ze shora), tak se nejdrive kontroluje RT, pokud neni zadny zaznam,
 	 * tak se clovek ani nedopingne na sve iface s IP.
+	 *
 	 * @param packet
+	 * @param src the value of src
 	 * @param dst
 	 */
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress dst, int ttl) {
+	public void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
 
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim
@@ -87,7 +89,7 @@ public class CiscoIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, ttl, packet);
+		IpPacket p = new IpPacket(src == null ? record.iface.getIpAddress().getIp() : src, dst, ttl, packet);
 
 		if (isItMyIpAddress(dst)) {
 			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne

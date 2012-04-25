@@ -68,7 +68,7 @@ public class LinuxIPLayer extends IPLayer {
 	}
 
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress dst, int ttl) {
+	public void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
 
 		if (isItMyIpAddress(dst) || dst.isLocalSubnet127()) {
 			IpPacket p = new IpPacket(dst, dst, ttl, packet);
@@ -84,7 +84,7 @@ public class LinuxIPLayer extends IPLayer {
 			return;
 		}
 
-		IpPacket p = new IpPacket(record.iface.getIpAddress().getIp(), dst, ttl, packet);
+		IpPacket p = new IpPacket(src == null ? record.iface.getIpAddress().getIp() : src, dst, ttl, packet);
 
 		processPacket(p, record, null);
 	}

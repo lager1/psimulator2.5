@@ -39,7 +39,7 @@ public class IcmpHandler implements Loggable {
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.payloadSize,p.payload);	// zadava se velikost payloadu
 				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packetItem);
-				getIpLayer().handleSendPacket(reply, packetItem.packet.src, getIpLayer().ttl);
+				getIpLayer().handleSendPacket(reply, packetItem.packet.dst, packetItem.packet.src, getIpLayer().ttl);
 				break;
 			case REPLY:
 			case TIME_EXCEEDED:
@@ -138,7 +138,7 @@ public class IcmpHandler implements Loggable {
 			p = new IcmpPacket(type, code);
 		}
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending "+type+" "+code+" to: "+dst, p);
-		getIpLayer().handleSendPacket(p, dst, getIpLayer().ttl);
+		getIpLayer().handleSendPacket(p, null, dst, getIpLayer().ttl);
 	}
 
 	/**
