@@ -7,8 +7,8 @@ import device.Device;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.NetworkModule;
 import networkModule.IpNetworkModule;
+import networkModule.NetworkModule;
 
 /**
  * Parent of all commands in parsing system.
