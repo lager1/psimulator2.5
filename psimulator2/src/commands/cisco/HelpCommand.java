@@ -73,9 +73,6 @@ class HelpCommand extends CiscoCommand {
 
 	@Override
 	protected void fillCompleters(Map<Integer, Completer> completers) {
-		completers.get(CommandShell.CISCO_USER_MODE).addCommand("help");
-		completers.get(CommandShell.CISCO_PRIVILEGED_MODE).addCommand("help");
-		completers.get(CommandShell.CISCO_CONFIG_MODE).addCommand("help");
-		completers.get(CommandShell.CISCO_CONFIG_IF_MODE).addCommand("help");
+		getDevice().addCommandToAllCompleters("help");
 	}
 }

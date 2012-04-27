@@ -14,11 +14,9 @@ import networkModule.L3.nat.NatTable;
  */
 public class PacketFilter {
 
-	private final IPLayer ipLayer;
 	private final NatTable natTable;
 
 	public PacketFilter(IPLayer ipLayer) {
-		this.ipLayer = ipLayer;
 		this.natTable = new NatTable(ipLayer);
 	}
 

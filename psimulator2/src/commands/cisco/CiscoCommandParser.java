@@ -187,7 +187,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 		try {
 
-			tryComplete(line);
+//			tryComplete(line);
 
 			if (debug) {
 				if (first.equals("ifconfig")) {

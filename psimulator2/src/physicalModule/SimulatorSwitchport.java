@@ -75,6 +75,9 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	@Override
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
+
+		Logger.log(this, Logger.IMPORTANT, LoggingCategory.PHYSICAL, "velikost paketu: ", packetSize);
+
 		if (size + packetSize > capacity) { // run out of capacity
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: Queue is full.", packet.toStringWithData());
 			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, physicMod.device.configID));

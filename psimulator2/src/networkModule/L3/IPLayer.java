@@ -7,17 +7,20 @@ import dataStructures.DropItem;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.*;
+import dataStructures.packets.ArpPacket;
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3Packet;
+import dataStructures.packets.L4Packet;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.IpNetworkModule;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.ArpCache.Target;
 import networkModule.L3.RoutingTable.Record;
 import networkModule.L3.nat.NatTable;
 import networkModule.L4.IcmpHandler;
-import networkModule.IpNetworkModule;
 import psimulator2.Psimulator;
 import utils.SmartRunnable;
 import utils.Util;
@@ -377,23 +380,6 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			if (iface.ipAddress != null && iface.ipAddress.getIp().equals(targetIpAddress) && iface.isUp) {
 				return true;
 			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if packet is ICMP REQUEST.
-	 * zatim nemazat!s
-	 * @param packet
-	 * @return
-	 */
-	private boolean isPacketIcmpRequest(IpPacket packet) {
-		if (packet.data != null && packet.data.getType() == L4Packet.L4PacketType.ICMP) {
-			IcmpPacket p = (IcmpPacket) packet.data;
-			if (p.type == IcmpPacket.Type.REQUEST) {
-				return true;
-			}
-
 		}
 		return false;
 	}

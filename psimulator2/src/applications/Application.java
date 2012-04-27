@@ -53,7 +53,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 		if (device.getNetworkModule().isStandardTcpIpNetMod()) {
 			this.transportLayer = ((IpNetworkModule) device.getNetworkModule()).transportLayer;
 		} else {
-			Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC_APPLICATION, "Vytvari se sitova aplikace pro device, ktery nema TcpIpNetMod!", null);
+			Logger.log(this, Logger.ERROR, LoggingCategory.GENERIC_APPLICATION, "Attempt to create network application on device without IpNetworkModule!", null);
 			this.transportLayer = null;
 		}
 	}
@@ -69,7 +69,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 			buffer.add(packetItem);
 			worker.wake();
 		} else {
-			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Prisel paket, ackoliv aplikace jiz ", packetItem.packet);
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Received paket but application is not running..", packetItem.packet);
 		}
 	}
 
@@ -105,7 +105,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	 */
 	public synchronized void start() {
 		if (running) {
-			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Znovu spustena jiz bezici aplikace, to by nemelo nikdy nastat.", null);
+			Logger.log(this, Logger.WARNING, LoggingCategory.GENERIC_APPLICATION, getName() + "Attempt to start already running application. This should never happen.", null);
 		} else {
 			running = true;
 			this.worker = new WorkerThread(this);

@@ -3,6 +3,9 @@
  */
 package utils;
 
+import dataStructures.packets.IcmpPacket;
+import dataStructures.packets.IpPacket;
+import dataStructures.packets.L4Packet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -54,15 +57,12 @@ public class Util {
 		return false;
 	}
 
-
-		/**
-		 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
-		 *
-		 * @param e
-		 * @return
-		 */
-
-
+	/**
+	 * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
+	 *
+	 * @param e
+	 * @return
+	 */
 	public static String stackToString(Exception e) {
 		try {
 			StringWriter sw = new StringWriter();
@@ -224,7 +224,8 @@ public class Util {
 
 	/**
 	 * Tato metoda rozseka vstupni string na jednotlivy words (jako jejich oddelovac se bere mezera) a ulozi je do
-	 * seznamu words, ktery dedi od Abstraktni. @autor Stanislav Řehák
+	 * seznamu words, ktery dedi od Abstraktni.
+	 * @autor Stanislav Řehák
 	 */
 	public static List<String> splitLine(String line) {
 		line = line.trim(); // rusim bile znaky na zacatku a na konci
@@ -238,5 +239,20 @@ public class Util {
 		return Arrays.asList(pole);
 	}
 
-//	public static boolean 
+	/**
+	 * Returns true if packet is ICMP REQUEST.
+	 *
+	 * @param packet
+	 * @return
+	 */
+	public static boolean isPacketIcmpRequest(IpPacket packet) {
+		if (packet.data != null && packet.data.getType() == L4Packet.L4PacketType.ICMP) {
+			IcmpPacket p = (IcmpPacket) packet.data;
+			if (p.type == IcmpPacket.Type.REQUEST) {
+				return true;
+			}
+
+		}
+		return false;
+	}
 }

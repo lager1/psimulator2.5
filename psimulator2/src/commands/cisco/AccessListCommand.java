@@ -41,14 +41,9 @@ public class AccessListCommand extends CiscoCommand {
         }
 	}
 
+	// access-list 7 permit 1.1.1.0 0.0.0.31
     private boolean process() {
 
-//        if (no) {
-//            if(!isCommand("access-list", nextWord(), 2)) {
-//                return false;
-//            }
-//        }
-//access-list 7 permit 1.1.1.0 0.0.0.31
         if (nextWordPeek().isEmpty()) {
             incompleteCommand();
             return false;
@@ -87,15 +82,12 @@ public class AccessListCommand extends CiscoCommand {
             return false;
         }
 
-        adr = new IPwithNetmask(adrTemp, wildcard);
-
-//        try {
-//
-//            adr.nastavMasku(maska);
-//        } catch (Exception e) {
-//            invalidInputDetected();
-//            return false;
-//        }
+        try {
+			adr = new IPwithNetmask(adrTemp, wildcard);
+		} catch (Exception e) { // shouldn't happen, just to be sure
+			invalidInputDetected();
+			return false;
+		}
 
         return true;
     }
