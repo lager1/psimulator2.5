@@ -12,8 +12,8 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.L4.IcmpHandler;
 import networkModule.IpNetworkModule;
+import networkModule.L4.IcmpHandler;
 
 /**
  * Represent's switchport on layer 2.
@@ -76,7 +76,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 	protected void sendPacket(L2Packet packet) {
 		int packetSize = packet.getSize();
 
-		Logger.log(this, Logger.IMPORTANT, LoggingCategory.PHYSICAL, "velikost paketu: ", packetSize);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.PHYSICAL, "velikost paketu: ", packetSize);
 
 		if (size + packetSize > capacity) { // run out of capacity
 			Logger.log(this, Logger.INFO, LoggingCategory.PHYSICAL, "Dropping packet: Queue is full.", packet.toStringWithData());
