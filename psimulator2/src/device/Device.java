@@ -41,7 +41,7 @@ public class Device {
 	 * Value - Application
 	 */
 	Map<Integer, Application> applications;
-	private int pidCounter = 1;
+	private int pidCounter = 0;
 
 	/**
 	 * telnet port is configured by TelnetProperties.addListerner method, which is called in constructor
@@ -110,7 +110,16 @@ public class Device {
 	 * @return
 	 */
 	public int getFreePID() {
-		return pidCounter++;
+		if (pidCounter == Integer.MAX_VALUE) {
+			pidCounter = 0;
+		}
+		pidCounter++;
+
+		if (applications.containsKey(pidCounter)) {
+			return getFreePID();
+		}
+
+		return pidCounter;
 	}
 
 	/**
