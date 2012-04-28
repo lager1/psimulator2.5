@@ -6,7 +6,7 @@ package applications;
 import device.Device;
 
 /**
- * Toto je trida pro aplikace, ktera nejen ze posloucha pozadavky za site, ale taky sama neco dela. K tomu, aby mohla
+ * Toto je trida pro aplikace, ktery nejen ze poslouchaj pozadavky ze site, ale taky sami neco delaji. K tomu, aby mohla
  * delat obe veci najednou ma 2 vlakna, jedno klasicky pres SmartRunable, ktery se probouzi a zase uspava podle
  * pozadavku ze site a druhy uplne normalni javovsky vlakno, ktery neco udela a pak se ukonci. Takhle funguje napr. ping
  * nebo traceroute.

@@ -3,8 +3,6 @@
  */
 package utils;
 
-import logging.Loggable;
-
 /**
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>

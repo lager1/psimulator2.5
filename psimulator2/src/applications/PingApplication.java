@@ -6,9 +6,9 @@ package applications;
 
 import commands.ApplicationNotifiable;
 import dataStructures.DropItem;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.IcmpPacket;
 import dataStructures.packets.IpPacket;
-import dataStructures.ipAddresses.IpAddress;
 import device.Device;
 import java.util.ArrayList;
 import java.util.HashMap;

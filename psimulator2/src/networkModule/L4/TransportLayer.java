@@ -5,16 +5,14 @@ package networkModule.L4;
 
 import applications.Application;
 import dataStructures.DropItem;
-import dataStructures.packets.IpPacket;
 import dataStructures.PacketItem;
-import java.net.NetworkInterface;
 import java.util.HashMap;
 import java.util.Map;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.L3.IPLayer;
 import networkModule.IpNetworkModule;
+import networkModule.L3.IPLayer;
 import utils.Util;
 
 /**
@@ -30,7 +28,7 @@ public class TransportLayer implements Loggable {
 	public final IpNetworkModule netMod;
 	public final IcmpHandler icmphandler;
 	/**
-	 * List of registred applications. <br />
+	 * List of registred ports of applications. <br />
 	 * Key - port or session number <br />
 	 * Value - listening application
 	 *

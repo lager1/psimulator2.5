@@ -150,15 +150,6 @@ public abstract class AbstractCommandParser implements Loggable {
 	 */
 	protected abstract void processLineForParsers();
 
-
-	/**
-	 * Prikaz notifikuje parser o svym skonceni.
-	 * @param exitCode
-	 */
-	public void finishCommand(int exitCode) {
-		this.runningCommand = null;
-	}
-
 	/**
 	 * Vrati shellu informaci, zda ma vypisovat prompt.
 	 * @return

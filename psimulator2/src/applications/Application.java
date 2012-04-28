@@ -11,8 +11,8 @@ import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.L4.TransportLayer;
 import networkModule.IpNetworkModule;
+import networkModule.L4.TransportLayer;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
@@ -122,7 +122,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	public synchronized void exit() {
 		if (running) {
 			running = false;
-			priUkonceni();
+			duringEnd();
 			atExit();
 			atKill();
 			Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " exit", null);
@@ -136,7 +136,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	public synchronized void kill() {
 		if (running) {
 			running = false;
-			priUkonceni();
+			duringEnd();
 			atKill();
 			Logger.log(this, Logger.DEBUG, LoggingCategory.GENERIC_APPLICATION, getName() + " kill", null);
 		}
@@ -145,7 +145,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	/**
 	 * Jen vytazeny spolecny veci ze dvou predchozich metod.
 	 */
-	private void priUkonceni() {
+	private void duringEnd() {
 		transportLayer.unregisterApplication(port);
 		worker.die();
 		device.unregisterApplication(this);
