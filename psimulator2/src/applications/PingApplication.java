@@ -124,7 +124,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 					stats.odezvy.add(delay);
 					stats.prijate++;
 				}
-				handleIncommingPacket(p, packet, delay);
+				handleIncommingPacket(p, delay);
 				lastReceived = packet.seq;
 
 			} else {
@@ -184,10 +184,9 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	/**
 	 * Handles incomming packet: REPLY, TIME_EXCEEDED, UNDELIVERED.
 	 *
-	 * @param packet
 	 * @param delay delay in miliseconds
 	 */
-	protected abstract void handleIncommingPacket(IpPacket p, IcmpPacket packet, double delay);
+	protected abstract void handleIncommingPacket(IpPacket p, double delay);
 
 	/**
 	 * Slouzi na hlasku o tom kolik ceho a kam posilam..

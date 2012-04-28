@@ -5,11 +5,10 @@
 package applications;
 
 
-import commands.ApplicationNotifiable;
 import commands.linux.Ping;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.IcmpPacket;
 import dataStructures.packets.IpPacket;
-import dataStructures.ipAddresses.IpAddress;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -88,13 +87,15 @@ public class LinuxPingApplication extends PingApplication {
 
 	/**
 	 * Print incoming packet. Velikost paketu se pouze vypisuje, jinak se posila furt stejna.
+	 *
 	 * @param p
-	 * @param packet
 	 * @param delay
 	 */
 	@Override
-	protected void handleIncommingPacket(IpPacket p, IcmpPacket packet, double delay) {
+	protected void handleIncommingPacket(IpPacket p, double delay) {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi paket, jdu ho vypsat.", null);
+
+		IcmpPacket packet = (IcmpPacket) p.data;
 
 		switch (packet.type) {
 			case REPLY:
@@ -137,5 +138,4 @@ public class LinuxPingApplication extends PingApplication {
 	public String getDescription() {
 		return device.getName()+": ping_app_linux";
 	}
-
 }
