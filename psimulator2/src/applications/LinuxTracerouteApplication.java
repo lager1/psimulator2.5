@@ -34,7 +34,11 @@ public class LinuxTracerouteApplication extends TracerouteApplication {
 
 	@Override
 	protected void lineBeginning(int ttl, String address) {
-		cmd.print(" " + ttl + "  "+ address + " (" + address + ")  ");
+		cmd.print(" " + ttl + "  ");
+
+		if (! address.isEmpty()) {
+			cmd.print(address + " (" + address + ")  ");
+		}
 	}
 
 	@Override
