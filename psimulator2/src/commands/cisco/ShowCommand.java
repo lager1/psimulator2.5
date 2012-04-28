@@ -298,7 +298,7 @@ public class ShowCommand extends CiscoCommand {
 				s += Util.zarovnej(target.address.toString(), 17);
 				s += Util.zarovnej("" + (System.currentTimeMillis() - record.timeStamp) / 1_000, 11);
 				s += Util.zarovnej(record.mac.getCiscoRepresentation(), 16);
-				s += Util.zarovnej("ARPA", 7);
+				s += Util.zarovnej("Dynam", 7);
 				s += target.iface.name;
 
 				if (it.hasNext()) {
@@ -322,9 +322,9 @@ public class ShowCommand extends CiscoCommand {
 			nIface = it.next();
 			s += nIface.name + " is ";
 			if (nIface.isUp) {
-				s += "up, line protocol is up\n";
+				s += "up, line protocol is *not implemented*\n";
 			} else {
-				s += "administratively down, line protocol is down\n";
+				s += "administratively down, line protocol is *not implemented*\n";
 			}
 
 			if (nIface.getIpAddress() != null) {
@@ -373,7 +373,7 @@ public class ShowCommand extends CiscoCommand {
 			s += Util.zarovnej("YES", 4);
 			s += Util.zarovnej("manual", 7);
 			s += Util.zarovnej((nIface.isUp ? "up" : "administratively down"), 23);
-			s += nIface.isUp ? "up" : "down"; // TODO: this is probably wrong, do a research what it means
+			s += "*not implemented*"; // TODO: implement in future - sending keepalive packet if set in configuration
 			s += "\n";
 		}
 
