@@ -42,7 +42,7 @@ public abstract class Application implements SmartRunnable, Loggable {
 	/**
 	 * Jestli aplikace prave bezi
 	 */
-	private boolean running = false;
+	private volatile boolean running = false;
 
 
 	public Application(String name, Device device) {
