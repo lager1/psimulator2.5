@@ -26,7 +26,9 @@ public class ArpCache implements Loggable {
 	 */
 	private int validRecordTime = 20_000;
 	/**
-	 * HashMap of records. <br/> Key - IP address <br /> Value - ArpRecord
+	 * HashMap of records. <br/>
+	 * Key - Target <br />
+	 * Value - ArpRecord
 	 */
 	private final Map<Target, ArpRecord> cache = Collections.synchronizedMap(new HashMap<Target, ArpRecord>());
 
