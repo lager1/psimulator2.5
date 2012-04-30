@@ -269,8 +269,7 @@ public class NatTable implements Loggable {
 
 	/**
 	* Translates packet with dynamic NetworkAddressTranslation. <br />
-	* Returns null iff someone tries to translate L3Packet without L4 data = without port number. <br />
-	* Returns untranslated packet iff there are now free ports number.
+	* Returns untranslated packet iff there are now free ports number or if packet has no L4 data = without port number.
 	* @param packet
 	* @return
 	*/
@@ -278,7 +277,7 @@ public class NatTable implements Loggable {
 		deleteOldDynamicRecords();
 
 		InnerRecord tempRecord = generateInnerRecordForSrc(packet);
-		if (tempRecord == null) { // jen ochrana, kdyby nejakej smoula sem poslal paket, ktery nema L4 data!
+		if (tempRecord == null) {
 			return packet;
 		}
 
