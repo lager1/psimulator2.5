@@ -278,7 +278,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 			for (int attempt = 0; attempt < queryPerTTL; attempt++) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName() + " posilam ping seq=" + seq + ", ttl="+ ttl, null);
 				timestamps.put(seq, new Timestamp((double)System.nanoTime()/1_000_000, ttl));
-				transportLayer.icmphandler.sendRequest(target, ttl, seq, port, payload);
+				transportLayer.icmpHandler.sendRequest(target, ttl, seq, port, payload);
 
 				if (seq == 1) {
 					Util.sleep(500); // aby se stihlo pockat na ARP protokol, tak se u 1. requestu ceka dyl

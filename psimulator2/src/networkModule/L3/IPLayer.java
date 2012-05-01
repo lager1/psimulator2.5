@@ -115,7 +115,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	}
 
 	public IcmpHandler getIcmpHandler() {
-		return netMod.transportLayer.icmphandler;
+		return netMod.transportLayer.icmpHandler;
 	}
 
 	/**

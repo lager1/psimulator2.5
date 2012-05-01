@@ -87,7 +87,7 @@ public class SimulatorSwitchport extends Switchport implements Loggable {
 				firstTime = false;
 				hasL3module = physicMod.device.getNetworkModule().isStandardTcpIpNetMod();
 				if (hasL3module) {
-					icmpHandler = ((IpNetworkModule) (physicMod.device.getNetworkModule())).transportLayer.icmphandler;
+					icmpHandler = ((IpNetworkModule) (physicMod.device.getNetworkModule())).transportLayer.icmpHandler;
 				}
 			}
 

@@ -26,7 +26,8 @@ import utils.Util;
 public class TransportLayer implements Loggable {
 
 	public final IpNetworkModule netMod;
-	public final IcmpHandler icmphandler;
+	public final IcmpHandler icmpHandler;
+	public final UdpHandler tcpudpHandler;
 	/**
 	 * List of registred ports of applications. <br />
 	 * Key - port or session number <br />
@@ -39,7 +40,8 @@ public class TransportLayer implements Loggable {
 
 	public TransportLayer(IpNetworkModule netMod) {
 		this.netMod = netMod;
-		this.icmphandler = new IcmpHandler(this);
+		this.icmpHandler = new IcmpHandler(this);
+		this.tcpudpHandler = new UdpHandler(this);
 	}
 
 	public IPLayer getIpLayer() {
@@ -59,8 +61,8 @@ public class TransportLayer implements Loggable {
 
 		switch (packetItem.packet.data.getType()) {
 			case ICMP:
-				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Prisel ICMP paket", packetItem);
-				icmphandler.handleReceivedIcmpPacket(packetItem);
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Incomming ICMP paket", packetItem);
+				icmpHandler.handleReceivedIcmpPacket(packetItem);
 				break;
 
 			case TCP:
@@ -69,8 +71,8 @@ public class TransportLayer implements Loggable {
 				break;
 
 			case UDP:
-				Logger.log(this, Logger.IMPORTANT, LoggingCategory.TRANSPORT, "Dropping packet: UDP handler is not yet implemented.", packetItem.packet);
-				Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packetItem.packet, getIpLayer().getNetMod().getDevice().configID));
+				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Incomming UDP paket", packetItem);
+				tcpudpHandler.handleReceivedUdpPacket(packetItem);
 				break;
 			default:
 				Logger.log(this, Logger.WARNING, LoggingCategory.TRANSPORT, "Dropping packet: Received packet with unknown L4 type.", packetItem.packet);
