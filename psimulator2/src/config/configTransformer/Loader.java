@@ -11,11 +11,11 @@ import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
 import filesystem.ArchiveFileSystem;
 import java.io.File;
-
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.IpNetworkModule;
 import networkModule.L2.EthernetInterface;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.CiscoWrapperRT;
@@ -23,7 +23,6 @@ import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.NatTable;
 import networkModule.NetworkModule;
 import networkModule.SwitchNetworkModule;
-import networkModule.IpNetworkModule;
 import physicalModule.Cable;
 import physicalModule.PhysicMod;
 import physicalModule.SimulatorSwitchport;
@@ -106,7 +105,7 @@ public class Loader implements Loggable {
 	private Device createDevice(HwComponentModel model) {
 
 		// vytvoreni samotnyho pocitace:
-		Device pc = new Device(model.getId(), model.getName(), prevedTyp(model.getHwType()));
+		Device pc = new Device(model.getId(), model.getName(), convertType(model.getHwType()));
 //		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu:
@@ -123,7 +122,7 @@ public class Loader implements Loggable {
 		}
 
 		// nastaveni sitovyho modulu
-		NetworkModule nm = createNetMod(model, pc);
+		NetworkModule nm = createNetworkModule(model, pc);
 		pc.setNetworkModule(nm);
 
 		// setup filesystem
@@ -154,7 +153,7 @@ public class Loader implements Loggable {
 	 * @param t
 	 * @return
 	 */
-	private Device.DeviceType prevedTyp(HwTypeEnum t) {
+	private Device.DeviceType convertType(HwTypeEnum t) {
 		Device.DeviceType type;
 		if ((t == HwTypeEnum.LINUX_ROUTER) || (t == HwTypeEnum.END_DEVICE_NOTEBOOK) || (t == HwTypeEnum.END_DEVICE_PC) || t == HwTypeEnum.END_DEVICE_WORKSTATION) {
 			type = Device.DeviceType.linux_computer;
@@ -175,7 +174,7 @@ public class Loader implements Loggable {
 	 * @param pc odkaz na uz hotovej pocitac
 	 * @return
 	 */
-	private NetworkModule createNetMod(HwComponentModel model, Device pc) {
+	private NetworkModule createNetworkModule(HwComponentModel model, Device pc) {
 
 		DeviceSettings.NetworkModuleType netModType;
 
@@ -196,9 +195,9 @@ public class Loader implements Loggable {
 		}
 
 		if (netModType == DeviceSettings.NetworkModuleType.tcp_ip_netmod) {	// modul je pro router
-			return createTcpIpNetMod(model, pc);
+			return createIpNetworkModule(model, pc);
 		} else if (netModType == DeviceSettings.NetworkModuleType.simple_switch_netMod) {
-			return createSimpleSwitchNetMod(model, pc);
+			return createSwitchNetworkModule(model, pc);
 		} else {
 			throw new LoaderException("Unknown or forbidden type of network module.");
 		}
@@ -213,7 +212,7 @@ public class Loader implements Loggable {
 	 * @param pc
 	 * @return
 	 */
-	private IpNetworkModule createTcpIpNetMod(HwComponentModel model, Device pc) {
+	private IpNetworkModule createIpNetworkModule(HwComponentModel model, Device pc) {
 		IpNetworkModule nm = new IpNetworkModule(pc);	// vytvoreni sitovyho modulu, pri nem se
 
 		//nahrani interfacu:
@@ -330,7 +329,7 @@ public class Loader implements Loggable {
 	 * @param pc
 	 * @return
 	 */
-	private NetworkModule createSimpleSwitchNetMod(HwComponentModel model, Device pc) {
+	private NetworkModule createSwitchNetworkModule(HwComponentModel model, Device pc) {
 		SwitchNetworkModule nm = new SwitchNetworkModule(pc);
 		EthernetInterface ethIface = nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
 			// -> switchi se priradi jedno rozhrani a da se mu nahodna mac
@@ -368,7 +367,7 @@ public class Loader implements Loggable {
 
 			} else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
 				// nepripustny stav, hodi se vyjimka
-				throw new LoaderException("V konfiguracnim souboru jsou propojeny 2 realny pocitace, coz je nepripustne: "+pcModel1.getName()+" a "+pcModel2.getName());
+				throw new LoaderException("There are two real devices connected to each other which is forbidden: "+pcModel1.getName()+" a "+pcModel2.getName());
 
 			} else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {	// pocitac 1 je realnej
 				// pocitaci 2 se nastavi realnej switchport:
@@ -402,7 +401,7 @@ public class Loader implements Loggable {
 			}
 		}
 
-		throw new LoaderException(String.format("Nepodarilo se najit Device s id=%d a k nemu SimulatorSwichport s id=%d", component1.getId(), interface1.getId()));
+		throw new LoaderException(String.format("Could not find Device with id=%d a for SimulatorSwichport with id=%d", component1.getId(), interface1.getId()));
 	}
 
 	@Override
@@ -412,14 +411,14 @@ public class Loader implements Loggable {
 
 	private void registerID(int id){
 		if(idecka.contains(id)){
-			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 objekty se stejnym id = "+id, null);
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two objects in configuration file with the same ID: id = "+id, null);
 		}
 		idecka.add(id);
 	}
 
 	private void registerName(String name, HwComponentModel model){
 		if(names.contains(name)){
-			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "V konfiguraku jsou 2 rozhrani na jednom prvku ("+model.getName()+") se stejnym jmenem: "+name, null);
+			Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two interfaces with the same name: "+name+ " on the same Device: ("+model.getName()+")", null);
 		}
 		names.add(name);
 	}

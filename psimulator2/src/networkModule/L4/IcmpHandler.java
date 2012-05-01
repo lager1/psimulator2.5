@@ -6,12 +6,12 @@
 package networkModule.L4;
 
 import dataStructures.DropItem;
+import dataStructures.PacketItem;
+import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.IcmpPacket;
 import dataStructures.packets.IcmpPacket.Code;
 import dataStructures.packets.IcmpPacket.Type;
 import dataStructures.packets.IpPacket;
-import dataStructures.PacketItem;
-import dataStructures.ipAddresses.IpAddress;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
