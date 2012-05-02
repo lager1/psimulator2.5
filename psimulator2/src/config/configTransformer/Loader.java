@@ -23,10 +23,7 @@ import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.NatTable;
 import networkModule.NetworkModule;
 import networkModule.SwitchNetworkModule;
-import physicalModule.Cable;
-import physicalModule.PhysicMod;
-import physicalModule.SimulatorSwitchport;
-import physicalModule.Switchport;
+import physicalModule.*;
 import psimulator2.Psimulator;
 import shared.Components.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
@@ -84,8 +81,16 @@ public class Loader implements Loggable {
 				s.devices.add(createDevice(device));
 			}
 
+			if (s.devices.isEmpty()) {
+				Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "No device was found in configuration file! Exiting. ", null);
+			}
 
-			connectCables();
+			if (s.devices.get(0).physicalModule instanceof PhysicMod) {
+				connectCables();
+			} else {
+				connectCablesV2();
+			}
+
 			updateRoutingTableForCisco();
 
 		} catch (Exception ex) {
@@ -109,7 +114,7 @@ public class Loader implements Loggable {
 //		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
 		// vytvoreni fysickyho modulu:
-		PhysicMod pm = pc.physicalModule;
+		AbstractPhysicalModule pm = pc.physicalModule;
 		//buildeni switchportu:
 		int cislovaniSwitchportu = 0;
 		names = new HashSet<>();
@@ -356,12 +361,12 @@ public class Loader implements Loggable {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Ani jedna komponenta neni realna.", cable);
 
 				// zapojeni 1. switchportu:
-				SimulatorSwitchport swportFirst = findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
+				SimulatorSwitchport swportFirst = (SimulatorSwitchport) findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
 				cable.setFirstSwitchport(swportFirst);
 				cable.setFirstDeviceId(cableModel.getComponent1().getId());
 
 				// zapojeni 2. switchportu:
-				SimulatorSwitchport swportSecond = findSwitchportFor(pcModel2, cableModel.getInterface2());
+				SimulatorSwitchport swportSecond = (SimulatorSwitchport) findSwitchportFor(pcModel2, cableModel.getInterface2());
 				cable.setSecondSwitchport(swportSecond);
 				cable.setSecondDeviceId(cableModel.getComponent2().getId());
 
@@ -372,12 +377,61 @@ public class Loader implements Loggable {
 			} else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {	// pocitac 1 je realnej
 				// pocitaci 2 se nastavi realnej switchport:
 				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
-				SimulatorSwitchport swportSecond = findSwitchportFor(pcModel2, cableModel.getInterface2());
+				SimulatorSwitchport swportSecond = (SimulatorSwitchport) findSwitchportFor(pcModel2, cableModel.getInterface2());
 				swportSecond.replaceWithRealSwitchport();
 
 			} else { // posledni moznost - pocitac 2 je realnej
 				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
-				SimulatorSwitchport swportFirst = findSwitchportFor(pcModel1, cableModel.getInterface1());
+				SimulatorSwitchport swportFirst = (SimulatorSwitchport) findSwitchportFor(pcModel1, cableModel.getInterface1());
+				swportFirst.replaceWithRealSwitchport();
+			}
+		}
+	}
+
+	/**
+	 * Projde vsechny kabely a spoji nase sitovy prvky. Specialne taky resi realny switchporty.
+	 *
+	 * @param network
+	 */
+	private void connectCablesV2() {
+		for (CableModel cableModel : networkModel.getCables()) {	// pro vsechny kabely
+			registerID(cableModel.getId());	// registruje se id
+			CableV2 cable = new CableV2(cableModel.getId());	// vytvari se novej kabel
+
+			HwComponentModel pcModel1 = cableModel.getComponent1();
+			HwComponentModel pcModel2 = cableModel.getComponent2();
+
+			if (pcModel1.getHwType() != HwTypeEnum.REAL_PC && pcModel2.getHwType() != HwTypeEnum.REAL_PC) { // oba dva pocitace simulovany
+
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Ani jedna komponenta neni realna.", cable);
+
+				// zapojeni 1. switchportu:
+				SimulatorSwitchportV2 swportFirst = (SimulatorSwitchportV2) findSwitchportFor(cableModel.getComponent1(), cableModel.getInterface1());
+				cable.setFirstSwitchport(swportFirst);
+				cable.setFirstDeviceId(cableModel.getComponent1().getId());
+
+				// zapojeni 2. switchportu:
+				SimulatorSwitchportV2 swportSecond = (SimulatorSwitchportV2) findSwitchportFor(pcModel2, cableModel.getInterface2());
+				cable.setSecondSwitchport(swportSecond);
+				cable.setSecondDeviceId(cableModel.getComponent2().getId());
+
+				if (!swportFirst.isConnected()) {
+					throw new LoaderException("1. swport is not connected to the 2. swport! "+swportFirst.getDescription());
+				}
+
+			} else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
+				// nepripustny stav, hodi se vyjimka
+				throw new LoaderException("There are two real devices connected to each other which is forbidden: "+pcModel1.getName()+" a "+pcModel2.getName());
+
+			} else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {	// pocitac 1 je realnej
+				// pocitaci 2 se nastavi realnej switchport:
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
+				SimulatorSwitchportV2 swportSecond = (SimulatorSwitchportV2) findSwitchportFor(pcModel2, cableModel.getInterface2());
+				swportSecond.replaceWithRealSwitchport();
+
+			} else { // posledni moznost - pocitac 2 je realnej
+				Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
+				SimulatorSwitchportV2 swportFirst = (SimulatorSwitchportV2) findSwitchportFor(pcModel1, cableModel.getInterface1());
 				swportFirst.replaceWithRealSwitchport();
 			}
 		}
@@ -390,18 +444,18 @@ public class Loader implements Loggable {
 	 * @param interface1
 	 * @return
 	 */
-	private SimulatorSwitchport findSwitchportFor(HwComponentModel component1, EthInterfaceModel interface1) {
+	private Switchport findSwitchportFor(HwComponentModel component1, EthInterfaceModel interface1) {
 		for (Device device : s.devices) {
 			if (device.configID == component1.getId()) {
 				for (Switchport swp : device.physicalModule.getSwitchports().values()) {
-					if (swp instanceof SimulatorSwitchport && swp.configID == interface1.getId()) {
-						return (SimulatorSwitchport) swp;
+					if ((swp instanceof SimulatorSwitchport || swp instanceof SimulatorSwitchportV2) && swp.configID == interface1.getId()) {
+						return swp;
 					}
 				}
 			}
 		}
 
-		throw new LoaderException(String.format("Could not find Device with id=%d a for SimulatorSwichport with id=%d", component1.getId(), interface1.getId()));
+		throw new LoaderException(String.format("Could not find Device with id=%d a for Switchport with id=%d", component1.getId(), interface1.getId()));
 	}
 
 	@Override

@@ -188,7 +188,7 @@ public class NatTable implements Loggable {
 
 		IpAddress srcTranslated = findStaticRuleIn(packet.src);
         if (srcTranslated != null) {
-			Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "NAT translation: static rule found.", null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "NAT translation: static rule found.", null);
 			return staticTranslation(packet, srcTranslated); // 0
         }
 
@@ -317,7 +317,7 @@ public class NatTable implements Loggable {
 		InnerRecord newDynamic = new InnerRecord(srcIpNew, srcPortNew, tempRecord.protocol);
 		Record r = new Record(tempRecord, newDynamic, packet.dst);
 
-		Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, "New dynamic record created: ", r);
+		Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "New dynamic record created: ", r);
 		table.add(r);
 
 		return getTranslatedPacket(packet, srcIpNew, srcPortNew);

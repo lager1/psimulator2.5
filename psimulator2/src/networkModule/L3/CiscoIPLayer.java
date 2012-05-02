@@ -80,7 +80,7 @@ public class CiscoIPLayer extends IPLayer {
 	 * @param dst
 	 */
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
+	protected void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
 
 		Record record = routingTable.findRoute(dst);
 		if (record == null) { // kdyz nemam zaznam na v RT, tak zahodim

@@ -15,7 +15,7 @@ import dataStructures.packets.L2Packet;
  */
 public abstract class Switchport {
 
-	protected PhysicMod physicMod;
+	protected AbstractPhysicalModule physicalModule;
 
 	/**
 	 * Unique number in PhysicMod.
@@ -28,8 +28,8 @@ public abstract class Switchport {
 	public final int configID;
 
 
-	public Switchport(PhysicMod physicMod, int number, int configID) {
-		this.physicMod = physicMod;
+	public Switchport(AbstractPhysicalModule physicMod, int number, int configID) {
+		this.physicalModule = physicMod;
 		this.number = number;
 		this.configID = configID;
 	}
@@ -53,4 +53,9 @@ public abstract class Switchport {
 	public abstract boolean isConnected();
 
 	public abstract boolean isReal();
+
+	@Override
+	public String toString() {
+		return "Switchport number=" + number + ", configID=" + configID;
+	}
 }

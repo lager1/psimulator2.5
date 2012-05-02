@@ -13,8 +13,6 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -151,7 +149,20 @@ public class Util {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+			// ok
+		}
+	}
+
+	/**
+	 * Uspi aktualni vlakno na pocet ns.
+	 *
+	 * @param ms
+	 */
+	public static void sleepNano(int ns) {
+		try {
+			Thread.sleep(0, ns);
+		} catch (InterruptedException ex) {
+			// ok
 		}
 	}
 

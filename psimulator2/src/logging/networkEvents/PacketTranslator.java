@@ -7,7 +7,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
-import physicalModule.Cable.CableItem;
+import physicalModule.AbstractCable.CableItem;
 import shared.NetworkObject;
 import shared.SimulatorEvents.SerializedComponents.EventType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;

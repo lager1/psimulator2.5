@@ -68,7 +68,7 @@ public class LinuxIPLayer extends IPLayer {
 	}
 
 	@Override
-	public void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
+	protected void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
 
 		if (isItMyIpAddress(dst) || dst.isLocalSubnet127()) {
 			IpPacket p = new IpPacket(dst, dst, ttl, packet);

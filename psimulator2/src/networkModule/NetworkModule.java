@@ -6,6 +6,7 @@ package networkModule;
 
 import dataStructures.packets.L2Packet;
 import device.Device;
+import physicalModule.AbstractPhysicalModule;
 import physicalModule.PhysicMod;
 
 
@@ -32,7 +33,7 @@ public abstract class NetworkModule {
         return device;
     }
 
-	public PhysicMod getPhysicMod() {
+	public AbstractPhysicalModule getPhysicMod() {
 		return device.physicalModule;
 	}
 

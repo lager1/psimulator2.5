@@ -4,6 +4,7 @@
 
 package networkModule;
 
+import dataStructures.DropItem;
 import dataStructures.packets.EthernetPacket;
 import dataStructures.packets.L2Packet;
 import device.Device;
@@ -39,13 +40,12 @@ public class SwitchNetworkModule extends NetworkModule  implements Loggable{
 	public void receivePacket(L2Packet packet, int switchportNumber) {
 		if (packet.getClass() != EthernetPacket.class) {	//kontrola spravnosti paketu
 			Logger.log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
-					"Zahazuju paket, protoze neni ethernetovej, je totiz tridy " + packet.getClass().getName());
+					"Dropping packet: It is not Ethernet packet, it is " + packet.getClass().getName());
+			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getDevice().configID));
 		} else {
 			ethernetLayer.receivePacket((EthernetPacket)packet, switchportNumber);
 		}
 	}
-
-
 
 	@Override
 	public String getDescription() {

@@ -11,6 +11,7 @@ import logging.*;
 import networkModule.Layer;
 import networkModule.NetworkModule;
 import networkModule.IpNetworkModule;
+import physicalModule.AbstractPhysicalModule;
 import physicalModule.PhysicMod;
 import utils.SmartRunnable;
 import utils.Util;
@@ -27,7 +28,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	protected final Map<Integer, SwitchportSettings> switchports = new HashMap<>();
 	private final List<SendItem> sendBuffer = Collections.synchronizedList(new LinkedList<SendItem>());
 	private final List<ReceiveItem> receiveBuffer = Collections.synchronizedList(new LinkedList<ReceiveItem>());
-	public final PhysicMod physicMod;	// zkratka na fysickej modul
+	public final AbstractPhysicalModule physicMod;	// zkratka na fysickej modul
 
 
 

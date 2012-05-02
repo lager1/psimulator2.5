@@ -12,7 +12,9 @@ import filesystem.FileSystem;
 import java.util.HashMap;
 import java.util.Map;
 import networkModule.NetworkModule;
+import physicalModule.AbstractPhysicalModule;
 import physicalModule.PhysicMod;
+import physicalModule.PhysicalModuleV2;
 import shell.apps.CommandShell.CommandShell;
 import telnetd.pridaneTridy.TelnetProperties;
 
@@ -25,7 +27,7 @@ public class Device {
 	public final int configID;	// configID z konfiguraku
 	private String name;
 	public final DeviceType type;
-	public final PhysicMod physicalModule;
+	public final AbstractPhysicalModule physicalModule;
 	private NetworkModule networkModule;
 	/**
 	 * Completers for all available modes.
@@ -62,7 +64,8 @@ public class Device {
 		this.configID = configID;
 		this.name = name;
 		this.type = type;
-		physicalModule = new PhysicMod(this);
+//		physicalModule = new PhysicMod(this);
+		physicalModule = new PhysicalModuleV2(this);
 		// telnetovy pripojeni se pridava jen kdyz to neni switch
 		if(type!=DeviceType.simple_switch){
 			TelnetProperties.addListener(this);  // telnetPort is configured in this method

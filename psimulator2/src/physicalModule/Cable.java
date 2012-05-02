@@ -11,26 +11,12 @@ import utils.SmartRunnable;
 import utils.WorkerThread;
 
 /**
- * Represents cable
+ * Represents cable.
+ * This cable process packets on both sides of the cable.
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public class Cable implements SmartRunnable, Loggable {
-
-	public final int configID;	// id z konfiguraku
-	/**
-	 * ID of first connector device.
-	 * (pro posilani paketu Martinovi)
-	 */
-	private int idFirstDevice;
-	/**
-	 * ID of second connector device.
-	 * (pro posilani paketu Martinovi)
-	 */
-	private int idSecondDevice;
-
-	private SimulatorSwitchport firstCon;
-	private SimulatorSwitchport secondCon;
+public class Cable extends AbstractCable implements SmartRunnable, Loggable {
 
 	protected final WorkerThread worker;
 
@@ -44,8 +30,8 @@ public class Cable implements SmartRunnable, Loggable {
 	 * @param id
 	 * @param delay
 	 */
-	public Cable(int id, long delay) {
-		this.configID = id;
+	public Cable(int configID, long delay) {
+		super(configID);
 		this.delay = delay;
 		this.worker = new WorkerThread(this);
 	}
@@ -57,7 +43,7 @@ public class Cable implements SmartRunnable, Loggable {
 	 * @return true if connector was empty and now is connected to interface.
 	 */
 	public void setFirstSwitchport(SimulatorSwitchport swport) {
-		swport.cabel = this;
+		swport.cable = this;
 		this.firstCon = swport;
 	}
 
@@ -68,7 +54,7 @@ public class Cable implements SmartRunnable, Loggable {
 	 * @return true if connector was empty and now is connected to interface.
 	 */
 	public void setSecondSwitchport(SimulatorSwitchport swport) {
-		swport.cabel = this;
+		swport.cable = this;
 		this.secondCon = swport;
 	}
 
@@ -79,14 +65,14 @@ public class Cable implements SmartRunnable, Loggable {
 		boolean secondIsEmpty = true;
 
 		do {
-			SimulatorSwitchport first = firstCon; // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
-			SimulatorSwitchport second = secondCon;
+			SimulatorSwitchport first = (SimulatorSwitchport) firstCon; // mohlo by to byt vne while-cyklu, ale co kdyz nekdo zapoji kabel (konektor) do rozhrani a my budem chtit, aby se to rozjelo?
+			SimulatorSwitchport second = (SimulatorSwitchport) secondCon;
 
 			if ((first != null) && !first.isEmptyBuffer()) {
 				packet = first.popPacket();
 				if (second != null) {
 					makeDelay();
-					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, idFirstDevice, idSecondDevice, configID));
+					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, getFirstIdDevice(), getSecondIdDevice(), configID));
 					second.receivePacket(packet);
 				}
 				firstIsEmpty = first.isEmptyBuffer();
@@ -96,7 +82,7 @@ public class Cable implements SmartRunnable, Loggable {
 				packet = second.popPacket();
 				if (first != null) {
 					makeDelay();
-					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, idSecondDevice, idFirstDevice, configID));
+					Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, getSecondIdDevice(), getFirstIdDevice(), configID));
 					first.receivePacket(packet);
 				}
 				secondIsEmpty = second.isEmptyBuffer();
@@ -113,47 +99,8 @@ public class Cable implements SmartRunnable, Loggable {
 		}
 	}
 
-	public void setFirstDeviceId(Integer id) {
-		this.idFirstDevice = id;
-	}
-
-	public void setSecondDeviceId(Integer id) {
-		this.idSecondDevice = id;
-	}
-
-	/**
-	 * Vraci to switchport na druhym konci kabelu nez je ten zadanej.
-	 * Returns switchport on the other end of the cable, where is the given.
-	 * @param one
-	 * @return
-	 */
-	public SimulatorSwitchport getTheOtherSwitchport(Switchport one) {
-		if (one == firstCon) {
-			return secondCon;
-		} else if (one == secondCon) {
-			return firstCon;
-		} else {
-			Logger.log(Logger.ERROR, LoggingCategory.PHYSICAL, "Byla spatne zavolana metoda getTheOtherSwitchport na kabelu s configID " + configID);
-			return null;
-		}
-	}
-
 	@Override
 	public String getDescription() {
-		return "Cable: sourceID=" + idFirstDevice + " " + "destinationID=" + idSecondDevice;
-	}
-
-	public class CableItem {
-		public final L2Packet packet;
-		public final int sourceID;
-		public final int destinationID;
-		public final int cabelID;
-
-		public CableItem(L2Packet packet, int source_ID, int destination_ID, int cabel_ID) {
-			this.packet = packet;
-			this.sourceID = source_ID;
-			this.destinationID = destination_ID;
-			this.cabelID = cabel_ID;
-		}
+		return "Cable: sourceID=" + getFirstIdDevice() + " " + "destinationID=" + getSecondIdDevice();
 	}
 }

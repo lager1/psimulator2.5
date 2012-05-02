@@ -39,7 +39,7 @@ public class IcmpHandler implements Loggable {
 				// odpovedet
 				IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.payloadSize,p.payload);	// zadava se velikost payloadu
 				Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packetItem);
-				getIpLayer().handleSendPacket(reply, packetItem.packet.dst, packetItem.packet.src, getIpLayer().ttl);
+				getIpLayer().sendPacket(reply, packetItem.packet.dst, packetItem.packet.src);
 				break;
 			case REPLY:
 			case TIME_EXCEEDED:
@@ -138,7 +138,8 @@ public class IcmpHandler implements Loggable {
 			p = new IcmpPacket(type, code);
 		}
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending "+type+" "+code+" to: "+dst, p);
-		getIpLayer().handleSendPacket(p, null, dst, getIpLayer().ttl);
+//		getIpLayer().handleSendPacket(p, null, dst, getIpLayer().ttl); // this was bad thing (everything was in the same thread - even sending SQ from physical module!)
+		getIpLayer().sendPacket(p, null, dst, getIpLayer().ttl);
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class IcmpHandler implements Loggable {
 		}
 
 		IcmpPacket packet = new IcmpPacket(Type.REQUEST, Code.ZERO, id, seq, payload, null);
-		getIpLayer().sendPacket(packet, target, sendTtl);
+		getIpLayer().sendPacket(packet, null, target, sendTtl);
 	}
 }
 

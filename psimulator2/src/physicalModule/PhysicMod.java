@@ -5,29 +5,25 @@ package physicalModule;
 
 import dataStructures.packets.L2Packet;
 import device.Device;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.NetworkModule;
 import utils.SmartRunnable;
 import utils.WorkerThread;
 
 /**
  * Seznam sitovych rozhrani reprezentujici fyzicke rozhrani
  *
- * TODO: PhysicMod: pak nejak poresit velikosti bufferu
+ * Old physical module: module + every cabel have its own threads
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  * @author Tomas Pitrinec
  */
-public class PhysicMod implements SmartRunnable, Loggable{
+public class PhysicMod extends AbstractPhysicalModule implements SmartRunnable, Loggable {
 
-
-	/**
-	 * List of interfaces.
-	 */
-	private Map<Integer,Switchport> switchports = new HashMap<>();
 	/**
 	 * Queue for incomming packets from cabels.
 	 */
@@ -41,45 +37,32 @@ public class PhysicMod implements SmartRunnable, Loggable{
 	 */
 	private WorkerThread worker;
 
-	/**
-	 * Odkaz na PC.
-	 */
-	public final Device device;
-
-
-// Konstruktory a vytvareni modulu: ----------------------------------------------------------------------------------------------
+// Konstruktory a vytvareni modulu: -----------------------------------------------------------------------------------
 
 	public PhysicMod(Device device) {
-		this.device = device;
+		super(device);
 		this.worker = new WorkerThread(this);
 	}
 
-
-	/**
-	 * Pridani switchportu
-	 * @param number cislo switchportu
-	 * @param realSwitchport je-li switchport realnym rozhranim (tzn. vede k realnymu pocitaci)
-	 * @param configID id z konfigurace - tedy ID u EthInterfaceModel
-	 */
+	@Override
 	public void addSwitchport(int number, boolean realSwitchport, int configID) {
 		Switchport swport;
 		if (!realSwitchport) {
-			swport = new SimulatorSwitchport(this,number, configID);
+			swport = new SimulatorSwitchport(this, number, configID);
 		} else {
-			swport =new RealSwitchport(this,number,configID);
+			swport = new RealSwitchport(this, number, configID);
 		}
 		switchports.put(swport.number, swport);
 	}
 
-
 // Verejny metody na posilani paketu - komunikace s ostatnima vrstvama ------------------------------------------------
-
 	/**
 	 * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
 	 *
 	 * @param packet to receive
 	 * @param iface which receives packet
 	 */
+	@Override
 	public void receivePacket(L2Packet packet, Switchport iface) {
 		receiveBuffer.add(new BufferItem(packet, iface));
 		worker.wake();
@@ -92,17 +75,17 @@ public class PhysicMod implements SmartRunnable, Loggable{
 	 * @param packet to send via physical module
 	 * @param iface through it will be send
 	 */
+	@Override
 	public void sendPacket(L2Packet packet, int switchportNumber) {
 		Switchport swport = switchports.get(switchportNumber);
-		if(swport == null){
-			Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL,"K odeslani bylo zadano cislo switchportu, ktery neexistuje, prosuvih!", packet);
+		if (swport == null) {
+			Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL, "Trying to send packet to non-existent switchport number: "+switchportNumber, packet);
 		}
 		sendBuffer.add(new BufferItem(packet, swport));
 		worker.wake();
 	}
 
-
-// Samotna prace a ruzny dulezity gettry rozhrani k ostatnim vrstvam (fasada): -----------------------------------------
+// Samotna prace a ruzny dulezity gettry rozhrani k ostatnim vrstvam (fasada): ----------------------------------------
 
 	@Override
 	public void doMyWork() {
@@ -120,57 +103,10 @@ public class PhysicMod implements SmartRunnable, Loggable{
 		}
 	}
 
-
-	/**
-	 * Returns numbers of switchports.
-	 * Uses Network Module to explore network hardware afer start.
-	 * @return
-	 */
-	public List<Integer> getNumbersOfPorts(){
-		List<Integer> vratit = new LinkedList<>();
-		for(Switchport swport: switchports.values()){
-			vratit.add(swport.number);
-		}
-		return vratit;
-	}
-
-	/**
-	 * Pro prikaz rnetconn, kterej se switchportama manipuluje. Nepouzivat v sitovym modulu.
-	 * @return
-	 */
-	public Map<Integer, Switchport> getSwitchports() {
-		return switchports;
-	}
-
-	public boolean isSwitchportConnected (int switchportNumber){
-		Switchport swport = switchports.get(switchportNumber);
-		if(swport==null) return false;
-		else return swport.isConnected();
-	}
-
-
-
-// Pomocny metody a zkratky: -------------------------------------------------------------------------------------------
+// Pomocny metody a zkratky: ------------------------------------------------------------------------------------------
 
 	@Override
 	public String getDescription() {
-		return device.getName()+": PhysicMod";
+		return device.getName() + ": PhysicMod";
 	}
-
-	private NetworkModule getNetMod(){
-		return device.getNetworkModule();
-	}
-
-
-	private class BufferItem {
-
-		L2Packet packet;
-		Switchport switchport;
-
-		public BufferItem(L2Packet packet, Switchport switchport) {
-			this.packet = packet;
-			this.switchport = switchport;
-		}
-	}
-
 }

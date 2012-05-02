@@ -19,4 +19,8 @@ public class SwitchportSettings {
 		isUp=true;
 	}
 
+	@Override
+	public String toString() {
+		return "SwitchportSettings: iface="+assignedInterface.name+", isUp="+isUp+", nr="+switchportNumber;
+	}
 }

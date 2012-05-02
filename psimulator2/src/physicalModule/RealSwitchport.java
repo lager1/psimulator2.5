@@ -6,7 +6,9 @@ package physicalModule;
 import dataStructures.packets.L2Packet;
 import java.util.ArrayList;
 import java.util.List;
-import logging.*;
+import logging.Loggable;
+import logging.Logger;
+import logging.LoggingCategory;
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapIf;
 
@@ -28,7 +30,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
 // konstruktory, startovani a zastavovani (nestartuje se pri konstrukci ale az na vyzadani): --------------------------
 
-	public RealSwitchport(PhysicMod physicMod, int number, int configID) {
+	public RealSwitchport(AbstractPhysicalModule physicMod, int number, int configID) {
 		super(physicMod, number, configID);
 		log(Logger.DEBUG,"Byl vytvoren realnej switchport c. "+number+" s configID "+configID, null);
 	}
@@ -88,7 +90,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 	@Override
 	protected void receivePacket(L2Packet packet) {
 		log(Logger.DEBUG, "Chytil jsem paket.", packet);
-		physicMod.receivePacket(packet, this);
+		physicalModule.receivePacket(packet, this);
 	}
 
 
@@ -183,7 +185,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 	 * @return
 	 */
 	public String getDeviceName(){
-		return physicMod.device.getName();
+		return physicalModule.device.getName();
 	}
 
 

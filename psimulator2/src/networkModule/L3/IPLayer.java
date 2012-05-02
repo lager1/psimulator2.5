@@ -282,34 +282,36 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * Method for sending packet from layer 4 with system default TTL.
 	 *
 	 * @param packet data to be sent
+	 * @param src source address - can be null
 	 * @param dst destination address
 	 */
-	public void sendPacket(L4Packet packet, IpAddress dst) {
-		sendPacket(packet, dst, this.ttl);
+	public void sendPacket(L4Packet packet, IpAddress src, IpAddress dst) {
+		sendBuffer.add(new SendItem(packet, src, dst, this.ttl));
+		worker.wake();
 	}
 
 	/**
 	 * Method for sending packet from layer 4.
 	 *
 	 * @param packet data to be sent
+	 * @param src source address - can be null
 	 * @param dst destination address
 	 * @param ttl Time To Live value
 	 */
-	public void sendPacket(L4Packet packet, IpAddress dst, int ttl) {
-		sendBuffer.add(new SendItem(packet, dst, ttl));
+	public void sendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
+		sendBuffer.add(new SendItem(packet, null, dst, ttl));
 		worker.wake();
 	}
 
 	/**
-	 * Method for sending from IPLayer and IcmpHandler only! <br />
-	 * In this method everything is in the same thread. <br />
-	 * Don't use it from Layer 4!
+	 * Method for sending from IPLayer only! <br />
+	 * In this method everything is in the same thread (no buffers!). <br />
 	 *
 	 * @param packet data to be sent
 	 * @param src source address - if null given it gain address from sending interface
 	 * @param dst destination address
 	 */
-	public abstract void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl);
+	protected abstract void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl);
 
 	@Override
 	public void doMyWork() {
@@ -326,7 +328,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			if (!sendBuffer.isEmpty()) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() sendBuffer", null);
 				SendItem m = sendBuffer.remove(0);
-				handleSendPacket(m.packet, null, m.dst, m.ttl); // bude se obsluhovat platform-specific
+				handleSendPacket(m.packet, m.src, m.dst, m.ttl); // bude se obsluhovat platform-specific
 			}
 
 			if (newArpReply && !storeBuffer.isEmpty()) { // ten boolean tam je proto, aby se to neprochazelo v kazdym cyklu
@@ -344,7 +346,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	/**
 	 * Sets IpAddress with NetMask to given interface. There is no other way to set IP address to interface.
 	 *
-	 * Reason for this method is that we might to add some actions after setting address in future.
+	 * Reason for this method is that we might to add some actions after setting address in future. (e.g. ARP announcments)
 	 *
 	 * @param iface
 	 * @param ipAddress
@@ -491,11 +493,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	private class SendItem {
 
 		final L4Packet packet;
+		final IpAddress src;
 		final IpAddress dst;
 		final int ttl;
 
-		public SendItem(L4Packet packet, IpAddress dst, int ttl) {
+		public SendItem(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
 			this.packet = packet;
+			this.src = src;
 			this.dst = dst;
 			this.ttl = ttl;
 		}
