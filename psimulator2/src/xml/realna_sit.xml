@@ -91,12 +91,12 @@
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
-                            <destination>192.168.2.0/24</destination>
-                            <interfaceName>eth1</interfaceName>
-                        </routingTableItem>
-                        <routingTableItem>
                             <destination>192.168.1.0/24</destination>
                             <interfaceName>eth0</interfaceName>
+                        </routingTableItem>
+                        <routingTableItem>
+                            <destination>192.168.2.0/24</destination>
+                            <interfaceName>eth1</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>0.0.0.0/0</destination>
@@ -134,21 +134,40 @@
                 <defaultZoomXPos>1650</defaultZoomXPos>
                 <defaultZoomYPos>222</defaultZoomYPos>
                 <devSettings>
-                    <natConfig/>
+                    <natConfig>
+                        <accessLists>
+                            <address>0.0.0.0</address>
+                            <number>1</number>
+                            <wildcard>255.255.255.255</wildcard>
+                        </accessLists>
+                        <inside>eth0</inside>
+                        <outside>eth1</outside>
+                        <poolAccesses>
+                            <number>1</number>
+                            <overload>true</overload>
+                            <poolName>ovrld</poolName>
+                        </poolAccesses>
+                        <pools>
+                            <end>192.168.3.1</end>
+                            <name>ovrld</name>
+                            <prefix>24</prefix>
+                            <start>192.168.3.1</start>
+                        </pools>
+                    </natConfig>
                     <netModType>tcp_ip_netmod</netModType>
                     <routingTabConfig>
                         <routingTableItem>
-                            <destination>192.168.1.0/24</destination>
-                            <gateway>192.168.2.1</gateway>
-                            <interfaceName>eth0</interfaceName>
+                            <destination>192.168.3.0/24</destination>
+                            <interfaceName>eth1</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>192.168.2.0/24</destination>
                             <interfaceName>eth0</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
-                            <destination>192.168.3.0/24</destination>
-                            <interfaceName>eth1</interfaceName>
+                            <destination>192.168.1.0/24</destination>
+                            <gateway>192.168.2.1</gateway>
+                            <interfaceName>eth0</interfaceName>
                         </routingTableItem>
                         <routingTableItem>
                             <destination>0.0.0.0/0</destination>
@@ -207,27 +226,7 @@
         <nextMacAddress>6</nextMacAddress>
         <nextNumberMap>
             <entry>
-                <key>CISCO_ROUTER</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>CABLE_ETHERNET</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>BUNDLE_OF_CABLES</key>
-                <value>0</value>
-            </entry>
-            <entry>
                 <key>END_DEVICE_PC</key>
-                <value>0</value>
-            </entry>
-            <entry>
-                <key>REAL_PC</key>
-                <value>1</value>
-            </entry>
-            <entry>
-                <key>END_DEVICE_NOTEBOOK</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -235,7 +234,15 @@
                 <value>0</value>
             </entry>
             <entry>
-                <key>CABLE_OPTIC</key>
+                <key>CISCO_ROUTER</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CISCO_SWITCH</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>END_DEVICE_WORKSTATION</key>
                 <value>0</value>
             </entry>
             <entry>
@@ -243,11 +250,23 @@
                 <value>3</value>
             </entry>
             <entry>
-                <key>END_DEVICE_WORKSTATION</key>
+                <key>CABLE_OPTIC</key>
                 <value>0</value>
             </entry>
             <entry>
-                <key>CISCO_SWITCH</key>
+                <key>END_DEVICE_NOTEBOOK</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>CABLE_ETHERNET</key>
+                <value>0</value>
+            </entry>
+            <entry>
+                <key>REAL_PC</key>
+                <value>1</value>
+            </entry>
+            <entry>
+                <key>BUNDLE_OF_CABLES</key>
                 <value>0</value>
             </entry>
         </nextNumberMap>
