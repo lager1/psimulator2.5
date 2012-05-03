@@ -3,12 +3,9 @@
  */
 package physicalModule;
 
-import dataStructures.DropItem;
 import dataStructures.packets.IpPacket;
 import dataStructures.packets.L2Packet;
 import logging.Loggable;
-import logging.Logger;
-import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
 import networkModule.L4.IcmpHandler;
 
@@ -22,9 +19,11 @@ public abstract class AbstractSimulatorSwitchport extends Switchport implements 
 	protected IcmpHandler icmpHandler = null;
 	protected boolean hasIpNetworkModule;
 	private boolean firstTime = true;
+	protected final int deviceID;
 
 	public AbstractSimulatorSwitchport(AbstractPhysicalModule physicMod, int number, int configID) {
 		super(physicMod, number, configID);
+		this.deviceID = physicMod.device.configID;
 	}
 
 	protected abstract void sendPacketFurther(L2Packet packet);

@@ -100,7 +100,7 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
 			CableItem m = (CableItem) object;
 
 			SimulatorEvent event = new SimulatorEvent();
-			event.setCableId(m.cabelID);
+			event.setCableId(m.cableID);
 			event.setSourcceId(m.sourceID);
 			event.setDestId(m.destinationID);
 			event.setTimeStamp(System.currentTimeMillis());

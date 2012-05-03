@@ -117,6 +117,13 @@ public class SimulatorSwitchportV2 extends AbstractSimulatorSwitchport implement
 
 	// konstruktory a buildeni pri startu: --------------------------------------------------------------------------------
 
+	/**
+	 * Constructor.
+	 *
+	 * @param physicMod
+	 * @param number
+	 * @param configID ID of EthernetInterfaceModel from XML.
+	 */
 	public SimulatorSwitchportV2(AbstractPhysicalModule physicMod, int number, int configID) {
 		super(physicMod, number, configID);
 		this.worker = new WorkerThread(this);

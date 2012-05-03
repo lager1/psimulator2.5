@@ -37,7 +37,7 @@ public class CableV2 extends AbstractCable {
 	 * @param dest destination
 	 */
 	public void transmit(L2Packet packet, AbstractSimulatorSwitchport src, AbstractSimulatorSwitchport dest) {
-		Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new AbstractCable.CableItem(packet, src.configID, dest.configID, configID));
+		Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new AbstractCable.CableItem(packet, src.deviceID, dest.deviceID, configID));
 		dest.receivePacket(packet);
 	}
 
@@ -65,6 +65,6 @@ public class CableV2 extends AbstractCable {
 
 	@Override
 	public String getDescription() {
-		return "CableV2: sourceID=" + getFirstIdDevice() + " " + "destinationID=" + getSecondIdDevice();
+		return "CableV2: 1_ID=" + getFirstIdDevice() + " " + "2_ID=" + getSecondIdDevice();
 	}
 }

@@ -101,6 +101,6 @@ public class Cable extends AbstractCable implements SmartRunnable, Loggable {
 
 	@Override
 	public String getDescription() {
-		return "Cable: sourceID=" + getFirstIdDevice() + " " + "destinationID=" + getSecondIdDevice();
+		return "Cable: 1_ID=" + getFirstIdDevice() + " " + "2_ID=" + getSecondIdDevice();
 	}
 }
