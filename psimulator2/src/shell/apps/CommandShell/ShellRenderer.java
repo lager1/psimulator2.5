@@ -147,6 +147,9 @@ public class ShellRenderer extends BasicInputField {
 				
 				switch (inputValue) { // HANDLE CONTROL CODES for text manipulation
 
+					case TerminalIO.HOME_KEY:
+						handleHome();
+						break;
 					case TerminalIO.END_KEY:
 						handleEnd();
 						break;

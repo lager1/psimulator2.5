@@ -88,6 +88,10 @@ public abstract class BasicInputField extends ActiveComponent {
 		this.moveCursorRight(toEndPositions);
 
 	}
+	
+	protected void handleHome(){
+		this.moveCursorLeft(this.cursor);
+	}
 
 	protected void handleBackSpace() throws IOException {
 
