@@ -131,7 +131,7 @@ public class Main {
 
 		Logger.addListener(eventServer.getListener().getPacketTranslator());
 
-		Logger.log(Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "EventServer sucessfully started on port: " + eventServerPort);
+		Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
 
 	}
 }

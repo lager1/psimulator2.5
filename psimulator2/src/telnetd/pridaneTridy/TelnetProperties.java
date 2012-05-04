@@ -103,7 +103,7 @@ public class TelnetProperties {
 
 		device.setTelnetPort(port);
 
-		Logger.log(Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
+		Logger.log("TELNET LISTENING PORT: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
 
 		// now add records for UI editor
 		ConfigRecord cfgr = new ConfigRecord();
