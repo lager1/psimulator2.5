@@ -338,26 +338,44 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public boolean cp_r(String source, String target) throws FileNotFoundException {
-		TFile file = getRelativeTFile(source);
+	public boolean cp_r(String source, String target) throws FileSystemException {
+		TFile sourceFile = getRelativeTFile(source);
 
-		if (file == null) {
+		if (sourceFile == null) {
 			return false;
 		}
 
-		if (!file.exists()) {
+		if (!sourceFile.exists()) {
 			throw new FileNotFoundException();
 		}
 
+		TFile targetFile = getRelativeTFile(target);
+		
+		if(targetFile==null)
+			return false;
+		
+		if (targetFile.exists() && sourceFile.isDirectory()) {
+			throw new AlreadyExistsException();
+		}
+		
+		if (targetFile.exists() && sourceFile.isFile()) {
+			
+			if(!targetFile.isDirectory())  
+				throw new AlreadyExistsException();
+			
+			targetFile = getRelativeTFile(target+ "/" + sourceFile.getName());
+			System.out.println(targetFile.getAbsolutePath());
+		}
+		
 		try {
-
-			TFile targetFile = new TFile(target);
-			file.cp_r(targetFile);
+			sourceFile.cp_r(targetFile);
 		} catch (IOException ex) {
+			
 			throw new FileNotFoundException();
 		}
 
 		return true;
+	
 	}
 
 	@Override
@@ -396,7 +414,7 @@ public class ArchiveFileSystem implements FileSystem {
 			
 			sourceFile.mv(targetFile);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			
 			throw new FileNotFoundException();
 		}
 

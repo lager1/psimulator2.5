@@ -24,7 +24,7 @@ public interface FileSystem {
 	 * @throws FileNotFoundException  
 	 */
 	public boolean rm_r(String path) throws FileNotFoundException;
-	public boolean cp_r(String source, String target) throws FileNotFoundException;
+	public boolean cp_r(String source, String target) throws FileSystemException;
 	public boolean mv(String source, String target) throws FileSystemException;
 
 	/**
