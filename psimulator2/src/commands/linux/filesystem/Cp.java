@@ -21,7 +21,7 @@ public class Cp  extends MvOrCp {
 	protected int processFile(String source, String target) {
 
 			try {
-			parser.device.getFilesystem().mv(source, target);
+			parser.device.getFilesystem().cp_r(source, target);
 			
 			return 0;
 		} catch (FileNotFoundException ex) {
