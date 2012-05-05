@@ -5,7 +5,9 @@
 package commands.linux.filesystem;
 
 import commands.AbstractCommandParser;
+import filesystem.exceptions.AlreadyExistsException;
 import filesystem.exceptions.FileNotFoundException;
+import filesystem.exceptions.FileSystemException;
 
 /**
  *
@@ -20,14 +22,25 @@ public class Mv extends MvOrCp {
 	@Override
 	protected int processFile(String source, String target) {
 		try {
-			parser.device.getFilesystem().mv(source, target);
+			
+			String currentDir = getCurrentDir();
+			
+			String mySource = resolvePath(currentDir, source);
+			String myTarget = resolvePath(currentDir, target);
+			
+			parser.device.getFilesystem().mv(mySource, myTarget);
 			
 			return 0;
 		} catch (FileNotFoundException ex) {
 			printLine("mv: "+ source + " to " + target + "failed. Directory or file doesnt exist" );
 			return -1;
-		}
+		}catch(AlreadyExistsException ex){
+			printLine("mv: "+ source + " to " + target + "failed. Directory or file already exist");
+			return -1;
+		}catch(FileSystemException ex){}
 	
+		return 0;
+		
 	}
 
 	

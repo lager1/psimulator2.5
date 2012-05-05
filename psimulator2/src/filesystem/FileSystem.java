@@ -8,6 +8,7 @@ import filesystem.dataStructures.NodesWrapper;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+import filesystem.exceptions.FileSystemException;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface FileSystem {
 	 */
 	public boolean rm_r(String path) throws FileNotFoundException;
 	public boolean cp_r(String source, String target) throws FileNotFoundException;
-	public boolean mv(String source, String target) throws FileNotFoundException;
+	public boolean mv(String source, String target) throws FileSystemException;
 
 	/**
 	 * find out if path is file

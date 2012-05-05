@@ -7,6 +7,7 @@ import de.schlichtherle.truezip.file.TVFS;
 import de.schlichtherle.truezip.fs.FsEntryNotFoundException;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
+import de.schlichtherle.truezip.fs.nio.file.FileDriver;
 import de.schlichtherle.truezip.nio.file.TPath;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 import filesystem.dataStructures.Directory;
@@ -15,7 +16,9 @@ import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.AlreadyExistsException;
 import filesystem.exceptions.FileNotFoundException;
+import filesystem.exceptions.FileSystemException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,6 +48,7 @@ public class ArchiveFileSystem implements FileSystem {
 		TConfig config = TConfig.get();
 		config.setArchiveDetector(new TArchiveDetector(
 				getFileSystemExtension(), // file system file extension
+				//new FileDriver()));
 				new JarDriver(IOPoolLocator.SINGLETON)));
 
 		TConfig.push();
@@ -357,22 +361,42 @@ public class ArchiveFileSystem implements FileSystem {
 	}
 
 	@Override
-	public boolean mv(String source, String target) throws FileNotFoundException {
-		TFile file = getRelativeTFile(source);
+	public boolean mv(String source, String target) throws FileSystemException {
+		TFile sourceFile = getRelativeTFile(source);
 
-		if (file == null) {
+		if (sourceFile == null) {
 			return false;
 		}
 
-		if (!file.exists()) {
+		if (!sourceFile.exists()) {
 			throw new FileNotFoundException();
 		}
 
+		TFile targetFile = getRelativeTFile(target);
+		
+		if(targetFile==null)
+			return false;
+		
+		if (targetFile.exists() && sourceFile.isDirectory()) {
+			throw new AlreadyExistsException();
+		}
+		
+		if (targetFile.exists() && sourceFile.isFile()) {
+			
+			if(!targetFile.isDirectory())  
+				throw new AlreadyExistsException();
+			
+			targetFile = getRelativeTFile(target+ "/" + sourceFile.getName());
+			System.out.println(targetFile.getAbsolutePath());
+		}
+		
+		
 		try {
 
-			TFile targetFile = new TFile(target);
-			file.mv(targetFile);
+			
+			sourceFile.mv(targetFile);
 		} catch (IOException ex) {
+			ex.printStackTrace();
 			throw new FileNotFoundException();
 		}
 
