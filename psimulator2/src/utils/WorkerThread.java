@@ -49,7 +49,7 @@ public final class WorkerThread implements Runnable, Loggable {
 			isSleeping = false;
 			this.notifyAll();
 
-		} else if (smartRunnable.getClass() == Alarm.class) {	// specialni fce JEN PRO BUDIK !!!
+		} else if (smartRunnable.getClass() == Alarm.class) {	// special function only for alarm !!! - specialni fce JEN PRO BUDIK !!!
 			if (myThread.getState() == Thread.State.TIMED_WAITING) {
 				myThread.interrupt();
 			}

@@ -3,6 +3,7 @@
  */
 package physicalModule;
 
+import dataStructures.CableItem;
 import dataStructures.packets.L2Packet;
 import logging.Loggable;
 import logging.Logger;

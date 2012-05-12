@@ -1,5 +1,6 @@
 package logging.networkEvents;
 
+import dataStructures.CableItem;
 import dataStructures.DropItem;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -7,7 +8,6 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
-import physicalModule.AbstractCable.CableItem;
 import shared.NetworkObject;
 import shared.SimulatorEvents.SerializedComponents.EventType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;

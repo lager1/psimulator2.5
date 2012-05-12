@@ -74,6 +74,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 //		commands.put("cping", PingCommand.class);	// zatim si pridavam cisco ping
 		commands.put("ip", Ip.class);
 		commands.put("help", Help.class);
+		commands.put("help-en", Help.class);
 		commands.put("man", Man.class);
 		commands.put("traceroute", Traceroute.class);
 		commands.put("iptables", Iptables.class);

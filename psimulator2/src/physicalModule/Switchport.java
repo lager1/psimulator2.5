@@ -27,11 +27,17 @@ public abstract class Switchport {
 	 */
 	public final int configID;
 
+	/**
+	 * ID pocitace.
+	 */
+	protected final int deviceID;
+
 
 	public Switchport(AbstractPhysicalModule physicMod, int number, int configID) {
 		this.physicalModule = physicMod;
 		this.number = number;
 		this.configID = configID;
+		this.deviceID = physicMod.device.configID;
 	}
 
 

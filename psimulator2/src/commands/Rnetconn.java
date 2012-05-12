@@ -37,6 +37,8 @@ public class Rnetconn extends AbstractCommand {
 			listAllRealSwitchports();
 		} else if (prikaz.equals("help")) {
 			printHelp();
+		} else if (prikaz.equals("help-cz")) {
+			printHelpCz();
 		} else if (prikaz.equals("tie")) {
 			connectSwitchport();
 		} else if (prikaz.equals("untie")) {
@@ -81,6 +83,7 @@ public class Rnetconn extends AbstractCommand {
 
 	private void printHelp() {
 		printLine("");
+		printLine("Usage:");
 		printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
 		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
 		printLine("SYNOPSIS: rnetconn command options");
@@ -89,6 +92,22 @@ public class Rnetconn extends AbstractCommand {
 		printLine("    rnetconn tie device switchport_num iface      tie real switchport switchport_num on device to iface");
 		printLine("    rnetconn untie device switchport_num          untie switchport from its device");
 		printLine("    help                                          print this help and exit");
+		printLine("    help-cz                                       print this help in czech and exit");
+		printLine("");
+	}
+
+	private void printHelpCz() {
+		printLine("");
+		printLine("Usage:");
+		printLine("Tento prikaz neexistuje na realnem cisco ani linux pocitaci. Je implementovan pouze v tomto simulatoru ke sprave pripojeni na realnou sit.");
+		printLine("Timto prikazem je mozno obsluhovat realna pripojeni vsech virtualnich sitovych zarizeni v simulatoru");
+		printLine("SYNOPSIS: rnetconn prikaz options");
+		printLine("  The mozne prikazy jsou:");
+		printLine("    rnetconn list                                 zobrazi vsechny realne switchporty na vsech zarizenich virtualni site");
+		printLine("    rnetconn tie device switchport_num iface      svaze realny switchport switchport_num zarizeni device s iface hostitelskeho pocitace");
+		printLine("    rnetconn untie device switchport_num          ukonci spojeni switchportu switchport_num na zarizeni device");
+		printLine("    help                                          vypise napovedu v anglictine a ukonci se");
+		printLine("    help-cz                                       vypise napovedu v cestine a ukonci se");
 		printLine("");
 	}
 
@@ -109,34 +128,22 @@ public class Rnetconn extends AbstractCommand {
 		}
 		String ifaceName = nextWord();
 
-		// hledani pocitace:
-		Device dev = Psimulator.getPsimulator().getDeviceByName(deviceName);
-		if(dev==null){
-			printLine("Device "+deviceName+" doesn't exist in this simulated network.");
-			printHelp();
-			return;
-		}
-
-		//hledani switchportu:
-		Switchport swport = dev.physicalModule.getSwitchports().get(switchportNumber);
-		if(swport==null){
-			printLine("On "+deviceName+" doesn't exist switchport number "+switchportNumber);
-			printHelp();
-			return;
-		} else if(!swport.isReal()){
-			printLine("Switchport "+switchportNumber+" on "+deviceName+" is only simulator switchport, it can not be connected to real interface.");
-			printHelp();
+		// hledani pocitace a switchportu:
+		Switchport swport = findSwitchport(deviceName,switchportNumber);
+		if(swport==null) return; // hlaseni by jiz pripadne byla vypsana
+		if(swport.isConnected()){
+			printLine("Switchport "+switchportNumber+" on "+deviceName+" is tied yet");
 			return;
 		}
 
 		// vsechno je v poradku, jde se pripojit:
-		RealSwitchport rport = (RealSwitchport)swport;
+		RealSwitchport rport = (RealSwitchport) swport;
 		int navrKod = rport.start(ifaceName);
-		if(navrKod==1){
+		if (navrKod == 1) {
 			printLine("An error occured while trying to connect to interface. For more informations see the programms main console.");
-		}if(navrKod==2){
-			printLine("Switchport was tied! Can not tie tied switchport!");
-		}else{
+		} else if (navrKod == 2) {
+			printLine("Switchport was tied! Can not tie tied switchport!");	// pridal jsem kontrolu (o par radku vejs), takze tohle byse nemelo stavat
+		} else {
 			printLine("Switchport was tied.");
 		}
 
@@ -158,25 +165,10 @@ public class Rnetconn extends AbstractCommand {
 			return;
 		}
 
-		// hledani pocitace:
-		Device dev = Psimulator.getPsimulator().getDeviceByName(deviceName);
-		if(dev==null){
-			printLine("Device "+deviceName+" doesn't exist in this simulated network.");
-			printHelp();
-			return;
-		}
-
-		//hledani switchportu:
-		Switchport swport = dev.physicalModule.getSwitchports().get(switchportNumber);
-		if(swport==null){
-			printLine("On "+deviceName+" doesn't exist switchport number "+switchportNumber);
-			printHelp();
-			return;
-		} else if(!swport.isReal()){
-			printLine("Switchport "+switchportNumber+" on "+deviceName+" is only simulator switchport, it can not be connected to real interface.");
-			printHelp();
-			return;
-		} else if(!swport.isConnected()){
+		// hledani pocitace a switchportu:
+		Switchport swport = findSwitchport(deviceName,switchportNumber);
+		if(swport==null) return; // hlaseni by jiz pripadne byla vypsana
+		if(!swport.isConnected()){
 			printLine("Switchport "+switchportNumber+" on "+deviceName+" is not tied, so it can't be untied.");
 			return;
 		}
@@ -186,6 +178,38 @@ public class Rnetconn extends AbstractCommand {
 		rport.stop();
 		printLine("Switchport "+switchportNumber+" on "+deviceName+" has been untied.");
 
+	}
+
+
+	/**
+	 * vycleneno par radku z connect a disconnectSwitchport. Slouzi predevsim k chybovejm vypisum.
+	 * @param dev
+	 * @param switchportNumber
+	 * @return
+	 */
+	private Switchport findSwitchport(String deviceName, int switchportNumber){
+
+		// hledani pocitace:
+		Device dev = Psimulator.getPsimulator().getDeviceByName(deviceName);
+		if(dev==null){
+			printLine("Device "+deviceName+" doesn't exist in this simulated network.");
+			printHelp();
+			return null;
+		}
+
+		//hledani switchportu:
+		Switchport swport = dev.physicalModule.getSwitchports().get(switchportNumber);
+		if(swport==null){
+			printLine("On "+dev.getName()+" doesn't exist switchport number "+switchportNumber);
+			printLine("For list of real switchports, which can be connected to real network type: rnetconn list");
+			printHelp();
+		} else if(!swport.isReal()){
+			printLine("Switchport "+switchportNumber+" on "+dev.getName()+" is only simulator switchport, it can not be connected to real interface.");
+			printLine("To list real switchports, which can be connected to real network type: rnetconn list");
+			printHelp();
+			swport=null;
+		}
+		return swport;
 	}
 
 }

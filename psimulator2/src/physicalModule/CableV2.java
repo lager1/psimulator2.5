@@ -4,6 +4,7 @@
 
 package physicalModule;
 
+import dataStructures.CableItem;
 import dataStructures.packets.L2Packet;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -37,7 +38,7 @@ public class CableV2 extends AbstractCable {
 	 * @param dest destination
 	 */
 	public void transmit(L2Packet packet, AbstractSimulatorSwitchport src, AbstractSimulatorSwitchport dest) {
-		Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new AbstractCable.CableItem(packet, src.deviceID, dest.deviceID, configID));
+		Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, src.deviceID, dest.deviceID, configID));
 		dest.receivePacket(packet);
 	}
 
