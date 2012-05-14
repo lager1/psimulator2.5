@@ -74,8 +74,6 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 	 */
 	protected Map<Integer, Timestamp> timestamps = new HashMap<>();
 
-	private transient boolean zavolanoBudikem = false;
-
 	public TracerouteApplication(Device device, ApplicationNotifiable command) {
 		super("traceroute", device);
 		this.command = command;
@@ -92,7 +90,6 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 	public void wake() {
 		if (isRunning()) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Byl jsem probuzen budikem a jdu zavolat svuj worker.", null);
-			zavolanoBudikem = true;
 			worker.wake();
 		} else {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Byl jsem probuzen budikem ale nevolam svuj worker, protoze mam bejt mrtvej.", null);
@@ -154,7 +151,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 				}
 
 //				try {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pridavam paket: ttl="+t.ttl+", seq="+packet.seq+", seznamu c."+(t.ttl-1), null);
+				Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pridavam paket: ttl="+t.ttl+", seq="+packet.seq+", seznamu c."+(t.ttl), null);
 				recordsNew.get(t.ttl).add(new Record(delay, packet, p.src)); // pridavam paket do spravnyho seznamu
 //				} catch (IndexOutOfBoundsException e) {
 //					Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Paket s TTL: "+t.ttl, null);
@@ -181,7 +178,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 				continue;
 			}
 
-			processTTL(t.ttl);
+//			processTTL(t.ttl); // zakomentovano, protoze pak se nevypisovali radky, ktery vyprseli a v processTTL se hned vypsaly dosly pakety s vyssim TTL
 		}
 
 		// tady projed vsechny nevypsany TTL, zda je uz nemam nahodou vypsat
@@ -235,7 +232,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 				address = temp.sender.toString();
 			}
 
-			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c."+(ttl-1) + ", size:"+recordsNew.get(ttl).size(), null);
+			Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c."+(ttl) + ", size:"+recordsNew.get(ttl).size(), null);
 
 			lineBeginning(ttl, address);
 			int count = 0;
