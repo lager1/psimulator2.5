@@ -242,6 +242,7 @@ public abstract class AbstractCommandParser implements Loggable {
 //		}
 
 		if (commandName.equals("rnetconn")) {
+			nextWord();	// potreba pro zvetseni citace
 			Rnetconn cmd = new Rnetconn(this);
 			cmd.run();
 			return true;

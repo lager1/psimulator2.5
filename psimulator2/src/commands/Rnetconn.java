@@ -98,8 +98,7 @@ public class Rnetconn extends AbstractCommand {
 		printLine("");
 		printLine("Usage:");
 		printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
-		printLine("The command can manage all real switchports on all simulated devices in virtual network. To setup connection to real network you must tie virtual interface of "
-				+ "you computer, with some switchport of some router or switch in virtual network. You must create ");	// TODO dopsat
+		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
 		printLine("SYNOPSIS: rnetconn command options");
 		printLine("  The possible commands are:");
 		printLine("    rnetconn list                                 list all real switchports in virtual network");
@@ -108,6 +107,11 @@ public class Rnetconn extends AbstractCommand {
 		printLine("    help                                          print this help and exit");
 		printLine("    help-cz                                       print this help in czech and exit");
 		printLine("");
+		printLine("Hint: For connection to real network work it has to exist 2 virtual interface on (real) host system. First (tap0) will be used "
+				+ "for communication of host system with simulator and the second (sim0) will be used and controlled by simulator. These two "
+				+ "interfaces has to be connected to each other by virtual cable (with help of VDE util and script virt_iface.sh). Interface "
+				+ "sim0 has to be tied together with some switchport of device in virtual network. Interface sim0 shouldn't be configured in "
+				+ "host system. ");
 	}
 
 	private void printHelpCz() {
