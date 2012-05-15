@@ -80,8 +80,8 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
             adr=new IpAddress(dalsiSlovo());
         }catch(BadIpException ex){
             navrKod=1;
-            parser.printService(": traceroute: Chyba v syntaxi prikazu," +
-                    " jedina povolena syntaxe je \"traceroute <adresa>\"");
+            parser.printService(": traceroute: Error in command syntax." +
+                    " Supported syntax is: \"traceroute <IP address>\"");
 
         }
     }

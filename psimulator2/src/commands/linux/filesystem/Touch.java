@@ -29,7 +29,7 @@ public class Touch extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO: Soubory k vytvoreni jsou v promenny files.
+	 * Soubory k vytvoreni jsou v promenny files.
 	 */
 	@Override
 	protected void executeCommand() {

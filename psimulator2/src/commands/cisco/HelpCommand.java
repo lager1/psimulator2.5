@@ -28,6 +28,8 @@ class HelpCommand extends CiscoCommand {
                     " help - writes this hint\n" +
                     " kill - for leaving console from any state of cisco\n" +
                     " save - for saving current configuration of all devices to XML file, " +
+					" rnetconn      command to manage connection of simulator to real network"+
+					"               for help in english type: rnetconn help"+
                     "without paramater it saves to "+Main.configFileName+"\n\n" +
 
                     "These commands are implemented:\n";

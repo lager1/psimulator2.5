@@ -117,6 +117,14 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 		return switchports.get(i);
 	}
 
+	public EthernetInterface getIfaceToSwitchport(int switchportNumber) {
+		SwitchportSettings swport = switchports.get(switchportNumber);
+		if (swport != null) {
+			return swport.assignedInterface;
+		} else {
+			return null;
+		}
+	}
 
 // Privatni metody resici sitovou komunikaci: ------------------------------------------------------------------------
 
@@ -216,7 +224,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 	private void handlePacketForMe(EthernetPacket packet, EthernetInterface iface, SwitchportSettings swport) {
 		if (netMod.isSwitch()) {
 			linkDebug("Prijal jsem paket pro me (nebo broadcast), nic s nim ale nedelam, protoze jsem switch. ", packet);
-			//TODO: Jedina vec, kdy se budou posilat pakety primo switchi je spanning tree protocol - tady bude jeho implementace.
+			// Here you can implement Spanning tree protocol. (jedinej pripad, kdys se pakety posilaj primo switchi)
 		} else {
 			if (packet.getEthertype() == L3Packet.L3PacketType.UNKNOWN || packet.data == null) {
 				linkDebug("Prijal jsem paket pro me ale nepredavam ho vyssi vrstve, protoze je neznamyho typu. ", packet);

@@ -22,7 +22,7 @@ public class Cd extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO implementovat. Prejdi do prvni slozky ktera je ulozena v seznamu files.
+	 * Prejde do prvni slozky ktera je ulozena v seznamu files.
 	 */
 	@Override
 	protected void executeCommand() {
@@ -34,7 +34,7 @@ public class Cd extends FileSystemCommand {
 		}
 
 		String currentDirectory = parser.getShell().getPrompt().getCurrentPath();
-		
+
 		StringBuilder processPath = new StringBuilder(files.get(0));
 		StringBuilder pathToSet;
 
@@ -51,7 +51,7 @@ public class Cd extends FileSystemCommand {
 			pathToSet.append(processPath);   // append rest if relative path
 		}
 
-		
+
 		if (pathToSet.toString().contentEquals("/../")) {
 			return;
 		}

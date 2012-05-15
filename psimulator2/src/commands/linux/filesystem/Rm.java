@@ -41,7 +41,7 @@ public class Rm extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO: implementovat. Soubory a slozky ke smazani jsou v promenny files.
+	 * Soubory a slozky ke smazani jsou v promenny files.
 	 */
 	@Override
 	protected void executeCommand() {
@@ -50,13 +50,13 @@ public class Rm extends FileSystemCommand {
 			parser.getShell().printLine("Sorry unimplemented funcionality");
 			return;
 		}
-		
+
 		String currentDir = getCurrentDir();
 
 		for (String filePath : files) {
-			
+
 			filePath = resolvePath(currentDir, filePath);
-			
+
 			if (!parser.device.getFilesystem().exists(filePath)) {
 				parser.getShell().printLine("rm: " + filePath + "file doesn't exist");
 				continue;

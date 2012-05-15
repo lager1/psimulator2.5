@@ -5,6 +5,9 @@
 package commands;
 
 import device.Device;
+import networkModule.L2.EthernetInterface;
+import networkModule.L2.EthernetLayer;
+import networkModule.SwitchNetworkModule;
 import physicalModule.RealSwitchport;
 import physicalModule.Switchport;
 import psimulator2.Psimulator;
@@ -31,7 +34,7 @@ public class Rnetconn extends AbstractCommand {
 		String prikaz = nextWord();
 
 		if (prikaz.equals("")) {
-			parser.printService("This command isn't present on real cisco or linux device. It's in this simulator to manage connection to real network.\n");
+			parser.printService("This command isn't present on real cisco or linux device. It's in this simulator to manage connection to real network.");
 			printHelp();
 		} else if (prikaz.equals("list")) {
 			listAllRealSwitchports();
@@ -59,6 +62,7 @@ public class Rnetconn extends AbstractCommand {
 		for (Device dev : Psimulator.getPsimulator().devices) {
 			for (Switchport swport : dev.physicalModule.getSwitchports().values()) {
 				if (swport.isReal()) {
+					printLine("Device name\tinterface\tswitchport no.\tstate");
 					printSwitchportSettings(dev, (RealSwitchport) swport);
 				}
 			}
@@ -71,9 +75,18 @@ public class Rnetconn extends AbstractCommand {
 	 * @param swport
 	 */
 	private void printSwitchportSettings(Device dev, RealSwitchport swport){
-		String vratit = dev.getName()+"    switchport no. "+swport.number+"    ";
+
+		// zkusim najit jmeno interface:
+		String ifaceName;
+		try{
+			ifaceName = ( (SwitchNetworkModule) (dev.getNetworkModule())).ethernetLayer.getIfaceToSwitchport(swport.number).name;
+		}catch(Exception ex){ //napr. vyjimka pri pretypovani nebo nullpointer
+			ifaceName="unknown";
+		}
+
+		String vratit = dev.getName()+"\t\t"+ifaceName+"\t\t"+swport.number+"\t\t";
 		if(swport.isConnected()){
-			vratit+="tied     "+swport.getIfaceName();
+			vratit+="tied with "+swport.getIfaceName();
 		} else {
 			vratit +="not tied";
 		}
@@ -85,11 +98,12 @@ public class Rnetconn extends AbstractCommand {
 		printLine("");
 		printLine("Usage:");
 		printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
-		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
+		printLine("The command can manage all real switchports on all simulated devices in virtual network. To setup connection to real network you must tie virtual interface of "
+				+ "you computer, with some switchport of some router or switch in virtual network. You must create ");	// TODO dopsat
 		printLine("SYNOPSIS: rnetconn command options");
 		printLine("  The possible commands are:");
 		printLine("    rnetconn list                                 list all real switchports in virtual network");
-		printLine("    rnetconn tie device switchport_num iface      tie real switchport switchport_num on device to iface");
+		printLine("    rnetconn tie device switchport_num iface      tie real switchport switchport_num on virtual device to iface");
 		printLine("    rnetconn untie device switchport_num          untie switchport from its device");
 		printLine("    help                                          print this help and exit");
 		printLine("    help-cz                                       print this help in czech and exit");
@@ -100,7 +114,8 @@ public class Rnetconn extends AbstractCommand {
 		printLine("");
 		printLine("Usage:");
 		printLine("Tento prikaz neexistuje na realnem cisco ani linux pocitaci. Je implementovan pouze v tomto simulatoru ke sprave pripojeni na realnou sit.");
-		printLine("Timto prikazem je mozno obsluhovat realna pripojeni vsech virtualnich sitovych zarizeni v simulatoru");
+		printLine("Timto prikazem je mozno obsluhovat realna pripojeni vsech virtualnich sitovych zarizeni v simulatoru.");
+		printLine("");
 		printLine("SYNOPSIS: rnetconn prikaz options");
 		printLine("  The mozne prikazy jsou:");
 		printLine("    rnetconn list                                 zobrazi vsechny realne switchporty na vsech zarizenich virtualni site");
@@ -108,6 +123,15 @@ public class Rnetconn extends AbstractCommand {
 		printLine("    rnetconn untie device switchport_num          ukonci spojeni switchportu switchport_num na zarizeni device");
 		printLine("    help                                          vypise napovedu v anglictine a ukonci se");
 		printLine("    help-cz                                       vypise napovedu v cestine a ukonci se");
+		printLine("");
+		printLine("Napoveda: Pro propojení simulátoru a reálné sítě je nutné navázat spojení mezi počítačem, na kterém je simulátor spuštěn "
+				+ "(hostitelským počítačem), a nějakým počítačem z virtuální síťě simulátoru (virtuálním počítačem). K tomu je "
+				+ "nutné na hostitelském počítači vytvořit 2 virtuální síťová rozhraní propojená virtuálním kabelem, tato rozhraní "
+				+ "se vytváří programem VDE za pomoci skriptu virt_iface.sh. Jedno z vytvořených rozhraní (nazývané obvykle tap0) "
+				+ "bude využívat hostitelský počítač pro komunikaci se simulátorem. Druhé (nazývané sim0) bude využíváno a ovládáno "
+				+ "virtuálním počítačem. K tomu je třeba svázat rozhraní sim0 se switchportem virtuálního počítače, aby s ním "
+				+ "tvořilo logický celek.");
+		printLine("Vice informaci najdete v souboru readme.txt a na wiki strance https://code.google.com/p/psimulator/w/list");
 		printLine("");
 	}
 

@@ -59,6 +59,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 			addCompleters();
 			addCompletionData();
 		}
+
+		printService("Type command 'help-en' for list of supported commands (or help for the same in czech).");
 	}
 
 
@@ -92,6 +94,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("cp", Cp.class);
 		commands.put("touch", Touch.class);
 		commands.put("editor",Editor.class); commands.put("mcedit",Editor.class);
+		commands.put("echo", Echo.class);
 
 	}
 

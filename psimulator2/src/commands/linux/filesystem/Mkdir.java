@@ -33,9 +33,6 @@ public class Mkdir extends FileSystemCommand {
 		}
 	}
 
-	/**
-	 * TODO: Tohle Martine implementuj. Vytvor vsechny adresare zadany ve files.
-	 */
 	@Override
 	protected void executeCommand() {
 

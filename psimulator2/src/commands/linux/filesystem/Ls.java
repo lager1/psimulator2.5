@@ -36,7 +36,7 @@ public class Ls extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO: Soubory a slozky, ktery se maj vypsat jsou v promenny files.
+	 * Soubory a slozky, ktery se maj vypsat jsou v promenny files.
 	 */
 	@Override
 	protected void executeCommand() {
@@ -63,7 +63,7 @@ public class Ls extends FileSystemCommand {
 
 				int i = 0;
 				for (Node node : nodes) {
-					
+
 					if (i % 4 == 0) {
 						parser.getShell().printLine("");
 					}
@@ -76,7 +76,7 @@ public class Ls extends FileSystemCommand {
 					}
 
 					parser.getShell().print("\t");
-					
+
 				}
 
 				parser.getShell().printLine("");

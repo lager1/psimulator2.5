@@ -21,7 +21,7 @@ public abstract class MvOrCp extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO: Implementovat. Ve files jsou minimalne 2 cesty, pokud jich je vic, tak 1. az predposledni cesta se presune
+	 * Ve files jsou minimalne 2 cesty, pokud jich je vic, tak 1. az predposledni cesta se presune
 	 * (zkopiruje) do posledni. Na rozdilny veci mezi mv a cp muzes pouzit processFile() nebo neco podobnyho.
 	 */
 	@Override

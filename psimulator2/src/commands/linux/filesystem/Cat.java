@@ -33,7 +33,7 @@ public class Cat extends FileSystemCommand {
 	}
 
 	/**
-	 * TODO: Soubory k vypsani jsou v promenny files.
+	 * Soubory k vypsani jsou v promenny files.
 	 */
 	@Override
 	protected void executeCommand() {
@@ -44,8 +44,8 @@ public class Cat extends FileSystemCommand {
 			try {
 
 				fileName = resolvePath(currentDir, fileName);
-				
-				
+
+
 			int ret = parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
 
 					@Override
@@ -59,10 +59,10 @@ public class Cat extends FileSystemCommand {
 						return 0;
 					}
 				});
-			
+
 			if(ret < 0)
 				throw new FileNotFoundException();
-			
+
 			} catch (FileNotFoundException ex) {
 				parser.getShell().printLine("cat: " + fileName + ": file not found");
 			}

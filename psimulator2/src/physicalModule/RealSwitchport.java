@@ -136,7 +136,15 @@ public class RealSwitchport extends Switchport implements Loggable {
 		PcapIf iface = null;
 
 		// nejdriv si najdu vsechny rozhrani:
-		int r = Pcap.findAllDevs(alldevs, errbuf);
+		int r;
+		try {
+			r = Pcap.findAllDevs(alldevs, errbuf);
+		} catch (UnsatisfiedLinkError ex) {	// This exception is thrown, when jNetPcap is not installed on the computer.
+			log(Logger.WARNING, "Some library is missing on yor computer. Did you copy the file libjnetpcap.so (from downloaded zip file) to /usr/lib? "
+					+ "Have you installed libpcap library? Error message: ["+ex.getMessage()+"]", null);
+
+			return null;
+		}
 		if (r == Pcap.NOT_OK || alldevs.isEmpty()) {
 			log(Logger.WARNING,"Can't read list of devices. Do you run psimulator as root?", null);
 			return null;

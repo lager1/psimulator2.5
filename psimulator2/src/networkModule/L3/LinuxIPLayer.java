@@ -24,7 +24,7 @@ public class LinuxIPLayer extends IPLayer {
 
 	/**
 	 * Packet forwarding flag. <br />
-	 * TODO: port_forward ulozit do filesystemu a nacitat od tam tud
+	 * TODO: ip_forward ulozit do filesystemu a nacitat od tam tud
 	 */
 	public boolean ip_forward = true;
 

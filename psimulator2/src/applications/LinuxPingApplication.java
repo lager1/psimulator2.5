@@ -15,7 +15,6 @@ import logging.LoggingCategory;
 import utils.Util;
 
 /**
- * TODO" Standa by rad, abych tu vypisoval nejaky source quench
  * @author Tomas Pitrinec
  */
 public class LinuxPingApplication extends PingApplication {
@@ -99,28 +98,31 @@ public class LinuxPingApplication extends PingApplication {
 
 		switch (packet.type) {
 			case REPLY:
-				command.printLine(packet.getSize()+" bytes from "+p.src+": icmp_req="+packet.seq+" ttl="+p.ttl+
-						" time="+Util.zaokrouhli(delay)+" ms");
+				command.printLine(packet.getSize() + " bytes from " + p.src + ": icmp_req=" + packet.seq + " ttl=" + p.ttl
+						+ " time=" + Util.zaokrouhli(delay) + " ms");
 				break;
 			case TIME_EXCEEDED:
-				command.printLine("From " + p.src.toString()+ " icmp_seq=" + packet.seq+ " Time to live exceeded");
+				command.printLine("From " + p.src.toString() + " icmp_seq=" + packet.seq + " Time to live exceeded");
 				break;
 			case UNDELIVERED:
 				switch (packet.code) {
 					case ZERO:
-						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
-                        packet.seq + " Destination Net Unreachable");
+						command.printLine("From " + p.src.toString() + ": icmp_seq="
+								+ packet.seq + " Destination Net Unreachable");
 						break;
 					case HOST_UNREACHABLE:
-						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
-                        packet.seq + " Destination Host Unreachable");
+						command.printLine("From " + p.src.toString() + ": icmp_seq="
+								+ packet.seq + " Destination Host Unreachable");
 						break;
 					default:
-						command.printLine("From " + p.src.toString() + ": icmp_seq=" +
-                        packet.seq + " Destination Host Unreachable");
+						command.printLine("From " + p.src.toString() + ": icmp_seq="
+								+ packet.seq + " Destination Host Unreachable");
 				}
 				break;
-
+			case SOURCE_QUENCH:
+				command.printLine("From " + p.src.toString() + ": icmp_seq="
+								+ packet.seq + " Source Quench");
+				break;
 			default:
 			// jeste tu je REQUEST, ten se sem ale nikdy nedostane
 			// zalogovat neznamy typ ICMP ?

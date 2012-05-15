@@ -63,15 +63,15 @@ public class Help extends AbstractCommand {
 		printLine("");
         printLine("This command is not present on real computer with Linux. Here is only for information, which Linux commands are supported by this simulator.");
         printLine("");
-        printLine("Simulator has this commands, which are not present on real computer:");
-        printLine("uloz / save   saves virtual network configuration to file");
+        printLine("Simulator has these commands, which are not present on real computer:");
+        printLine("save          saves virtual network configuration to file");
         printLine("              for example: save ./konfiguraky/sit.xml   - saves in relative path to path, where is siulator running");
         printLine("help          print this help in czech");
 		printLine("help-en       print this help in english");
 		printLine("rnetconn      command to manage connection of simulator to real network");
 		printLine("              for help in english type: rnetconn help");
         printLine("");
-        printLine("In siulator this linux commands are supported:");
+        printLine("These linux commands are supported in simulator:");
         printLine("ifconfig      parameters address, netmask, up, down");
         printLine("route         actions add, del; parameters -net, -host, dev, gw, netmask");
         printLine("iptables      only masquerade");
