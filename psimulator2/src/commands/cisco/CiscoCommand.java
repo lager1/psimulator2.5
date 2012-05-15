@@ -42,6 +42,10 @@ public abstract class CiscoCommand extends AbstractCommand {
 		parser.ambiguousCommand();
 	}
 
+	protected void unsupportedCommand() {
+		printService("This command is not yet implemented.");
+	}
+
 	protected void debug(String s) {
 		if (debug) {
 			printLine(s);

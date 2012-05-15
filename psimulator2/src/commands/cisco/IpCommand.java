@@ -51,6 +51,12 @@ public class IpCommand extends CiscoCommand {
 				return;
 			}
 
+			if (isCommandWithoutOutput("dhcp", dalsi, 2)) {
+				command = new IpDhcpExcludedCommand(parser, no);
+				command.run();
+				return;
+			}
+
 			if (isCommandWithoutOutput("classless", dalsi, 2)) {
 				if (no) {
 					getNetMod().ipLayer.routingTable.classless = false;

@@ -8,16 +8,15 @@ import commands.AbstractCommandParser;
 import device.Device;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
-
-
 import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 
@@ -32,6 +31,7 @@ public class CommandShell extends TerminalApplication implements Loggable {
 	public static final int CISCO_PRIVILEGED_MODE = 1;
 	public static final int CISCO_CONFIG_MODE = 2;
 	public static final int CISCO_CONFIG_IF_MODE = 3;
+	public static final int CISCO_CONFIG_DHCP = 4;
 	private ShellRenderer shellRenderer;
 	private NormalRead normalRead;
 	private InputField inputField;

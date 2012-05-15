@@ -93,6 +93,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		device.commandCompleters.put(CommandShell.CISCO_PRIVILEGED_MODE, new CiscoCompleter());
 		device.commandCompleters.put(CommandShell.CISCO_CONFIG_MODE, new CiscoCompleter());
 		device.commandCompleters.put(CommandShell.CISCO_CONFIG_IF_MODE, new CiscoCompleter());
+		device.commandCompleters.put(CommandShell.CISCO_CONFIG_DHCP, new CiscoCompleter());
 		Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "Pocet completeru: "+device.commandCompleters.size(), null);
 	}
 
@@ -108,6 +109,8 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 	private void registerCommands() {
 		availableCommands.add(new AccessListCommand(this, false));
 		availableCommands.add(new ConfigureCommand(this));
+		availableCommands.add(new DhcpMode(this, ""));
+		availableCommands.add(new IpDhcpExcludedCommand(this, false));
 		availableCommands.add(new HelpCommand(this));
 		availableCommands.add(new IpAddressCommand(this, false));
 		availableCommands.add(new IpCommand(this, false));
@@ -308,6 +311,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						no();
 						return;
 					}
+					// TODO: here add command for switching to DHCP mode.
+
+
 					break;
 
 				case CISCO_CONFIG_IF_MODE:
@@ -337,6 +343,15 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 						return;
 					}
 					break;
+
+				case CISCO_CONFIG_DHCP:
+					if (isCommand("exit", first)) {
+						changeMode(CISCO_CONFIG_MODE);
+						return;
+					}
+					command = new DhcpMode(this, first);
+					command.run();
+					return;
 			}
 
 			if (isAmbiguousCommand) {
@@ -466,6 +481,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
                     i = 3;
                     break;
                 case CISCO_CONFIG_IF_MODE:
+				case CISCO_CONFIG_DHCP:
                     i = 1;
             }
         }
@@ -529,13 +545,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 		switch (mode) {
 			case CISCO_USER_MODE:
 				shell.setMode(mode);
-//                shell.setPrompt(device.getName() + ">");
 				shell.getPrompt().setSuffix(">");
 				break;
 
 			case CISCO_PRIVILEGED_MODE:
 				shell.setMode(mode);
-				//shell.setPrompt(device.getName() + "#");
 				shell.getPrompt().setSuffix("#");
 
 				if (this.mode == CISCO_CONFIG_MODE || this.mode == CISCO_CONFIG_IF_MODE) { // jdu z configu
@@ -545,13 +559,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 			case CISCO_CONFIG_MODE:
 				shell.setMode(mode);
-//				shell.setPrompt(device.getName() + "(config)#");
 				shell.getPrompt().setSuffix("(config)#");
 
 				if (this.mode == CISCO_PRIVILEGED_MODE) { // jdu z privilegovaneho
 					shell.printLine("Enter configuration commands, one per line.  End with 'exit'."); // zmena oproti ciscu: End with CNTL/Z.
-	//				configure1 = false;
-	//				kon.vypisPrompt = true;
 				} else if (this.mode == CISCO_CONFIG_IF_MODE) {
 					configuredInterface = null;
 				}
@@ -559,7 +570,6 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
 			case CISCO_CONFIG_IF_MODE:
 				shell.setMode(mode);
-//				shell.setPrompt(device.getName() + "(config-if)#");
 				shell.getPrompt().setSuffix("(config-if)#");
 				break;
 

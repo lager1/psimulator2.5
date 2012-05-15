@@ -6,7 +6,6 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
-import commands.completer.Node;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
