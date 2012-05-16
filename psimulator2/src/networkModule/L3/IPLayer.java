@@ -318,7 +318,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 //		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork()", null);
 
 		// prochazet jednotlivy buffery a vyrizovat jednotlivy pakety
-		while (!sendBuffer.isEmpty() || !receiveBuffer.isEmpty()) {
+		while (!sendBuffer.isEmpty() || !receiveBuffer.isEmpty() || !storeBuffer.isEmpty()) {
 			if (!receiveBuffer.isEmpty()) {
 				Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "doMyWork() receiveBuffer", null);
 				ReceiveItem m = receiveBuffer.remove(0);
@@ -335,11 +335,6 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
 				handleStoreBuffer();
 			}
-		}
-
-		if (!storeBuffer.isEmpty()) { // ?
-			// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
-			handleStoreBuffer();
 		}
 	}
 
