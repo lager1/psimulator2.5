@@ -39,7 +39,7 @@ public class ClientSession {
 		if (this.outputStream == null) {
 
 			if (this.socket == null || this.socket.isClosed() || !this.socket.isConnected()) {
-				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Starting ClientSessionThread without properly connected socket. Stopping ClientSessionThread!!!");
+				Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Starting ClientSession without properly connected socket. Stopping ClientSessionThread!!!");
 				return;
 			}
 			try {

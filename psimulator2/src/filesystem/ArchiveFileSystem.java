@@ -230,9 +230,9 @@ public class ArchiveFileSystem implements FileSystem {
 		try {
 			TFile file = getRelativeTFile(path);
 
-			if (!file.exists()) {
-				return -1;
-			}
+//			if (!file.exists()) {
+//				return -1;
+//			}
 
 			TPath pat = new TPath(file);
 

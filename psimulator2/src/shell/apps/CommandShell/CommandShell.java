@@ -461,6 +461,11 @@ public class CommandShell extends TerminalApplication implements Loggable {
 		{
 			this.childProcess.quit();
 		}
+		
+		if(historyManager != null )
+		{
+			historyManager.saveAllHistory();
+		}
 
 		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Quiting CommandShell");
 		this.quit = true;
