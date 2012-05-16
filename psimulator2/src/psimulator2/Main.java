@@ -5,6 +5,9 @@ package psimulator2;
 
 import config.configTransformer.Loader;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import logging.Logger;
 import logging.LoggingCategory;
 import logging.networkEvents.EventServer;
@@ -25,11 +28,15 @@ import utils.Util;
 public class Main {
 
 	public static String configFileName;
+	private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+
+		System.out.println("Starting Psimulator2, build "+format.format(new Date()));
+
 
 		// check jvm version  ... 1.7 or higher
 
