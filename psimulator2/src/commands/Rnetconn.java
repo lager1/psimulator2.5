@@ -11,6 +11,7 @@ import networkModule.SwitchNetworkModule;
 import physicalModule.RealSwitchport;
 import physicalModule.Switchport;
 import psimulator2.Psimulator;
+import utils.Util;
 
 /**
  * This command is used to manage connections from simulator to real network.
@@ -78,13 +79,14 @@ public class Rnetconn extends AbstractCommand {
 
 		// zkusim najit jmeno interface:
 		String ifaceName;
-		try{
-			ifaceName = ( (SwitchNetworkModule) (dev.getNetworkModule())).ethernetLayer.getIfaceToSwitchport(swport.number).name;
-		}catch(Exception ex){ //napr. vyjimka pri pretypovani nebo nullpointer
-			ifaceName="unknown";
+		try {
+			ifaceName = ((SwitchNetworkModule) (dev.getNetworkModule())).ethernetLayer.getIfaceToSwitchport(swport.number).name;
+		} catch (Exception ex) { //napr. vyjimka pri pretypovani nebo nullpointer
+			ifaceName = "unknown";
 		}
 
-		String vratit = dev.getName()+"\t\t"+ifaceName+"\t\t"+swport.number+"\t\t";
+		String vratit = Util.zarovnej(dev.getName(),16)+ Util.zarovnej(ifaceName, 16)+Util.zarovnej(swport.number+"", 16);
+
 		if(swport.isConnected()){
 			vratit+="tied with "+swport.getIfaceName();
 		} else {

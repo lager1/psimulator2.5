@@ -10,6 +10,16 @@ import dataStructures.packets.IpPacket;
 import dataStructures.packets.L4Packet;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
+import filesystem.FileSystem;
+import filesystem.dataStructures.jobs.InputFileJob;
+import filesystem.dataStructures.jobs.OutputFileJob;
+import filesystem.exceptions.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
@@ -26,11 +36,31 @@ public class LinuxIPLayer extends IPLayer {
 	 * Packet forwarding flag. <br />
 	 * TODO: ip_forward ulozit do filesystemu a nacitat od tam tud
 	 */
-	public boolean ip_forward = true;
+//	public boolean ip_forward = true;
+	private String ip_forwardPath = "/proc/sys/net/ipv4/ip_forward";
 
 	public LinuxIPLayer(IpNetworkModule netMod) {
 		super(netMod);
 		this.ttl = 64;
+		createIp_forwardFile();
+	}
+
+	/**
+	 * Creates ip_forward file, if it is no present in filesystem.
+	 */
+	private void createIp_forwardFile(){
+		FileSystem fs = netMod.getDevice().getFilesystem();
+		if(!fs.exists(ip_forwardPath)){
+			fs.runOutputFileJob(ip_forwardPath, new OutputFileJob() {
+			@Override
+			public int workOnFile(OutputStream output) throws Exception {
+				PrintWriter writer = new PrintWriter(output);
+				writer.println("0");
+				writer.flush();
+				return 0;
+			}
+		});
+		}
 	}
 
 	@Override
@@ -122,7 +152,7 @@ public class LinuxIPLayer extends IPLayer {
 			return;
 		}
 
-		if (!ip_forward) {
+		if (!ip_forward()) {
 			// Jestli se nepletu, tak paket proste zahodi. Chce to ale jeste overit.
 			Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: ip_forward is not set.", packet);
 			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
@@ -153,5 +183,44 @@ public class LinuxIPLayer extends IPLayer {
 
 		Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+(ifaceIn == null ? "null" : ifaceIn.name), packet);
 		processPacket(p, record, ifaceIn);
+	}
+
+	private boolean ip_forward(){
+		FileSystem fs = netMod.getDevice().getFilesystem();
+
+		// vycteni 1. radku:
+		final List<String> firstLine = new ArrayList<>(); // neprisel jsem na to, jak jinak to z ty vnitrni fce vytahnout
+		try {
+			fs.runInputFileJob(this.ip_forwardPath, new InputFileJob() {
+
+				@Override
+				public int workOnFile(InputStream input) throws Exception {
+
+					Scanner sc = new Scanner(input);
+
+					if (sc.hasNextLine()) {
+						firstLine.add(sc.nextLine());
+					}
+
+					return 0;
+				}
+			});
+		} catch (FileNotFoundException ex) {
+			Logger.log(this, Logger.WARNING, LoggingCategory.NET, "ip_forward file not found!", null);
+			return true;
+		}
+
+		// samotny nastaveni:
+		try {
+			int number = Integer.parseInt(firstLine.get(0));
+			if (number == 0) {
+				return false;
+			}
+		} catch (NumberFormatException ex) {
+			return true;
+		}
+
+
+		return true;
 	}
 }

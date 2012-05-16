@@ -10,6 +10,7 @@ import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
 import filesystem.ArchiveFileSystem;
+import filesystem.FileSystem;
 import java.io.File;
 import java.util.*;
 import logging.Loggable;
@@ -58,10 +59,12 @@ public class Loader implements Loggable {
 	 */
 	private Map<CiscoIPLayer, RoutingTableConfig> ciscoSettings = new HashMap<>();
 	private String configFilename;
+	private String projectName;
 
 	public Loader(NetworkModel networkModel, String configFileName) {
 		this.networkModel = networkModel;
 		this.configFilename=configFileName;
+		projectName = configFilename.substring(0, configFilename.length());
 	}
 
 	/**
@@ -113,6 +116,9 @@ public class Loader implements Loggable {
 		Device pc = new Device(model.getId(), model.getName(), convertType(model.getHwType()));
 //		System.out.printf("device: id: %s name: %s, type: %s \n", model.getId(), model.getDeviceName(), model.getHwType());
 
+		// setup filesystem (je to uz tady, aby s nim mohl zachazet sitovy modul (napr. pro ip_forward)):
+		pc.setFilesystem(setupFilesystem(model));
+
 		// vytvoreni fysickyho modulu:
 		AbstractPhysicalModule pm = pc.physicalModule;
 		//buildeni switchportu:
@@ -130,26 +136,19 @@ public class Loader implements Loggable {
 		NetworkModule nm = createNetworkModule(model, pc);
 		pc.setNetworkModule(nm);
 
-		// setup filesystem
-		String pathSeparator = System.getProperty("file.separator");
+		return pc;
+	}
 
-//		int projectStartNameIndex = configFilename.lastIndexOf(pathSeparator);
-//
-//		if(projectStartNameIndex < 1)
-//			projectStartNameIndex = 0;
-//
-		String projectName = configFilename.substring(0, configFilename.length());
+	private FileSystem setupFilesystem(HwComponentModel model){
+		String pathSeparator = System.getProperty("file.separator");
 
 		File filesystemDir = new File(projectName+"-DATA");
 
 		if(!filesystemDir.isDirectory() && 	!filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
 			Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
 
-
 		String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getIDAsString() + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
-		pc.setFilesystem(new ArchiveFileSystem(pathFileSystem));
-
-		return pc;
+		return new ArchiveFileSystem(pathFileSystem);
 	}
 
 	/**
