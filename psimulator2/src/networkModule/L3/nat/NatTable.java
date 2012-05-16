@@ -365,7 +365,7 @@ public class NatTable implements Loggable {
 	 * @param in incomming interface
 	 * @return
 	 */
-	public IpPacket backwardTranlate(IpPacket packet, NetworkInterface in) {
+	public IpPacket backwardTranslate(IpPacket packet, NetworkInterface in) {
 		if (in == null) {
 			Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming iface is null.", packet);
 			return packet;

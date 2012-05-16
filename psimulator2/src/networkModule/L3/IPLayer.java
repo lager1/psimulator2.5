@@ -478,6 +478,20 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 		return ifaces;
 	}
 
+	/**
+	 * Returns EthernetInterface for given IP address attached to this iface.
+	 * @param dst
+	 * @return
+	 */
+	protected EthernetInterface findInterfaceForIpAddress(IpAddress dst) {
+		for (NetworkInterface iface : getNetworkIfaces()) {
+			if (iface.getIpAddress() != null && iface.getIpAddress().getIp() != null && iface.getIpAddress().getIp().equals(dst)) {
+				return iface.ethernetInterface;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void wake() {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "awaken by Alarm", null);

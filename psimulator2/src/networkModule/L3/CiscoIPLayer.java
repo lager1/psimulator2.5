@@ -92,7 +92,8 @@ public class CiscoIPLayer extends IPLayer {
 		IpPacket p = new IpPacket(src == null ? record.iface.getIpAddress().getIp() : src, dst, ttl, packet);
 
 		if (isItMyIpAddress(dst)) {
-			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
+			EthernetInterface iface = findInterfaceForIpAddress(dst);
+			handleReceivePacket(p, iface); // rovnou ubsluz v mem vlakne
 			return;
 		}
 

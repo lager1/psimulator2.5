@@ -26,7 +26,7 @@ public class PacketFilter {
 
 	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
 
-		packet = natTable.backwardTranlate(packet, in);
+		packet = natTable.backwardTranslate(packet, in);
 
 
 		return packet;

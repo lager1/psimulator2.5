@@ -73,7 +73,9 @@ public class LinuxIPLayer extends IPLayer {
 		if (isItMyIpAddress(dst) || dst.isLocalSubnet127()) {
 			IpPacket p = new IpPacket(dst, dst, ttl, packet);
 
-			handleReceivePacket(p, null); // rovnou ubsluz v mem vlakne
+			EthernetInterface iface = findInterfaceForIpAddress(dst);
+
+			handleReceivePacket(p, iface); // rovnou ubsluz v mem vlakne
 			return;
 		}
 
