@@ -58,7 +58,7 @@ public class LinuxIPLayer extends IPLayer {
 				// ulozit si target
 				// kdyz uz to prislo sem, tak je jasne, ze ta odpoved byla pro me (protoze odpoved se posila jen odesilateli a ne na broadcast), takze si ji muzu ulozit a je to ok
 				arpCache.updateArpCache(packet.senderIpAddress, packet.senderMacAddress, iface);
-				newArpReply = true;
+				shouldHandleStoreBuffer = true;
 				worker.wake();
 				break;
 			default:

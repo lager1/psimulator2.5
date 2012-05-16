@@ -67,7 +67,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	 * When some ARP reply arrives this is set to true so doMyWork() can process storeBuffer. After processing
 	 * storeBuffer it is set to false.
 	 */
-	protected transient boolean newArpReply = false;
+	protected transient boolean shouldHandleStoreBuffer = false;
 	/**
 	 * Map of network interfaces. <br />
 	 * Key - interface name <br />
@@ -213,7 +213,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 			netMod.ethernetLayer.sendPacket(s.packet, s.out, mac);
 		}
 
-		newArpReply = false;
+		shouldHandleStoreBuffer = false;
 	}
 
 	/**
@@ -331,7 +331,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 				handleSendPacket(m.packet, m.src, m.dst, m.ttl); // bude se obsluhovat platform-specific
 			}
 
-			if (newArpReply && !storeBuffer.isEmpty()) { // ten boolean tam je proto, aby se to neprochazelo v kazdym cyklu
+			if (shouldHandleStoreBuffer && !storeBuffer.isEmpty()) { // ten boolean tam je proto, aby se to neprochazelo v kazdym cyklu
 				// bude obskoceno vzdy, kdyz se tam neco prida, tak snad ok
 				handleStoreBuffer();
 			}
@@ -481,7 +481,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 	@Override
 	public void wake() {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "awaken by Alarm", null);
-		newArpReply = true;
+		shouldHandleStoreBuffer = true;
 		this.worker.wake();
 	}
 
