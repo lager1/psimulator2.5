@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -64,11 +65,8 @@ public class ServerConnection {
 
     public void start() {
         ProcessBuilder pb;
-        //ProcessBuil pb;
         
         if(os.startsWith("Win")) {
-            // tady je ten problem, ze proces neni korektne ukoncen a diky tomu je problem pri dalsich spustenich !
-            
             pb = new ProcessBuilder("cmd.exe", "/C", "java -jar ", 
                 location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
         }
@@ -185,12 +183,33 @@ public class ServerConnection {
 	public void terminate() {
             
          if(os.startsWith("Win")) {
-            String cmd = "cmd /c taskkill /T /F /IM cmd.exe";       // running process is cmd.exe
-             try {                                                  // not the java !!
+            Runtime rt = Runtime.getRuntime();
+            String lastLine = "";           // for pid o running java process !
+            String commands = "cmd /c tasklist /FI \"IMAGENAME eq java.exe\" /FI \"SESSIONNAME eq Console\"";
+
+            Process proc;            
+            try {
+                 proc = rt.exec(commands);
+                BufferedReader stdInput = new BufferedReader(new 
+                InputStreamReader(proc.getInputStream()));
+                String s = null;
+                while ((s = stdInput.readLine()) != null) {
+                    lastLine = s;
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+             
+            String delims = "[ ]+";
+            String[] tokens = lastLine.split(delims);
+            
+             String cmd = "cmd /c taskkill /T /F /PID " + tokens[1];       // pid of running backend
+             try {                                                           
                  Process child = Runtime.getRuntime().exec(cmd);
              } catch (IOException ex) {
                 ex.printStackTrace();
              }
+            
          }           
          else {
             p.destroy();	// end process
