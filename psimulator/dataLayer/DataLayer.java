@@ -46,7 +46,8 @@ public class DataLayer extends DataLayerFacade {
     private TelnetConfig telnetConfig;
     //
     private UserInterfaceMainPanelState MainPanelState;
-    
+    //
+    private String realInterface;
 
     public DataLayer() {
         networkFacade = new NetworkFacade();
@@ -264,5 +265,15 @@ public class DataLayer extends DataLayerFacade {
     @Override
     public UserInterfaceMainPanelState getMainPanelState() {
     	return MainPanelState;
+    }
+
+    @Override
+    public void setRealInterface(String selectedInterface) {
+        realInterface = selectedInterface;
+    }
+
+    @Override
+    public String getRealInterface() {
+        return realInterface;
     }
 }

@@ -39,7 +39,6 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelState;
 import psimulator.userInterface.actionListerners.PreferencesActionListener;
 import shared.Components.NetworkModel;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
-//import psimulator.logicLayer.Simulator.ServerFileStatus;
 import shared.Components.HwTypeEnum;
 
 
@@ -101,6 +100,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
         this.setTitle(dataLayer.getString("WINDOW_TITLE"));
 
+        
         // set menu bar
         this.setJMenuBar(jMenuBar);
         this.add(jToolBar, BorderLayout.PAGE_START);
@@ -371,7 +371,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     if(!checkDataLossBeforeSimulation()) {	// must be saved before simulation
                     	return;
                     }
-                    
+
                     if(hasRealNetwork() && !checkAppPermision()) {
                         lowPermissionNotice();
                     }
@@ -379,8 +379,6 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     if(!startServer())	// stop if server start failed
                     	return;
 
-                    //System.out.println("server se povedlo nastartovat, main");
-                    
                     dataLayer.setConnectionIpAddress(server.getIpAddress());	// set backend address to data layer
                     dataLayer.setConnectionPort(server.getPort());				// set backend port to data layer
                     dataLayer.setMainPanelState(UserInterfaceMainPanelState.valueOf(e.getActionCommand()));	 // set state to data layer
@@ -457,10 +455,10 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 				failed = false;
 				break;
     	}
-        
-    	if(failed) {
+
+        if(failed) {
 			JOptionPane.showMessageDialog(this,
-			FailureReason,
+			FailureReason, 
 			dataLayer.getString("WARNING"),
 			JOptionPane.WARNING_MESSAGE);
 			server = null;
@@ -532,11 +530,13 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         
         else {
             String user = System.getProperty("user.name");
-            if(user == "root")
+            if(user.equals("root")) {
                 return true;
+            }
 
-            else
+            else {
                 return false;
+            }
         }
     }
 

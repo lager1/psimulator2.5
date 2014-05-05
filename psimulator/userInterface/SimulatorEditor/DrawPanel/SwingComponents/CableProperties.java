@@ -18,8 +18,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Support.Validator;
  */
 public final class CableProperties extends AbstractPropertiesOkCancelDialog {
 
-	private static final long serialVersionUID = 638202219907304766L;
-	private CableGraphic cable;
+    private static final long serialVersionUID = 638202219907304766L;
+    private CableGraphic cable;
     private DrawPanelInnerInterface drawPanel;
     /*
      * window componenets
