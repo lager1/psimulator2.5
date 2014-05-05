@@ -32,7 +32,8 @@ public class ServerConnection {
 	//private String serverFileHash = "49f3196e44ac529305b1e2fc12a74125d05ba604de172a501ad17459a8579b4b";		
 	private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
 	private String location;
-	
+	private String os;
+        
         // HLAVNI TODO
         // PROC JE TAK VELKY ROZDIL MEZI PUVODNIM A NOVYM BACKENDEM ?!!!
         
@@ -40,43 +41,57 @@ public class ServerConnection {
 	 * @param file current file with topology
 	 * 
 	 */
-public ServerConnection (File file) {
+    public ServerConnection (File file) {
         location = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
-        location = location.replace("file:", "");
-        location = location.substring(0, location.lastIndexOf(File.separator));
+        
+        os = System.getProperty("os.name");
 
+        if(os.startsWith("Win")) {
+            location = location.replace("file:/", "");
+        }
+        else {
+            location = location.replace("file:", "");
+        }
+
+        location = location.substring(0, location.lastIndexOf("/"));
+        
         serverFile = new File(location + File.separator + "psimulator2_backend.jar");
         netFile = file;
         status = checkServerFile(); 
     }
 
-			
-	public void start() {
-		ProcessBuilder pb = new ProcessBuilder(location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
-		//ProcessBuilder pb = new ProcessBuilder(serverFile.getAbsolutePath(), serverFile.toString()); 
-
-		//System.out.println("backend nasrtoval");
-		
+    public void start() {
+        ProcessBuilder pb;
+        
+        if(os.startsWith("Win")) {
+            pb = new ProcessBuilder("cmd.exe", "/C", "java -jar", 
+                location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
+        }
+        else {
+            pb = new ProcessBuilder(location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
+        }
+        
         try {
-			log = File.createTempFile("psimulatorServerLog", ".tmp");	// temporary server file
-		} catch (IOException e1) {
-			System.out.println("Error creating server log file!");
-			e1.printStackTrace();
-		}
+            log = File.createTempFile("psimulatorServerLog", ".tmp");	// temporary server file
+        } catch (IOException e1) {
+            System.out.println("Error creating server log file!");
+            e1.printStackTrace();
+        }
+                
         pb.redirectErrorStream(true);
         pb.redirectOutput(Redirect.appendTo(log));
+
         try {
-			this.p = pb.start();
-		} catch (IOException e) {
-			System.out.println("Error starting the server process!");
-			e.printStackTrace();
-		}
-	}
+            this.p = pb.start();
+        } catch (IOException e) {
+            System.out.println("Error starting the server process!");
+            e.printStackTrace();
+        }
+    }
 			
-	public ServerFileStatus getServerFileStatus() {
-		return status;
-	
-	}
+    public ServerFileStatus getServerFileStatus() {
+        return status;
+    }
 			
     private ServerFileStatus checkServerFile() {
                 // file does not exist
