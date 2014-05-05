@@ -12,8 +12,6 @@ import java.lang.ProcessBuilder.Redirect;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import psimulator.logicLayer.Simulator.ServerFileStatus;
-
 /**
  *
  * @author lager1
@@ -31,28 +29,30 @@ public class ServerConnection {
 	private File netFile;					// file with the network to simulate
 	
 	// sha256 sum of server jar file (so it can be checked, whether the file was modified)
-	private String serverFileHash = "49f3196e44ac529305b1e2fc12a74125d05ba604de172a501ad17459a8579b4b";		
+	//private String serverFileHash = "49f3196e44ac529305b1e2fc12a74125d05ba604de172a501ad17459a8579b4b";		
+	private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
+	private String location;
 	
-	
+        // HLAVNI TODO
+        // PROC JE TAK VELKY ROZDIL MEZI PUVODNIM A NOVYM BACKENDEM ?!!!
+        
 	/* creates the server process
 	 * @param file current file with topology
 	 * 
 	 */
 public ServerConnection (File file) {
-			//serverFile = new File(System.getProperty("user.dir") + File.separator + "lib" + File.separator + "psimulator2_backend.jar");
-			serverFile = new File(System.getProperty("user.dir") + File.separator + "psimulator2_backend.jar");
+        location = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+        location = location.replace("file:", "");
+        location = location.substring(0, location.lastIndexOf(File.separator));
 
-			// backend ma problem s nacitanim knihoven -> bylo by treba modifikovat strukturu
-			// -> viz log serveru
-//			System.out.println(serverFile);
-			netFile = file;
-			
-			status = checkServerFile(); 
+        serverFile = new File(location + File.separator + "psimulator2_backend.jar");
+        netFile = file;
+        status = checkServerFile(); 
     }
 
 			
 	public void start() {
-		ProcessBuilder pb = new ProcessBuilder(System.getProperty("user.dir") + File.separator + "psimulator2_backend.jar", netFile.toString()); 
+		ProcessBuilder pb = new ProcessBuilder(location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
 		//ProcessBuilder pb = new ProcessBuilder(serverFile.getAbsolutePath(), serverFile.toString()); 
 
 		//System.out.println("backend nasrtoval");
@@ -79,10 +79,11 @@ public ServerConnection (File file) {
 	}
 			
     private ServerFileStatus checkServerFile() {
-    	// file does not exist
-    	if(!serverFile.exists())
-			return ServerFileStatus.FILE_NOT_FOUND;
-
+                // file does not exist
+                if(!serverFile.exists()) {
+                    return ServerFileStatus.FILE_NOT_FOUND;
+                }
+	
 		// is not readable
 		if(!serverFile.canRead())
 			return ServerFileStatus.FILE_NOT_READABLE;
@@ -94,13 +95,8 @@ public ServerConnection (File file) {
 
 		// hash of file does not match expected hash
 		if (!getSHA256CheckSum(serverFile.getAbsolutePath()).equals(serverFileHash)) {
-                        // debug
-			///*
 			System.out.println(getSHA256CheckSum(serverFile.getAbsolutePath()));
 			System.out.println(serverFileHash);
-			//*/
-
-                        
 			return ServerFileStatus.FILE_MODIFIED;
 		}
 

@@ -37,8 +37,11 @@ public abstract class DataLayerFacade implements PreferencesInterface, LanguageI
     public abstract TelnetConfig getTelnetConfig();
     
     public abstract void setMainPanelState(UserInterfaceMainPanelState userInterfaceState);
-	public abstract UserInterfaceMainPanelState getMainPanelState();
+    public abstract UserInterfaceMainPanelState getMainPanelState();
 
 	//public abstract void set(UserInterfaceMainPanelState userInterfaceState);
     //public abstract void saveProperties();
+
+    public abstract void setRealInterface(String selectedInterface);
+    public abstract String getRealInterface();
 }

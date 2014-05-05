@@ -10,6 +10,7 @@ import shared.Components.simulatorConfig.DeviceSettings;
 /**
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
+ * @author lager1
  */
 public final class HwComponentModel implements PositionInterface, NameInterface, AbstractComponentModel {
 
@@ -43,7 +44,11 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * Nastaveni pocitace pro potreby simulatoru.
      */
     private DeviceSettings devSettings;
-
+    /**
+     * real inteface name
+     */
+    private String realInterface;
+    
     public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces,
             int defaultZoomXPos, int defaultZoomYPos) {
 
@@ -205,7 +210,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     /**
      * Returns collection of interfaces
      */
-    public Collection getEthInterfaces() {
+    public Collection<EthInterfaceModel> getEthInterfaces() {
         return interfacesMap.values();
     }
 

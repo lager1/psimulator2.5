@@ -3,6 +3,7 @@ package psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
@@ -22,8 +23,8 @@ import shared.Components.EthInterfaceModel;
  */
 public final class HwComponentProperties extends AbstractPropertiesOkCancelDialog {
 
-	private static final long serialVersionUID = -483233919073360958L;
-	private HwComponentGraphic abstractHwComponent;
+    private static final long serialVersionUID = -483233919073360958L;
+    private HwComponentGraphic abstractHwComponent;
     private DrawPanelInnerInterface drawPanel;
     /*
      * window componenets
@@ -42,8 +43,11 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     private boolean allowInterfaceCountChange = true;
     //
     private String deviceName;
+    //private String realInterface;
     //
     private InterfacesTableModel tableInterfacesModel;
+    // 
+    private OutputInferfaceSelector interfaceSelector;
     // 
 
     public HwComponentProperties(Component mainWindow, DataLayerFacade dataLayer, DrawPanelInnerInterface drawPanel, HwComponentGraphic abstractHwComponent) {
@@ -145,6 +149,8 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
             // save interface changes
             tableInterfacesModel.copyValuesFromLocalToGlobal();
         }
+
+        dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
         
         // fire edit happend on graph
         drawPanel.getGraphOuterInterface().editHappend();
@@ -309,15 +315,9 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     }
 
     private JPanel createRealPcPanel() {
-        JPanel realPcPanel = new JPanel();
-        realPcPanel.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("REAL_PC")));
+        interfaceSelector = new OutputInferfaceSelector(dataLayer);
 
-        JLabel realPcLabel = new JLabel(dataLayer.getString("THIS_IS_REAL_PC"));
-        realPcLabel.setFont(fontBold);
-
-        realPcPanel.add(realPcLabel);
-
-        return realPcPanel;
+        return interfaceSelector.getrealPcPanel();
     }
 
     @Override

@@ -515,5 +515,4 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
 
         return texts;
     }
-
 }

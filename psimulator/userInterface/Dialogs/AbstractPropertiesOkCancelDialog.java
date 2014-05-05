@@ -76,9 +76,14 @@ public abstract class AbstractPropertiesOkCancelDialog extends AbstractPropertie
         @Override
         public void actionPerformed(ActionEvent e) {
             copyValuesFromFieldsToLocal();
+            
+            /*
             if (hasChangesMade()) {
                 copyValuesFromLocalToGlobal();
             }
+            */
+            
+            copyValuesFromLocalToGlobal();
             thisDialog.setVisible(false);
             thisDialog.dispose();    //closes the window
         }
