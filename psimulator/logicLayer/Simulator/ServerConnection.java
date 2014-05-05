@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.lang.ProcessBuilder.Redirect;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,9 +64,12 @@ public class ServerConnection {
 
     public void start() {
         ProcessBuilder pb;
+        //ProcessBuil pb;
         
         if(os.startsWith("Win")) {
-            pb = new ProcessBuilder("cmd.exe", "/C", "java -jar", 
+            // tady je ten problem, ze proces neni korektne ukoncen a diky tomu je problem pri dalsich spustenich !
+            
+            pb = new ProcessBuilder("cmd.exe", "/C", "java -jar ", 
                 location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
         }
         else {
@@ -178,8 +183,20 @@ public class ServerConnection {
 	 *
      */
 	public void terminate() {
-		p.destroy();	// end process
-		log.delete();	// delete temporary file
+            
+         if(os.startsWith("Win")) {
+            String cmd = "cmd /c taskkill /T /F /IM cmd.exe";       // running process is cmd.exe
+             try {                                                  // not the java !!
+                 Process child = Runtime.getRuntime().exec(cmd);
+             } catch (IOException ex) {
+                ex.printStackTrace();
+             }
+         }           
+         else {
+            p.destroy();	// end process
+             
+         }
+            log.delete();	// delete temporary file
 	}
 
 	/*
