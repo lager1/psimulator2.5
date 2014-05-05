@@ -41,7 +41,6 @@ import shared.Components.NetworkModel;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.Components.HwTypeEnum;
 
-
 /**
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
@@ -520,11 +519,11 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 //            String groups[] = new com.sun.security.auth.NT;
 //            for (String group : groups) {
 //                if (group.equals("S-1-5-32-544"))
-//                    System.out.println("spusteno pod adminem");
+//            //        System.out.println("spusteno pod adminem");
 //                    return true;
 //            }
             
-            System.out.println("spusteno bez admina");
+ //           System.out.println("spusteno bez admina");
             return false;
         }
         
