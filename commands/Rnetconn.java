@@ -16,14 +16,13 @@ import utils.Util;
 /**
  * This command is used to manage connections from simulator to real network.
  * @author Tomas Pitrinec
+ * @author lager1
  */
 public class Rnetconn extends AbstractCommand {
 
 	public Rnetconn(AbstractCommandParser parser) {
 		super(parser);
 	}
-
-
 
 	@Override
 	public void run() {

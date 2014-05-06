@@ -20,6 +20,7 @@ import shared.Components.EthInterfaceModel;
 /**
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
+ * @author lager1
  */
 public final class HwComponentProperties extends AbstractPropertiesOkCancelDialog {
 
@@ -149,8 +150,9 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
             // save interface changes
             tableInterfacesModel.copyValuesFromLocalToGlobal();
         }
-
-        dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
+        
+        if(interfaceSelector != null)
+            dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
         
         // fire edit happend on graph
         drawPanel.getGraphOuterInterface().editHappend();
