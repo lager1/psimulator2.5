@@ -12,8 +12,6 @@ import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -32,13 +30,9 @@ public class ServerConnection {
 	private File netFile;					// file with the network to simulate
 	
 	// sha256 sum of server jar file (so it can be checked, whether the file was modified)
-	//private String serverFileHash = "49f3196e44ac529305b1e2fc12a74125d05ba604de172a501ad17459a8579b4b";		
 	private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
 	private String location;
 	private String os;
-        
-        // HLAVNI TODO
-        // PROC JE TAK VELKY ROZDIL MEZI PUVODNIM A NOVYM BACKENDEM ?!!!
         
 	/* creates the server process
 	 * @param file current file with topology
@@ -161,8 +155,8 @@ public class ServerConnection {
         String result = "";
         byte[] b = null;
 
-        try {
-			b = createChecksum(filename);
+            try {
+                    b = createChecksum(filename);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -178,7 +172,7 @@ public class ServerConnection {
     
     /*
      * Terminates the server process
-	 *
+     *
      */
 	public void terminate() {
             
@@ -213,7 +207,6 @@ public class ServerConnection {
          }           
          else {
             p.destroy();	// end process
-             
          }
             log.delete();	// delete temporary file
 	}
