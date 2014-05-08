@@ -5,9 +5,11 @@
 package commands;
 
 import device.Device;
-import networkModule.L2.EthernetInterface;
-import networkModule.L2.EthernetLayer;
+import java.util.ArrayList;
+import java.util.List;
 import networkModule.SwitchNetworkModule;
+import org.jnetpcap.Pcap;
+import org.jnetpcap.PcapIf;
 import physicalModule.RealSwitchport;
 import physicalModule.Switchport;
 import psimulator2.Psimulator;
@@ -19,6 +21,7 @@ import utils.Util;
  * @author lager1
  */
 public class Rnetconn extends AbstractCommand {
+    private List<PcapIf> alldevs;
 
 	public Rnetconn(AbstractCommandParser parser) {
 		super(parser);
@@ -54,6 +57,20 @@ public class Rnetconn extends AbstractCommand {
 		printLine("");	// na konci odradkovani
 	}
 
+    private boolean getInterfaces() {
+        alldevs = new ArrayList<PcapIf>();              // Will be filled with NICs  
+        StringBuilder errbuf = new StringBuilder();     // For any error msgs  
+
+        int r = Pcap.findAllDevs(alldevs, errbuf);  
+        if (r == Pcap.NOT_OK || alldevs.isEmpty()) {
+            return false;  
+        }  
+
+        return true;
+    }
+        
+        
+        
 	/**
 	 * Najde a vypise vsechny realny switchporty v systemu.
 	 */
@@ -108,11 +125,6 @@ public class Rnetconn extends AbstractCommand {
 		printLine("    help                                          print this help and exit");
 		printLine("    help-cz                                       print this help in czech and exit");
 		printLine("");
-		printLine("Hint: For connection to real network work it has to exist 2 virtual interface on (real) host system. First (tap0) will be used "
-				+ "for communication of host system with simulator and the second (sim0) will be used and controlled by simulator. These two "
-				+ "interfaces has to be connected to each other by virtual cable (with help of VDE util and script virt_iface.sh). Interface "
-				+ "sim0 has to be tied together with some switchport of device in virtual network. Interface sim0 shouldn't be configured in "
-				+ "host system. ");
 	}
 
 	private void printHelpCz() {
@@ -129,14 +141,6 @@ public class Rnetconn extends AbstractCommand {
 		printLine("    help                                          vypise napovedu v anglictine a ukonci se");
 		printLine("    help-cz                                       vypise napovedu v cestine a ukonci se");
 		printLine("");
-		printLine("Napoveda: Pro propojení simulátoru a reálné sítě je nutné navázat spojení mezi počítačem, na kterém je simulátor spuštěn "
-				+ "(hostitelským počítačem), a nějakým počítačem z virtuální síťě simulátoru (virtuálním počítačem). K tomu je "
-				+ "nutné na hostitelském počítači vytvořit 2 virtuální síťová rozhraní propojená virtuálním kabelem, tato rozhraní "
-				+ "se vytváří programem VDE za pomoci skriptu virt_iface.sh. Jedno z vytvořených rozhraní (nazývané obvykle tap0) "
-				+ "bude využívat hostitelský počítač pro komunikaci se simulátorem. Druhé (nazývané sim0) bude využíváno a ovládáno "
-				+ "virtuálním počítačem. K tomu je třeba svázat rozhraní sim0 se switchportem virtuálního počítače, aby s ním "
-				+ "tvořilo logický celek.");
-		printLine("Vice informaci najdete v souboru readme.txt a na wiki strance https://code.google.com/p/psimulator/w/list");
 		printLine("");
 	}
 
