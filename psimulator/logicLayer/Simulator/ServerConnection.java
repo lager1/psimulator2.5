@@ -30,8 +30,10 @@ public class ServerConnection {
 	private File netFile;					// file with the network to simulate
 	
 	// sha256 sum of server jar file (so it can be checked, whether the file was modified)
-	private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
-	private String location;
+	private String serverFileHash = "a16fdb0cbe461de7cc6d0f4964e64d85b03e6eea8b72a4933292b47b9151600b";		
+	//private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
+	
+        private String location;
 	private String os;
         
 	/* creates the server process
@@ -52,12 +54,15 @@ public class ServerConnection {
 
         location = location.substring(0, location.lastIndexOf("/"));
         
+        //System.out.println(location);
         serverFile = new File(location + File.separator + "psimulator2_backend.jar");
+        //System.out.println(serverFile);
         netFile = file;
         status = checkServerFile(); 
     }
 
     public void start() {
+        //System.out.println(os);
         ProcessBuilder pb;
         
         if(os.startsWith("Win")) {
@@ -65,7 +70,10 @@ public class ServerConnection {
                 location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
         }
         else {
-            pb = new ProcessBuilder(location + File.separator + "psimulator2_backend.jar", netFile.toString()); 
+            pb = new ProcessBuilder(
+                    System.getProperty("java.home") + File.separator + "bin" + File.separator + "java", // absolute java binary path
+                    "-jar", location + File.separator + "psimulator2_backend.jar",      // jar !
+                    netFile.toString());
         }
         
         try {
