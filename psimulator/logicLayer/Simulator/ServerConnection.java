@@ -9,7 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ProcessBuilder.Redirect;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -41,28 +43,27 @@ public class ServerConnection {
 	 * 
 	 */
     public ServerConnection (File file) {
-        location = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
-        
+        location = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();    // absolute path
         os = System.getProperty("os.name");
 
         if(os.startsWith("Win")) {
-            location = location.replace("file:/", "");
-        }
-        else {
-            location = location.replace("file:", "");
+            location = location.replaceFirst("/", "");
         }
 
         location = location.substring(0, location.lastIndexOf("/"));
+
+        try {
+            location = URLDecoder.decode(location, "UTF-8");    // for dealing with non ascii characters
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
         
-        //System.out.println(location);
         serverFile = new File(location + File.separator + "psimulator2_backend.jar");
-        //System.out.println(serverFile);
         netFile = file;
         status = checkServerFile(); 
     }
 
     public void start() {
-        //System.out.println(os);
         ProcessBuilder pb;
         
         if(os.startsWith("Win")) {
