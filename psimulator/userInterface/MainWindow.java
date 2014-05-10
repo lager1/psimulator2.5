@@ -437,12 +437,8 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 			case FILE_MODIFIED:
 				FailureReason = dataLayer.getString("SERVER_FILE_MODIFIED");
 				break;
-				
-			case FILE_NOT_EXECUTABLE:
-				FailureReason = dataLayer.getString("SERVER_FILE_NOT_EXECUTABLE");
-				break;
 
-			case FILE_NOT_FOUND:
+                        case FILE_NOT_FOUND:
 				FailureReason = dataLayer.getString("SERVER_FILE_NOT_FOUND");
 				break;
 
