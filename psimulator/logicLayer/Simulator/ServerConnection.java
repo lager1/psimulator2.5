@@ -109,12 +109,7 @@ public class ServerConnection {
 		if(!serverFile.canRead())
 			return ServerFileStatus.FILE_NOT_READABLE;
 		
-		
-		// file is not executable
-		if(!serverFile.canExecute())
-			return ServerFileStatus.FILE_NOT_EXECUTABLE;
-
-		// hash of file does not match expected hash
+                // hash of file does not match expected hash
 		if (!getSHA256CheckSum(serverFile.getAbsolutePath()).equals(serverFileHash)) {
 			System.out.println(getSHA256CheckSum(serverFile.getAbsolutePath()));
 			System.out.println(serverFileHash);
