@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import networkModule.NetworkModule;
 import physicalModule.AbstractPhysicalModule;
-import physicalModule.PhysicMod;
 import physicalModule.PhysicalModuleV2;
 import shell.apps.CommandShell.CommandShell;
 import telnetd.pridaneTridy.TelnetProperties;
@@ -181,7 +180,8 @@ public class Device {
 		}
 	}
 
-	public enum DeviceType {
+        
+        public enum DeviceType {
 
 		cisco_router,
 		linux_computer,

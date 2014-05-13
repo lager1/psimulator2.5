@@ -69,6 +69,7 @@ public class PacketCatcher implements Runnable, Loggable {
 
 		// spustim nekonecnou smycku:
 		pcap.loop(-1, packetHandler, null);
+		//pcap.loop(pcap.LOOP_INFINITE, packetHandler, null);
 
 		log(Logger.DEBUG,"Vlakno catcheru konci.",null); // sem se to muze dostat jedine po zavolani pcap.close()
 	}

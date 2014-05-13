@@ -32,8 +32,8 @@ public class ServerConnection {
 	private File netFile;					// file with the network to simulate
 	
 	// sha256 sum of server jar file (so it can be checked, whether the file was modified)
-	private String serverFileHash = "a16fdb0cbe461de7cc6d0f4964e64d85b03e6eea8b72a4933292b47b9151600b";		
-	//private String serverFileHash = "059ea32e324630971725becb8e552e9919bb2c83426fb63ee8cb7b7e37d1414c";		
+	private String serverFileHash = "7aad37ce172035db12b406fd9e88f710724c5bed28c3eadeb7a06b6c507fff18";		
+	//private String serverFileHash = "a16fdb0cbe461de7cc6d0f4964e64d85b03e6eea8b72a4933292b47b9151600b";		
 	
         private String location;
 	private String os;
@@ -86,7 +86,10 @@ public class ServerConnection {
                 
         pb.redirectErrorStream(true);
         pb.redirectOutput(Redirect.appendTo(log));
-
+        
+        // just for debug
+        pb.redirectError(Redirect.appendTo(log));
+        
         try {
             this.p = pb.start();
         } catch (IOException e) {

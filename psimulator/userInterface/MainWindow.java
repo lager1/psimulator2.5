@@ -37,6 +37,7 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanel;
 import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelOuterInterface;
 import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelState;
 import psimulator.userInterface.actionListerners.PreferencesActionListener;
+import psimulator2.Psimulator;
 import shared.Components.NetworkModel;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.Components.HwTypeEnum;
@@ -413,7 +414,6 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                             return;
                         }     
                     }
-                    
 
                     // change state to editor without changing or removing the graph
                     refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.SIMULATOR, true);
@@ -511,6 +511,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         String s = System.getProperty("os.name");
 
         if(s.startsWith("Win")) {
+            /*
 //            String groups[] = (new com.sun.security.auth.module.NTSystem()).getGroupIDs();
 //            String groups[] = new com.sun.security.auth.NT;
 //            for (String group : groups) {
@@ -520,7 +521,9 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 //            }
             
  //           System.out.println("spusteno bez admina");
-            return false;
+              */
+            
+            return true;    // not needed on windows
         }
         
         else {
@@ -528,7 +531,6 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             if(user.equals("root")) {
                 return true;
             }
-
             else {
                 return false;
             }
