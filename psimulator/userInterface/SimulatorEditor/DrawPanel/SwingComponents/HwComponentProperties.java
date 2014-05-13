@@ -6,6 +6,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
@@ -151,8 +158,24 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
             tableInterfacesModel.copyValuesFromLocalToGlobal();
         }
         
-        if(interfaceSelector != null)
-            dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
+        if(interfaceSelector != null) {
+            PrintWriter writer = null;
+            File temp;
+            try {
+                dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
+                temp = File.createTempFile("realNetConnection", ".sim");               //create a temp file
+                //System.out.println("Temp file : " + temp.getAbsolutePath());
+                
+                writer = new PrintWriter(temp, "UTF-8");
+                writer.println(interfaceSelector.getSelectedInterface());   // write selected real interface name
+                writer.close();
+            }catch(IOException e){
+               e.printStackTrace();
+            } finally {
+                writer.close();
+            }
+        
+        }
         
         // fire edit happend on graph
         drawPanel.getGraphOuterInterface().editHappend();
