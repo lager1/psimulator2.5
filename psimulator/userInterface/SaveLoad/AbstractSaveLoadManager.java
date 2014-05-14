@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import psimulator.dataLayer.DataLayerFacade;
 import shared.Serializer.SaveLoadExceptionParametersWrapper;
 
@@ -28,6 +29,12 @@ public abstract class AbstractSaveLoadManager {
         // create file chooser
         fileChooser = new JFileChooser();
 
+        // only xml files
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+        dataLayer.getString("FILE_CHOOSER_ACCEPT_FILES"), "xml");
+        fileChooser.setAcceptAllFileFilterUsed(false);  // only xml files allowed
+        fileChooser.setFileFilter(filter);
+        
         // set texts to file chooser
         setTextsToFileChooser();
     }
@@ -183,7 +190,7 @@ public abstract class AbstractSaveLoadManager {
         UIManager.put("FileChooser.fileDateHeaderText", dataLayer.getString("FILE_CHOOSER_DATE_MODIFIED"));
 
         UIManager.put("FileChooser.saveInLabelText", dataLayer.getString("FILE_CHOOSER_LOOK_IN"));
-        UIManager.put("FileChooser.acceptAllFileFilterText", dataLayer.getString("FILE_CHOOSER_ACCEPT_FILES"));
+//        UIManager.put("FileChooser.acceptAllFileFilterText", dataLayer.getString("FILE_CHOOSER_ACCEPT_FILES"));
 
         // let fileChooser to update according to current look and feel = it loads texts againt
         fileChooser.updateUI();
