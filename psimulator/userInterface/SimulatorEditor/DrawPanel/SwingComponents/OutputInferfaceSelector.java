@@ -106,6 +106,9 @@ public class OutputInferfaceSelector {
         combo = new JComboBox(devices.toArray());
         combo.setSelectedItem(dataLayer.getRealInterface());
     
+        if(dataLayer.getRealInterface() != null)
+            selectedInterface = dataLayer.getRealInterface();
+        
         realPcPanel.add(combo);
         
         combo.addItemListener(new ItemListener(){

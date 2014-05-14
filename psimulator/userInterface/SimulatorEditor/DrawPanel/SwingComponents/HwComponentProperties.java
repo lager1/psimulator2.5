@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -160,12 +161,25 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
         
         if(interfaceSelector != null) {
             PrintWriter writer = null;
+
+            File f = new File(System.getProperty("java.io.tmpdir"));
+            File[] matchingFiles = f.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.startsWith("realNetConnection") && name.endsWith("sim");    // defined file name
+                }
+            });
+            
+            dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
+            
             File temp;
             try {
-                dataLayer.setRealInterface(interfaceSelector.getSelectedInterface());   // save selected interface into data layer
-                temp = File.createTempFile("realNetConnection", ".sim");               //create a temp file
-                //System.out.println("Temp file : " + temp.getAbsolutePath());
-                
+                if(matchingFiles.length == 0) { // no files present
+                    temp = File.createTempFile("realNetConnection", ".sim");               //create a temp file
+                }
+                else {
+                    temp = matchingFiles[0];
+                }
+
                 writer = new PrintWriter(temp, "UTF-8");
                 writer.println(interfaceSelector.getSelectedInterface());   // write selected real interface name
                 writer.close();
