@@ -15,7 +15,6 @@
    <mapID target="item107" url="topics/tutorial/1_editor/project_save.html" />
    
    <mapID target="item201" url="topics/tutorial/2_simulator/simulation_mode.html" />
-   <mapID target="item202" url="topics/tutorial/2_simulator/simulator_connecting.html" />
    <mapID target="item203" url="topics/tutorial/2_simulator/event_recieve_list_move.html" />
    <mapID target="item204" url="topics/tutorial/2_simulator/event_playing.html" />
    <mapID target="item205" url="topics/tutorial/2_simulator/event_save_load.html" />
