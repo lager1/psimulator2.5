@@ -156,7 +156,7 @@ public class Rnetconn extends AbstractCommand {
                 }
             });
 
-            if(matchingFiles == null) {
+            if(matchingFiles.length == 0) {
                 return null;    // no interface selected in frontend
             }
 
@@ -247,8 +247,8 @@ public class Rnetconn extends AbstractCommand {
             }
 
             String realInterface = getRealInterface();
-            if(realInterface == null) {
-                printLine("no interface selected in properties of real network.");
+            if(realInterface == null || realInterface.equals("")) {
+                printLine("no interface selected in properties of real pc.");
                 return;
             }
 

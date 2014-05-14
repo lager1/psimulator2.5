@@ -32,8 +32,7 @@ public class ServerConnection {
 	private File netFile;					// file with the network to simulate
 	
 	// sha256 sum of server jar file (so it can be checked, whether the file was modified)
-	private String serverFileHash = "7aad37ce172035db12b406fd9e88f710724c5bed28c3eadeb7a06b6c507fff18";		
-	//private String serverFileHash = "a16fdb0cbe461de7cc6d0f4964e64d85b03e6eea8b72a4933292b47b9151600b";		
+	private String serverFileHash = "d4273e435926d3764c26ce1459763cea85ec63ea2dbb23e0e7e8b3f0de85ba5e";		
 	
         private String location;
 	private String os;
