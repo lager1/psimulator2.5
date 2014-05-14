@@ -20,7 +20,6 @@
 
     <tocitem text="2. Simulation mode" image="chapter" >    
         <tocitem text="Simulation mode" target="item201" image="topic" />
-        <tocitem text="Connecting to simulator" target="item202" image="topic" />
         <tocitem text="Recieving events and move in event list" target="item203" image="topic" />
         <tocitem text="Playing events" target="item204" image="topic" />
         <tocitem text="Loading and saving events" target="item205" image="topic" />
