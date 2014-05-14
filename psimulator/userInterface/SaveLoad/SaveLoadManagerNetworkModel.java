@@ -236,7 +236,7 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
         int returnVal = fileChooser.showSaveDialog(parentComponent);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File selctedFile = fileChooser.getSelectedFile();
+            File selctedFile = new File(fileChooser.getSelectedFile() + ".xml");
             
             // save current directory
             recentDir = fileChooser.getCurrentDirectory();
