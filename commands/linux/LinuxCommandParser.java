@@ -82,6 +82,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 		commands.put("iptables", Iptables.class);
 		commands.put("rnetconn", Rnetconn.class);
 		commands.put("service", Service.class);
+		commands.put("dhclient", Dhclient.class);
+                commands.put("dig", Dig.class);
 
 		// prace s filesystemem:
 		commands.put("cat", Cat.class);
