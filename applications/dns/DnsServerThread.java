@@ -19,7 +19,7 @@ import networkModule.L7.ApplicationLayer;
  *
  * @author Michal Horacek
  */
-public class DnsServerThread extends Thread {
+public class DnsServerThread implements Runnable {
 
     private final DnsServer server;
     private final PacketItem packetItem;
@@ -53,6 +53,7 @@ public class DnsServerThread extends Thread {
             sendAnswer(DnsStatus.FORMAT_ERROR);
             return;
         }
+		
         DnsQuery query = getZoneInfo(dnsPacket.question.qName);
         if (query == null) {
             sendAnswer(DnsStatus.NAME_ERROR);
