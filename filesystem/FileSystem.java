@@ -101,6 +101,15 @@ public interface FileSystem {
 	public int runOutputFileJob(String path, OutputFileJob job);
 
 	/**
+	 * 
+	 * @param path   path to the file to work on
+	 * @param job    job to do with file
+	 * @param append true for creating file in append mode
+	 * @return 
+	 */
+	public int runOutputFileJob(String path, OutputFileJob job, boolean append);
+
+	/**
 	 * umount filesystem archive
 	 */
 	public void umount();

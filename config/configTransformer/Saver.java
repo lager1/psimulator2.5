@@ -74,9 +74,12 @@ public class Saver {
 
 		for (NetworkInterface iface : netMod.ipLayer.getNetworkIfaces()) {
 			EthInterfaceModel ethIfaceModel = hwComponentModel.getEthInterface(iface.configID);
-			if (iface.getIpAddress() != null) {
+			if (!iface.isDhcp && iface.getIpAddress() != null) {
 				ethIfaceModel.setIpAddress(iface.getIpAddress().toString());
-			}
+			} else {
+                            ethIfaceModel.setIpAddress("");
+                        }
+                        
 			ethIfaceModel.setIsUp(iface.isUp);
 		}
 	}

@@ -59,7 +59,7 @@ public class RoutingTable implements Loggable{
 	 * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br /> 2: iface nenalezeno, pro zadaneho adresata
 	 * neexistuje zaznam U<br />
 	 */
-	public int addRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr) {
+	public synchronized int addRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr) {
 		boolean rozhraniNalezeno = false;
 		for (Record z : records) { //hledani spravnyho iface
 			if (z.brana == null) { //tohle by moh bejt zaznam potrebnej zaznam priznaku U
@@ -91,7 +91,7 @@ public class RoutingTable implements Loggable{
      * @param rozhr predpoklada se, ze iface na pocitaci existuje
      * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br />
      */
-    public int addRecord(IPwithNetmask adresat, NetworkInterface rozhr){
+    public synchronized int addRecord(IPwithNetmask adresat, NetworkInterface rozhr){
         Record z=new Record(adresat, rozhr);
         return pridaniZaznamu(z);
     }
@@ -106,7 +106,7 @@ public class RoutingTable implements Loggable{
      * @return
      * @author Stanislav Řehák
      */
-    public int addRecord(IPwithNetmask adresat, NetworkInterface rozhr, boolean primo) {
+    public synchronized int addRecord(IPwithNetmask adresat, NetworkInterface rozhr, boolean primo) {
         Record z=new Record(adresat, rozhr, primo);
         return pridaniZaznamu(z);
 	}

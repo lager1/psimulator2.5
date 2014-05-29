@@ -54,7 +54,10 @@ public class Help extends AbstractCommand {
         printLine("traceroute    jen napr. traceroute 1.1.1.1");
         printLine("exit");
         printLine("ip            podprikazy addr a route");
-        printLine("echo, cat     jen na zapisovani a cteni souboru /proc/sys/net/ipv4/ip_forward");
+        printLine("echo, cat     zapisovani a cteni souboru");
+        printLine("editor        jednoduchy textovy editor");
+        printLine("service       implementovane sluzby: networking, dhcp-server, dns-server");
+        printLine("dhclient");
         printLine("");
     }
 
@@ -79,8 +82,11 @@ public class Help extends AbstractCommand {
         printLine("ping          options -c, -i, -s, -t");
         printLine("traceroute    for example: traceroute 1.1.1.1");
         printLine("exit");
-        printLine("ip            podprikazy addr a route");
-        printLine("echo, cat     jen na zapisovani a cteni souboru /proc/sys/net/ipv4/ip_forward");
+        printLine("ip            subcommands addr and route");
+        printLine("echo, cat     reading files");
+        printLine("editor        simple text editor");
+        printLine("service       implemented services: networking, dhcp-server, dns-server");
+        printLine("dhclient");        
         printLine("");
     }
 

@@ -7,6 +7,7 @@ package networkModule.L4;
 import dataStructures.PacketItem;
 import dataStructures.packets.TcpUdpPacket;
 import logging.Loggable;
+import networkModule.L7.ApplicationLayer;
 import utils.Util;
 
 /**
@@ -24,7 +25,6 @@ public class UdpHandler implements Loggable {
 
 	public void handleReceivedUdpPacket(PacketItem m) {
 		TcpUdpPacket p = (TcpUdpPacket) m.packet.data;
-
 		transportLayer.forwardPacketToApplication(m, p.dstPort);
 	}
 

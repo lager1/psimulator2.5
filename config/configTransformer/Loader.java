@@ -4,6 +4,8 @@
 package config.configTransformer;
 
 
+import applications.Networking;
+import commands.linux.LinuxCommand;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -11,15 +13,21 @@ import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
 import filesystem.ArchiveFileSystem;
 import filesystem.FileSystem;
+import config.configFiles.InterfacesFile;
+import filesystem.dataStructures.jobs.OutputFileJob;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
 import networkModule.L2.EthernetInterface;
+import networkModule.L3.LinuxIPLayer;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.CiscoWrapperRT;
+import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.NatTable;
 import networkModule.NetworkModule;
@@ -29,6 +37,7 @@ import psimulator2.Psimulator;
 import shared.Components.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
 import shared.Components.simulatorConfig.*;
+import utils.Util;
 
 /**
  *
@@ -136,6 +145,11 @@ public class Loader implements Loggable {
 		NetworkModule nm = createNetworkModule(model, pc);
 		pc.setNetworkModule(nm);
 
+		if (pc.type == Device.DeviceType.linux_computer) {
+			IpNetworkModule ipNetMod = (IpNetworkModule)nm;
+			ipNetMod.applicationLayer.startServices();
+		}
+				
 		return pc;
 	}
 
@@ -218,7 +232,6 @@ public class Loader implements Loggable {
 	 */
 	private IpNetworkModule createIpNetworkModule(HwComponentModel model, Device pc) {
 		IpNetworkModule nm = new IpNetworkModule(pc);	// vytvoreni sitovyho modulu, pri nem se
-
 		//nahrani interfacu:
 		for (EthInterfaceModel ifaceModel : model.getInterfacesAsList()) {	// pro kazdy rozhrani
 
@@ -228,11 +241,14 @@ public class Loader implements Loggable {
 			ethInterface.addSwitchportSettings(nm.ethernetLayer.getSwitchport(cisloSwitchportu));	// samotny prirazeni switchportu
 
 			IPwithNetmask ip = null;
+			boolean isDhcp = true;
 			if (ifaceModel.getIpAddress() != null && !ifaceModel.getIpAddress().equals("")) {
 				ip = new IPwithNetmask(ifaceModel.getIpAddress(), 24, true);
+				isDhcp = false;
 			}
 
-			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getId(), ifaceModel.getName(), ip, ethInterface, ifaceModel.isIsUp());
+			NetworkInterface netInterface = new NetworkInterface(ifaceModel.getId(), ifaceModel.getName(), ip, 
+					                                             ethInterface, ifaceModel.isIsUp(), isDhcp);
 			nm.ipLayer.addNetworkInterface(netInterface);
 		}
 
@@ -321,11 +337,11 @@ public class Loader implements Loggable {
 		}
 
 		//TODO pripadne nejaky dalsi nastaveni 4. vrstvy?
-
-
+		
 		return nm;
 	}
 
+	
 	/**
 	 * Vytvori sitovej modul switche, uplne ignoruje jeho nastaveni z konfigurace (kdyby tam nejaky bylo).
 	 *

@@ -13,6 +13,7 @@ import device.Device;
 import java.util.*;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.L4.TransportLayer;
 import psimulator2.Psimulator;
 import utils.Util;
 import utils.Wakeable;
@@ -264,6 +265,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 	 */
 	@Override
 	public void run() {
+		TransportLayer transportLayer = applicationLayer.getNetMod().transportLayer;
 		Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
 		int seq = 1;
 		int ttl = firstTTL;

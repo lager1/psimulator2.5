@@ -16,6 +16,7 @@ import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
+import networkModule.L7.ApplicationLayer;
 import utils.Util;
 
 /**
@@ -26,9 +27,11 @@ import utils.Util;
 public class IcmpHandler implements Loggable {
 
 	private final TransportLayer transportLayer;
+	private final ApplicationLayer applicationLayer;
 
 	public IcmpHandler(TransportLayer transportLayer) {
 		this.transportLayer = transportLayer;
+		this.applicationLayer = transportLayer.netMod.applicationLayer;
 	}
 
 	public void handleReceivedIcmpPacket(PacketItem packetItem) {
