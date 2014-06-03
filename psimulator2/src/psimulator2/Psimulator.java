@@ -14,6 +14,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import logging.SystemListener;
 import logging.networkEvents.EventServer;
+import psimulator.dataLayer.DataLayerFacade;
 import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
@@ -39,8 +40,8 @@ public class Psimulator implements Loggable{
 	public Alarm budik;
 	public SystemListener systemListener;
 	public EventServer eventServer;
-
-
+        private String realInterface;
+        
 	private Psimulator() {
 		budik = new Alarm();
 	}
@@ -113,5 +114,5 @@ public class Psimulator implements Loggable{
 		return instance;
 	}
 
-
+    
 }

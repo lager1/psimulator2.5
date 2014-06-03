@@ -138,7 +138,9 @@ public class Main {
 
 		Logger.addListener(eventServer.getListener().getPacketTranslator());
 
-		Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
+                Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Server sucessfully started, listening on port: " + eventServerPort);
 
+                // v tomto je problem - ale neprisel jsem na to proc - konkretne v logging category
+		Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
 	}
 }

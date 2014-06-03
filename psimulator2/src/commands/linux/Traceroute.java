@@ -1,10 +1,10 @@
 /*
  * Erstellt am 16.3.2012.
  */
-
 package commands.linux;
 
 import applications.LinuxTracerouteApplication;
+import applications.dns.DnsResolver;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
@@ -13,82 +13,77 @@ import dataStructures.ipAddresses.IpAddress;
 
 /**
  * TODO dodelat traceroute
+ *
  * @author Tomas Pitrinec
  */
-public class Traceroute extends LinuxCommand implements LongTermCommand, ApplicationNotifiable{
+public class Traceroute extends LinuxCommand implements LongTermCommand, ApplicationNotifiable {
 
-	protected IpAddress adr;
-    protected int navrKod = 0;
     protected int maxTtl = 30; //to je to, co se vypisuje jako hops max
     protected double interval = 0.1; //interval mezi odesilanim v sekudach
     /**
-     * Stav vykonavani prikazu:
-     * 0 - ceka se na pakety<br />
+     * Stav vykonavani prikazu: 0 - ceka se na pakety<br />
      * 1 - vratil se paket od cilovyho pocitace - skoncit<br />
      * 2 - byl timeout - vypisovat hvezdicky a skoncit<br />
      * 3 - vratilo se host unreachable nebo net unreachable<br />
      */
-    protected int stavKonani = 0;
+    //protected int stavKonani = 0;
 
-	private LinuxTracerouteApplication app;
+    private LinuxTracerouteApplication app;
 
-	public Traceroute(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public Traceroute(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
-		parsujPrikaz();
-		if(navrKod ==0){ // jen kdyz je parsovani v poradku
-			parser.setRunningCommand(this, false);
+    @Override
+    public void run() {
+        IpAddress addr = parseCommand();
+        executeCommand(addr);
+    }
 
-			vykonejPrikaz();
-		}
-	}
-
-	@Override
-	public void catchSignal(Signal signal) {
-		if(signal==Signal.CTRL_C){
-			app.exit();
-		}
-	}
-
-	@Override
-	public void catchUserInput(String line) {
-		// nic nedela
-	}
-
-	@Override
-	public void applicationFinished() {
-		parser.deleteRunningCommand();
-	}
-
-
-
-	private void vykonejPrikaz() {
-		app = new LinuxTracerouteApplication(getDevice(), this);
-		app.setTarget(adr);
-		app.setQueriesPerTTL(3);
-		app.setMaxTTL(30);
-		app.start();
-	}
-
-// privatni metody - parsovani:
-
-    protected void parsujPrikaz(){
-        try{
-            adr=new IpAddress(dalsiSlovo());
-        }catch(BadIpException ex){
-            navrKod=1;
-            parser.printService(": traceroute: Error in command syntax." +
-                    " Supported syntax is: \"traceroute <IP address>\"");
-
+    @Override
+    public void catchSignal(Signal signal) {
+        if (signal == Signal.CTRL_C) {
+            app.exit();
         }
     }
 
+    @Override
+    public void catchUserInput(String line) {
+        // nic nedela
+    }
+
+    @Override
+    public void applicationFinished() {
+        parser.deleteRunningCommand();
+    }
+
+    public void executeCommand(IpAddress addr) {
+        if (addr == null) {
+            return;
+        }
+        
+        parser.setRunningCommand(this, false);
+        app = new LinuxTracerouteApplication(getDevice(), this);
+        app.setTarget(addr);
+        app.setQueriesPerTTL(3);
+        app.setMaxTTL(30);
+        app.start();
+    }
+
+// privatni metody - parsovani:
+    protected IpAddress parseCommand() {
+        String word = dalsiSlovo();
+        IpAddress adr;
+        try {
+            adr = new IpAddress(word);
+            return adr;
+        } catch (BadIpException ex) {
+            new DnsResolver(getDevice(), this, word).start();
+        }
+        return null;
+    }
 
 // privatni metody - vykonavani
-
 //    protected void vykonejPrikaz() {
 //
 //        /*
@@ -173,11 +168,4 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 //            printLine(zarovnejZLeva((i + 1) + "", 2) + "  * * *");
 //        }
 //    }
-
-
-
-
-
-
-
 }

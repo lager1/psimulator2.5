@@ -11,6 +11,7 @@ import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.IPLayer;
 import networkModule.L3.LinuxIPLayer;
 import networkModule.L4.TransportLayer;
+import networkModule.L7.ApplicationLayer;
 
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
@@ -22,6 +23,7 @@ public class IpNetworkModule extends SwitchNetworkModule {
 
 	public final IPLayer ipLayer;
 	public final TransportLayer transportLayer;
+	public final ApplicationLayer applicationLayer;
 
 	/**
 	 * Konstruktor sitovyho modulu.
@@ -42,6 +44,7 @@ public class IpNetworkModule extends SwitchNetworkModule {
 				this.ipLayer = null;
 		}
 		this.transportLayer = new TransportLayer(this);
+		this.applicationLayer = new ApplicationLayer(this);
 	}
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema

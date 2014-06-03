@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import logging.Logger;
 import logging.LoggingCategory;
+import networkModule.L4.TransportLayer;
 import psimulator2.Psimulator;
 import utils.Util;
 import utils.Wakeable;
@@ -155,7 +156,9 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
 	@Override
 	public void run() {
 		Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
+		TransportLayer transportLayer = applicationLayer.getNetMod().transportLayer;
 		int i = 0;
+		
 		while ((i < count || count == -1) && isRunning()) {	// bezi se jen dokud je running
 			int seq = i + 1;
 			Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);

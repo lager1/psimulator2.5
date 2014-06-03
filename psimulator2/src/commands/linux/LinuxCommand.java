@@ -20,6 +20,8 @@ public abstract class LinuxCommand extends AbstractCommand {
 	protected boolean ladiciVypisovani; //pro debug
 
 	protected final IPLayer ipLayer;	// zkratka
+	
+	public LinuxCommandType type = LinuxCommandType.ELSE;
 
 	public LinuxCommand(AbstractCommandParser parser) {
 		super(parser);
@@ -42,5 +44,9 @@ public abstract class LinuxCommand extends AbstractCommand {
 		return parser.nextWord();
 	}
 
-
+	public enum LinuxCommandType {
+		PING,
+		TRACEROUTE,
+		ELSE,
+	}
 }

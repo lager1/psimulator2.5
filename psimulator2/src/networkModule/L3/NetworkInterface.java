@@ -24,6 +24,10 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 	 * default behavior on cisco: false
 	 */
 	public boolean isUp = true;
+	/*
+	 * Urcuje, jestli je rozhrani konfigurovane staticky, nebo pres DHCP.
+	 */
+	public boolean isDhcp;
 	/**
 	 * Je naschval protected! Nekdy v budoucnu mozna budeme chtit pridat nejake akce, kdyz se zmeni IP..
 	 * IP na rozhrani se meni pred IPLayer a metodu changeIpAddressOnInterface().
@@ -43,12 +47,14 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 		this.ethernetInterface = iface;
 	}
 
-	public NetworkInterface(Integer configID, String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, boolean isUp) {
+	public NetworkInterface(Integer configID, String name, IPwithNetmask ipAddress, EthernetInterface ethernetInterface, 
+			                boolean isUp, boolean isDhcp) {
 		this.configID = configID;
 		this.name = name;
 		this.ipAddress = ipAddress;
 		this.ethernetInterface = ethernetInterface;
 		this.isUp = isUp;
+		this.isDhcp = isDhcp;
 	}
 
 	/**

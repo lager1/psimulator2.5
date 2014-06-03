@@ -7,7 +7,6 @@ import de.schlichtherle.truezip.file.TVFS;
 import de.schlichtherle.truezip.fs.FsEntryNotFoundException;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.JarDriver;
-import de.schlichtherle.truezip.fs.nio.file.FileDriver;
 import de.schlichtherle.truezip.nio.file.TPath;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 import filesystem.dataStructures.Directory;
@@ -23,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -104,7 +105,6 @@ public class ArchiveFileSystem implements FileSystem {
 	@Override
 	public boolean isDir(String path) {
 
-
 		TFile file = getRelativeTFile(path);
 
 		if (file == null) {
@@ -181,7 +181,7 @@ public class ArchiveFileSystem implements FileSystem {
 
 
 	}
-
+	
 	@Override
 	public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException {
 
@@ -218,9 +218,9 @@ public class ArchiveFileSystem implements FileSystem {
 		return -1;
 
 	}
-
+	
 	@Override
-	public int runOutputFileJob(String path, OutputFileJob job) {
+	public int runOutputFileJob(String path, OutputFileJob job, boolean append) {
 
 		while (Thread.interrupted()) {  // clear threat interrupted status
 		}
@@ -236,20 +236,30 @@ public class ArchiveFileSystem implements FileSystem {
 
 			TPath pat = new TPath(file);
 
-			output = Files.newOutputStream(pat);
+			if (append) {
+				output = Files.newOutputStream(pat, APPEND, CREATE);
+			}
+			else {
+				output = Files.newOutputStream(pat);
+			}
+			
 			job.workOnFile(output);
 			return 0;
 		} catch (Exception ex) {
 			Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Exception occured when running outputFileJob: " + ex.toString());
 		} finally {
-
 			try {
 				output.close();
 			} catch (Exception ex) {
 			}
 		}
 
-		return -1;
+		return -1;		
+	}
+	
+	@Override
+	public int runOutputFileJob(String path, OutputFileJob job) {
+		return runOutputFileJob(path, job, false);
 	}
 
 	/**
