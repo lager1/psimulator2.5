@@ -3,6 +3,8 @@
  */
 package networkModule.L2;
 
+import dataStructures.MacAddress;
+
 /**
  * Represents settings of switchport in Network module in ethernet layer.
  *
@@ -17,6 +19,12 @@ public class SwitchportSettings {
     public SwitchportSettings(int switchportNumber) {
         this.switchportNumber = switchportNumber;
         isUp = true;
+    }
+
+    public MacAddress getSwitchportMacAddress() {
+        if (assignedInterface != null)
+            return assignedInterface.getMac();
+        return null;
     }
 
     @Override

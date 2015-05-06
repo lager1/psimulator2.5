@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import logging.Loggable;
+import networkModule.L2.Stp.StpPortStates;
+import networkModule.SwitchNetworkModule;
 
 /**
  * Representace ethernetovyho interface (sitovy karty) se switchovaci tabulkou. Spolecny pro switch i router. Ma jmeno,
@@ -131,7 +133,11 @@ public class EthernetInterface implements Loggable {
                 continue;
             if (!etherLayer.physicMod.isSwitchportConnected(switchport.switchportNumber))
                 continue;
-	
+
+            if (etherLayer.getNetMod().isSwitch() &&
+                    ((SwitchNetworkModule) etherLayer.getNetMod()).stpEnabled &&
+                    ((SwitchNetworkModule) etherLayer.getNetMod()).stpState.portsStates.get(switchport.switchportNumber).state != StpPortStates.PORT_FORWARDING)
+                continue;
             etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
         }
     }

@@ -129,6 +129,7 @@ public class Loader implements Loggable {
         //buildeni switchportu:
         int cislovaniSwitchportu = 0;
         names = new HashSet<>();
+
         for (EthInterfaceModel ifaceModel : (Collection<EthInterfaceModel>) model.getEthInterfaces()) { // prochazim interfacy a pridavam je jako switchporty
             registerID(ifaceModel.getId());
             registerName(ifaceModel.getName(), model);
@@ -352,6 +353,7 @@ public class Loader implements Loggable {
         // -> switchi se priradi jedno rozhrani a da se mu nahodna mac
         nm.ethernetLayer.addAllSwitchportsToGivenInterface(ethIface);
         ethIface.switchingEnabled = true;
+        nm.setupSTP(model.getStpEnabled(), model.getMaxAge(),model.getHelloTime(), model.getForwardDelay(), model.getBridgePriority());
         return nm;
     }
 

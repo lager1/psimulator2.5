@@ -11,6 +11,7 @@ import java.util.*;
 
 import logging.*;
 import networkModule.*;
+import networkModule.L2.Stp.StpPortStates;
 import physicalModule.AbstractPhysicalModule;
 import shared.HookManager;
 import utils.SmartRunnable;
@@ -242,7 +243,10 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
             iface.transmitPacketOnAllSwitchports(packet, incoming);    // interface to odesle na vsechny porty
 
         } else {    // switchport nalezen, posilam to na nej
-            linkDebug("Jdu odeslat paket na interface " + iface.name + " na switchport " + swport.switchportNumber + ". ", packet);
+            if (netMod.isSwitch() &&
+                    ((SwitchNetworkModule) netMod).stpEnabled &&
+                    ((SwitchNetworkModule) netMod).stpState.portsStates.get(swport.switchportNumber).state != StpPortStates.PORT_FORWARDING)
+                return;
             netMod.getPhysicMod().sendPacket(packet, swport.switchportNumber); //odeslu to po tom najitym switchportu
         }
     }
