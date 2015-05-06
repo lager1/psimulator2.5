@@ -1,11 +1,11 @@
 package psimulator.dataLayer.Simulator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 
+import dataStructures.packets.L2Packet;
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Enums.SimulatorPlayerCommand;
@@ -15,6 +15,7 @@ import shared.Components.CableModel;
 import shared.Components.EthInterfaceModel;
 import shared.Components.HwComponentModel;
 import shared.SimulatorEvents.SerializedComponents.EventType;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.telnetConfig.TelnetConfig;
@@ -42,6 +43,11 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     private volatile boolean isSequential = true;
     private volatile int currentSpeed = SPEED_INIT;
     private volatile int currentDelay = DELAY_INIT;
+
+    private EnumSet<PacketType> displayedPacketTypes = EnumSet.allOf(PacketType.class);
+    private TableRowSorter eventSorter;
+    private RowFilter eventFilter;
+
     //
     //private volatile int currentPositionInList = 0;
     //
@@ -51,6 +57,17 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
         this.dataLayerFacade = dataLayerFacade;
         eventTableModel = new EventTableModel();
         isPlaying = false;
+
+        eventSorter = new TableRowSorter(getEventTableModel());
+        eventSorter.setRowFilter(eventFilter = new RowFilter()
+            {
+                @Override
+                public boolean include(Entry entry)
+                {
+                    return displayedPacketTypes.contains((PacketType)entry.getValue(3));
+                }
+            }
+        );
     }
 
     // ----- OBSERVERS notify methods
@@ -375,6 +392,11 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
         });
     }
 
+    public RowSorter getEventsTableSorter()
+    {
+        return eventSorter;
+    }
+
     /**
      * Used from another thread
      */
@@ -442,7 +464,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     }
 
     /**
-     * used from Controll panel
+     * used from Control panel
      */
     @Override
     public void moveToEvent(final int index) {
@@ -485,8 +507,15 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
      * @return
      */
     @Override
-    public SimulatorEventWithDetails getNextEvent() {
-        return eventTableModel.getNextEvent();
+    public SimulatorEventWithDetails getNextEvent()
+    {
+        SimulatorEventWithDetails event = null;
+        while (eventTableModel.getCurrentPositionInList() < eventTableModel.getRowCount()) {
+            event = eventTableModel.getNextEvent();
+            if (displayedPacketTypes.contains(event.getPacketType()))
+                break;
+        }
+        return event;
     }
 
 
@@ -685,5 +714,18 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     @Override
     public void setTelnetConfig(TelnetConfig telnetConfig) {
         dataLayerFacade.setTelnetConfig(telnetConfig);
+    }
+
+    @Override
+    public EnumSet<PacketType> getDisplayedEventTypes()
+    {
+        return displayedPacketTypes;
+    }
+
+    @Override
+    public void setDisplayedEventTypes(EnumSet<PacketType> filter)
+    {
+        this.displayedPacketTypes = filter;
+        this.eventTableModel.fireTableDataChanged();
     }
 }

@@ -108,8 +108,8 @@ public class DataLayer extends DataLayerFacade {
     }
 
     @Override
-    public Object[] getAvaiableLanguageNames() {
-        return languageManager.getAvaiableLanguageNames();
+    public Object[] getAvailableLanguageNames() {
+        return languageManager.getAvailableLanguageNames();
     }
 
     @Override

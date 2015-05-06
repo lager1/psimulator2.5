@@ -221,7 +221,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     }
 
     /**
-     * gets first avaiable ethInterface, if no avaiable null is renturned
+     * gets first available ethInterface, if no available null is renturned
      *
      * @return
      */

@@ -3,9 +3,11 @@
  */
 package physicalModule;
 
+import dataStructures.MacAddress;
 import dataStructures.packets.L2Packet;
 import device.Device;
 
+import java.lang.invoke.SwitchPoint;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,7 +63,7 @@ public abstract class AbstractPhysicalModule implements Loggable {
      * Wakes worker.
      *
      * @param packet to send via physical module
-     * @param iface  through it will be send
+     * @param switchportNumber  through it will be send
      */
     public abstract void sendPacket(L2Packet packet, int switchportNumber);
 
@@ -104,7 +106,6 @@ public abstract class AbstractPhysicalModule implements Loggable {
     protected NetworkModule getNetMod() {
         return device.getNetworkModule();
     }
-
 
     public class BufferItem {
 

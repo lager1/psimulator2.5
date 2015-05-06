@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.Observable;
 import java.util.Observer;
@@ -13,11 +14,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableRowSorter;
 
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Enums.SimulatorPlayerCommand;
 import psimulator.dataLayer.Enums.ToolbarIconSizeEnum;
+import psimulator.dataLayer.Simulator.EventTableModel;
 import psimulator.dataLayer.Simulator.ParseSimulatorEventException;
 import psimulator.dataLayer.Simulator.SimulatorManager;
 import psimulator.dataLayer.Simulator.SimulatorManagerInterface;
@@ -27,6 +30,7 @@ import psimulator.userInterface.ConnectionAnimation;
 import psimulator.userInterface.MainWindowInnerInterface;
 import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelState;
 //import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelState;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 
 /**
@@ -80,6 +84,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
     private JTableEventList jTableEventList;
     private JScrollPane jScrollPaneTableEventList;
     private JButton jButtonDeleteEvents;
+    private JButton jButtonFilterEvents;
     // Packet details panel
     private JPanel jPanelPacketDetails;
     private JLabel jLabelDetailsTimeName;
@@ -169,9 +174,9 @@ public class SimulatorControlPanel extends JPanel implements Observer {
                 //updateConnectionInfoAccordingToModel();
                 break;
             case CONNECTION_CONNECTION_FAILED:  // when connection failed
-                JOptionPane.showMessageDialog(mainWindow.getMainWindowComponent(),
-                        dataLayer.getString("CONNECTION_BROKE_DOWN"),
-                        dataLayer.getString("WARNING"),
+                JOptionPane.showMessageDialog(mainWindow.getMainWindowComponent(), 
+                        dataLayer.getString("CONNECTION_BROKE_DOWN"), 
+                        dataLayer.getString("WARNING"), 
                         JOptionPane.WARNING_MESSAGE);
                 mainWindow.refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);    // set main window state to EDITOR
                 break;
@@ -367,6 +372,16 @@ public class SimulatorControlPanel extends JPanel implements Observer {
                 }
             }
         });
+
+        jButtonFilterEvents.addActionListener(new ActionListener()
+                                              {
+                                                  @Override
+                                                  public void actionPerformed(ActionEvent e)
+                                                  {
+                                                      showFilterDialog();
+                                                  }
+                                              }
+        );
 
         // -------------------- PLAY BUTTONS ACTIONS ---------------------
         jButtonFirst.addActionListener(new ActionListener() {
@@ -567,7 +582,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
         //
         jPanelSaveLoadButtons = new JPanel();
         //jPanelConnectSaveLoadButtons.setLayout(new BoxLayout(jPanelConnectSaveLoadButtons, BoxLayout.X_AXIS));
-        GridLayout jPanelSaveLoadButtonsLayout = new GridLayout(1,3);
+        GridLayout jPanelSaveLoadButtonsLayout = new GridLayout(1, 3);
         jPanelSaveLoadButtonsLayout.setHgap(4);
         jPanelSaveLoadButtons.setLayout(jPanelSaveLoadButtonsLayout);
         //
@@ -730,6 +745,9 @@ public class SimulatorControlPanel extends JPanel implements Observer {
 
         //// link table with table model
         jTableEventList = new JTableEventList(simulatorManagerInterface.getEventTableModel());
+        jTableEventList.setRowSorter(simulatorManagerInterface.getEventsTableSorter());
+
+
         //
         jPanelEventListTable = new JPanel();
         jScrollPaneTableEventList = new JScrollPane();
@@ -749,8 +767,13 @@ public class SimulatorControlPanel extends JPanel implements Observer {
 
         jButtonDeleteEvents = new JButton();
         jButtonDeleteEvents.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        jButtonFilterEvents = new JButton();
+        jButtonFilterEvents.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         //jPanelEventListButtons.add(Box.createRigidArea(new Dimension(0, 7)));
+
+        jPanelEventListButtons.add(jButtonFilterEvents);
         jPanelEventListButtons.add(jButtonDeleteEvents);
         //
         //
@@ -900,6 +923,10 @@ public class SimulatorControlPanel extends JPanel implements Observer {
         jPanelEventList.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("EVENT_LIST")));
         jButtonDeleteEvents.setText(dataLayer.getString("DELETE_EVENTS"));
         jButtonDeleteEvents.setToolTipText(dataLayer.getString("DELETES_EVENTS_IN_LIST"));
+
+        jButtonFilterEvents.setText(dataLayer.getString("FILTER_EVENTS"));
+        jButtonFilterEvents.setToolTipText(dataLayer.getString("FILTER_EVENTS_IN_LIST"));
+
         //
         jTableEventList.getColumnModel().getColumn(0).setHeaderValue(dataLayer.getString("TIME") + " [s]");
         jTableEventList.getColumnModel().getColumn(1).setHeaderValue(dataLayer.getString("FROM"));
@@ -1051,11 +1078,11 @@ public class SimulatorControlPanel extends JPanel implements Observer {
 
     private int showYesNoDialog(String title, String message) {
         Object[] options = {dataLayer.getString("YES"), dataLayer.getString("NO")};
-        int n = JOptionPane.showOptionDialog(this,
-                message,
-                title,
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
+        int n = JOptionPane.showOptionDialog(this, 
+                message, 
+                title, 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.INFORMATION_MESSAGE, 
                 null, //do not use a custom Icon
                 options, //the titles of buttons
                 options[0]); //default button title
@@ -1065,13 +1092,86 @@ public class SimulatorControlPanel extends JPanel implements Observer {
 
     private void showWarningDialog(String title, String message) {
         //custom title, warning icon
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this, 
                 message, title, JOptionPane.WARNING_MESSAGE);
     }
     
     private void showErrorDialog(String title, String message) {
         //custom title, warning icon
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this, 
                 message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    private JDialog showFilterDialog() {
+        final JDialog dialog = new JDialog();
+        dialog.setTitle("Filter");
+        dialog.setLayout(new GridLayout(2, 0));
+        dialog.setResizable(false);
+        dialog.setSize(new Dimension(200, 225));
+        dialog.setAlwaysOnTop(true);
+
+        final EnumSet<PacketType> types = simulatorManagerInterface.getDisplayedEventTypes();
+        final JComponent container = new JPanel();
+
+
+
+        container.setLayout(new GridLayout(0, 2));
+        for (final PacketType f : PacketType.values())
+        {
+            final JCheckBox checkBox = new JCheckBox(f.toString());
+            checkBox.setSelected(types.contains(f));
+            checkBox.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    if (checkBox.isSelected())
+                        types.add(f);
+                    else
+                        types.remove(f);
+                }
+            });
+            container.add(checkBox);
+        }
+
+
+
+        JPanel buttonsContainer = new JPanel();
+        buttonsContainer.add(Box.createHorizontalGlue());
+        buttonsContainer.setLayout(new BoxLayout(buttonsContainer, BoxLayout.X_AXIS));
+
+        JButton okButton = new JButton(dataLayer.getString("OK"));
+        okButton.setAlignmentX(LEFT_ALIGNMENT);
+        okButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                simulatorManagerInterface.setDisplayedEventTypes(types);
+                dialog.setVisible(false);
+            }
+        });
+        buttonsContainer.add(okButton);
+
+        buttonsContainer.add(Box.createHorizontalStrut(5));
+
+        JButton cancelButton = new JButton(dataLayer.getString("CANCEL"));
+        cancelButton.setAlignmentX(RIGHT_ALIGNMENT);
+        cancelButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dialog.setVisible(false);
+            }
+        });
+
+        buttonsContainer.add(cancelButton);
+        buttonsContainer.add(Box.createHorizontalGlue());
+
+        dialog.add(container);
+        dialog.add(buttonsContainer);
+        dialog.setVisible(true);
+        return dialog;
     }
 }

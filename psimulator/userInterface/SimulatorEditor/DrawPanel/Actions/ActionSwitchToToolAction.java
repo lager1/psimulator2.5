@@ -24,7 +24,7 @@ public class ActionSwitchToToolAction extends AbstractDrawPanelAction{
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        drawPanel.doSetTollInEditorToolBar(mainTool);
+        drawPanel.doSetToolInEditorToolBar(mainTool);
     }
 
 }

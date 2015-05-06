@@ -1,11 +1,13 @@
 package psimulator.dataLayer.Simulator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import psimulator.dataLayer.SimulatorEvents.SimulatorEventWithDetails;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 
 /**
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
@@ -79,6 +81,8 @@ public class EventTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int i, int i1) {
         synchronized (lock) {
+            if (eventList.size() <= i)
+                return null;
             return eventList.get(i).getValueAt(i1);
         }
     }
@@ -92,8 +96,21 @@ public class EventTableModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(int c) {
         synchronized (lock) {
-            return getValueAt(0, c).getClass();
+            switch (c)
+            {
+                case 0:
+                    return long.class;
+                case 1:
+                    return String.class;
+                case 2:
+                    return String.class;
+                case 3:
+                    return PacketType.class;
+                case 4:
+                    return Color.class;
+            }
         }
+        return null;
     }
 
     /**
@@ -242,8 +259,9 @@ public class EventTableModel extends AbstractTableModel {
 
             currentPositionInList = 0;
             isInTheList = false;
-
-            this.fireTableRowsDeleted(0, listSize);
+            if (listSize > 0)
+                //this.fireTableRowsDeleted(0, listSize);
+                this.fireTableDataChanged();
         }
     }
 
@@ -307,7 +325,8 @@ public class EventTableModel extends AbstractTableModel {
             // set event list
             this.eventList = eventList;
             // fire event
-            this.fireTableRowsInserted(0, eventList.size());
+            System.out.println(eventList.size());
+            this.fireTableRowsInserted(0, eventList.size() - 1);
         }
     }
 }

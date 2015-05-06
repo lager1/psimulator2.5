@@ -90,7 +90,10 @@ public class SaveLoadManagerEvents extends AbstractSaveLoadManager {
         int returnVal = fileChooser.showSaveDialog(parentComponent);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File selctedFile = new File(fileChooser.getSelectedFile() + ".xml");
+            String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+            if (!fileName.endsWith(".xml"))
+                fileName += ".xml";
+            File selctedFile = new File(fileName);
 
             // save current directory
             recentDir = fileChooser.getCurrentDirectory();

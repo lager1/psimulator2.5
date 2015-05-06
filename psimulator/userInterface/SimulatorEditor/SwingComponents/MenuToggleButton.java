@@ -37,7 +37,7 @@ public class MenuToggleButton extends JToggleButton {
         this.dataLayer = dataLayer;
 
         if (tools == null || tools.isEmpty()) {
-            this.setToolTipText("no tool avaiable");
+            this.setToolTipText("no tool available");
             this.setEnabled(false);
         } else {
             // if more than one tool, create and add popup menu

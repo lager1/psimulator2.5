@@ -259,7 +259,7 @@ public class TelnetIO {
      * @return true if new data arrived, else otherwise
      * @throws IOException
      */
-    public boolean avaiable() {
+    public boolean available() {
         try {
             if (m_In.available() > 0)
                 return true;

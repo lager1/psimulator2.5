@@ -44,7 +44,7 @@ import java.io.IOException;
  */
 public interface BasicTerminalIO {
 
-    public boolean avaiable();
+    public boolean available();
 
     /**
      * Method that retrieves Input from the underlying

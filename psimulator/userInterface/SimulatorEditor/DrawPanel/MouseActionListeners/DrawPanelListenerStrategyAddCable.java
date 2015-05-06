@@ -124,7 +124,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
             // if first component dont have any free interface
             if (!component1.hasFreeInterace()) {
                 // show meesage dialog
-                doShowInformMessageDialog(dataLayer.getString("NO_INTERFACE_AVAIABLE"), dataLayer.getString("CONNECTION_PROBLEM"));
+                doShowInformMessageDialog(dataLayer.getString("NO_INTERFACE_AVAILABLE"), dataLayer.getString("CONNECTION_PROBLEM"));
                 // cancel cable making
                 initVariablesForCableMaking();
             } else {
@@ -143,7 +143,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
                 // if second component dont have any free interface
                 if (!component2.hasFreeInterace()) {
                     // show meesage dialog
-                    doShowInformMessageDialog(dataLayer.getString("NO_INTERFACE_AVAIABLE"), dataLayer.getString("CONNECTION_PROBLEM"));
+                    doShowInformMessageDialog(dataLayer.getString("NO_INTERFACE_AVAILABLE"), dataLayer.getString("CONNECTION_PROBLEM"));
                     // remove second component from cable making
                     removeSecondComponentFromCable();
                 } else {
@@ -167,7 +167,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
             // will be converted again in mousePressedLeft
             mousePressedLeft(oldMouseEvent);
         }else{ // if nothing clicked
-            drawPanel.doSetTollInEditorToolBar(MainTool.HAND);
+            drawPanel.doSetToolInEditorToolBar(MainTool.HAND);
         }
 
     }
@@ -208,7 +208,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
 
     /**
      * Chooses interface. If right mouse button clicked, than user sets which interface to use, if left
-     * button clicked, than it uses first avaiable interface
+     * button clicked, than it uses first available interface
      * @param e Mouse event
      * @param component Component that is beeing connected
      */

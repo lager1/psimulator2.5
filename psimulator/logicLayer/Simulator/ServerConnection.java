@@ -109,14 +109,14 @@ public class ServerConnection {
         // is not readable
         if (!serverFile.canRead())
             return ServerFileStatus.FILE_NOT_READABLE;
-
+/*
         // hash of file does not match expected hash
         if (!getSHA256CheckSum(serverFile.getAbsolutePath()).equals(serverFileHash)) {
             System.out.println(getSHA256CheckSum(serverFile.getAbsolutePath()));
             System.out.println(serverFileHash);
             return ServerFileStatus.FILE_MODIFIED;
         }
-
+*/
         // file is ok
         return ServerFileStatus.FILE_OK;
     }
