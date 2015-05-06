@@ -8,12 +8,14 @@ import java.util.Arrays;
 
 import utils.Utilities;
 
+import javax.crypto.Mac;
+
 /**
  * Implementation of mac address. Vnitrni representace je pomoci integeru, protoze s bytama byl problem se znainkem.
  *
  * @author neiss
  */
-public class MacAddress {
+public class MacAddress implements Comparable {
 
     private final byte[] representation;
 
@@ -131,7 +133,20 @@ public class MacAddress {
      * @return
      */
     public boolean isLessOrEqualThan(MacAddress other) {
-        return isByteLessThan(other, 0);
+        for (int i = 0; i < 6; i++) {
+            /*
+            System.out.println("I: " + i + "  =>  " +
+                                    (String.format("%02X", representation[i])) +  "(" + representation[i] + ") " +
+                                    (String.format("%02X", other.representation[i])) + "(" + other.representation[i] + ") " +
+                                    "  <: " + (((int)representation[i] & 0xff) < ((int)other.representation[i] & 0xff)) +
+                                    "  >: " + (((int)representation[i] & 0xff) > ((int)other.representation[i] & 0xff)));
+            */
+            if (((int)representation[i] & 0xff) < ((int)other.representation[i] & 0xff))
+                return true;
+            else if (((int)representation[i] & 0xff) > ((int)other.representation[i] & 0xff))
+                return false;
+        }
+        return true;
     }
 
     private boolean isByteLessThan(MacAddress other, int cisloBytu) {
@@ -167,6 +182,21 @@ public class MacAddress {
             }
         }
         return true;
+    }
+
+
+    public static Boolean isSwitchGroupAddress(MacAddress mac) {
+        final byte[] groupAddress = new byte[] { (byte)0x01, (byte)0x80, (byte)0xC2, (byte)0x00, (byte)0x00, (byte)0x00 };
+        for (int i = 0; i < 6; i++) {
+            if (mac.representation[i] != groupAddress[i])
+                return false;
+        }
+        return true;
+    }
+
+    public static MacAddress switchGroupAddress() {
+        final byte[] groupAddress = new byte[] { (byte)0x01, (byte)0x80, (byte)0xC2, (byte)0x00, (byte)0x00, (byte)0x00 };
+        return new MacAddress(groupAddress);
     }
 
     public static MacAddress broadcast() {
@@ -231,5 +261,21 @@ public class MacAddress {
         } else {
             return v;
         }
+    }
+
+
+    public static Integer compare(MacAddress a, MacAddress b) {
+        int out = 0;
+        for (int i = 0; i < 6; ++i)
+            out = out + (a.representation[i] - b.representation[i]) << (8 * (5 - i));
+        return out;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        int out = 0;
+        for (int i = 0; i < 6; ++i)
+            out = out + (this.representation[i] - ((MacAddress) o).representation[i]) << (8 * (5 - i));
+        return out;
     }
 }
