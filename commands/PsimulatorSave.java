@@ -6,7 +6,6 @@ package commands;
 import psimulator2.Psimulator;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class PsimulatorSave extends AbstractCommand {

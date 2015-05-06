@@ -5,6 +5,7 @@ import dataStructures.configurations.DhcpServerConfiguration;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +13,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DhcpdConfFile extends AbstractLinuxFile {
@@ -27,16 +28,15 @@ public class DhcpdConfFile extends AbstractLinuxFile {
     // parser se nachazi uvnitr subnet bloku
     private final int SUBNET_STATE = 1;
     private static final String[] ALLOWED_STRINGS = {
-        "lease-time",
-        "domain-name-servers",
-        "domain-name",
-        "subnet-mask",
-        "broadcast-address",
-        "routers"};
+            "lease-time",
+            "domain-name-servers",
+            "domain-name",
+            "subnet-mask",
+            "broadcast-address",
+            "routers"};
     private static final Set<String> ALLOWED_OPTIONS = new HashSet<>(Arrays.asList(ALLOWED_STRINGS));
 
     /**
-     *
      * @param device
      */
     public DhcpdConfFile(FileSystem fs) {
@@ -56,7 +56,6 @@ public class DhcpdConfFile extends AbstractLinuxFile {
     }
 
     /**
-     *
      * @return
      */
     public DhcpServerConfiguration getConfiguration() {

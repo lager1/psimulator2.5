@@ -5,14 +5,16 @@
 package telnetd.pridaneTridy;
 
 import device.Device;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shared.telnetConfig.ConfigRecord;
 import shared.telnetConfig.TelnetConfig;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * x
@@ -25,6 +27,7 @@ public class TelnetProperties {
 
         LINUX, CISCO
     }
+
     private static Properties properties = new Properties();
     private static int lastPort = 11000;
     private static List<String> listenerNames = new LinkedList<String>();
@@ -77,7 +80,7 @@ public class TelnetProperties {
 
     }
 
-    public static TelnetConfig getTelnetConfig(){
+    public static TelnetConfig getTelnetConfig() {
         return telnetConfig;
     }
 
@@ -91,19 +94,19 @@ public class TelnetProperties {
         int maxTestedPort = 10;
         int testedPort = 0;
 
-        while (!utils.Util.availablePort(port)) {
+        while (!Utilities.availablePort(port)) {
             port++;
             lastPort++;
             testedPort++;
             if (testedPort > maxTestedPort) {
-                Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot start telnet server for device "+name+" . I have tried 10 port, but none one is available");
+                Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot start telnet server for device " + name + " . I have tried 10 port, but none one is available");
                 return;
             }
         }
 
         device.setTelnetPort(port);
 
-        Logger.log("TELNET LISTENING PORT: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
+        Logger.log("TELNET LISTENING PORT: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Utilities.alignFromRight(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
 
         // now add records for UI editor
         ConfigRecord cfgr = new ConfigRecord();

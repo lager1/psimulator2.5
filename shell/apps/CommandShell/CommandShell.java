@@ -8,11 +8,13 @@ import commands.AbstractCommandParser;
 import device.Device;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -21,7 +23,6 @@ import shell.apps.TerminalApplication;
 import telnetd.io.BasicTerminalIO;
 
 /**
- *
  * @author Martin Lukáš
  */
 public class CommandShell extends TerminalApplication implements Loggable {
@@ -102,6 +103,7 @@ public class CommandShell extends TerminalApplication implements Loggable {
 //    public List<String> getCommandList() {
 //        return this.pocitac.getCommandList();
 //    }
+
     /**
      * method that read command from command line
      *
@@ -209,13 +211,12 @@ public class CommandShell extends TerminalApplication implements Loggable {
      * method used to print text to the terminal
      *
      * @param text text to be printed to the terminal
-     *
      */
     public void print(String text) {
         try {
 
             terminalIO.write(text);
-            if(!terminalIO.isAutoflushing())
+            if (!terminalIO.isAutoflushing())
                 terminalIO.flush();
 
             Logger.log(Logger.DEBUG, LoggingCategory.TELNET, text);
@@ -229,7 +230,6 @@ public class CommandShell extends TerminalApplication implements Loggable {
      *
      * @param lines
      * @param delay in milliseconds
-     *
      */
     public void printWithDelay(String lines, int delay) {
         try {
@@ -462,8 +462,7 @@ public class CommandShell extends TerminalApplication implements Loggable {
             this.childProcess.quit();
         }
 
-        if(historyManager != null )
-        {
+        if (historyManager != null) {
             historyManager.saveAllHistory();
         }
 

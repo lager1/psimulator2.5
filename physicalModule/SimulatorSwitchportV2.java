@@ -5,19 +5,20 @@ package physicalModule;
 
 import dataStructures.DropItem;
 import dataStructures.packets.L2Packet;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import utils.SmartRunnable;
-import utils.Util;
+import utils.Utilities;
 import utils.WorkerThread;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class SimulatorSwitchportV2 extends AbstractSimulatorSwitchport implements Loggable, SmartRunnable {
@@ -122,7 +123,7 @@ public class SimulatorSwitchportV2 extends AbstractSimulatorSwitchport implement
      *
      * @param physicMod
      * @param number
-     * @param configID ID of EthernetInterfaceModel from XML.
+     * @param configID  ID of EthernetInterfaceModel from XML.
      */
     public SimulatorSwitchportV2(AbstractPhysicalModule physicMod, int number, int configID) {
         super(physicMod, number, configID);
@@ -176,7 +177,7 @@ public class SimulatorSwitchportV2 extends AbstractSimulatorSwitchport implement
     }
 
     private void makeDelay(L2Packet packet) {
-        Util.sleepNano(packet.getSize() * cable.sendingSpeed + processingDelay);
+        Utilities.sleepNano(packet.getSize() * cable.sendingSpeed + processingDelay);
     }
 
     /**

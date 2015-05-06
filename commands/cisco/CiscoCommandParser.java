@@ -11,12 +11,14 @@ import commands.completer.Node;
 import commands.linux.Ifconfig;
 import commands.linux.Route;
 import device.Device;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -25,12 +27,13 @@ import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.NetworkModule;
 import shell.apps.CommandShell.CommandShell;
+
 import static shell.apps.CommandShell.CommandShell.*;
-import utils.Util;
+
+import utils.Utilities;
 
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class CiscoCommandParser extends AbstractCommandParser implements Loggable {
@@ -81,7 +84,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
             addCompleters();
             addCompletionData();
 
-            Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "completery: \n"+device.commandCompleters.toString(), null);
+            Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "completery: \n" + device.commandCompleters.toString(), null);
         }
 
         printService("Type command 'help' for list of supported commands.");
@@ -94,7 +97,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         device.commandCompleters.put(CommandShell.CISCO_CONFIG_MODE, new CiscoCompleter());
         device.commandCompleters.put(CommandShell.CISCO_CONFIG_IF_MODE, new CiscoCompleter());
         device.commandCompleters.put(CommandShell.CISCO_CONFIG_DHCP, new CiscoCompleter());
-        Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "Pocet completeru: "+device.commandCompleters.size(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.CISCO_COMMAND_PARSER, "Pocet completeru: " + device.commandCompleters.size(), null);
     }
 
     @Override
@@ -147,9 +150,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
         Node iface = new Node("interface");
         for (NetworkInterface rozh : ipLayer.getNetworkIfaces()) {
-            if (rozh.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1,2}")) {
+            if (rozh.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1, 2}")) {
                 int indexOfT = rozh.name.lastIndexOf("t");
-                String shortenedIfaceName = rozh.name.substring(0, indexOfT+1);
+                String shortenedIfaceName = rozh.name.substring(0, indexOfT + 1);
                 iface.addChild(new Node(shortenedIfaceName));
                 break;
             }
@@ -385,15 +388,14 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         }
 
 
-
         switch (sig) {
 //            case CTRL_SHIFT_6:
-                // tady predat bezicimu prikazu a ten to preda bezici aplikaci
+            // tady predat bezicimu prikazu a ten to preda bezici aplikaci
 //                break;
 
             case CTRL_Z:
                 shell.print("^Z");
-                Util.sleep(100);
+                Utilities.sleep(100);
                 shell.printLine("");
                 switch (mode) {
                     case CISCO_CONFIG_IF_MODE:
@@ -420,7 +422,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
                 }
                 break;
             default:
-            // no reaction
+                // no reaction
         }
     }
 
@@ -434,8 +436,9 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
     /**
      * Tato metoda simuluje zkracovani commandu tak, jak cini cisco.
+     *
      * @param command command, na ktery se zjistuje, zda lze na nej doplnit.
-     * @param cmd command, ktery zadal uzivatel
+     * @param cmd     command, ktery zadal uzivatel
      * @return Vrati true, pokud retezec cmd je jedinym moznym commandem, na ktery ho lze doplnit.
      */
     protected boolean isCommand(String command, String cmd) {
@@ -447,7 +450,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         String[] jedna = {"terminal", "inside", "outside", "source", "static", "pool", "netmask", "permit"};
         // + ip, exit
         String[] dva = {"show", "interface", "no", "shutdown", "enable", "classless",
-            "access-list", "ping", "logout", "nat", "traceroute"};
+                "access-list", "ping", "logout", "nat", "traceroute"};
         // + ip, exit
         String[] tri = {"running-config", "name-server", "nat", "address"};
         // + exit
@@ -539,6 +542,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
     /**
      * Target mode we want change to.
+     *
      * @param mode
      */
     protected final void changeMode(int mode) {
@@ -574,7 +578,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
                 break;
 
             default:
-                throw new RuntimeException("Change to unsupported mode: "+mode);
+                throw new RuntimeException("Change to unsupported mode: " + mode);
 
         }
     }
@@ -607,11 +611,11 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
         this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
 
         if (configuredInterface == null) {
-            if (rozhrani.matches("[fF].*[0-9]/[0-9]{1,2}")) {
+            if (rozhrani.matches("[fF].*[0-9]/[0-9]{1, 2}")) {
                 int end = rozhrani.indexOf("0");
                 String novy = "FastEthernet";
                 String cislo = rozhrani.substring(end, rozhrani.length());
-                rozhrani = novy+cislo;
+                rozhrani = novy + cislo;
 
                 this.configuredInterface = ipLayer.getNetworkIntefaceIgnoreCase(rozhrani);
                 if (this.configuredInterface != null) {
@@ -637,7 +641,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
      * no ip nat inside<br />
      * no ip route <br />
      * no access-list <br />
-     *
+     * <p/>
      * no ip address <br />
      * no ip nat inside/outside <br />
      * no shutdown
@@ -683,15 +687,15 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
     /**
      * Tento prikaz zapne rozhrani, ktere je definovano v aktualnim nastovacim rezimu (napr.: interface fastEthernet0/0)
      * a aktualizuje routovaci tabulku.
-     *
+     * <p/>
      * prislo 'no shutdown'
      */
     private void noshutdown() {
         if (configuredInterface.isUp == false) { // kdyz nahazuju rozhrani
-            Util.sleep(500);
+            Utilities.sleep(500);
             Date d = new Date();
             shell.printLine(getFormattedTime() + ": %LINK-3-UPDOWN: Interface " + configuredInterface.name + ", changed state to up");
-            Util.sleep(100);
+            Utilities.sleep(100);
             shell.printLine(getFormattedTime() + ": %LINEPROTO-5-UPDOWN: Line protocol on Interface " + configuredInterface.name + ", changed state to up");
             configuredInterface.isUp = true;
             ipLayer.wrapper.update();
@@ -703,10 +707,10 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
      */
     private void shutdown() {
         if (configuredInterface.isUp) {
-            Util.sleep(250);
+            Utilities.sleep(250);
             Date d = new Date();
             shell.printLine(getFormattedTime() + ": %LINK-5-UPDOWN: Interface " + configuredInterface.name + ", changed state to down");
-            Util.sleep(100);
+            Utilities.sleep(100);
             shell.printLine(getFormattedTime() + ": %LINEPROTO-5-UPDOWN: Line protocol on Interface " + configuredInterface.name + ", changed state to down");
             configuredInterface.isUp = false;
             ipLayer.wrapper.update();
@@ -715,7 +719,7 @@ public class CiscoCommandParser extends AbstractCommandParser implements Loggabl
 
     @Override
     public String getDescription() {
-        return device.getName()+": CiscoCommandParser";
+        return device.getName() + ": CiscoCommandParser";
     }
 
     private void tryComplete(String line) {

@@ -6,7 +6,9 @@ package networkModule.L3;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IpAddress;
 import device.Device;
+
 import java.util.*;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -117,7 +119,7 @@ public class ArpCache implements Loggable {
     /**
      * Updates ARP cache.
      *
-     * @param ip key for update
+     * @param ip  key for update
      * @param mac value
      */
     public void updateArpCache(IpAddress ip, MacAddress mac, EthernetInterface iface) {

@@ -37,6 +37,7 @@ public abstract class AbstractCommand implements Loggable {
 
     /**
      * Returns next word or "".
+     *
      * @return
      */
     public String nextWord() {
@@ -45,6 +46,7 @@ public abstract class AbstractCommand implements Loggable {
 
     /**
      * Returns peek of next word.
+     *
      * @return
      */
     public String nextWordPeek() {

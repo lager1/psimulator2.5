@@ -28,6 +28,7 @@ public class Cable extends AbstractCable implements SmartRunnable, Loggable {
 
     /**
      * Creates cable with given delay time.
+     *
      * @param id
      * @param delay
      */

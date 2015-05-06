@@ -4,7 +4,6 @@
 package config.configTransformer;
 
 /**
- *
  * @author neiss
  */
 public class LoaderException extends RuntimeException {

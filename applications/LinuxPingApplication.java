@@ -7,12 +7,12 @@ package applications;
 
 import commands.linux.Ping;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * @author Tomas Pitrinec
@@ -25,12 +25,12 @@ public class LinuxPingApplication extends PingApplication {
      *
      * @param device
      * @param command
-     * @param target cilova ip adresa
-     * @param count pocet pingu
-     * @param size velikost pingu
-     * @param timeout v ms
+     * @param target   cilova ip adresa
+     * @param count    pocet pingu
+     * @param size     velikost pingu
+     * @param timeout  v ms
      * @param interval v ms
-     * @param ttl kdyz je -1, nastavi se defaultni systemovej (ze sitovyho modulu)
+     * @param ttl      kdyz je -1, nastavi se defaultni systemovej (ze sitovyho modulu)
      */
     public LinuxPingApplication(Device device, Ping command, IpAddress target, int count, int size, int timeout, int interval, int ttl) {
         super(device, command);
@@ -52,8 +52,8 @@ public class LinuxPingApplication extends PingApplication {
 
         //vypocitani celkovyho casu do vypisu:
         int cas;
-        if(stats.prijate>0){
-             cas = (int) ((stats.odeslane - 1) * waitTime + Math.random() * 10); // celkovej cas se zas vymejsli =)
+        if (stats.prijate > 0) {
+            cas = (int) ((stats.odeslane - 1) * waitTime + Math.random() * 10); // celkovej cas se zas vymejsli =)
         } else {
             cas = 0;
         }
@@ -73,15 +73,14 @@ public class LinuxPingApplication extends PingApplication {
 
         // vypis radku se statistikama (pokud ovsem neco doslo)
         if (stats.prijate > 0) { //aspon jeden prijaty paket - vypisuji se statistiky
-            double mdev = Util.zaokrouhli((((stats.avg - stats.min) + (stats.max - stats.avg)) / 2) * 0.666); //ma to bejt stredni odchylka,
+            double mdev = Utilities.round((((stats.avg - stats.min) + (stats.max - stats.avg)) / 2) * 0.666); //ma to bejt stredni odchylka,
             //je tam jen na okrasu, tak si ji pocitam po svym =)
-            command.printLine("rtt min/avg/max/mdev = " + Util.zaokrouhli(stats.min) + "/" + Util.zaokrouhli(stats.avg) + "/" +
-                    Util.zaokrouhli(stats.max) + "/" + mdev + " ms");
+            command.printLine("rtt min/avg/max/mdev = " + Utilities.round(stats.min) + "/" + Utilities.round(stats.avg) + "/" +
+                    Utilities.round(stats.max) + "/" + mdev + " ms");
         } else { // neprijat zadny paket, statistiky se nevypisuji
             // ping.printLine(", pipe 3");    // v dobe bakalarky vypisovala skolni laborka tenhle nesmysl, ted uz ne
         }
     }
-
 
 
     /**
@@ -99,7 +98,7 @@ public class LinuxPingApplication extends PingApplication {
         switch (packet.type) {
             case REPLY:
                 command.printLine(packet.getSize() + " bytes from " + p.src + ": icmp_req=" + packet.seq + " ttl=" + p.ttl
-                        + " time=" + Util.zaokrouhli(delay) + " ms");
+                        + " time=" + Utilities.round(delay) + " ms");
                 break;
             case TIME_EXCEEDED:
                 command.printLine("From " + p.src.toString() + " icmp_seq=" + packet.seq + " Time to live exceeded");
@@ -121,11 +120,11 @@ public class LinuxPingApplication extends PingApplication {
                 break;
             case SOURCE_QUENCH:
                 command.printLine("From " + p.src.toString() + ": icmp_seq="
-                                + packet.seq + " Source Quench");
+                        + packet.seq + " Source Quench");
                 break;
             default:
-            // jeste tu je REQUEST, ten se sem ale nikdy nedostane
-            // zalogovat neznamy typ ICMP ?
+                // jeste tu je REQUEST, ten se sem ale nikdy nedostane
+                // zalogovat neznamy typ ICMP ?
         }
 
         Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Vypsal jsem paket.", null);
@@ -133,11 +132,11 @@ public class LinuxPingApplication extends PingApplication {
 
     @Override
     protected void startMessage() {
-        command.printLine("PING "+target+" ("+target+") "+payload+"("+(payload+28)+") bytes of data.");
+        command.printLine("PING " + target + " (" + target + ") " + payload + "(" + (payload + 28) + ") bytes of data.");
     }
 
     @Override
     public String getDescription() {
-        return device.getName()+": ping_app_linux";
+        return device.getName() + ": ping_app_linux";
     }
 }

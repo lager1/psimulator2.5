@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public final class RecentOpenedFilesManager {
@@ -18,38 +17,41 @@ public final class RecentOpenedFilesManager {
 
     public RecentOpenedFilesManager() {
     }
-    
-    
-    public int getSize(){
+
+
+    public int getSize() {
         return recentOpenedFiles.size();
     }
-    
+
     /**
      * Creates files string from list of recent opened files
-     * @return 
+     *
+     * @return
      */
-    public String createStringFromFiles(){
+    public String createStringFromFiles() {
         String s = "";
-        
-        for(File file : recentOpenedFiles){
+
+        for (File file : recentOpenedFiles) {
             s += file.getAbsolutePath() + ";";
         }
-        
+
         return s;
     }
-    
+
     /**
      * Initializes RecentOpendFilesManager with files in parameter string
-     * @param filesInString 
+     *
+     * @param filesInString
      */
-    public void parseFilesFromString(String filesInString){
+    public void parseFilesFromString(String filesInString) {
         List<String> filePathsList = parseFilesStringToList(filesInString);
         recentOpenedFiles = createFilesList(filePathsList);
     }
 
     /**
      * Returns recent opend files list
-     * @return 
+     *
+     * @return
      */
     public List<File> getRecentOpenedFiles() {
         return recentOpenedFiles;
@@ -57,78 +59,81 @@ public final class RecentOpenedFilesManager {
 
     /**
      * Adds file at begining of the list. Files over max count are removed.
-     * @param file 
+     *
+     * @param file
      */
-    public void addFile(File file){
+    public void addFile(File file) {
         File oldFileRecord = null;
-        
+
         // find if file of this name is in the list
-        for(File f : recentOpenedFiles){
-            if(f.toString().equals(file.toString())){
+        for (File f : recentOpenedFiles) {
+            if (f.toString().equals(file.toString())) {
                 oldFileRecord = f;
             }
         }
-        
+
         // if it is in the list, remove it from the list
-        if(oldFileRecord != null){
+        if (oldFileRecord != null) {
             recentOpenedFiles.remove(oldFileRecord);
         }
-        
+
         // add file to the beginning of the list
         recentOpenedFiles.add(0, file);
-        
+
         // if list size exceeds max count, remove exceeding file
-        if(recentOpenedFiles.size() > MAX_COUNT){
+        if (recentOpenedFiles.size() > MAX_COUNT) {
             int removeCount = recentOpenedFiles.size() - MAX_COUNT;
-            
-            for(int i = 0; i < removeCount; i++){
+
+            for (int i = 0; i < removeCount; i++) {
                 recentOpenedFiles.remove(MAX_COUNT);
             }
         }
     }
-    
+
     /**
      * Removes not existing files from list
      */
-    public void clearNotExistingFiles(){
+    public void clearNotExistingFiles() {
         List<File> newFiles = new LinkedList<>();
-        for(File file : recentOpenedFiles){
+        for (File file : recentOpenedFiles) {
             if (file.exists()) {
                 newFiles.add(file);
             }
         }
         recentOpenedFiles = newFiles;
     }
-    
+
     /**
      * Checks if files in parameter exists.
+     *
      * @param files
      * @return true if exists, false if some doesnt exist.
      */
-    public boolean checkFilesIfExists(List<File> files){
-        for(File file : files){
+    public boolean checkFilesIfExists(List<File> files) {
+        for (File file : files) {
             if (!file.exists()) {
                 return false;
             }
         }
         return true;
     }
-    
+
     /**
      * Creates files list from path list
+     *
      * @param filePathsList
-     * @return 
+     * @return
      */
-    private List<File> createFilesList(List<String> filePathsList){
+    private List<File> createFilesList(List<String> filePathsList) {
         List<File> files = new LinkedList<>();
-        
-        for(String str : filePathsList){
-            if(str.isEmpty()){
+
+        for (String str : filePathsList) {
+            if (str.isEmpty()) {
                 continue;
             }
-            
+
             File tmpFile = new File(str);
-            
+
             files.add(tmpFile);
         }
         return files;
@@ -136,8 +141,9 @@ public final class RecentOpenedFilesManager {
 
     /**
      * Parses filenames from parameter string. Ues DELIMITER.
+     *
      * @param filesInString
-     * @return 
+     * @return
      */
     private List<String> parseFilesStringToList(String filesInString) {
         List<String> filePathsList = new ArrayList<>();

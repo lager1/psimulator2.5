@@ -5,13 +5,13 @@ package commands.linux.filesystem;
 
 import commands.AbstractCommandParser;
 import commands.linux.LinuxCommand;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public abstract class FileSystemCommand extends LinuxCommand {
@@ -32,7 +32,7 @@ public abstract class FileSystemCommand extends LinuxCommand {
     @Override
     public void run() {
         parseCommand();
-        if (ladiciVypisovani) {
+        if (enableDebug) {
             printLine(toString());
         }
 
@@ -114,7 +114,8 @@ public abstract class FileSystemCommand extends LinuxCommand {
         return vratit;
 
     }
-// staticky pomocny veci k parsovani: -------------------------------------------------------------------------------
+
+    // staticky pomocny veci k parsovani: -------------------------------------------------------------------------------
     private static String[] specs;
 
     public static boolean containsSpecialCharacter(String s) {
@@ -128,7 +129,6 @@ public abstract class FileSystemCommand extends LinuxCommand {
                 return true;
             }
         }
-
 
 
         return false;

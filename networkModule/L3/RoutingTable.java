@@ -6,8 +6,10 @@ package networkModule.L3;
 
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -16,9 +18,10 @@ import logging.LoggingCategory;
  * Implementation of Routing Table.
  * Datova struktura na ukladani routovacich zaznamu, jinak nic nedela.
  * Z velky casti prekopirovana ze stary routovaci tabulky, public metody prejmenovany do anglictiny.
+ *
  * @author neiss
  */
-public class RoutingTable implements Loggable{
+public class RoutingTable implements Loggable {
 
 
     private List<Record> records = new LinkedList<>();
@@ -27,7 +30,6 @@ public class RoutingTable implements Loggable{
      * Special pro cisco, nevim, co to dela.
      */
     public boolean classless = true;
-
 
 
     /**
@@ -41,7 +43,7 @@ public class RoutingTable implements Loggable{
      */
     public Record findRoute(IpAddress cil) {
         for (Record z : records) {
-            if ( z.adresat.isInMyNetwork(cil) && z.iface.isUp) {
+            if (z.adresat.isInMyNetwork(cil) && z.iface.isUp) {
                 return z; //vraci prvni odpovidajici iface
             }
         }
@@ -54,8 +56,8 @@ public class RoutingTable implements Loggable{
      * na tomhle iface.
      *
      * @param adresat musi bejt vyplnenej
-     * @param brana musi bejt vyplnena
-     * @param rozhr muze bejt null
+     * @param brana   musi bejt vyplnena
+     * @param rozhr   muze bejt null
      * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br /> 2: iface nenalezeno, pro zadaneho adresata
      * neexistuje zaznam U<br />
      */
@@ -87,12 +89,13 @@ public class RoutingTable implements Loggable{
     /**
      * Prida novej zaznam priznaku U.
      * Spolecna metoda pro linux i cisco.
+     *
      * @param adresat ocekava IpAdresu, ktera je cislem site
-     * @param rozhr predpoklada se, ze iface na pocitaci existuje
+     * @param rozhr   predpoklada se, ze iface na pocitaci existuje
      * @return 0: v poradku<br /> 1: existuje stejny zaznam;<br />
      */
-    public synchronized int addRecord(IPwithNetmask adresat, NetworkInterface rozhr){
-        Record z=new Record(adresat, rozhr);
+    public synchronized int addRecord(IPwithNetmask adresat, NetworkInterface rozhr) {
+        Record z = new Record(adresat, rozhr);
         return pridaniZaznamu(z);
     }
 
@@ -100,6 +103,7 @@ public class RoutingTable implements Loggable{
     /**
      * Prida novy zaznam na vlastni iface.
      * Extra cisco metoda.
+     *
      * @param adresat
      * @param rozhr
      * @param primo
@@ -107,25 +111,26 @@ public class RoutingTable implements Loggable{
      * @author Stanislav Řehák
      */
     public synchronized int addRecord(IPwithNetmask adresat, NetworkInterface rozhr, boolean primo) {
-        Record z=new Record(adresat, rozhr, primo);
+        Record z = new Record(adresat, rozhr, primo);
         return pridaniZaznamu(z);
     }
 
     /**
      * Metoda na mazani zaznamu.
+     *
      * @param adresat musi byt zadan
-     * @param brana muze byt null
-     * @param rozhr muze byt null
+     * @param brana   muze byt null
+     * @param rozhr   muze byt null
      * @return true - zaznam smazan<br /> false - zaznam nenalezen - nic nesmazano
      */
-    public boolean deleteRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr){
+    public boolean deleteRecord(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhr) {
         Record z;
-        for(int i=0;i<records.size();i++){
-            z=records.get(i);
-            if(z.adresat.equals(adresat)){ //adresati se rovnaj -> adept na smazani
-                if( ( brana == null ) || ( z.brana!=null && z.brana.equals(brana) ) ){//zkracene vyhodnocovani
-                            //-> brana nezadana nebo zadana a stejna existuje u zaznamu -> adept na smazani
-                    if( rozhr==null || (rozhr!=null && rozhr==z.iface)){  //rozhrani nezadano, nebo zadano a
+        for (int i = 0; i < records.size(); i++) {
+            z = records.get(i);
+            if (z.adresat.equals(adresat)) { //adresati se rovnaj -> adept na smazani
+                if ((brana == null) || (z.brana != null && z.brana.equals(brana))) {//zkracene vyhodnocovani
+                    //-> brana nezadana nebo zadana a stejna existuje u zaznamu -> adept na smazani
+                    if (rozhr == null || (rozhr != null && rozhr == z.iface)) {  //rozhrani nezadano, nebo zadano a
                         records.remove(i);                                     //odpovida -> smazat
                         return true;
                     }
@@ -135,27 +140,28 @@ public class RoutingTable implements Loggable{
         return false;
     }
 
-    public boolean deleteRecord(Record z){
+    public boolean deleteRecord(Record z) {
         return records.remove(z);
     }
 
     /**
      * Smaze vsechny zaznamy (U i UG) na zadanem iface. Potreba pro mazani rout, kdyz se zmeni adresa nebo maska
      * na iface.
+     *
      * @param rozhr
      * @return pocet smazanych iface (spis pro ladeni, jinej efekt to asi nema)
      */
-    public int flushRecords(NetworkInterface rozhr){
+    public int flushRecords(NetworkInterface rozhr) {
         int p = 0; //pocet smazanych zaznamu
-        List <Record>smazat = new LinkedList(); //dela se to pres pomocnej seznam, protoze jinak hazela
-                                                // java vyjimku ConcurrentModificationException
-        for(Record z:records){
-            if (z.iface == rozhr){
+        List<Record> smazat = new LinkedList(); //dela se to pres pomocnej seznam, protoze jinak hazela
+        // java vyjimku ConcurrentModificationException
+        for (Record z : records) {
+            if (z.iface == rozhr) {
                 smazat.add(z);
                 p++;
             }
         }
-        for(Record z:smazat){
+        for (Record z : smazat) {
             records.remove(z);
         }
         return p;
@@ -170,30 +176,32 @@ public class RoutingTable implements Loggable{
     }
 
     @Deprecated
-    public String vypisSeLinuxove(){
-        String v="";
-        v+="Směrovací tabulka v jádru pro IP\n";
-        v+="Adresát         Brána           Maska           Přízn\t Metrik\t Odkaz\t  Užt\t Rozhraní\n";
-        for (Record z:records){
-            v+=z.vypisSeLinuxove();
+    public String vypisSeLinuxove() {
+        String v = "";
+        v += "Směrovací tabulka v jádru pro IP\n";
+        v += "Adresát         Brána           Maska           Přízn\t Metrik\t Odkaz\t  Užt\t Rozhraní\n";
+        for (Record z : records) {
+            v += z.vypisSeLinuxove();
         }
         return v;
     }
 
     /**
      * Returns number of records in routing table.
+     *
      * @return
      */
-    public int size(){
+    public int size() {
         return records.size();
     }
 
     /**
      * Vrati zaznam na urceny posici, iface pro vypisovaci metody.
+     *
      * @param posice
      * @return
      */
-    public Record getRecord(int posice){
+    public Record getRecord(int posice) {
         return records.get(posice);
     }
 
@@ -216,6 +224,7 @@ public class RoutingTable implements Loggable{
      * Tahleta metoda slouží k přidávání záznamů z konfiguráku. Neprováděj se žádný kontroly, prostě se to tam
      * přidá. Adresat a iface musej bejt vyplneny, brana jen u priznaku
      * UG, tzn. u routy na branu.
+     *
      * @param adresat
      * @param brana
      * @param rozhr
@@ -226,7 +235,7 @@ public class RoutingTable implements Loggable{
             throw new RuntimeException("Chyba v konfiguracnim souboru, adresat " + adresat.toString()
                     + " v routovaci tabulce neni cislem site. ");
         }
-        Record z = new Record(adresat,brana,rozhr);
+        Record z = new Record(adresat, brana, rozhr);
         records.add(najdiSpravnouPosici(z), z);
     }
 
@@ -236,38 +245,39 @@ public class RoutingTable implements Loggable{
     }
 
 
-
 // privatni metody ----------------------------------------------------------------------------------------------------
 
     /**
      * Prida zaznam na spravnou pozici. Jen vytazeny radky z puvodnich metod na pridani zaznamu U nebo UG
+     *
      * @param z
      * @return
      * @author Stanislav Řehák
      */
     private int pridaniZaznamu(Record z) {
-        if(existujeStejnyZaznam(z))return 1;
-        int i=najdiSpravnouPosici(z);
-        records.add(i,z);
+        if (existujeStejnyZaznam(z)) return 1;
+        int i = najdiSpravnouPosici(z);
+        records.add(i, z);
         return 0;
     }
 
-        /**
+    /**
      * Kontroluje, jestli tabulka uz pridavany radek neobsahuje. Zaznam musi obsahovat adresata a iface
      * (to je predem zjisteno), brana se kontroluje, jen kdyz neni null.
+     *
      * @param zazn
      * @return
      */
-    private boolean existujeStejnyZaznam(Record zazn){
-        for(Record z:records){
-            if( z.adresat.equals(zazn.adresat) ){   // adresati se rovnaji
-                if ( z.brana==null && zazn.brana==null){ //obe brany jsou null
-                    if( z.iface==zazn.iface){
+    private boolean existujeStejnyZaznam(Record zazn) {
+        for (Record z : records) {
+            if (z.adresat.equals(zazn.adresat)) {   // adresati se rovnaji
+                if (z.brana == null && zazn.brana == null) { //obe brany jsou null
+                    if (z.iface == zazn.iface) {
                         return true;
                     }
                 }
-                if(z.brana!=null && zazn.brana!=null){ //obe brany nejsou null a rovnaji se
-                    if(z.brana.equals(zazn.brana) && z.iface==zazn.iface){
+                if (z.brana != null && zazn.brana != null) { //obe brany nejsou null a rovnaji se
+                    if (z.brana.equals(zazn.brana) && z.iface == zazn.iface) {
                         return true;
                     }
                 }
@@ -321,6 +331,7 @@ public class RoutingTable implements Loggable{
 
         /**
          * Potreba pro cisco.
+         *
          * @return
          */
         public boolean jePrimoPripojene() {
@@ -330,45 +341,45 @@ public class RoutingTable implements Loggable{
         public Record(IPwithNetmask adresat, NetworkInterface rozhrani) {
             this.adresat = adresat;
             this.iface = rozhrani;
-            brana=null;
+            brana = null;
         }
 
         /*
          * Konstruktur pro cisco.
          */
-        private Record(IPwithNetmask adresat, NetworkInterface rozhrani, boolean pripojene){
-            this.adresat=adresat;
-            this.iface=rozhrani;
+        private Record(IPwithNetmask adresat, NetworkInterface rozhrani, boolean pripojene) {
+            this.adresat = adresat;
+            this.iface = rozhrani;
             this.connected = pripojene;
-            brana=null;
+            brana = null;
         }
 
-        private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani){
-            this.adresat=adresat;
-            this.brana=brana;
-            this.iface=rozhrani;
+        private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani) {
+            this.adresat = adresat;
+            this.brana = brana;
+            this.iface = rozhrani;
         }
 
         /*
          * Konstruktur pro cisco.
          */
-        private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani, boolean pripojene){
-            this.adresat=adresat;
-            this.brana=brana;
-            this.iface=rozhrani;
+        private Record(IPwithNetmask adresat, IpAddress brana, NetworkInterface rozhrani, boolean pripojene) {
+            this.adresat = adresat;
+            this.brana = brana;
+            this.iface = rozhrani;
             this.connected = pripojene;
         }
 
         @Deprecated //neni potreba
         private String vypisSeLinuxove() {
-            String v="";
-            v+=adresat.getIp()+"\t";    //neni sem potreba psat toString(), doplni se to samo
-            if(brana==null){
-                v+="0.0.0.0\t"+adresat.getMask()+"\tU\t";
-            } else{
-                v+=brana.toString()+"\t"+adresat.getMask()+"\tUG\t";
+            String v = "";
+            v += adresat.getIp() + "\t";    //neni sem potreba psat toString(), doplni se to samo
+            if (brana == null) {
+                v += "0.0.0.0\t" + adresat.getMask() + "\tU\t";
+            } else {
+                v += brana.toString() + "\t" + adresat.getMask() + "\tUG\t";
             }
-            v+="0\t0\t0\t"+iface.name+"\n";
+            v += "0\t0\t0\t" + iface.name + "\n";
             return v;
         }
     }

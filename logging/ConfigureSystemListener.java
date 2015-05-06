@@ -7,7 +7,6 @@ package logging;
 import java.util.Map;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class ConfigureSystemListener {

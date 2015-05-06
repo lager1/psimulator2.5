@@ -10,6 +10,7 @@ import commands.AbstractCommandParser;
 /**
  * Vypisuje napovedu simulatoru.
  * TODO: Nutno upravit podle konecny verze.
+ *
  * @author Tomas Pitrinec
  */
 public class Help extends AbstractCommand {
@@ -17,7 +18,6 @@ public class Help extends AbstractCommand {
     public Help(AbstractCommandParser parser) {
         super(parser);
     }
-
 
 
     @Override
@@ -29,7 +29,6 @@ public class Help extends AbstractCommand {
             helpEnglish();
         }
     }
-
 
 
     protected void helpCzech() {

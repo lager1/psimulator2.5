@@ -4,11 +4,11 @@
 package networkModule.L3.nat;
 
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Pool implements Comparable<Pool> {

@@ -7,16 +7,18 @@ package networkModule.L3.nat;
 import dataStructures.DropItem;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L4Packet;
 import dataStructures.packets.L4Packet.L4PacketType;
+
 import java.util.*;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * TODO: poresit generovani portu kvuli kolizim s poslouchajicima aplikacema.
@@ -85,6 +87,7 @@ public class NatTable implements Loggable {
 
     /**
      * Returns NetworkAddressTranslation table.
+     *
      * @return
      */
     public List<Record> getDynamicRules() {
@@ -93,6 +96,7 @@ public class NatTable implements Loggable {
 
     /**
      * Returns static rules.
+     *
      * @return
      */
     public List<StaticRule> getStaticRules() {
@@ -101,6 +105,7 @@ public class NatTable implements Loggable {
 
     /**
      * Returns outside interface.
+     *
      * @return
      */
     public NetworkInterface getOutside() {
@@ -109,6 +114,7 @@ public class NatTable implements Loggable {
 
     /**
      * Returns list of inside interfaces.
+     *
      * @return
      */
     public Collection<NetworkInterface> getInside() {
@@ -117,6 +123,7 @@ public class NatTable implements Loggable {
 
     /**
      * Returns interface or null.
+     *
      * @return
      */
     public NetworkInterface getInside(String name) {
@@ -135,7 +142,7 @@ public class NatTable implements Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(ipLayer.getNetMod().getDevice().getName(), Util.deviceNameAlign)+ " " + "natTable";
+        return Utilities.alignFromRight(ipLayer.getNetMod().getDevice().getName(), Utilities.deviceNameAlign) + " " + "natTable";
     }
 
     //--------------------------------------------- forward translation ---------------------------------------------
@@ -144,8 +151,8 @@ public class NatTable implements Loggable {
      * Executes forward translation of packet.
      *
      * @param packet to translate
-     * @param in incomming interface - can be null iff I am sending this packet
-     * @param out outgoing interface - never null
+     * @param in     incomming interface - can be null iff I am sending this packet
+     * @param out    outgoing interface - never null
      * @return
      */
     public IpPacket translate(IpPacket packet, NetworkInterface in, NetworkInterface out) {
@@ -166,7 +173,7 @@ public class NatTable implements Loggable {
         if (packet.data == null) {
             Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation,
                     "No NAT translation: packet with no L4 data received. Could not gain port number!?", packet);
-                        // -> Standa to logoval jako warning, ale vzhledem k napojeni na realnou sit se to muze stavat pomerne casto
+            // -> Standa to logoval jako warning, ale vzhledem k napojeni na realnou sit se to muze stavat pomerne casto
             return packet;
         }
 
@@ -222,9 +229,10 @@ public class NatTable implements Loggable {
 
     /**
      * Hleda mezi statickymi pravidly, jestli tam je zaznam pro danou IP.
+     *
      * @param zdroj
      * @return zanatovana IP <br />
-     *         null pokud nic nenaslo
+     * null pokud nic nenaslo
      */
     private IpAddress findStaticRuleIn(IpAddress zdroj) {
         for (StaticRule rule : staticRules) {
@@ -237,7 +245,8 @@ public class NatTable implements Loggable {
 
     /**
      * Translates packet with static NetworkAddressTranslation rule.
-     * @param packet to translate
+     *
+     * @param packet        to translate
      * @param srcTranslated new source IP
      * @return
      */
@@ -263,16 +272,17 @@ public class NatTable implements Loggable {
             when = " after";
         }
 
-        Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format(op+": "+when+": "+"src: %s:%d dst: %s:%d",
-                        packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
+        Logger.log(this, Logger.INFO, LoggingCategory.NetworkAddressTranslation, String.format(op + ": " + when + ": " + "src: %s:%d dst: %s:%d",
+                packet.src.toString(), packet.data.getPortSrc(), packet.dst.toString(), packet.data.getPortDst()), packet);
     }
 
     /**
-    * Translates packet with dynamic NetworkAddressTranslation. <br />
-    * Returns untranslated packet iff there are now free ports number or if packet has no L4 data = without port number.
-    * @param packet
-    * @return
-    */
+     * Translates packet with dynamic NetworkAddressTranslation. <br />
+     * Returns untranslated packet iff there are now free ports number or if packet has no L4 data = without port number.
+     *
+     * @param packet
+     * @return
+     */
     private IpPacket dynamicTranslation(IpPacket packet) {
         deleteOldDynamicRecords();
 
@@ -326,8 +336,8 @@ public class NatTable implements Loggable {
     /**
      * Vrati kopii IpPacketu s novou zdrojovou adresou a novym portem
      *
-     * @param packet old packet
-     * @param srcIpNew source IP of new packet
+     * @param packet     old packet
+     * @param srcIpNew   source IP of new packet
      * @param srcPortNew source port of new packet
      * @return
      */
@@ -361,8 +371,9 @@ public class NatTable implements Loggable {
 
     /**
      * Executes backward translation of packet.
+     *
      * @param packet to translate
-     * @param in incomming interface
+     * @param in     incomming interface
      * @return
      */
     public IpPacket backwardTranslate(IpPacket packet, NetworkInterface in) {
@@ -382,7 +393,7 @@ public class NatTable implements Loggable {
         if (outside.name.equals(in.name)) {
             return doBackwardTranslation(packet);
         }
-        Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming iface is: "+in.name+", but outside is: "+outside.name, packet);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.NetworkAddressTranslation, "No NAT translation: incomming iface is: " + in.name + ", but outside is: " + outside.name, packet);
         return packet;
     }
 
@@ -425,6 +436,7 @@ public class NatTable implements Loggable {
     /**
      * Vrati pozici pro pridani do tabulky.
      * Radi se to dle out adresy vzestupne.
+     *
      * @param out
      * @return index noveho zaznamu
      */
@@ -442,6 +454,7 @@ public class NatTable implements Loggable {
     /**
      * Vrati pozici pro pridani do tabulky.
      * Radi se to dle out adresy vzestupne.
+     *
      * @param out
      * @return index noveho zaznamu
      */
@@ -477,11 +490,12 @@ public class NatTable implements Loggable {
     /**
      * Prida isStatic pravidlo do tabulky.
      * Razeno vzestupne dle out adresy.
-     * @param in zdrojova IP urcena pro preklad
+     *
+     * @param in  zdrojova IP urcena pro preklad
      * @param out nova (prelozena) adresa
      * @return 0 - ok, zaznam uspesne pridan <br />
-     *         1 - chyba, in adresa tam uz je (% in already mapped (in -> out)) <br />
-     *         2 - chyba, out adresa tam uz je (% similar static entry (in -> out) already exists)
+     * 1 - chyba, in adresa tam uz je (% in already mapped (in -> out)) <br />
+     * 2 - chyba, out adresa tam uz je (% similar static entry (in -> out) already exists)
      */
     public int addStaticRuleCisco(IpAddress in, IpAddress out) {
 
@@ -499,12 +513,13 @@ public class NatTable implements Loggable {
         return 0;
     }
 
-     /**
+    /**
      * Smaze vsechny isStatic zaznamy, ktere maji odpovidajici in a out.
      * Dale aktualizuje outside rozhrani co se IP tyce. Nejdrive smaze vsechny krom getFirst,
      * a pak postupne prida ze statickych a pak i z poolu.
+     *
      * @return 0 - alespon 1 zaznam se smazal <br />
-     *         1 - nic se nesmazalo, pac nebyl nalezen odpovidajici zaznam (% Translation not found)
+     * 1 - nic se nesmazalo, pac nebyl nalezen odpovidajici zaznam (% Translation not found)
      */
     public int deleteStaticRule(IpAddress in, IpAddress out) {
 
@@ -528,6 +543,7 @@ public class NatTable implements Loggable {
      * Prida inside rozhrani. <br />
      * Neprida se pokud uz tam je rozhrani se stejnym jmenem. <br />
      * Pro pouziti prikazu 'address nat inside'.
+     *
      * @param iface
      */
     public void addInside(NetworkInterface iface) {
@@ -538,6 +554,7 @@ public class NatTable implements Loggable {
 
     /**
      * Nastavi outside rozhrani.
+     *
      * @param iface
      */
     public void setOutside(NetworkInterface iface) {
@@ -547,6 +564,7 @@ public class NatTable implements Loggable {
     /**
      * Smaze toto rozhrani z inside listu.
      * Kdyz to rozhrani neni v inside, tak se nestane nic.
+     *
      * @param iface
      */
     public void deleteInside(NetworkInterface iface) {
@@ -572,6 +590,7 @@ public class NatTable implements Loggable {
     /**
      * Pomocny servisni vypis.
      * Nejdriv se smazou stare dynamcike zaznamy.
+     *
      * @return
      */
     public String getDynamicRulesInUse() {
@@ -593,6 +612,7 @@ public class NatTable implements Loggable {
      * ven po nejakym rozhrani prekladaj na nejakou verejnou adresu, a z toho rozhrani zase zpatky.
      * Prikaz napr: "iptables -t nat -I POSTROUTING -o eth2 -j MASQUERADE" - vsechny pakety jdouci ven
      * po rozhrani eth2 se prekladaj.
+     *
      * @param pc
      * @param outside, urci ze je tohle rozhrani outside a ostatni jsou automaticky soukroma.
      */
@@ -655,7 +675,8 @@ public class NatTable implements Loggable {
 
     /**
      * Prida staticke pravidlo do NetworkAddressTranslation tabulky. Nic se nekontroluje.
-     * @param in zdrojova IP
+     *
+     * @param in  zdrojova IP
      * @param out nova zdrojova (prelozena)
      */
     public void addStaticRuleLinux(IpAddress in, IpAddress out) {
@@ -706,7 +727,7 @@ public class NatTable implements Loggable {
 
         @Override
         public String toString() {
-            return in.address.toString()+":"+in.port+" "+in.protocol+" => "+out.address.toString()+":"+out.port+" "+out.protocol;
+            return in.address.toString() + ":" + in.port + " " + in.protocol + " => " + out.address.toString() + ":" + out.port + " " + out.protocol;
         }
     }
 

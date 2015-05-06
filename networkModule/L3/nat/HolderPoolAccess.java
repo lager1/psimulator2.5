@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Datova struktura pro seznam PoolAccess. Jednoznacny identifikator je cislo.
  * (cisco prikaz: "ip nat inside source list 'cisloAccessListu' poolName 'jmenoPoolu' overload?" )
- *
+ * <p/>
  * OK
  *
  * @author Stanislav Řehák
@@ -31,6 +31,7 @@ public class HolderPoolAccess {
     /**
      * Prida novy poolAccess na spravnou pozici. Kdyz najde PoolAccess se stejnym jmenem,
      * tak ho bez milosti premazne.
+     *
      * @param access
      * @param poolName
      */
@@ -49,9 +50,10 @@ public class HolderPoolAccess {
 
     /**
      * Zkusi smazat PoolAccess.
+     *
      * @param access, identifikator PoolAccessu.
      * @return 0 - ok, smazalo to. <br />
-     *         1 - takovy zaznam neni (%Dynamic mapping not found)
+     * 1 - takovy zaznam neni (%Dynamic mapping not found)
      */
     public int deletePoolAccess(int access) {
 
@@ -72,6 +74,7 @@ public class HolderPoolAccess {
 
     /**
      * Vrati prirazeny poolAccess nebo null, kdyz nic nenajde.
+     *
      * @param poolName
      * @return
      */

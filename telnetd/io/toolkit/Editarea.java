@@ -37,6 +37,7 @@ import telnetd.io.BasicTerminalIO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.io.TerminalIO;
@@ -112,12 +113,11 @@ public class Editarea
     }//getValue
 
     /**
-     *
      * @param textLines text lines without \n
      */
     public void setValue(ArrayList<String> textLines) {
 
-        if(textLines == null || textLines.isEmpty())
+        if (textLines == null || textLines.isEmpty())
             return;
 
         m_Firstrun = false;  // next call run() method will not be the first one
@@ -192,7 +192,7 @@ public class Editarea
             //reset flag
             m_Firstrun = false;
             //make a new editline
-            if(lines.isEmpty()){
+            if (lines.isEmpty()) {
                 line = createLine();
                 appendLine(line);
             }

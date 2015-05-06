@@ -27,7 +27,6 @@ import shared.SimulatorEvents.Serializer.SimulatorEventsSerializerXML;
 import shared.telnetConfig.TelnetConfig;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -54,7 +53,7 @@ public class DataLayer extends DataLayerFacade {
         //
         preferencesManager = new PreferencesManager();
         languageManager = new LanguageManager();
-        simulatorManager = new SimulatorManager((DataLayerFacade)this);
+        simulatorManager = new SimulatorManager((DataLayerFacade) this);
 
         abstractNetworkSerializer = new NetworkModelSerializerXML();
         //abstractNetworkSerializer = new NetworkModelSerializer();
@@ -72,6 +71,7 @@ public class DataLayer extends DataLayerFacade {
 
     /**
      * Returns current icon toolbar size.
+     *
      * @return
      */
     @Override
@@ -81,6 +81,7 @@ public class DataLayer extends DataLayerFacade {
 
     /**
      * Sets toolbar icon size in preferences.
+     *
      * @param size
      */
     @Override
@@ -90,7 +91,7 @@ public class DataLayer extends DataLayerFacade {
 
     /**
      * Saves aplication preferences.
-     *
+     * <p/>
      * Call before program exit.
      */
     @Override

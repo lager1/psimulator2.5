@@ -4,7 +4,6 @@
 package exceptions;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class ApplicationNotFoundException extends Exception {

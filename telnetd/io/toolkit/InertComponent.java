@@ -29,4 +29,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
-package telnetd.io.toolkit;import telnetd.io.BasicTerminalIO;/** * Class that represents an abstract inert toolkit component. * Components derived from this class are simply decorative or * informative. They are not supposed to be actively processing and reacting * on Input. * * @author Dieter Wimberger * @version 2.0 (16/07/2006) */public abstract class InertComponent extends Component {  /**   * Constructor for an InertComponent instance.   */  public InertComponent(BasicTerminalIO io, String name) {    super(io, name);  }//InertComponent}//class InertComponent
+
+package telnetd.io.toolkit;
+
+import telnetd.io.BasicTerminalIO;
+
+/**
+ * Class that represents an abstract inert toolkit component.
+ * Components derived from this class are simply decorative or
+ * informative. They are not supposed to be actively processing and reacting
+ * on Input.
+ *
+ * @author Dieter Wimberger
+ * @version 2.0 (16/07/2006)
+ */
+public abstract class InertComponent extends Component {
+
+    /**
+     * Constructor for an InertComponent instance.
+     */
+    public InertComponent(BasicTerminalIO io, String name) {
+        super(io, name);
+    }//InertComponent
+
+}//class InertComponent

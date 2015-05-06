@@ -6,16 +6,17 @@ import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import logging.LoggingCategory;
 
 /**
- *
  * @author Michal Horacek
  */
 public class HostsFile extends AbstractLinuxFile {
@@ -64,7 +65,7 @@ public class HostsFile extends AbstractLinuxFile {
     private IpAddress parseLine(String line, String toResolve) {
         IpAddress res = null;
         String[] words = line.split("\\s+");
-        
+
         if (words.length > 1) {
             for (int i = 1; i < words.length; i++) {
                 if (words[i].equals(toResolve)) {

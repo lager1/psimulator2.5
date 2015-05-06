@@ -6,6 +6,7 @@ package networkModule.L3.nat;
 
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * Datova struktura pro seznam Access-listu.
  * Kazdy access-list obsahuje jmeno (number 1-2699) a IPwithNetmask,
  * ktera definuje rozsah pristupnych IP adres.
- *
+ * <p/>
  * OK
  *
  * @author Stanislav Řehák
@@ -30,6 +31,7 @@ public class HolderAccessList {
      * Prida do seznamu Access-listu na spravnou pozici dalsi pravidlo. <br />
      * Je to razeny dle number access-listu.
      * Pocitam s tim, ze ani jedno neni null.
+     *
      * @param adresa
      * @param number
      */
@@ -51,6 +53,7 @@ public class HolderAccessList {
 
     /**
      * Smaze vsechny seznam-listy s danym cislem.
+     *
      * @param number
      */
     public void deleteAccessList(int cislo) {
@@ -74,6 +77,7 @@ public class HolderAccessList {
     /**
      * Vrati prvni access-list do ktereho spada ip.
      * Kdyz zadny takovy nenajde, tak vrati null.
+     *
      * @param ip
      * @return
      */

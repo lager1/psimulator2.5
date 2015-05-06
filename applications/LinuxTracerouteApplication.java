@@ -7,10 +7,9 @@ import commands.linux.Traceroute;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
-import utils.Util;
+import utils.Utilities;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class LinuxTracerouteApplication extends TracerouteApplication {
@@ -36,7 +35,7 @@ public class LinuxTracerouteApplication extends TracerouteApplication {
     protected void lineBeginning(int ttl, String address) {
         cmd.print(" " + ttl + "  ");
 
-        if (! address.isEmpty()) {
+        if (!address.isEmpty()) {
             cmd.print(address + " (" + address + ")  ");
         }
     }
@@ -50,12 +49,12 @@ public class LinuxTracerouteApplication extends TracerouteApplication {
             switch (record.packet.type) {
                 case REPLY:
                 case TIME_EXCEEDED:
-                    cmd.print(Util.zaokrouhli(record.delay) + " ms  ");
+                    cmd.print(Utilities.round(record.delay) + " ms  ");
                     break;
                 case UNDELIVERED:
                     switch (record.packet.code) {
                         case PORT_UNREACHABLE:
-                            cmd.print(Util.zaokrouhli(record.delay) + " ms  ");
+                            cmd.print(Utilities.round(record.delay) + " ms  ");
                             break;
                         case FRAGMENTAION_REQUIRED:
                             cmd.print("!F ");

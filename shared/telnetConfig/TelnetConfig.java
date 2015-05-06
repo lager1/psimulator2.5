@@ -5,13 +5,13 @@ package shared.telnetConfig;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 import shared.NetworkObject;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
-public class TelnetConfig implements NetworkObject, Serializable{
+public class TelnetConfig implements NetworkObject, Serializable {
 
     /**
      * key is a componentID
@@ -31,8 +31,7 @@ public class TelnetConfig implements NetworkObject, Serializable{
     }
 
     /**
-     *
-     * @param key compnent ID / DeviceID
+     * @param key   compnent ID / DeviceID
      * @param value {@link ConfigRecord}
      * @return
      */
@@ -54,8 +53,6 @@ public class TelnetConfig implements NetworkObject, Serializable{
 
         return sb.toString();
     }
-
-
 
 
 }

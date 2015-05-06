@@ -3,7 +3,6 @@ package filesystem.dataStructures;
 import java.util.Comparator;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public abstract class Node {
@@ -23,7 +22,6 @@ public abstract class Node {
     public abstract String toString();
 
     /**
-     *
      * @return
      */
     public static Comparator getAlphaNumericalNameComparator() {

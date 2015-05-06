@@ -11,9 +11,10 @@ import physicalModule.PhysicMod;
 
 
 //TODO: napsat javadoc anglicky.
+
 /**
  * Nejabstraknejsi ze sitovejch modulu. Interface representující síťový modul počítače bez rozhraní pro aplikační
- * vrstvu, prakticky tedy použitelnej jen pro switch. Síťový modul zajišťuje síťovou komunikaci na 2.,3. a 4. vrstvě
+ * vrstvu, prakticky tedy použitelnej jen pro switch. Síťový modul zajišťuje síťovou komunikaci na 2., 3. a 4. vrstvě
  * ISO/OSI modelu.
  *
  * @author neiss
@@ -39,13 +40,15 @@ public abstract class NetworkModule {
 
     /**
      * Implementovat synchronizovane!
+     *
      * @param packet
      * @param swport
      */
-    public abstract void receivePacket(L2Packet packet, int  switchportNumber);
+    public abstract void receivePacket(L2Packet packet, int switchportNumber);
 
     /**
      * Returns true, if device is switch and have only link layer.
+     *
      * @return
      */
     public abstract boolean isSwitch();
@@ -55,7 +58,7 @@ public abstract class NetworkModule {
      *
      * @return true, kdyz je potomkem nebo instanci tridy TcpIpNetmod
      */
-    public final boolean isStandardTcpIpNetMod(){
+    public final boolean isStandardTcpIpNetMod() {
         return IpNetworkModule.class.isAssignableFrom(this.getClass());    // funguje to, mam to otestovany
     }
 

@@ -1,13 +1,13 @@
 package shell.apps.CommandShell;
 
 import java.io.IOException;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.io.BasicTerminalIO;
 import telnetd.io.toolkit.ActiveComponent;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public abstract class BasicInputField extends ActiveComponent {
@@ -89,7 +89,7 @@ public abstract class BasicInputField extends ActiveComponent {
 
     }
 
-    protected void handleHome(){
+    protected void handleHome() {
         this.moveCursorLeft(this.cursor);
     }
 

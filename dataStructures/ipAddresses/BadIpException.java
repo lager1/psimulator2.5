@@ -5,7 +5,6 @@
 package dataStructures.ipAddresses;
 
 /**
- *
  * @author neiss
  */
 public class BadIpException extends RuntimeException {
@@ -19,6 +18,7 @@ public class BadIpException extends RuntimeException {
 
     /**
      * Constructs an instance of <code>BadIpException</code> with the specified detail message.
+     *
      * @param msg the detail message.
      */
     public BadIpException(String msg) {

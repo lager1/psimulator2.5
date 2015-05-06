@@ -5,7 +5,6 @@
 package exceptions;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class UnsupportedL3TypeException extends RuntimeException {

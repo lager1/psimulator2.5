@@ -45,14 +45,14 @@ import java.io.IOException;
  */
 public class IACException extends IOException {
 
-  /**
-   * Constructs an IACException instance with a given
-   * message (i.e. human readable reason).
-   *
-   * @param msg a String that describes what happened.
-   */
-  public IACException(String msg) {
-    super(msg);
-  }//constructor
+    /**
+     * Constructs an IACException instance with a given
+     * message (i.e. human readable reason).
+     *
+     * @param msg a String that describes what happened.
+     */
+    public IACException(String msg) {
+        super(msg);
+    }//constructor
 
 }//class IACException

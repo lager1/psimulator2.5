@@ -8,6 +8,7 @@ import device.Device;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.TerminalApplication;
@@ -30,7 +32,6 @@ import telnetd.io.toolkit.myToolkit.MyEditArea;
 import telnetd.io.toolkit.myToolkit.Quitable;
 
 /**
- *
  * @author Martin Lukáš
  */
 public class TextEditor extends TerminalApplication implements ComponentReDrawer {
@@ -98,8 +99,8 @@ public class TextEditor extends TerminalApplication implements ComponentReDrawer
                         return -1;
                     }
                 } catch (FileNotFoundException ex1) {
-                        terminalIO.write("New file cannot be created in destination: " + filePath + TerminalIO.CRLF);
-                        return -1;
+                    terminalIO.write("New file cannot be created in destination: " + filePath + TerminalIO.CRLF);
+                    return -1;
                 }
             }
 

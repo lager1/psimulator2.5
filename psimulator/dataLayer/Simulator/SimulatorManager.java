@@ -20,7 +20,6 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.telnetConfig.TelnetConfig;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class SimulatorManager extends Observable implements SimulatorManagerInterface {
@@ -55,6 +54,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     }
 
     // ----- OBSERVERS notify methods
+
     /**
      * Used from another thread
      */
@@ -93,17 +93,17 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     public void recievedWrongPacket() {
         this.isRealtime = false;
         this.isRecording = false;
-        
+
         // realtime turns of recording too
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 setRealtimeDeactivated();
-                
+
                 setChanged();
                 notifyObservers(ObserverUpdateEventType.PACKET_RECIEVER_WRONG_PACKET);
             }
-        });    
+        });
     }
 
     /**
@@ -113,7 +113,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     public void connectingFailed() {
         // debug
         System.out.println("connection failed");
-        
+
         isConnectedToServer = false;
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -125,7 +125,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
             }
         });
     }
-    
+
     /**
      * Used from another thread
      */
@@ -151,7 +151,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
         });
     }
 
-    
+
     /**
      * Used from another thread
      */
@@ -161,7 +161,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
 
         // debug
         System.out.println("volani conn failed");
-        
+
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -216,11 +216,11 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
         setChanged();
         notifyObservers(ObserverUpdateEventType.SIMULATOR_SPEED);
     }
-    
+
     @Override
-    public void setDelayLength(int delay){
+    public void setDelayLength(int delay) {
         currentDelay = delay;
-        
+
         // notify all observers
         setChanged();
         notifyObservers(ObserverUpdateEventType.SIMULATOR_DELAY);
@@ -478,20 +478,22 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
 
         return simulatorEvent;
     }
-    
-    /**
-     * used from another thread...player
-     * @return 
-     */
-    @Override
-    public SimulatorEventWithDetails getNextEvent(){
-        return eventTableModel.getNextEvent();
-    }
-            
 
     /**
      * used from another thread...player
-     * @return 
+     *
+     * @return
+     */
+    @Override
+    public SimulatorEventWithDetails getNextEvent() {
+        return eventTableModel.getNextEvent();
+    }
+
+
+    /**
+     * used from another thread...player
+     *
+     * @return
      */
     @Override
     public boolean isConnectedToServer() {
@@ -509,7 +511,7 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
     }
 
     @Override
-    public int getSimulatorDelayLength(){
+    public int getSimulatorDelayLength() {
         return currentDelay;
     }
 
@@ -625,17 +627,17 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
      * @throws ParseSimulatorEventException
      */
     private SimulatorEventWithDetails createSimulatorEventWithDetails(SimulatorEvent simulatorEvent) throws ParseSimulatorEventException {
-        if(simulatorEvent.getEventType() == EventType.LOST_IN_DEVICE){
+        if (simulatorEvent.getEventType() == EventType.LOST_IN_DEVICE) {
             HwComponentModel c1 = dataLayerFacade.getNetworkFacade().getHwComponentModelById(simulatorEvent.getSourcceId());
-            
+
             if (c1 == null) {
                 throw new ParseSimulatorEventException();
             }
-            
+
             return new SimulatorEventWithDetails(simulatorEvent, c1.getName(), "", c1, null, null, null);
         }
-        
-        
+
+
         // set details to event
         HwComponentModel c1 = dataLayerFacade.getNetworkFacade().getHwComponentModelById(simulatorEvent.getSourcceId());
         HwComponentModel c2 = dataLayerFacade.getNetworkFacade().getHwComponentModelById(simulatorEvent.getDestId());
@@ -664,8 +666,8 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
             if (dataLayerFacade.getNetworkFacade().getHwComponentModelById(eventWithDetails.getSourcceId()) == null) {
                 return false;
             }
-            
-            if(eventWithDetails.getEventType() != EventType.LOST_IN_DEVICE){
+
+            if (eventWithDetails.getEventType() != EventType.LOST_IN_DEVICE) {
                 if (dataLayerFacade.getNetworkFacade().getHwComponentModelById(eventWithDetails.getDestId()) == null) {
                     return false;
                 }

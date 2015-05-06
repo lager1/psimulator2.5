@@ -5,10 +5,12 @@ package logging;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import psimulator2.Psimulator;
 
 /**
  * Cela trida bude jen staticka - lip se pak loguje.
+ *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Logger {
@@ -37,7 +39,7 @@ public class Logger {
      */
     public static final int DEBUG = 5;
 
-    public static void addListener(LoggerListener listener){
+    public static void addListener(LoggerListener listener) {
         Logger.listeners.add(listener);
     }
 
@@ -54,11 +56,11 @@ public class Logger {
      * Zalogovat zpravu. Nejkomplexnejsi logovani, loguje se jak objekt, kterej loguje, tak i nejakej objekt k ty
      * zprave.
      *
-     * @param caller odkaz na volajiciho
+     * @param caller   odkaz na volajiciho
      * @param logLevel vlozit pres logging.Logger.
      * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
-     * @param message logovana zprava
-     * @param object zalogovany objekt, napr. EthernetPacket ci IpPacket ..
+     * @param message  logovana zprava
+     * @param object   zalogovany objekt, napr. EthernetPacket ci IpPacket ..
      */
     public static void log(Loggable caller, int logLevel, LoggingCategory category, String message, Object object) {
         for (LoggerListener listener : listeners) {
@@ -74,10 +76,10 @@ public class Logger {
      * Zalogovat zpravu. Jednodussi logovani, logovana trida nemusi byt Loggable, posila se jen string s description.
      * Neposila se zadnej dodatecnej objekt.
      *
-     * @param name identifikace volajiciho (abychom vedeli, kdo tu zpravu poslal: napr. ktery device, ktere rozhrani..)
+     * @param name     identifikace volajiciho (abychom vedeli, kdo tu zpravu poslal: napr. ktery device, ktere rozhrani..)
      * @param logLevel vlozit pres logging.Logger.
      * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
-     * @param message logovana zprava
+     * @param message  logovana zprava
      */
     public static void log(String name, int logLevel, LoggingCategory category, String message) {
         for (LoggerListener listener : listeners) {
@@ -94,7 +96,7 @@ public class Logger {
      *
      * @param logLevel vlozit pres logging.Logger.
      * @param category ze ktere tridy je logovana zprava, napr. ETHERNET_LAYER nebo IP_LAYER ..
-     * @param message logovana zprava
+     * @param message  logovana zprava
      */
     public static void log(int logLevel, LoggingCategory category, String message) {
         String name = new Exception().getStackTrace()[1].getClassName();
@@ -133,6 +135,7 @@ public class Logger {
 
     /**
      * Returns true iff SystemListener is set ON for category with DEBUG facility.
+     *
      * @param category
      * @return
      */

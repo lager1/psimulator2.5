@@ -8,7 +8,6 @@ import applications.dns.DnsResolver;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
-import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -16,15 +15,15 @@ import networkModule.L3.NetworkInterface;
 
 /**
  * Linuxovy prikaz ping.
- *
- * Znamy odchylky: pri nepovolenym intervalu (0;0,2) by se mela vypsat hlavicka
+ * <p/>
+ * Znamy odchylky: pri nepovolenym intervalu (0;0, 2) by se mela vypsat hlavicka
  * pingu, zatim se nevypisuje.
  *
  * @author Tomas Pitrinec
  */
 public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNotifiable {
 
-//parametry prikazu: -------------------------------------------------------------------------------------------
+    //parametry prikazu: -------------------------------------------------------------------------------------------
     IpAddress cil; //adresa, na kterou ping posilam
     int count = -1; //pocet paketu k poslani, zadava se prepinacem -c
     int size = 56; //velikost paketu k poslani, zadava se -s
@@ -48,7 +47,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
     private boolean translatingName = false;
 
-// konstruktor a ostatni nutny verejny metody: ------------------------------------------------------------------------
+    // konstruktor a ostatni nutny verejny metody: ------------------------------------------------------------------------
     public Ping(AbstractCommandParser parser) {
         super(parser);
         this.type = LinuxCommandType.PING;
@@ -58,7 +57,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     public void run() {
         parser.setRunningCommand(this, false);    // registrovani u parseru
         parsujPrikaz();
-        if (ladiciVypisovani) {
+        if (enableDebug) {
             printLine(toString());
         }
         if (translatingName) {
@@ -110,6 +109,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     }
 
 // privatni metody pro  vykonavani: ------------------------------------------------------------------------------
+
     /**
      * Vykonavani, tedy predevsim spousteni pingovaci aplikace.
      *
@@ -151,6 +151,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     }
 
 // privatni metody pro  parsovani: ------------------------------------------------------------------------------
+
     /**
      * Parsovani. Cte prikaz, zatim cte jenom IP adresu a nic nekontroluje.
      */
@@ -252,7 +253,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
      * Parsovani. Tahleta metoda parsuje ciselne hodnoty prepinace, podle
      * podminek, podle jakych funguje ping (poznamky v mym sesite).
      *
-     * @param uk ukazatel na pismeno toho prepinace ve slove
+     * @param uk      ukazatel na pismeno toho prepinace ve slove
      * @param puvodni hodnota prepinace
      * @return -1 kdyz se zparsovani nepovede
      */

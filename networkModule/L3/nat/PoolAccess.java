@@ -4,7 +4,6 @@
 package networkModule.L3.nat;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class PoolAccess implements Comparable<PoolAccess> {

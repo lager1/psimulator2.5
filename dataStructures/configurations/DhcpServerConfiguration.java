@@ -3,12 +3,12 @@ package dataStructures.configurations;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DhcpServerConfiguration {
@@ -27,7 +27,7 @@ public class DhcpServerConfiguration {
     }
 
     public void addSubnet(String subnet, String netMask,
-            ArrayList<DhcpConfigRange> ranges, HashMap<String, String> subnetOptions) {
+                          ArrayList<DhcpConfigRange> ranges, HashMap<String, String> subnetOptions) {
 
         DhcpSubnetConfiguration sub = new DhcpSubnetConfiguration();
 
@@ -67,7 +67,6 @@ public class DhcpServerConfiguration {
 
             sub.ranges.add(new DhcpRange(start, end));
         }
-
 
 
         //sub.currentAddress = sub.rangeStart;

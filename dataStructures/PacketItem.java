@@ -4,12 +4,13 @@
 
 package dataStructures;
 
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import networkModule.L3.NetworkInterface;
 
 /**
  * Item for supplying packets with additional informations in network module and applications.
  * Slouzi k predavani paketu s dodatecnejma informacema v ramci sitovyho modulu a aplikaci.
+ *
  * @author Tomas Pitrinec
  */
 public class PacketItem {

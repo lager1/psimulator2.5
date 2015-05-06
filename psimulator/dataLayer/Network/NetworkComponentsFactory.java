@@ -1,11 +1,11 @@
 package psimulator.dataLayer.Network;
 
 import java.util.*;
+
 import psimulator.dataLayer.Singletons.GeneratorSingleton;
 import shared.Components.*;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class NetworkComponentsFactory {
@@ -15,7 +15,8 @@ public class NetworkComponentsFactory {
 
     /**
      * Creates empty network model with emtpty maps.
-     * @return 
+     *
+     * @return
      */
     public NetworkModel createEmptyNetworkModel() {
         LinkedHashMap<Integer, HwComponentModel> componentsMap = new LinkedHashMap<Integer, HwComponentModel>();
@@ -25,37 +26,39 @@ public class NetworkComponentsFactory {
         NetworkCounterModel networkCounterModel = createEmptyNetworkCounter();
 
         NetworkModel networkModel = new NetworkModel(componentsMap, cablesMap, lastEditTimestamp, id, networkCounterModel);
-        
+
         return networkModel;
     }
-    
+
     /**
      * Creates new initialized network counter.
-     * @return 
+     *
+     * @return
      */
-    public NetworkCounterModel createEmptyNetworkCounter(){
-        
+    public NetworkCounterModel createEmptyNetworkCounter() {
+
         int nextId = 0;
         int nextMacAddress = 0;
         Map<HwTypeEnum, Integer> nextNumberMap = new EnumMap<HwTypeEnum, Integer>(HwTypeEnum.class);
-        
+
         for (HwTypeEnum hwTypeEnum : HwTypeEnum.values()) {
             nextNumberMap.put(hwTypeEnum, new Integer(0));
         }
-        
+
         NetworkCounterModel networkCounterModel = new NetworkCounterModel(nextId, nextMacAddress, nextNumberMap);
-        
+
         return networkCounterModel;
     }
 
     /**
      * Creates cable betweem two components.
+     *
      * @param hwType
      * @param component1
      * @param component2
      * @param interface1
      * @param interface2
-     * @return 
+     * @return
      */
     public CableModel createCable(HwTypeEnum hwType, HwComponentModel component1, HwComponentModel component2, EthInterfaceModel interface1, EthInterfaceModel interface2) {
         Integer id = GeneratorSingleton.getInstance().getNextId();
@@ -80,11 +83,12 @@ public class NetworkComponentsFactory {
 
     /**
      * Creates component with desired parameters.
+     *
      * @param hwType
      * @param interfacesCount
      * @param defaultZoomXPos
      * @param defaultZoomYPos
-     * @return 
+     * @return
      */
     public HwComponentModel createHwComponent(HwTypeEnum hwType, int interfacesCount, int defaultZoomXPos, int defaultZoomYPos) {
         // generate ID for HwComponent
@@ -116,9 +120,10 @@ public class NetworkComponentsFactory {
 
     /**
      * Creates new EthInterfaceModel for device of hwType type and name interfaceName.
+     *
      * @param interfaceName
      * @param hwType
-     * @return 
+     * @return
      */
     private EthInterfaceModel createEthInterface(String interfaceName, HwTypeEnum hwType) {
         String macAddress;
@@ -138,7 +143,7 @@ public class NetworkComponentsFactory {
                 ipAddress = "";
                 break;
         }
-        
+
         switch (hwType) {
             case LINUX_ROUTER:
                 isUp = true;
@@ -151,7 +156,7 @@ public class NetworkComponentsFactory {
             case END_DEVICE_PC:
                 isUp = true;
                 break;
-            default: 
+            default:
                 isUp = false;
                 break;
         }
@@ -164,22 +169,23 @@ public class NetworkComponentsFactory {
 
         return ethInterfaceModel;
     }
-    
+
     /**
      * Creates next eth interface for existing component.
+     *
      * @param component
-     * @return 
+     * @return
      */
-    public EthInterfaceModel createNextEthInterface(HwComponentModel component, int sequence){
+    public EthInterfaceModel createNextEthInterface(HwComponentModel component, int sequence) {
         HwTypeEnum hwType = component.getHwType();
         // generate interface name
         String interfaceName = GeneratorSingleton.getInstance().getInterfaceName(hwType, sequence);
-        
+
         // create interface
         EthInterfaceModel ethInterface = createEthInterface(interfaceName, hwType);
-        
+
         // Component is NOT SET to interface, will be set when it is really added to component
-        
+
         return ethInterface;
     }
 }

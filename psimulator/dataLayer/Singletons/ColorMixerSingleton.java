@@ -1,10 +1,10 @@
 package psimulator.dataLayer.Singletons;
 
 import java.awt.Color;
+
 import shared.SimulatorEvents.SerializedComponents.PacketType;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class ColorMixerSingleton {
@@ -21,8 +21,10 @@ public class ColorMixerSingleton {
 
     private static ColorMixerSingleton colorMixerSignletonObject;
 
-    /** A private Constructor prevents any other class from instantiating. */
-    private ColorMixerSingleton () {
+    /**
+     * A private Constructor prevents any other class from instantiating.
+     */
+    private ColorMixerSingleton() {
         //     Optional Code
     }
 
@@ -40,11 +42,12 @@ public class ColorMixerSingleton {
 
     /**
      * Gets color for packet type
+     *
      * @param packetType
      * @return
      */
-    public static Color getColorAccodringToPacketType(PacketType packetType){
-        switch(packetType){
+    public static Color getColorAccodringToPacketType(PacketType packetType) {
+        switch (packetType) {
             case TCP:
                 return Color.GREEN;
             case UDP:

@@ -9,7 +9,6 @@ import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class CiscoTracerouteApplication extends TracerouteApplication {
@@ -32,7 +31,7 @@ public class CiscoTracerouteApplication extends TracerouteApplication {
 
     @Override
     protected void lineBeginning(int ttl, String address) {
-        command.print(ttl + " "+ address + " ");
+        command.print(ttl + " " + address + " ");
     }
 
     @Override

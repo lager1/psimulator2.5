@@ -6,7 +6,9 @@ package commands.linux;
 
 import commands.completer.Completer;
 import commands.completer.Node;
+
 import java.util.List;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -20,7 +22,7 @@ public class LinuxCompleter extends Completer {
     protected void handleMorePossibilities(List<Node> possibilities, CommandShell shell) {
         shell.printLine("");
         for (Node node : possibilities) {
-            shell.print(node.value+"\t");
+            shell.print(node.value + "\t");
         }
         shell.printLine("");
         shell.printPrompt();

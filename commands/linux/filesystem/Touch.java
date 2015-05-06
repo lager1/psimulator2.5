@@ -7,7 +7,6 @@ import commands.AbstractCommandParser;
 import filesystem.exceptions.FileNotFoundException;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class Touch extends FileSystemCommand {

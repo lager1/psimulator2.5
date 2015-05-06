@@ -5,10 +5,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+
 import shared.Components.simulatorConfig.DeviceSettings;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -48,9 +48,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * real inteface name
      */
     private String realInterface;
-    
+
     public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces,
-            int defaultZoomXPos, int defaultZoomYPos) {
+                            int defaultZoomXPos, int defaultZoomYPos) {
 
         // add values to variables
         this.id = id;
@@ -107,7 +107,8 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets interface names as array of Objects
-     * @return 
+     *
+     * @return
      */
     public Object[] getInterfacesNames() {
         Object[] list = new Object[interfacesMap.size()];
@@ -122,8 +123,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterface with specified ID
+     *
      * @param id
-     * @return 
+     * @return
      */
     public EthInterfaceModel getEthInterface(Integer id) {
         return interfacesMap.get(id);
@@ -131,8 +133,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterface at specified index
+     *
      * @param index
-     * @return 
+     * @return
      */
     public EthInterfaceModel getEthInterfaceAtIndex(int index) {
         List<EthInterfaceModel> list = new ArrayList<EthInterfaceModel>(interfacesMap.values());
@@ -141,7 +144,8 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterfaces count
-     * @return 
+     *
+     * @return
      */
     public int getEthInterfaceCount() {
         return interfacesMap.size();
@@ -214,7 +218,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         return interfacesMap.values();
     }
 
-    
+
     @XmlTransient // do not store as a map, we need a reference to this object for JAXB, storing as List
     public Map<Integer, EthInterfaceModel> getInterfacesMap() {
         return interfacesMap;
@@ -236,9 +240,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         for (EthInterfaceModel eth : ethInterfaces) {
             interfacesMap.put(eth.getId(), eth);
         }
-        
+
     }
-    
+
     @Override
     public HwTypeEnum getHwType() {
         return hwType;
@@ -266,35 +270,38 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     public void setDevSettings(DeviceSettings devSettings) {
         this.devSettings = devSettings;
     }
-    
-        /**
+
+    /**
      * Removes interface with specified ID
-     * @param id 
+     *
+     * @param id
      */
-    public void removeInterface(EthInterfaceModel eth){
+    public void removeInterface(EthInterfaceModel eth) {
         interfacesMap.remove(eth.getId());
-        
+
         // unbind eth interface and component
         eth.setHwComponent(null);
     }
 
     /**
      * Adds interface in parameter to interfaces map
-     * @param eth 
+     *
+     * @param eth
      */
-    public void addInterface(EthInterfaceModel eth){
+    public void addInterface(EthInterfaceModel eth) {
         // bind eth interface and component together
         eth.setHwComponent(this);
-        
+
         interfacesMap.put(eth.getId(), eth);
     }
-    
+
     /**
      * Returns minimum interface count for component
-     * @return 
+     *
+     * @return
      */
-    public int getMinInterfaceCount(){
-        switch(hwType){
+    public int getMinInterfaceCount() {
+        switch (hwType) {
             case CISCO_ROUTER:
             case CISCO_SWITCH:
             case LINUX_ROUTER:

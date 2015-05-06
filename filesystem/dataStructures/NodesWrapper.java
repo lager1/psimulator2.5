@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class NodesWrapper {
@@ -25,7 +24,6 @@ public class NodesWrapper {
     }
 
     /**
-     *
      * @return return sorted list of nodes. Nodes are sorted by type and name. First directories, second files ...
      */
     public List<Node> getNodesSortedByTypeAndName() {

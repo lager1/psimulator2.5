@@ -6,7 +6,9 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import networkModule.L3.IPLayer;
 import shell.apps.CommandShell.CommandShell;
 
@@ -81,9 +83,9 @@ public class IpNatInterfaceCommand extends CiscoCommand {
             ipLayer.getNatTable().deleteOutside();
             ipLayer.getNatTable().addInside(parser.configuredInterface);
         } else if (outside) {
-            if (ipLayer.getNatTable().getOutside() != null && ! ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
+            if (ipLayer.getNatTable().getOutside() != null && !ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
                 printService("Implementace nepovoluje mit vice nastavenych verejnych rozhrani. "
-                        + "Takze se rusi aktualni verejne: " + ipLayer.getNatTable().getOutside().name+ " a nastavi se "+parser.configuredInterface.name);
+                        + "Takze se rusi aktualni verejne: " + ipLayer.getNatTable().getOutside().name + " a nastavi se " + parser.configuredInterface.name);
             }
 //            System.out.println("nastavuju outside");
             ipLayer.getNatTable().deleteInside(parser.configuredInterface);

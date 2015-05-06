@@ -23,6 +23,7 @@
 package telnetd.io.terminal;
 
 import java.io.IOException;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.io.TelnetIO;

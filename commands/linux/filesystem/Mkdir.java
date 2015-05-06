@@ -13,7 +13,7 @@ import filesystem.exceptions.FileNotFoundException;
  */
 public class Mkdir extends FileSystemCommand {
 
-// promenny parseru:
+    // promenny parseru:
     public Mkdir(AbstractCommandParser parser) {
         super(parser, "mkdir");
     }
@@ -59,10 +59,7 @@ public class Mkdir extends FileSystemCommand {
             }
 
 
-
-
         }
-
 
 
     }

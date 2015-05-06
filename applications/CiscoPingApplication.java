@@ -6,16 +6,14 @@ package applications;
 
 import commands.ApplicationNotifiable;
 import commands.cisco.CiscoCommandParser;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class CiscoPingApplication extends PingApplication {
@@ -37,7 +35,7 @@ public class CiscoPingApplication extends PingApplication {
 
     @Override
     public String getDescription() {
-        return device.getName() + ": cisco" + getName() +" application";
+        return device.getName() + ": cisco" + getName() + " application";
     }
 
     @Override
@@ -54,7 +52,7 @@ public class CiscoPingApplication extends PingApplication {
 
         IcmpPacket packet = (IcmpPacket) p.data;
 
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" handleIncommingPacket, type="+packet.type+", code="+packet.code+", seq="+packet.seq, packet);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " handleIncommingPacket, type=" + packet.type + ", code=" + packet.code + ", seq=" + packet.seq, packet);
 
         // http://www.cisco.com/en/US/products/sw/iosswrel/ps1831/products_tech_note09186a00800a6057.shtml
 

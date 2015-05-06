@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Enums.ToolbarIconSizeEnum;
@@ -21,7 +22,6 @@ import psimulator.userInterface.SimulatorEditor.SwingComponents.MenuToggleButton
 import psimulator.userInterface.SimulatorEditor.Tools.ToolsFactory;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class EditorToolBar extends JToolBar implements Observer {
@@ -46,9 +46,9 @@ public class EditorToolBar extends JToolBar implements Observer {
         this.dataLayer = dataLayer;
 
         // add this ToolBar as observer to languageManager
-        dataLayer.addLanguageObserver((Observer)this);
+        dataLayer.addLanguageObserver((Observer) this);
 
-        dataLayer.addPreferencesObserver((Observer)this);
+        dataLayer.addPreferencesObserver((Observer) this);
 
         // tool bar is not possible to move
         this.setFloatable(false);
@@ -131,9 +131,10 @@ public class EditorToolBar extends JToolBar implements Observer {
 
     /**
      * Updates images on toolbar buttons according to size
+     *
      * @param size
      */
-    public final void updateIconSize(ToolbarIconSizeEnum size){
+    public final void updateIconSize(ToolbarIconSizeEnum size) {
         jButtonFitToSize.setIcon(ImageFactorySingleton.getInstance().getImageIconForToolbar(SecondaryTool.FIT_TO_SIZE, dataLayer.getToolbarIconSize()));
         jButtonAlignToGrid.setIcon(ImageFactorySingleton.getInstance().getImageIconForToolbar(SecondaryTool.ALIGN_TO_GRID, dataLayer.getToolbarIconSize()));
 
@@ -149,8 +150,8 @@ public class EditorToolBar extends JToolBar implements Observer {
     /**
      * Enables deafult tool of this toolbar
      */
-    public void setTool(MainTool tool){
-        switch(tool){
+    public void setTool(MainTool tool) {
+        switch (tool) {
             case HAND:
                 toggleButtonHand.setCurrentToolEnabled();
                 toggleButtonHand.setSelected(true);
@@ -166,6 +167,7 @@ public class EditorToolBar extends JToolBar implements Observer {
 
     /**
      * adds action listener to jButtonFitToSize
+     *
      * @param listener
      */
     public void addToolActionFitToSizeListener(ActionListener listener) {
@@ -174,6 +176,7 @@ public class EditorToolBar extends JToolBar implements Observer {
 
     /**
      * adds action listener to jButtonAlignToGrid
+     *
      * @param listener
      */
     public void addToolActionAlignToGridListener(ActionListener listener) {
@@ -183,8 +186,8 @@ public class EditorToolBar extends JToolBar implements Observer {
     ////////------------ PRIVATE------------///////////
     private void setTextsToComponents() {
         // set text only to Tools that cant be changed
-        toggleButtonDragMove.setToolTipText(dataLayer.getString("DRAG_MOVE")+" (M)");
-        toggleButtonHand.setToolTipText(dataLayer.getString("HAND")+" (H)");
+        toggleButtonDragMove.setToolTipText(dataLayer.getString("DRAG_MOVE") + " (M)");
+        toggleButtonHand.setToolTipText(dataLayer.getString("HAND") + " (H)");
         toggleButtonRealPC.setToolTipText(dataLayer.getString("REAL_PC"));
         //toggleButtonCable.setToolTipText(dataLayer.getString("CABLE"));
         jButtonFitToSize.setToolTipText(dataLayer.getString("FIT_TO_SIZE"));

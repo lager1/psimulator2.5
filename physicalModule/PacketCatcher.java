@@ -4,17 +4,15 @@
 
 package physicalModule;
 
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L4Packet;
 import dataStructures.packets.L3Packet;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.EthernetPacket;
-import dataStructures.packets.ArpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L2.EthernetPacket;
+import dataStructures.packets.L2.ArpPacket;
 import dataStructures.*;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.packets.*;
-import java.util.Arrays;
-import java.util.logging.Level;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -32,8 +30,9 @@ import org.jnetpcap.protocol.network.Ip4;
 
 /**
  * Class for capturing packets from real network.
- *
+ * <p/>
  * Trida na chytani paketu z realny site. Bezi v uplne vlastim vlakne!
+ *
  * @author Tomas Pitrinec
  */
 public class PacketCatcher implements Runnable, Loggable {
@@ -71,12 +70,12 @@ public class PacketCatcher implements Runnable, Loggable {
         pcap.loop(-1, packetHandler, null);
         //pcap.loop(pcap.LOOP_INFINITE, packetHandler, null);
 
-        log(Logger.DEBUG,"Vlakno catcheru konci.",null); // sem se to muze dostat jedine po zavolani pcap.close()
+        log(Logger.DEBUG, "Vlakno catcheru konci.", null); // sem se to muze dostat jedine po zavolani pcap.close()
     }
 
-    private void translatePacket(JPacket packet){
+    private void translatePacket(JPacket packet) {
         L2Packet l2p = processLinkLayer(packet);
-        if(l2p!=null){
+        if (l2p != null) {
             //poslu paket:
             swport.receivePacket(l2p);
         }
@@ -85,9 +84,10 @@ public class PacketCatcher implements Runnable, Loggable {
 
     /**
      * Translates ethernet II packets, than calls the translation of network layer and gives the L2Packet to the swport.
+     *
      * @param packet
      */
-    private L2Packet processLinkLayer(JPacket packet){
+    private L2Packet processLinkLayer(JPacket packet) {
 
         if (packet.hasHeader(JProtocol.ETHERNET_ID)) { // kdyz to ma ethernetovou hlavicku
             // nactu si hlavicku
@@ -96,15 +96,15 @@ public class PacketCatcher implements Runnable, Loggable {
             packet.getHeader(ethHeader);
 
             // nactu si mac adresy:
-            MacAddress src=new MacAddress(ethHeader.source());
-            MacAddress dst=new MacAddress(ethHeader.destination());
+            MacAddress src = new MacAddress(ethHeader.source());
+            MacAddress dst = new MacAddress(ethHeader.destination());
 
             // necham zpracovat paket vyssi vrstvy:
             L3Packet data = processNetLayer(packet);
 
             //vytvorim paket:
-            if(data!=null){
-                return new EthernetPacket (src,dst,data.getType(), data);    // typ se dava podle skutecnosti, ne podle toho, co bylo zadano v puvodnim paketu
+            if (data != null) {
+                return new EthernetPacket(src, dst, data.getType(), data);    // typ se dava podle skutecnosti, ne podle toho, co bylo zadano v puvodnim paketu
             }
 
         } else {    // je to nejakej neznamej typ, loguju to jako info
@@ -115,10 +115,11 @@ public class PacketCatcher implements Runnable, Loggable {
 
     /**
      * Translates the packets on net layer, for now translates the ARP and IPv4 packets.
+     *
      * @param packet
      * @return
      */
-    private L3Packet processNetLayer(JPacket packet){
+    private L3Packet processNetLayer(JPacket packet) {
 
         if (packet.hasHeader(JProtocol.ARP_ID)) {
             return processArp(packet);
@@ -135,10 +136,11 @@ public class PacketCatcher implements Runnable, Loggable {
 
     /**
      * Translates ARP packet.
+     *
      * @param packet
      * @return null if packet doesn't contain ARP header
      */
-    private ArpPacket processArp(JPacket packet){
+    private ArpPacket processArp(JPacket packet) {
 
         if (packet.hasHeader(JProtocol.ARP_ID)) { // for sure
 
@@ -155,10 +157,10 @@ public class PacketCatcher implements Runnable, Loggable {
             MacAddress targetMac = new MacAddress(arpHeader.tha());
 
             //vytvorim paket:
-            if(opCode==Arp.OpCode.REPLY){
+            if (opCode == Arp.OpCode.REPLY) {
                 return new ArpPacket(senderIP, senderMac, targetIP, targetMac);
             } else {
-                return new ArpPacket(senderIP,senderMac,targetIP);
+                return new ArpPacket(senderIP, senderMac, targetIP);
             }
 
         } else {
@@ -168,12 +170,13 @@ public class PacketCatcher implements Runnable, Loggable {
 
     /**
      * Finds IP header in JPacket and returns complete IpPacket (with all data).
+     *
      * @param packet
      * @return null if packet doesn't contain IP header
      */
-    private IpPacket processIp(JPacket packet){
+    private IpPacket processIp(JPacket packet) {
 
-        if (! packet.hasHeader(JProtocol.IP4_ID)) { // for sure
+        if (!packet.hasHeader(JProtocol.IP4_ID)) { // for sure
             return null;
         } else {
             // nactu hlavicku:
@@ -186,9 +189,9 @@ public class PacketCatcher implements Runnable, Loggable {
             int ttl = ipHeader.ttl();
 
             //necham zpracovat protokol vyssi vrstvy:
-            L4Packet  data = processTransportLayer(packet);
+            L4Packet data = processTransportLayer(packet);
 
-            if(data==null){ //unknown type of transport layer header
+            if (data == null) { //unknown type of transport layer header
                 log(Logger.INFO, "Packet with unknown transport layer header catched and dropped.", null);
                 return null;
             } else {
@@ -201,11 +204,12 @@ public class PacketCatcher implements Runnable, Loggable {
 
     /**
      * Translates the packets on transport layer, for now translates only ICMP echo/reply packets.
+     *
      * @param packet
      * @return
      */
     private L4Packet processTransportLayer(JPacket packet) {
-        if(packet.hasHeader(JProtocol.ICMP_ID)){
+        if (packet.hasHeader(JProtocol.ICMP_ID)) {
             return processIcmp(packet);
         } else {
             // Here you can add translations of other headers on transport layer.
@@ -215,11 +219,11 @@ public class PacketCatcher implements Runnable, Loggable {
         return null;
     }
 
-    private IcmpPacket processIcmp(JPacket packet){
+    private IcmpPacket processIcmp(JPacket packet) {
 
         IcmpPacket p = null;
 
-        if(packet.hasHeader(JProtocol.ICMP_ID)){    // for sure
+        if (packet.hasHeader(JProtocol.ICMP_ID)) {    // for sure
             // ziskam hlavicku
             Icmp icmp = new Icmp();
             packet.getHeader(icmp);
@@ -237,11 +241,11 @@ public class PacketCatcher implements Runnable, Loggable {
                 icmp.getSubHeader(icmpEcho);    // nactu si podhlavicku
                 int identifier = icmpEcho.id();
                 int sequence = icmpEcho.sequence();
-                byte [] data = icmp.getPayload();
+                byte[] data = icmp.getPayload();
                 try {
                     p = new IcmpPacket(type, code, identifier, sequence, data);
                 } catch (Exception ex) {
-                    log(Logger.WARNING,ex.getMessage(), ex);
+                    log(Logger.WARNING, ex.getMessage(), ex);
                 }
             } else { // neni to request ani reply
                 // Here you can add the translation of other ICMP packets
@@ -255,7 +259,7 @@ public class PacketCatcher implements Runnable, Loggable {
                         // inner packet is ICMP
                         p = new IcmpPacket(type, code, innerIcmp.id, innerIcmp.seq, innerIcmp.payload);
                     } catch (Exception ex) {
-                        log(Logger.WARNING,ex.getMessage(), ex);
+                        log(Logger.WARNING, ex.getMessage(), ex);
                     }
                 }
 
@@ -266,16 +270,14 @@ public class PacketCatcher implements Runnable, Loggable {
     }
 
 
-
     @Override
     public String getDescription() {
-        return swport.getDescription()+": cather";
+        return swport.getDescription() + ": cather";
     }
 
-    private void log(int logLevel, String msg, Object obj){
+    private void log(int logLevel, String msg, Object obj) {
         Logger.log(this, logLevel, LoggingCategory.REAL_NETWORK, msg, obj);
     }
-
 
 
 }

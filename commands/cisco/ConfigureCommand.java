@@ -7,9 +7,13 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
+
 import static shell.apps.CommandShell.CommandShell.CISCO_CONFIG_MODE;
+
 import shell.apps.CommandShell.ShellMode;
 
 /**
@@ -63,7 +67,7 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
             return;
         }
 
-        debug("chyba: "+nextWord);
+        debug("chyba: " + nextWord);
         parser.invalidInputDetected();
     }
 

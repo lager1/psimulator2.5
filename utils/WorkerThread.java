@@ -9,6 +9,7 @@ import logging.LoggingCategory;
 
 /**
  * Thread implements wake and run functions. It sleeps itselfs.
+ *
  * @author Tomas Pitrinec
  * @author Stanislav Rehak
  */
@@ -87,7 +88,7 @@ public final class WorkerThread implements Runnable, Loggable {
             try { // tohleto try je tady pro odchytavani veskerejch vyjimek, takhle vlakno neumre, ale i pres vyjimku pokracuje dal
                 smartRunnable.doMyWork();
             } catch (Exception e) {
-                Logger.log(this, Logger.WARNING, LoggingCategory.THREADS, "Some exception occured: "+e.toString(), e);
+                Logger.log(this, Logger.WARNING, LoggingCategory.THREADS, "Some exception occured: " + e.toString(), e);
             }
 
             if (!dieCalled) {    // ma-li se umrit po metode doMyWork nespousti se sleep, tzn. jde se na zacatek a skonci se
@@ -115,10 +116,10 @@ public final class WorkerThread implements Runnable, Loggable {
 
     @Override
     public String getDescription() {
-        return "WorkerThread ("+getThreadName()+")";
+        return "WorkerThread (" + getThreadName() + ")";
     }
 
-    public String getThreadName(){
+    public String getThreadName() {
         return myThread.getName();
     }
 }

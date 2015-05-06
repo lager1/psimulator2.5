@@ -9,7 +9,9 @@ import commands.completer.Completer;
 import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Map;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
@@ -36,7 +38,7 @@ public class IpAddressCommand extends CiscoCommand {
 
     @Override
     public void run() {
-         boolean pokracovat = process();
+        boolean pokracovat = process();
         if (pokracovat) {
             start();
         }
@@ -44,6 +46,7 @@ public class IpAddressCommand extends CiscoCommand {
 
     /**
      * Vim, ze mi prislo '(no) ip address'.
+     *
      * @return
      */
     private boolean process() {
@@ -51,7 +54,7 @@ public class IpAddressCommand extends CiscoCommand {
 
         String ip = nextWord();
 
-        if (ip.isEmpty() && no){
+        if (ip.isEmpty() && no) {
             noBezAdresy = true;
             return true;
         }
@@ -94,7 +97,7 @@ public class IpAddressCommand extends CiscoCommand {
             printLine("Bad mask 0x" + s.toUpperCase() + " for address " + ip);
             return false;
         } catch (Exception e) {
-            Logger.log(getDescription(), Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, "Tohle by se asi nemelo stavat?, exception: "+e);
+            Logger.log(getDescription(), Logger.WARNING, LoggingCategory.CISCO_COMMAND_PARSER, "Tohle by se asi nemelo stavat?, exception: " + e);
             invalidInputDetected();
             return false;
         }

@@ -12,7 +12,6 @@ import logging.LoggingCategory;
 /**
  * Represents simple cable which only forwards packets to the other side.
  *
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class CableV2 extends AbstractCable {
@@ -34,8 +33,9 @@ public class CableV2 extends AbstractCable {
 
     /**
      * Transmits packet to the other end of cable.
+     *
      * @param packet data to send
-     * @param dest destination
+     * @param dest   destination
      */
     public void transmit(L2Packet packet, AbstractSimulatorSwitchport src, AbstractSimulatorSwitchport dest) {
         Logger.log(this, Logger.INFO, LoggingCategory.CABEL_SENDING, "Sending packet through cabel..", new CableItem(packet, src.deviceID, dest.deviceID, configID));

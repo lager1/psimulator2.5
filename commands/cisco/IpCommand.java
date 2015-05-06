@@ -6,11 +6,12 @@ package commands.cisco;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class IpCommand extends CiscoCommand {

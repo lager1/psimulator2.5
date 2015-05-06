@@ -9,17 +9,19 @@ import dataStructures.configurations.DhcpServerConfiguration;
 import dataStructures.configurations.DhcpSubnetConfiguration;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dhcp.DhcpPacket;
-import dataStructures.packets.dhcp.DhcpPacketType;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacketType;
 import device.Device;
 import filesystem.FileSystem;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
@@ -127,7 +129,7 @@ public class DhcpServer extends Application {
     }
 
     private void sendDhcpPacket(DhcpPacketType replyType, NetworkInterface iface, DhcpPacket recDhcp,
-            IPwithNetmask adrm, HashMap<String, String> options) {
+                                IPwithNetmask adrm, HashMap<String, String> options) {
         // nactu, co mu poslu:
         IpAddress serverAddress = iface.getIpAddress().getIp();
         // sestavim pakety:

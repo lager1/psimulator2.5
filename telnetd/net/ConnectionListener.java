@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger
+ * Copyright (c) 2000-2005 Dieter Wimberger 
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -46,45 +46,45 @@ package telnetd.net;
  */
 public interface ConnectionListener {
 
-  /**
-   * Called when a CONNECTION_IDLE event occured.
-   *
-   * @param ce ConnectionEvent instance.
-   * @see telnetd.net.ConnectionEvent#CONNECTION_IDLE
-   */
-  public void connectionIdle(ConnectionEvent ce);
+    /**
+     * Called when a CONNECTION_IDLE event occured.
+     *
+     * @param ce ConnectionEvent instance.
+     * @see telnetd.net.ConnectionEvent#CONNECTION_IDLE
+     */
+    public void connectionIdle(ConnectionEvent ce);
 
-  /**
-   * Called when a CONNECTION_TIMEDOUT event occured.
-   *
-   * @param ce ConnectionEvent instance.
-   * @see telnetd.net.ConnectionEvent#CONNECTION_TIMEDOUT
-   */
-  public void connectionTimedOut(ConnectionEvent ce);
+    /**
+     * Called when a CONNECTION_TIMEDOUT event occured.
+     *
+     * @param ce ConnectionEvent instance.
+     * @see telnetd.net.ConnectionEvent#CONNECTION_TIMEDOUT
+     */
+    public void connectionTimedOut(ConnectionEvent ce);
 
-  /**
-   * Called when a CONNECTION_LOGOUTREQUEST occured.
-   *
-   * @param ce ConnectionEvent instance.
-   * @see telnetd.net.ConnectionEvent#CONNECTION_LOGOUTREQUEST
-   */
-  public void connectionLogoutRequest(ConnectionEvent ce);
+    /**
+     * Called when a CONNECTION_LOGOUTREQUEST occured.
+     *
+     * @param ce ConnectionEvent instance.
+     * @see telnetd.net.ConnectionEvent#CONNECTION_LOGOUTREQUEST
+     */
+    public void connectionLogoutRequest(ConnectionEvent ce);
 
-  /**
-   * Called when a CONNECTION_BROKEN event occured.
-   *
-   * @param ce ConnectionEvent instance.
-   * @see telnetd.net.ConnectionEvent#CONNECTION_BROKEN
-   */
-  //public void connectionBroken(ConnectionEvent ce);
+    /**
+     * Called when a CONNECTION_BROKEN event occured.
+     *
+     * @param ce ConnectionEvent instance.
+     * @see telnetd.net.ConnectionEvent#CONNECTION_BROKEN
+     */
+    //public void connectionBroken(ConnectionEvent ce);
 
 
-  /**
-   * Called when a CONNECTION_BREAK event occured.
-   *
-   * @param ce ConnectionEvent instance.
-   * @see telnetd.net.ConnectionEvent#CONNECTION_BREAK
-   */
-  public void connectionSentBreak(ConnectionEvent ce);
+    /**
+     * Called when a CONNECTION_BREAK event occured.
+     *
+     * @param ce ConnectionEvent instance.
+     * @see telnetd.net.ConnectionEvent#CONNECTION_BREAK
+     */
+    public void connectionSentBreak(ConnectionEvent ce);
 
 }//interface ConnectionListener

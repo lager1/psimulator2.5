@@ -2,8 +2,10 @@ package logging.networkEvents;
 
 import dataStructures.CableItem;
 import dataStructures.DropItem;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggerListener;
@@ -13,7 +15,6 @@ import shared.SimulatorEvents.SerializedComponents.EventType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class PacketTranslator implements Runnable, LoggerListener, Loggable {
@@ -29,7 +30,6 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
     private boolean quit = false;
 
     /**
-     *
      * @param translatedPackets aka output queue
      */
     public PacketTranslator(LinkedBlockingQueue<NetworkObject> translatedPackets) {
@@ -87,12 +87,11 @@ public class PacketTranslator implements Runnable, LoggerListener, Loggable {
         }
 
 
-
     }
 
     private NetworkObject translatePacket(Object object) {
 
-        if(object instanceof NetworkObject) // if object is NetworkObject => send directly
+        if (object instanceof NetworkObject) // if object is NetworkObject => send directly
             return (NetworkObject) object;
 
         if (object instanceof CableItem) {

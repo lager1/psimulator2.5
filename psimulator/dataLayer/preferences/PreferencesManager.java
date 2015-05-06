@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.prefs.Preferences;
+
 import psimulator.dataLayer.Enums.*;
 import psimulator.dataLayer.interfaces.SaveableInterface;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.PacketImageType;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public final class PreferencesManager extends Observable implements SaveableInterface {
@@ -142,6 +142,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets current toolbar icon size.
+     *
      * @return
      */
     public ToolbarIconSizeEnum getToolbarIconSize() {
@@ -151,6 +152,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets current toolbar icon size and notifies observers.
      * ICON_SIZE
+     *
      * @param toolbarIconSize
      */
     public void setToolbarIconSize(ToolbarIconSizeEnum toolbarIconSize) {
@@ -163,6 +165,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets current packet image type.
+     *
      * @return
      */
     public PacketImageType getPackageImageType() {
@@ -172,6 +175,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets packet image type and notifies observers.
      * PACKET_IMAGE_TYPE_CHANGE
+     *
      * @param packageImageType
      */
     public void setPackageImageType(PacketImageType packageImageType) {
@@ -184,6 +188,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets current level of details mode.
+     *
      * @return
      */
     public LevelOfDetailsMode getLevelOfDetails() {
@@ -193,6 +198,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets level of details mode and notifies the observers.
      * VIEW_DETAILS
+     *
      * @param levelOfDetails
      */
     public void setLevelOfDetails(LevelOfDetailsMode levelOfDetails) {
@@ -205,6 +211,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets IP address to psimulator server.
+     *
      * @return
      */
     public String getConnectionIpAddress() {
@@ -213,6 +220,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Sets IP address to psimulator server
+     *
      * @param connectionPort
      */
     public void setConnectionIpAddress(String connectionIpAddress) {
@@ -221,6 +229,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets connection port to psimulator server.
+     *
      * @return
      */
     public String getConnectionPort() {
@@ -229,6 +238,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Sets connection port to psimulator server
+     *
      * @param connectionPort
      */
     public void setConnectionPort(String connectionPort) {
@@ -237,6 +247,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets recently opened files.
+     *
      * @return
      */
     public List<File> getRecentOpenedFiles() {
@@ -246,6 +257,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Adds file to recently opened and notifies observers.
      * RECENT_OPENED_FILES_CHANGED
+     *
      * @param file
      */
     public void addRecentOpenedFile(File file) {
@@ -258,6 +270,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Saves directory of type into preferences
+     *
      * @param directoryType
      * @param file
      */
@@ -277,6 +290,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets recent  directory of directoryType from preferences
+     *
      * @param directoryType
      * @return directory File, or NULL if file does not exist....
      */
@@ -308,6 +322,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets value of specified view details type.
+     *
      * @param viewDetailsType
      * @return
      */
@@ -334,6 +349,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Set specified view details to value.
+     *
      * @param viewDetailsType
      * @param value
      */

@@ -6,6 +6,7 @@ package logging;
 import dataStructures.packets.L2Packet;
 import dataStructures.packets.L3Packet;
 import dataStructures.packets.L4Packet;
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,7 +30,7 @@ public class SystemListener implements LoggerListener {
     private DateFormat currentTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     private PrintWriter out;
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    private String file = psimulator2.Psimulator.getNameOfProgram()+"_exceptions_"+format.format(new Date())+".txt";
+    private String file = psimulator2.Psimulator.getNameOfProgram() + "_exceptions_" + format.format(new Date()) + ".txt";
 
     public SystemListener() {
         ConfigureSystemListener.configure(configuration);
@@ -50,9 +51,9 @@ public class SystemListener implements LoggerListener {
                     try {
                         out = new PrintWriter(new FileWriter(file, true));
                     } catch (IOException exs) {
-                        System.err.println("Could not create Printwriter to log exceptions to file: " + file+", so this exception is not logged to a file.");
+                        System.err.println("Could not create Printwriter to log exceptions to file: " + file + ", so this exception is not logged to a file.");
                     }
-                    out.println(currentTime.format(new Date()) + " " + caller.getDescription()+": ");
+                    out.println(currentTime.format(new Date()) + " " + caller.getDescription() + ": ");
                     ex.printStackTrace(out);
                     out.println();
                     out.flush();
@@ -61,7 +62,7 @@ public class SystemListener implements LoggerListener {
                     System.out.println(begin + object.toString() + " | " + message);
 
                 } else if (object != null) {    // nejakej jinej object, ten se vypisuje na konec
-                    System.out.println(begin + message+" (" + object.toString()+")");
+                    System.out.println(begin + message + " (" + object.toString() + ")");
                 } else {
                     System.out.println(begin + message);
                 }

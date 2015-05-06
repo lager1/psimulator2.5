@@ -5,6 +5,7 @@
 package shell.apps.CommandShell;
 
 import device.Device;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,6 @@ public class HistoryManager {
     }
 
 
-
     /**
      * set current active history and activate it
      *
@@ -59,11 +59,12 @@ public class HistoryManager {
         activeHistory.activate();
     }
 
-    private static History createHistoryObject(int mode, Device device){
+    private static History createHistoryObject(int mode, Device device) {
         return new History(defaultHistoryPath + String.valueOf(mode), device);
     }
 
     // @TODO rename historys => histories, english grammar failure
+
     /**
      * method, that rotate two historys.
      *
@@ -73,7 +74,7 @@ public class HistoryManager {
         this.saveAllHistory();
         History histObject = this.mapOfHistorys.get(mode);
 
-        if(histObject == null) // not yet loaded
+        if (histObject == null) // not yet loaded
         {
             histObject = createHistoryObject(mode, deviceReference);
             mapOfHistorys.put(mode, histObject);

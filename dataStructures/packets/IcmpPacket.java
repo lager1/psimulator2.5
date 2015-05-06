@@ -4,7 +4,7 @@
 package dataStructures.packets;
 
 import shared.SimulatorEvents.SerializedComponents.PacketType;
-import utils.Util;
+import utils.Utilities;
 import static dataStructures.packets.IcmpPacket.Type.*;
 import static dataStructures.packets.IcmpPacket.Code.*;
 import java.util.Arrays;
@@ -138,7 +138,7 @@ public class IcmpPacket extends L4Packet {
 
     @Override
     public String toString(){
-        return "IcmpPacket: "+Util.zarovnej(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
+        return "IcmpPacket: "+Utilities.alignFromRight(type.toString(), 7)+" "+code+" id: " + id + " seq="+seq;
     }
 
     public int getPayloadSize() {

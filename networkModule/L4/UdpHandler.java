@@ -5,10 +5,9 @@
 package networkModule.L4;
 
 import dataStructures.PacketItem;
-import dataStructures.packets.TcpUdpPacket;
+import dataStructures.packets.L4.TcpUdpPacket;
 import logging.Loggable;
-import networkModule.L7.ApplicationLayer;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Forwards incomming UDP packets to application.
@@ -30,6 +29,6 @@ public class UdpHandler implements Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(transportLayer.netMod.getDevice().getName(), Util.deviceNameAlign)+" UdpHandler";
+        return Utilities.alignFromRight(transportLayer.netMod.getDevice().getName(), Utilities.deviceNameAlign) + " UdpHandler";
     }
 }

@@ -5,13 +5,15 @@
 package commands.completer;
 
 import commands.completer.Node.Item;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Command completer for commands.
@@ -40,7 +42,7 @@ public abstract class Completer implements Loggable {
     /**
      * Returns completed command iff there is only one possibility.
      * Otherwise returns null
-     *
+     * <p/>
      * Bude volan ze shellu uz konkretni Completer dle aktualniho modu.
      *
      * @param line
@@ -49,7 +51,7 @@ public abstract class Completer implements Loggable {
     public String complete(String line, CommandShell shell) {
         temp.clear();
         ref = 0;
-        temp.addAll(Util.splitLine(line));
+        temp.addAll(Utilities.splitLine(line));
 
         Node act = root;
 
@@ -57,7 +59,7 @@ public abstract class Completer implements Loggable {
 
         while (true) {
             String word = getNextWord();
-            log("slovo z prikazu: "+word);
+            log("slovo z prikazu: " + word);
 
             if (word == null) {
                 if (completedLine.isEmpty()) {
@@ -71,11 +73,11 @@ public abstract class Completer implements Loggable {
                 handleMorePossibilities(act.possibilities, shell);
                 return null;
             } else if (completed.child == null) {
-                log("nenalezeno mezi detmi: "+word);
+                log("nenalezeno mezi detmi: " + word);
                 return null;
             }
 
-            log("nalezeno mezi detmi: "+word);
+            log("nalezeno mezi detmi: " + word);
             act = completed.child;
             completedLine += act.value + " ";
         }
@@ -83,6 +85,7 @@ public abstract class Completer implements Loggable {
 
     /**
      * Writes possibilities to the shell.
+     *
      * @param possibilities
      * @param shell
      */
@@ -90,7 +93,7 @@ public abstract class Completer implements Loggable {
 
     public void addCommand(String line) {
         List<String> tmp = new ArrayList<>();
-        tmp.addAll(Util.splitLine(line));
+        tmp.addAll(Utilities.splitLine(line));
 
         Node act = root;
 
@@ -107,6 +110,7 @@ public abstract class Completer implements Loggable {
 
     /**
      * Neresi se zde zatim situace, kdy vkladam strom do podstromu s vice sousedama (viz radek uk = node.getFirstDescendant();)
+     *
      * @param node
      */
     public void addCommand(Node node) {

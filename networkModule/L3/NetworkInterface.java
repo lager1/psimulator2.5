@@ -5,12 +5,15 @@ package networkModule.L3;
 
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
+
 import java.util.Objects;
+
 import networkModule.L2.EthernetInterface;
 
 /**
  * Representation of network interface in 3th layer in Network Module.
  * Representuje prakticky jen nastaveni interfacu, samotna trida nic nedela.
+ *
  * @author neiss
  */
 public class NetworkInterface implements Comparable<NetworkInterface> {
@@ -37,6 +40,7 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 
     /**
      * Only to create temporary interface in commands and tests.
+     *
      * @param configID
      * @param name
      * @param iface
@@ -60,6 +64,7 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
     /**
      * Getter for IP address with mask.
      * Setter is not available. Set IP address on IPLayer with method setIpAddressOnInterface()
+     *
      * @return
      */
     public IPwithNetmask getIpAddress() {
@@ -68,6 +73,7 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 
     /**
      * Jen zkratka.
+     *
      * @return
      */
     public MacAddress getMacAddress() {
@@ -76,6 +82,7 @@ public class NetworkInterface implements Comparable<NetworkInterface> {
 
     /**
      * Aby se to dalo radit podle jmena interface.
+     *
      * @param o
      * @return
      */

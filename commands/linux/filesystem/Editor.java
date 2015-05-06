@@ -8,7 +8,6 @@ import filesystem.exceptions.FileNotFoundException;
 import shell.apps.TextEditor.TextEditor;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class Editor extends FileSystemCommand {
@@ -32,7 +31,7 @@ public class Editor extends FileSystemCommand {
     @Override
     protected void executeCommand() {
 
-        if(files.isEmpty()){
+        if (files.isEmpty()) {
             parser.getShell().printLine("File name needed to run editor");
             return;
         }
@@ -47,7 +46,7 @@ public class Editor extends FileSystemCommand {
         String currentDir = getCurrentDir();
 
 
-    filePath = resolvePath(currentDir, filePath);
+        filePath = resolvePath(currentDir, filePath);
 
         if (!parser.device.getFilesystem().isFile(filePath)) {  // if path is not existing file
             try {
@@ -58,10 +57,9 @@ public class Editor extends FileSystemCommand {
                 }
             } catch (FileNotFoundException ex) {
                 parser.getShell().printLine("Cannot create new empty file with your path: " + filePath);
-                    return;
+                return;
             }
         }
-
 
 
         // OK resolved path should be now poining to regular file. time to start texteditor

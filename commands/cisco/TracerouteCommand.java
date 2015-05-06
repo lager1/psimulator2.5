@@ -10,11 +10,12 @@ import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
 import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class TracerouteCommand extends CiscoCommand implements LongTermCommand, ApplicationNotifiable {

@@ -14,7 +14,7 @@ import logging.LoggingCategory;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
-public abstract class AbstractCable implements Loggable{
+public abstract class AbstractCable implements Loggable {
 
     /**
      * ID from configuration file
@@ -41,6 +41,7 @@ public abstract class AbstractCable implements Loggable{
     /**
      * Vraci to switchport na druhym konci kabelu nez je ten zadanej.
      * Returns switchport on the other end of the cable.
+     *
      * @param one
      * @return
      */
@@ -50,7 +51,7 @@ public abstract class AbstractCable implements Loggable{
         } else if (one == secondCon) {
             return firstCon;
         } else {
-            Logger.log(Logger.ERROR, LoggingCategory.PHYSICAL, "Wrong calling of method getTheOtherSwitchport("+one+") on cable with configID " + configID);
+            Logger.log(Logger.ERROR, LoggingCategory.PHYSICAL, "Wrong calling of method getTheOtherSwitchport(" + one + ") on cable with configID " + configID);
             return null;
         }
     }

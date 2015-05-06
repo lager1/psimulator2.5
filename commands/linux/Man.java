@@ -8,7 +8,6 @@ import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class Man extends AbstractCommand {
@@ -18,13 +17,10 @@ public class Man extends AbstractCommand {
     }
 
 
-
     @Override
     public void run() {
         vykonejPrikaz();
     }
-
-
 
 
     protected void vykonejPrikaz() {

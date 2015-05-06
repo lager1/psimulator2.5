@@ -7,6 +7,7 @@ package shared.Components.simulatorConfig;
 
 /**
  * Sem se bude davat nastaveni Device, ktery je jen pro simulator, aby neprekazelo Martinoj Svihlikoj.
+ *
  * @author Tomas Pitrinec
  */
 public class DeviceSettings {
@@ -14,6 +15,7 @@ public class DeviceSettings {
     private NetworkModuleType netModType;
     private RoutingTableConfig routingTabConfig;
     private NatConfig natConfig;
+    private Boolean stpEnabled;
 
     public NatConfig getNatConfig() {
         return natConfig;
@@ -39,12 +41,15 @@ public class DeviceSettings {
         this.routingTabConfig = routingTabConfig;
     }
 
+    public Boolean getStpConfig() {
+        return stpEnabled;
+    }
 
+    public void setStpConfig(Boolean stpEnabled) {
+        this.stpEnabled = stpEnabled;
+    }
 
-
-
-
-    public enum NetworkModuleType{
+    public enum NetworkModuleType {
         tcp_ip_netmod,
         simple_switch_netMod,
     }

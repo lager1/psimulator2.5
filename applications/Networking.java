@@ -6,7 +6,9 @@ import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import device.Device;
 import filesystem.FileSystem;
+
 import java.util.ArrayList;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
@@ -89,7 +91,7 @@ public class Networking extends Application {
             ipNetMod.ipLayer.changeIpAddressOnInterface(iface, addr);
             updateRoutingTable(iface, config);
             iface.isDhcp = false;
-        } else if (config.type.equalsIgnoreCase("dhcp") && 
+        } else if (config.type.equalsIgnoreCase("dhcp") &&
                 iface.ethernetInterface.isConnected()) {
             ipNetMod.applicationLayer.getDhcpManager().lease(iface, shell);
         } else {
@@ -102,7 +104,7 @@ public class Networking extends Application {
         if (iface.getIpAddress() != null) {
             ipNetMod.ipLayer.routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface);
         }
-        
+
         if (config.gateway != null) {
             IPwithNetmask destination = new IPwithNetmask("0.0.0.0");
             ipNetMod.ipLayer.routingTable.addRecord(destination, config.gateway, iface);

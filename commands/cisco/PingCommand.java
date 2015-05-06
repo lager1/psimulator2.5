@@ -10,11 +10,12 @@ import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
 import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class PingCommand extends CiscoCommand implements ApplicationNotifiable, LongTermCommand {
@@ -64,9 +65,10 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
     /**
      * Ulozi vsechny parametry do tridnich promennych nebo vypise chybovou hlasku.
+     *
      * @param typVolby, ktery ma zpracovavat
      * @return true pokud se ma pokracovat v posilani pingu
-     *         false pokud to vypsalo chybu a tedy uz nic nedelat
+     * false pokud to vypsalo chybu a tedy uz nic nedelat
      */
     private boolean processParameters(String typVolby) {
         if (!check("timeout", typVolby) && !check("repeat", typVolby) && !check("size", typVolby)) {
@@ -124,7 +126,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         }
 
         typVolby = nextWord();
-        if (! typVolby.equals("")) {
+        if (!typVolby.equals("")) {
             return processParameters(typVolby);
         }
 
@@ -133,6 +135,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
     /**
      * Parsuje prikaz ping.
+     *
      * @return
      */
     private boolean processLine() {
@@ -163,8 +166,9 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
     /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
+     *
      * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
-     * @param cmd prikaz, ktery zadal uzivatel
+     * @param cmd     prikaz, ktery zadal uzivatel
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
     private boolean check(String command, String cmd) {

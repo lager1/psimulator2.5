@@ -16,6 +16,7 @@ import networkModule.L7.ApplicationLayer;
 /**
  * Síťový modul pro počítač, tedy včetně rozhraní pro aplikace.
  * Dedi od SwitchNetworkModule, tedy se v tyhle tride resi spis komunikace nahoru.
+ *
  * @author neiss
  */
 public class IpNetworkModule extends SwitchNetworkModule {
@@ -28,6 +29,7 @@ public class IpNetworkModule extends SwitchNetworkModule {
     /**
      * Konstruktor sitovyho modulu.
      * Predpoklada uz hotovej pocitac a fysickej modul, protoze zkouma jeho nastaveni.
+     *
      * @param device
      */
     public IpNetworkModule(Device device) {
@@ -48,7 +50,6 @@ public class IpNetworkModule extends SwitchNetworkModule {
     }
 
     //tady budou muset bejt metody pro posilani dat a pro registraci aplikaci, tedy komunikaci s aplikacema
-
 
 
     @Override

@@ -34,18 +34,18 @@ public class ServerConnection {
     // sha256 sum of server jar file (so it can be checked, whether the file was modified)
     private String serverFileHash = "d4273e435926d3764c26ce1459763cea85ec63ea2dbb23e0e7e8b3f0de85ba5e";
 
-        private String location;
+    private String location;
     private String os;
 
     /* creates the server process
      * @param file current file with topology
      *
      */
-    public ServerConnection (File file) {
+    public ServerConnection(File file) {
         location = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();    // absolute path
         os = System.getProperty("os.name");
 
-        if(os.startsWith("Win")) {
+        if (os.startsWith("Win")) {
             location = location.replaceFirst("/", "");
         }
 
@@ -65,11 +65,10 @@ public class ServerConnection {
     public void start() {
         ProcessBuilder pb;
 
-        if(os.startsWith("Win")) {
+        if (os.startsWith("Win")) {
             pb = new ProcessBuilder("cmd.exe", "/C", "java -jar ",
-                location + File.separator + "psimulator2_backend.jar", netFile.toString());
-        }
-        else {
+                    location + File.separator + "psimulator2_backend.jar", netFile.toString());
+        } else {
             pb = new ProcessBuilder(
                     System.getProperty("java.home") + File.separator + "bin" + File.separator + "java", // absolute java binary path
                     "-jar", location + File.separator + "psimulator2_backend.jar",      // jar !
@@ -102,16 +101,16 @@ public class ServerConnection {
     }
 
     private ServerFileStatus checkServerFile() {
-                // file does not exist
-                if(!serverFile.exists()) {
-                    return ServerFileStatus.FILE_NOT_FOUND;
-                }
+        // file does not exist
+        if (!serverFile.exists()) {
+            return ServerFileStatus.FILE_NOT_FOUND;
+        }
 
         // is not readable
-        if(!serverFile.canRead())
+        if (!serverFile.canRead())
             return ServerFileStatus.FILE_NOT_READABLE;
 
-                // hash of file does not match expected hash
+        // hash of file does not match expected hash
         if (!getSHA256CheckSum(serverFile.getAbsolutePath()).equals(serverFileHash)) {
             System.out.println(getSHA256CheckSum(serverFile.getAbsolutePath()));
             System.out.println(serverFileHash);
@@ -161,15 +160,15 @@ public class ServerConnection {
         String result = "";
         byte[] b = null;
 
-            try {
-                    b = createChecksum(filename);
+        try {
+            b = createChecksum(filename);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         for (int i = 0; i < b.length; i++) {
-            result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
         }
 
         return result;
@@ -182,16 +181,16 @@ public class ServerConnection {
      */
     public void terminate() {
 
-         if(os.startsWith("Win")) {
+        if (os.startsWith("Win")) {
             Runtime rt = Runtime.getRuntime();
             String lastLine = "";           // for pid o running java process !
             String commands = "cmd /c tasklist /FI \"IMAGENAME eq java.exe\" /FI \"SESSIONNAME eq Console\"";
 
             Process proc;
             try {
-                 proc = rt.exec(commands);
+                proc = rt.exec(commands);
                 BufferedReader stdInput = new BufferedReader(new
-                InputStreamReader(proc.getInputStream()));
+                        InputStreamReader(proc.getInputStream()));
                 String s = null;
                 while ((s = stdInput.readLine()) != null) {
                     lastLine = s;
@@ -203,18 +202,17 @@ public class ServerConnection {
             String delims = "[ ]+";
             String[] tokens = lastLine.split(delims);
 
-             String cmd = "cmd /c taskkill /T /F /PID " + tokens[1];       // pid of running backend
-             try {
-                 Process child = Runtime.getRuntime().exec(cmd);
-             } catch (IOException ex) {
+            String cmd = "cmd /c taskkill /T /F /PID " + tokens[1];       // pid of running backend
+            try {
+                Process child = Runtime.getRuntime().exec(cmd);
+            } catch (IOException ex) {
                 ex.printStackTrace();
-             }
+            }
 
-         }
-         else {
+        } else {
             p.destroy();    // end process
-         }
-            log.delete();    // delete temporary file
+        }
+        log.delete();    // delete temporary file
     }
 
     /*
@@ -231,13 +229,12 @@ public class ServerConnection {
 
             // need to wait for server to generate output
             while (true) { // need to wait for server port
-                if(line != null && line.contains("listening on port")) {
+                if (line != null && line.contains("listening on port")) {
                     String[] fields = line.split(" ");    // split by " "
                     port = fields[fields.length - 1];    // port is the last field
 
                     return port;
-                }
-                else {
+                } else {
                     try {
                         Thread.sleep(100);        // wait for more output
                     } catch (InterruptedException e) {

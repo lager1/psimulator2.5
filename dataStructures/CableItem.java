@@ -7,7 +7,6 @@ package dataStructures;
 import dataStructures.packets.L2Packet;
 
 /**
- *
  * @author Stanislav Rehak
  */
 public class CableItem {

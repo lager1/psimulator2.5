@@ -16,13 +16,14 @@ import device.Device;
 public abstract class TwoThreadApplication extends Application implements Runnable {
 
     private Thread myThread;
+
     /**
      * Jestli se ma bezet nebo uz skoncit. Potomci si ho sami musi volat!
      */
 
     public TwoThreadApplication(String name, Device device) {
         super(name, device);
-        myThread = new Thread(this, device.getName()+": TwoThreadedApp_vlakno_na_popredi");
+        myThread = new Thread(this, device.getName() + ": TwoThreadedApp_vlakno_na_popredi");
     }
 
     /**
@@ -34,7 +35,7 @@ public abstract class TwoThreadApplication extends Application implements Runnab
         myThread.start();
     }
 
-    public String getMyThreadName(){
+    public String getMyThreadName() {
         return myThread.getName();
     }
 }

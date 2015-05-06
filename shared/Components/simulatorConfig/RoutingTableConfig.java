@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Ukladaci struktura pro routovaci tabulku.
+ *
  * @author Tomas Pitrinec
  */
 public class RoutingTableConfig {
@@ -25,7 +26,7 @@ public class RoutingTableConfig {
         this.records = records;
     }
 
-    public void addRecord(String destination,String interfaceName, String gateway){
+    public void addRecord(String destination, String interfaceName, String gateway) {
         records.add(new Record(destination, interfaceName, gateway));
     }
 }

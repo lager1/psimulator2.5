@@ -4,7 +4,7 @@
 
 package networkModule.L3;
 
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import networkModule.L3.nat.NatTable;
 
 /**

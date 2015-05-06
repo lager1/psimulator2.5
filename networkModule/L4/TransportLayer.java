@@ -6,19 +6,21 @@ package networkModule.L4;
 import applications.Application;
 import dataStructures.DropItem;
 import dataStructures.PacketItem;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
 import networkModule.L3.IPLayer;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Implementace transportni vrstvy sitovyho modulu. <br /> Nebezi v vlastnim
  * vlakne, je to vlastne jen rozhrani mezi aplikacema a 3. vrstvou.
- *
+ * <p/>
  * Pozor: Porty jsou sdileny napric protokoly (ICMP, TCP, UDP), proto nelze
  * poslouchat na 80 pres TCP, UDP a ICMP najednout.
  *
@@ -32,7 +34,6 @@ public class TransportLayer implements Loggable {
     /**
      * List of registred ports of applications. <br /> Key - port or session
      * number <br /> Value - listening application
-     *
      */
     private final Map<Integer, Application> applications = new HashMap<>();
     private int portCounter = 1025;
@@ -94,7 +95,7 @@ public class TransportLayer implements Loggable {
         } else {
             Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT,
                     "Dropping packet: There is now app listening on this port: " + port
-                    + ", sending port unreachable to: " + packetItem.packet.src, packetItem.packet);
+                            + ", sending port unreachable to: " + packetItem.packet.src, packetItem.packet);
             Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP,
                     "Logging dropped packet.", new DropItem(packetItem.packet, netMod.getDevice().configID));
 //            icmphandler.sendPortUnreachable(packet.src, packet); // zatim posilat nebudeme, protoze by se nam toho tam posilalo moc
@@ -104,7 +105,7 @@ public class TransportLayer implements Loggable {
     /**
      * Register application to listen and accept packets.
      *
-     * @param app to register
+     * @param app  to register
      * @param port listen on this port - if null given it will assign free port
      * @return assigned port or -1 iff given port is already in use (than app is
      * for obvious reason not registered)
@@ -136,7 +137,7 @@ public class TransportLayer implements Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign) + "TcpIpLayer";
+        return Utilities.alignFromRight(netMod.getDevice().getName(), Utilities.deviceNameAlign) + "TcpIpLayer";
     }
 
     /**

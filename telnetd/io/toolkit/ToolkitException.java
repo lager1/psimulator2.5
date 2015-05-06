@@ -40,6 +40,6 @@ package telnetd.io.toolkit;
  * @version 2.0 (16/07/2006)
  */
 public class ToolkitException
-    extends Exception {
+        extends Exception {
 
 }//class ToolkitException

@@ -5,7 +5,7 @@ import dataStructures.ipAddresses.IpNetmask;
 
 /**
  * Data structure containing information parsed from the networking configuration file
- * 
+ *
  * @author Michal Horacek
  */
 public class InterfaceConfiguration {
@@ -15,5 +15,5 @@ public class InterfaceConfiguration {
     public IpAddress address;
     public IpNetmask mask;
     public IpAddress broadcast;
-        public IpAddress gateway;
+    public IpAddress gateway;
 }

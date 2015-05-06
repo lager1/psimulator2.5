@@ -51,13 +51,13 @@ import telnetd.net.ConnectionListener;
  * @version 2.0 (16/07/2006)
  */
 public interface Shell
-    extends ConnectionListener {
+        extends ConnectionListener {
 
-  /**
-   * Method that runs the shell.
-   *
-   * @param con Connection the shell is associated with
-   */
-  public void run(Connection con);
+    /**
+     * Method that runs the shell.
+     *
+     * @param con Connection the shell is associated with
+     */
+    public void run(Connection con);
 
 }//interface Shell

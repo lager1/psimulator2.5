@@ -6,11 +6,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import psimulator.dataLayer.DataLayerFacade;
 import shared.Serializer.SaveLoadExceptionParametersWrapper;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -21,20 +21,20 @@ public abstract class AbstractSaveLoadManager {
     //
     protected File file;
     protected long lastSavedTimestamp;
-    
+
     public AbstractSaveLoadManager(Component parentComponent, DataLayerFacade dataLayer) {
         this.parentComponent = parentComponent;
         this.dataLayer = dataLayer;
-        
+
         // create file chooser
         fileChooser = new JFileChooser();
 
         // only xml files
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-        dataLayer.getString("FILE_CHOOSER_ACCEPT_FILES"), "xml");
+                dataLayer.getString("FILE_CHOOSER_ACCEPT_FILES"), "xml");
         fileChooser.setAcceptAllFileFilterUsed(false);  // only xml files allowed
         fileChooser.setFileFilter(filter);
-        
+
         // set texts to file chooser
         setTextsToFileChooser();
     }
@@ -42,7 +42,7 @@ public abstract class AbstractSaveLoadManager {
     public void updateTextsOnFileChooser() {
         setTextsToFileChooser();
     }
-    
+
     public File getFile() {
         return file;
     }
@@ -50,11 +50,11 @@ public abstract class AbstractSaveLoadManager {
     public void setFile(File file) {
         this.file = file;
     }
-    
+
     public void setLastSavedTimestamp() {
         setLastSavedTimestamp(System.currentTimeMillis());
     }
-    
+
     public long getLastSavedTimestamp() {
         return lastSavedTimestamp;
     }
@@ -94,7 +94,7 @@ public abstract class AbstractSaveLoadManager {
 
         return n;
     }
-    
+
     protected final int showWarningPossibleOverwriteDialog(String title, String message) {
         Object[] options = {dataLayer.getString("YES"), dataLayer.getString("NO"), dataLayer.getString("CANCEL")};
         int n = JOptionPane.showOptionDialog(parentComponent,
@@ -108,7 +108,7 @@ public abstract class AbstractSaveLoadManager {
 
         return n;
     }
-    
+
     protected final void showWarningSaveLoadError(SaveLoadExceptionParametersWrapper parametersWrapper) {
 
         String title;
@@ -152,7 +152,7 @@ public abstract class AbstractSaveLoadManager {
                 title,
                 JOptionPane.ERROR_MESSAGE);
     }
-    
+
     /**
      * Sets internationalized texts to file chooser
      */

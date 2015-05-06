@@ -3,13 +3,14 @@ package shell;
 import commands.AbstractCommandParser;
 import commands.LongTermCommand;
 import commands.LongTermCommand.Signal;
+
 import java.util.regex.Pattern;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import telnetd.io.TerminalIO;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class ShellUtils {

@@ -18,10 +18,12 @@ import commands.completer.Node;
 import device.Device;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import logging.*;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
@@ -29,13 +31,12 @@ import networkModule.L3.NetworkInterface;
 import networkModule.NetworkModule;
 import networkModule.IpNetworkModule;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
+import utils.Utilities;
 
 /**
- *
  * @author Tomáš Pitřinec
  */
-public class LinuxCommandParser extends AbstractCommandParser implements Loggable{
+public class LinuxCommandParser extends AbstractCommandParser implements Loggable {
 
     /**
      * Mapa mezi nazvama prikazu a jejich tridou.
@@ -45,11 +46,10 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
     private List<String> scriptCommands;
 
 
-
     public LinuxCommandParser(Device networkDevice, CommandShell shell) {
         super(networkDevice, shell);
         registerCommands();
-        shell.getPrompt().setPrefix(device.getName()+":");
+        shell.getPrompt().setPrefix(device.getName() + ":");
         shell.getPrompt().setCurrentPath("/");
         shell.getPrompt().showPath(true);
         shell.getPrompt().setSuffix("#");
@@ -62,7 +62,6 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
         printService("Type command 'help-en' for list of supported commands (or help for the same in czech).");
     }
-
 
 
     /**
@@ -83,7 +82,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
         commands.put("rnetconn", Rnetconn.class);
         commands.put("service", Service.class);
         commands.put("dhclient", Dhclient.class);
-                commands.put("dig", Dig.class);
+        commands.put("dig", Dig.class);
 
         // prace s filesystemem:
         commands.put("cat", Cat.class);
@@ -95,7 +94,8 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
         commands.put("mv", Mv.class);
         commands.put("cp", Cp.class);
         commands.put("touch", Touch.class);
-        commands.put("editor",Editor.class); commands.put("mcedit",Editor.class);
+        commands.put("editor", Editor.class);
+        commands.put("mcedit", Editor.class);
         commands.put("echo", Echo.class);
 
     }
@@ -105,10 +105,10 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
     @Override
     public void catchSignal(Signal sig) {
-        if(sig==Signal.CTRL_C){
-            Logger.log(this,Logger.DEBUG,LoggingCategory.LINUX_COMMANDS,"Dostal jsem signal ctrl+C, vykonava me vlakno "+Util.threadName(),null);
+        if (sig == Signal.CTRL_C) {
+            Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Dostal jsem signal ctrl+C, vykonava me vlakno " + Utilities.threadName(), null);
             shell.printLine("^C");
-            if(runningCommand != null){
+            if (runningCommand != null) {
                 runningCommand.catchSignal(sig);
             }
         }
@@ -129,9 +129,9 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
                 AbstractCommand command = getLinuxCommand(commandName);
                 if (command != null) { // pokud je to normalni prikaz
                     command.run();
-                } else if(commandName.startsWith("#")){ // komentar - nic se nedeje
+                } else if (commandName.startsWith("#")) { // komentar - nic se nedeje
                     // nic nedelam
-                } else if(commandName.contains("/")){ //obsahuje to lomitko, mohla by to bejt cesta
+                } else if (commandName.contains("/")) { //obsahuje to lomitko, mohla by to bejt cesta
                     nactiSkript(commandName);
                 } else {
                     shell.printLine("bash: " + commandName + ": command not found");
@@ -143,7 +143,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
             log(Logger.WARNING, "Some error in linux commands.", null);
             log(Logger.DEBUG, "Byla vyhozena vyjimka.", ex);
         }
-        //log(Logger.DEBUG,"konec metody processLineForParsers",null);
+        //log(Logger.DEBUG, "konec metody processLineForParsers", null);
 
     }
 
@@ -159,7 +159,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
     @Override
     public String getDescription() {
-        return device.getName()+": LinuxCommandParser";
+        return device.getName() + ": LinuxCommandParser";
     }
 
 
@@ -201,6 +201,7 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
 
     /**
      * Metoda na spusteni skriptu. Praci s filesystemem jsem zkopiroval z Cat.java.
+     *
      * @param fileName
      */
     private void nactiSkript(String fileName) {
@@ -235,22 +236,22 @@ public class LinuxCommandParser extends AbstractCommandParser implements Loggabl
             });
             vykonejSkript();
         } catch (FileNotFoundException ex) {
-            log(Logger.DEBUG,"Byla chycena vyjimka.", null);
+            log(Logger.DEBUG, "Byla chycena vyjimka.", null);
             getShell().printLine("bash: " + currentDir + fileName + ": No such file or directory");
         }
 
     }
 
-    private void vykonejSkript(){
-        while(scriptCommands != null && !scriptCommands.isEmpty() && runningCommand == null){
+    private void vykonejSkript() {
+        while (scriptCommands != null && !scriptCommands.isEmpty() && runningCommand == null) {
             String radek = scriptCommands.remove(0);
             processLine(radek, mode);
-                // -> na tohle pozor, v parseru spustenim nad konkretnim radkem volam ten samej parser - mohlo by to delat neplechu
+            // -> na tohle pozor, v parseru spustenim nad konkretnim radkem volam ten samej parser - mohlo by to delat neplechu
         }
     }
 
 
-    private void log(int logLevel, String message, Object obj){
+    private void log(int logLevel, String message, Object obj) {
         Logger.log(this, logLevel, LoggingCategory.LINUX_COMMANDS, message, obj);
     }
 

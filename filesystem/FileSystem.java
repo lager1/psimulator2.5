@@ -11,7 +11,6 @@ import filesystem.exceptions.FileNotFoundException;
 import filesystem.exceptions.FileSystemException;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public interface FileSystem {
@@ -24,7 +23,9 @@ public interface FileSystem {
      * @throws FileNotFoundException
      */
     public boolean rm_r(String path) throws FileNotFoundException;
+
     public boolean cp_r(String source, String target) throws FileSystemException;
+
     public boolean mv(String source, String target) throws FileSystemException;
 
     /**
@@ -52,7 +53,6 @@ public interface FileSystem {
     public boolean exists(String path);
 
     /**
-     *
      * @param path
      * @return null if file or dir do not exist, else absolute path
      */
@@ -61,39 +61,35 @@ public interface FileSystem {
     /**
      * list directory as array of Nodes
      *
-     * @param path path to the directory or file. If path pointing to the file,then single Node is returned;
+     * @param path path to the directory or file. If path pointing to the file, then single Node is returned;
      * @return names of files or directories
      * @throws FileNotFoundException
      */
     public NodesWrapper listDir(String path) throws FileNotFoundException;
 
     /**
-     *
      * @param path
-     * @return  true = success, false otherwise
-     * @throws FileNotFoundException  if parent directory was not found
+     * @return true = success, false otherwise
+     * @throws FileNotFoundException if parent directory was not found
      */
     public boolean createNewFile(String path) throws FileNotFoundException;
 
     /**
-     *
      * @param path
-     * @return  true = success, false otherwise
-     * @throws FileNotFoundException  if parent directory was not found
+     * @return true = success, false otherwise
+     * @throws FileNotFoundException if parent directory was not found
      */
     public boolean createNewDir(String path) throws FileNotFoundException;
 
     /**
-     *
      * @param path path to the file to work on
-     * @param job job to do
+     * @param job  job to do
      * @return 0 success  -1 otherwise
      * @throws FileNotFoundException
      */
     public int runInputFileJob(String path, InputFileJob job) throws FileNotFoundException;
 
     /**
-     *
      * @param path path to the file to work on
      * @param job  job to do with file
      * @return
@@ -101,7 +97,6 @@ public interface FileSystem {
     public int runOutputFileJob(String path, OutputFileJob job);
 
     /**
-     *
      * @param path   path to the file to work on
      * @param job    job to do with file
      * @param append true for creating file in append mode

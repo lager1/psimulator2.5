@@ -8,6 +8,7 @@ import java.util.Observer;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Singletons.ZoomManagerSingleton;
@@ -21,7 +22,6 @@ import psimulator.userInterface.SimulatorEditor.SimulatorControllPanel.Simulator
 import psimulator.userInterface.SimulatorEditor.UserInterfaceLayeredPane.UserInterfaceLayeredPane;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -52,7 +52,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
     private WelcomePanel jPanelWelcome;
 
     public UserInterfaceMainPanel(MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer,
-            UserInterfaceMainPanelState userInterfaceState) {
+                                  UserInterfaceMainPanelState userInterfaceState) {
         super(new BorderLayout());
 
         this.mainWindow = mainWindow;
@@ -145,8 +145,8 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
     }
 
     @Override
-    public void stopSimulatorActivities(){
-         // turn of activities in simulator
+    public void stopSimulatorActivities() {
+        // turn of activities in simulator
         jPanelSimulator.setTurnedOff();
     }
 
@@ -194,7 +194,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
      */
     @Override
     public void update(Observable o, Object o1) {
-       switch ((ObserverUpdateEventType) o1) {
+        switch ((ObserverUpdateEventType) o1) {
             case ZOOM_CHANGE:
                 ZoomEventWrapper zoomEventWrapper = ZoomManagerSingleton.getInstance().getZoomEventWrapper();
                 zoomChangeUpdate(zoomEventWrapper);
@@ -367,8 +367,8 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
     }
 
     @Override
-    public final void doSetToolInToolBar(MainTool mainTool){
-         jToolBarEditor.setTool(mainTool);
+    public final void doSetToolInToolBar(MainTool mainTool) {
+        jToolBarEditor.setTool(mainTool);
     }
 
     @Override

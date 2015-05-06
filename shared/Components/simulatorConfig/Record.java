@@ -26,7 +26,6 @@ public class Record {
     }
 
 
-
     public String getDestination() {
         return destination;
     }

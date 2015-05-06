@@ -5,7 +5,6 @@
 package commands;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public interface LongTermCommand {

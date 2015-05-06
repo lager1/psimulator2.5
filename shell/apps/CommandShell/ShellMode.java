@@ -5,7 +5,6 @@
 package shell.apps.CommandShell;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public enum ShellMode {
@@ -22,7 +21,6 @@ public enum ShellMode {
      * mode for reading a single line, in this mode printing into shell is forbidden
      */
     INPUT_FIELD
-
 
 
 }

@@ -9,6 +9,7 @@ import dataStructures.ipAddresses.IPwithNetmask;
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
+
 /**
  * Trida reprezentujici jeden seznam-list.
  */

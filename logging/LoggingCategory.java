@@ -5,6 +5,7 @@ package logging;
 
 /**
  * Kategorie logovani.
+ *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public enum LoggingCategory {

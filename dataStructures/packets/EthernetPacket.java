@@ -7,7 +7,7 @@ package dataStructures.packets;
 import dataStructures.packets.L3Packet.L3PacketType;
 import dataStructures.MacAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Represents Ethernet II frames.
@@ -69,7 +69,7 @@ public class EthernetPacket extends L2Packet {
 
     @Override
     public String toString(){
-        String vratit = "EthPacket: src: "+src+ " dst: "+dst+" "+Util.zarovnej(type.toString(), 4);    // vypis minimalistickej, aby se to veslo na obrazovku
+        String vratit = "EthPacket: src: "+src+ " dst: "+dst+" "+Utilities.alignFromRight(type.toString(), 4);    // vypis minimalistickej, aby se to veslo na obrazovku
         return vratit;
     }
 

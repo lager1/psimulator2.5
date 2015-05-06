@@ -11,6 +11,7 @@ package logging;
 public interface LoggerListener {
 
     public void listen(Loggable caller, int logLevel, LoggingCategory category, String message, Object object);
+
     public void listen(String name, int logLevel, LoggingCategory category, String message);
 
 }

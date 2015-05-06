@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger
+ * Copyright (c) 2000-2005 Dieter Wimberger 
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Iterator;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -56,216 +57,216 @@ import logging.LoggingCategory;
 public class TelnetD {
 
 
-  private static TelnetD c_Self = null;    //reference of the running singleton
-  private List m_Listeners;
-  private ShellManager m_ShellManager;
+    private static TelnetD c_Self = null;    //reference of the running singleton
+    private List m_Listeners;
+    private ShellManager m_ShellManager;
 
 
-  /**
-   * Constructor creating a TelnetD instance.<br>
-   * Private so that only  the factory method can create the
-   * singleton instance.
-   */
-  private TelnetD() {
-    c_Self = this;    //sets the singleton reference
-    m_Listeners = new ArrayList(5);
-  }//constructor
+    /**
+     * Constructor creating a TelnetD instance.<br>
+     * Private so that only  the factory method can create the
+     * singleton instance.
+     */
+    private TelnetD() {
+        c_Self = this;    //sets the singleton reference
+        m_Listeners = new ArrayList(5);
+    }//constructor
 
-  /**
-   * Start this telnet daemon, respectively
-   * all configured listeners.<br>
-   */
-  public void start() {
-      Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
+    /**
+     * Start this telnet daemon, respectively
+     * all configured listeners.<br>
+     */
+    public void start() {
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
 
-    for (int i = 0; i < m_Listeners.size(); i++) {
-      PortListener plis = (PortListener) m_Listeners.get(i);
-      plis.start();
-    }
-  }//start
+        for (int i = 0; i < m_Listeners.size(); i++) {
+            PortListener plis = (PortListener) m_Listeners.get(i);
+            plis.start();
+        }
+    }//start
 
-  /**
-   * Stop this telnet daemon, respectively
-   * all configured listeners.
-   */
-  public void stop() {
-    for (int i = 0; i < m_Listeners.size(); i++) {
-      PortListener plis = (PortListener) m_Listeners.get(i);
-      //shutdown the Portlistener resources
-      plis.stop();
-    }
-  }//stop
+    /**
+     * Stop this telnet daemon, respectively
+     * all configured listeners.
+     */
+    public void stop() {
+        for (int i = 0; i < m_Listeners.size(); i++) {
+            PortListener plis = (PortListener) m_Listeners.get(i);
+            //shutdown the Portlistener resources
+            plis.stop();
+        }
+    }//stop
 
-  /**
-   * Accessor method to version information.
-   *
-   * @return String that contains version information.
-   */
-  public String getVersion() {
-    return VERSION;
-  }//getVersion
+    /**
+     * Accessor method to version information.
+     *
+     * @return String that contains version information.
+     */
+    public String getVersion() {
+        return VERSION;
+    }//getVersion
 
-  /**
-   * Method to prepare the ShellManager.<br>
-   * Creates and prepares a Singleton instance of the ShellManager,
-   * with settings from the passed in Properties.
-   *
-   * @param settings Properties object that holds main settings.
-   * @throws BootException if preparation fails.
-   */
-  private void prepareShellManager(Properties settings)
-      throws BootException {
+    /**
+     * Method to prepare the ShellManager.<br>
+     * Creates and prepares a Singleton instance of the ShellManager,
+     * with settings from the passed in Properties.
+     *
+     * @param settings Properties object that holds main settings.
+     * @throws BootException if preparation fails.
+     */
+    private void prepareShellManager(Properties settings)
+            throws BootException {
 
-    //use factory method  for creating mgr singleton
-    m_ShellManager = ShellManager.createShellManager(settings);
-    if (m_ShellManager == null) {
-      System.exit(1);
-    }
-  }//prepareShellManager
+        //use factory method  for creating mgr singleton
+        m_ShellManager = ShellManager.createShellManager(settings);
+        if (m_ShellManager == null) {
+            System.exit(1);
+        }
+    }//prepareShellManager
 
 
-  /**
-   * Method to prepare the PortListener.<br>
-   * Creates and prepares and runs a PortListener, with settings from the
-   * passed in Properties. Yet the Listener will not accept any incoming
-   * connections before startServing() has been called. this has the advantage
-   * that whenever a TelnetD Singleton has been factorized, it WILL 99% not fail
-   * any longer (e.g. serve its purpose).
-   *
-   * @param settings Properties object that holds main settings.
-   * @throws BootException if preparation fails.
-   */
-  private void prepareListener(String name, Properties settings)
-      throws BootException {
+    /**
+     * Method to prepare the PortListener.<br>
+     * Creates and prepares and runs a PortListener, with settings from the
+     * passed in Properties. Yet the Listener will not accept any incoming
+     * connections before startServing() has been called. this has the advantage
+     * that whenever a TelnetD Singleton has been factorized, it WILL 99% not fail
+     * any longer (e.g. serve its purpose).
+     *
+     * @param settings Properties object that holds main settings.
+     * @throws BootException if preparation fails.
+     */
+    private void prepareListener(String name, Properties settings)
+            throws BootException {
 
-    //factorize PortListener
-    PortListener listener = PortListener.createPortListener(name, settings);
-    //start the Thread derived PortListener
-    try {
-      m_Listeners.add(listener);
-    } catch (Exception ex) {
-      throw new BootException("Failure while starting PortListener thread: " + ex.getMessage());
-    }
+        //factorize PortListener
+        PortListener listener = PortListener.createPortListener(name, settings);
+        //start the Thread derived PortListener
+        try {
+            m_Listeners.add(listener);
+        } catch (Exception ex) {
+            throw new BootException("Failure while starting PortListener thread: " + ex.getMessage());
+        }
 
-  }//prepareListener
+    }//prepareListener
 
-  private void prepareTerminals(Properties terminals)
-      throws BootException {
+    private void prepareTerminals(Properties terminals)
+            throws BootException {
 
-    TerminalManager.createTerminalManager(terminals);
-  }//prepareTerminals
+        TerminalManager.createTerminalManager(terminals);
+    }//prepareTerminals
 
-  /**
-   * Returns a {@link PortListener} for the given
-   * identifier.
-   *
-   * @param id the identifier of the {@link PortListener} instance.
-   * @return {@link PortListener} instance or null if an instance
-   *         with the given identifier does not exist.
-   */
-  public PortListener getPortListener(String id) {
-    if(id==null || id.length() == 0) {
-      return null;
-    }
-    for (Iterator iterator = m_Listeners.iterator(); iterator.hasNext();) {
-      PortListener portListener = (PortListener) iterator.next();
-      if(portListener.getName().equals(id)) {
-        return portListener;
-      }
-    }
-    return null;
-  }//getPortListener
+    /**
+     * Returns a {@link PortListener} for the given
+     * identifier.
+     *
+     * @param id the identifier of the {@link PortListener} instance.
+     * @return {@link PortListener} instance or null if an instance
+     * with the given identifier does not exist.
+     */
+    public PortListener getPortListener(String id) {
+        if (id == null || id.length() == 0) {
+            return null;
+        }
+        for (Iterator iterator = m_Listeners.iterator(); iterator.hasNext(); ) {
+            PortListener portListener = (PortListener) iterator.next();
+            if (portListener.getName().equals(id)) {
+                return portListener;
+            }
+        }
+        return null;
+    }//getPortListener
 
-  /**
-   * Factory method to create a TelnetD Instance.
-   *
-   * @param main Properties object with settings for the TelnetD.
-   * @return TenetD instance that has been properly set up according to the
-   *         passed in properties, and is ready to start serving.
-   * @throws BootException if the setup process fails.
-   */
-  public static TelnetD createTelnetD(Properties main)
-      throws BootException {
+    /**
+     * Factory method to create a TelnetD Instance.
+     *
+     * @param main Properties object with settings for the TelnetD.
+     * @return TenetD instance that has been properly set up according to the
+     * passed in properties, and is ready to start serving.
+     * @throws BootException if the setup process fails.
+     */
+    public static TelnetD createTelnetD(Properties main)
+            throws BootException {
 
-    if (c_Self == null) {
-      TelnetD td = new TelnetD();
-      td.prepareShellManager(main);
-      td.prepareTerminals(main);
-      String[] listnames = StringUtil.split(main.getProperty("listeners"), ",");
-      for (int i = 0; i < listnames.length; i++) {
-        td.prepareListener(listnames[i], main);
-      }
-      return td;
-    } else {
-      throw new BootException("Singleton already instantiated.");
-    }
+        if (c_Self == null) {
+            TelnetD td = new TelnetD();
+            td.prepareShellManager(main);
+            td.prepareTerminals(main);
+            String[] listnames = StringUtil.split(main.getProperty("listeners"), ", ");
+            for (int i = 0; i < listnames.length; i++) {
+                td.prepareListener(listnames[i], main);
+            }
+            return td;
+        } else {
+            throw new BootException("Singleton already instantiated.");
+        }
 
-  }//createTelnetD
+    }//createTelnetD
 
-  /**
-   * Factory method to create a TelnetD singleton instance,
-   * loading the standard properties files from the given
-   * String containing an URL location.<br>
-   *
-   * @param urlprefix String containing an URL prefix.
-   * @return TenetD instance that has been properly set up according to the
-   *         passed in properties, and is ready to start serving.
-   * @throws BootException if the setup process fails.
-   */
-  public static TelnetD createTelnetD(String urlprefix)
-      throws BootException {
+    /**
+     * Factory method to create a TelnetD singleton instance,
+     * loading the standard properties files from the given
+     * String containing an URL location.<br>
+     *
+     * @param urlprefix String containing an URL prefix.
+     * @return TenetD instance that has been properly set up according to the
+     * passed in properties, and is ready to start serving.
+     * @throws BootException if the setup process fails.
+     */
+    public static TelnetD createTelnetD(String urlprefix)
+            throws BootException {
 
-    try {
-      return createTelnetD(PropertiesLoader.loadProperties(urlprefix));
-    } catch (IOException ex) {
-        Logger.log(Logger.ERROR, LoggingCategory.TELNET, ex.toString());
+        try {
+            return createTelnetD(PropertiesLoader.loadProperties(urlprefix));
+        } catch (IOException ex) {
+            Logger.log(Logger.ERROR, LoggingCategory.TELNET, ex.toString());
 
-      throw new BootException("Failed to load configuration from given URL.");
-    }
-  }//createTelnetD
+            throw new BootException("Failed to load configuration from given URL.");
+        }
+    }//createTelnetD
 
-  /**
-   * Accessor method for the Singleton instance of this class.<br>
-   *
-   * @return TelnetD Singleton instance reference.
-   */
-  public static TelnetD getReference() {
-    if (c_Self != null) {
-      return ((TelnetD) c_Self);
-    } else {
-      return null;
-    }
-  }//getReference
+    /**
+     * Accessor method for the Singleton instance of this class.<br>
+     *
+     * @return TelnetD Singleton instance reference.
+     */
+    public static TelnetD getReference() {
+        if (c_Self != null) {
+            return ((TelnetD) c_Self);
+        } else {
+            return null;
+        }
+    }//getReference
 
-  /**
-   * Implements a test startup of an example server.
-   * It is supposed to demonstrate the easy deployment,
-   * and usage of this daemon.<br>
-   * <em>Usage:</em><br>
-   * <code>java telnetd.TelnetD [URL prefix pointing to properties]</code>
-   *
-   * @param args String array containing arguments.
-   */
-  public static void main(String[] args) {
-    TelnetD myTD = null;
+    /**
+     * Implements a test startup of an example server.
+     * It is supposed to demonstrate the easy deployment,
+     * and usage of this daemon.<br>
+     * <em>Usage:</em><br>
+     * <code>java telnetd.TelnetD [URL prefix pointing to properties]</code>
+     *
+     * @param args String array containing arguments.
+     */
+    public static void main(String[] args) {
+        TelnetD myTD = null;
 
-    try {
-      //1. prepare daemon
-      if (args.length == 0) {
-        System.out.println("\nUsage: java telnetd.TelnetD urlprefix\n");
-        System.out.println("         java telnetd.TelnetD url\n");
-        System.exit(1);
-      } else {
-        myTD = TelnetD.createTelnetD(args[0]);
-      }
-      //2.start serving/accepting connections
-      myTD.start();
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      System.exit(1);
-    }
-  }//main
+        try {
+            //1. prepare daemon
+            if (args.length == 0) {
+                System.out.println("\nUsage: java telnetd.TelnetD urlprefix\n");
+                System.out.println("         java telnetd.TelnetD url\n");
+                System.exit(1);
+            } else {
+                myTD = TelnetD.createTelnetD(args[0]);
+            }
+            //2.start serving/accepting connections
+            myTD.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+    }//main
 
-  private static final String VERSION = "2.0";
+    private static final String VERSION = "2.0";
 
 }//class TelnetD

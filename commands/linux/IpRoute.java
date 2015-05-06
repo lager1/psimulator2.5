@@ -4,23 +4,20 @@
 
 package commands.linux;
 
-import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.ArrayList;
 import java.util.List;
-import logging.Logger;
-import logging.LoggingCategory;
+
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.RoutingTable;
-import psimulator2.Psimulator;
-import utils.Util;
+import utils.Utilities;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class IpRoute extends LinuxCommand {
@@ -38,7 +35,7 @@ public class IpRoute extends LinuxCommand {
      * 5 - vypsani helpu <br />
      * 6 - get <br />
      */
-    private int akce=0;
+    private int akce = 0;
 
     /**
      * 0 - v poradku <br />
@@ -65,17 +62,17 @@ public class IpRoute extends LinuxCommand {
      * 17. - get nenaslo adresu (provedeni) <br />
      * 18. - u get zadanej parametr dev - normalne spravnej, ale ja ho pro zmatenost nepodporuju (kontrola)
      */
-    int navrKod=0; //je dobry pouzit funkci Util.md
+    int navrKod = 0; //je dobry pouzit funkci Utilities.md
 
     //jeste nenastaveny parametry:
     String rozhrRet;
 
 
     //spravne nastaveny parametry:
-    IPwithNetmask adresat=null; //nastavuje parser
+    IPwithNetmask adresat = null; //nastavuje parser
     NetworkInterface rozhr; //nastavuje kontrola
     IpAddress brana; //nastavuje parser
-    boolean all=false; //bylo-li zadano slovicko all (vyznam u show a flush)
+    boolean all = false; //bylo-li zadano slovicko all (vyznam u show a flush)
 
     //spatny parametry:
     String necoSpatne; //do tohodle stringu se ukladaj spatne nastaveny parametry: adresa, via, nesmysly...
@@ -84,21 +81,17 @@ public class IpRoute extends LinuxCommand {
     RoutingTable rTable;
 
 
-
-
-
     public IpRoute(AbstractCommandParser parser) {
         super(parser);
         rTable = ipLayer.routingTable;
     }
 
 
-
     @Override
     public void run() {
         parsujPrikaz();
         zkontrolujPrikaz();
-        if(ladiciVypisovani){
+        if (enableDebug) {
             printLine(toString());
         }
         vykonejPrikaz();
@@ -106,11 +99,7 @@ public class IpRoute extends LinuxCommand {
     }
 
 
-
-
-
-
-    private void vypisChybovyHlaseni(){
+    private void vypisChybovyHlaseni() {
 
         /*
          * Tahle metoda vypisuje jen chyby parseru a kontroly, provedeni si je vypisuje samo.
@@ -137,43 +126,43 @@ public class IpRoute extends LinuxCommand {
         if (navrKod == 0) {
             return;
         }
-      //parser:
-        if ( (navrKod & Util.md(6)) != 0 ) { //neznama akce
+        //parser:
+        if ((navrKod & Utilities.md(6)) != 0) { //neznama akce
             printLine("Command \"" + necoSpatne + "\" is unknown, try \"ip addr help\".");
             return;
         }
-        if ( ( (navrKod & Util.md(1)) != 0 ) || ( (navrKod & Util.md(12)) != 0) ) { //spatna adresa
+        if (((navrKod & Utilities.md(1)) != 0) || ((navrKod & Utilities.md(12)) != 0)) { //spatna adresa
             printLine("Error: an inet prefix is expected rather than  \"" + necoSpatne + "\"");
             return;
         }
-        if ((navrKod & Util.md(0)) != 0) { //nejakej nesmysl
+        if ((navrKod & Utilities.md(0)) != 0) { //nejakej nesmysl
             printLine("Error: either \"local\" is duplicate, or \"" + necoSpatne + "\" is a garbage.");
             return;
         }
-        if ((navrKod & Util.md(2)) != 0) { // napsano dev a nic po nem
+        if ((navrKod & Utilities.md(2)) != 0) { // napsano dev a nic po nem
             printLine("Command line is not complete. Try option \"help\"");
             return;
         }
-      //kontrola:
-        if ((navrKod & Util.md(5)) != 0) { // chybejici parametry u add nebo del
+        //kontrola:
+        if ((navrKod & Utilities.md(5)) != 0) { // chybejici parametry u add nebo del
             printLine("RTNETLINK answers: No such device");
             return;
         }
-        if ((navrKod & Util.md(3)) != 0) { // spatne iface
-            printLine("Cannot find device \""+rozhrRet+"\"");
+        if ((navrKod & Utilities.md(3)) != 0) { // spatne iface
+            printLine("Cannot find device \"" + rozhrRet + "\"");
             return;
         }
-        if ((navrKod & Util.md(13)) != 0) { // chybi parametry u flush
+        if ((navrKod & Utilities.md(13)) != 0) { // chybi parametry u flush
             printLine("\"ip route flush\" requires arguments.");
             return;
         }
-        if ((navrKod & Util.md(18)) != 0) { // u get zadanej nepodporovanej parametr dev
+        if ((navrKod & Utilities.md(18)) != 0) { // u get zadanej nepodporovanej parametr dev
             parser.printService("Parametr dev u akce get je normalne mozny, neni ale simulatorem " +
                     "podporovany, protoze v pripade zadani nespravneho rozhrani vraci tezko zjistitelne " +
                     "nesmysly. Zadejte tedy prosim prikaz get bez tohoto parametru.");
             //tady nedavam return
         }
-        if ((navrKod & Util.md(14)) != 0) { // chybi adresa u get
+        if ((navrKod & Utilities.md(14)) != 0) { // chybi adresa u get
             printLine("need at least destination address");
             return;
         }
@@ -186,8 +175,8 @@ public class IpRoute extends LinuxCommand {
      * zpravu do navrKodu
      */
     private void zkontrolujPrikaz() {
-        if(navrKod != 0){
-            navrKod |= Util.md(10);
+        if (navrKod != 0) {
+            navrKod |= Utilities.md(10);
             return;
         }
 
@@ -195,43 +184,43 @@ public class IpRoute extends LinuxCommand {
         if (rozhrRet != null) {
             rozhr = ipLayer.getNetworkInteface(rozhrRet);
             if (rozhr == null) { //rozhrani nenalezeno napr. ip a a 1.1.1.1 dev dsa
-                navrKod |= Util.md(3);
+                navrKod |= Utilities.md(3);
             }
         }
 
         //spolecna kontrola pro add a del, kontroluje se hlavne, byla-li zadana cilova adresa:
-        if(akce==2 || akce==3){
+        if (akce == 2 || akce == 3) {
             //kontrola adresy:
-            if(adresat==null){
+            if (adresat == null) {
                 adresat = new IPwithNetmask("0.0.0.0", 0); //jestlize nebyl adresat zadan,
-                    // hodi se sem implicitni - tzn default (0.0.0.0/0)
+                // hodi se sem implicitni - tzn default (0.0.0.0/0)
             }
         }
 
         //specialni kontrola pro akci add, kontroluju, bylo-li zadano dev nebo via:
-        if(akce==2){
-            if(brana==null && rozhrRet==null){ //kontroluju to radsi pres ten string, aby tam nebyly
-                        //zbytecne 2 navrKody na neexistujici iface
-                navrKod |= Util.md(5);
+        if (akce == 2) {
+            if (brana == null && rozhrRet == null) { //kontroluju to radsi pres ten string, aby tam nebyly
+                //zbytecne 2 navrKody na neexistujici iface
+                navrKod |= Utilities.md(5);
             }
         }
 
         //akce show nepotrebuje zadnou zvlastni kontrolu
 
         //kontrola pro akci flush, musi u ni bejt zadano aspon jedno: adresat, brana, iface, all
-        if(akce==4){
-            if(adresat==null && rozhr==null && brana==null && !all){
-                navrKod |= Util.md(13);
+        if (akce == 4) {
+            if (adresat == null && rozhr == null && brana == null && !all) {
+                navrKod |= Utilities.md(13);
             }
         }
 
         //kontrola pro akci get, musi u ni bejt zadana adresa:
-        if(akce==6){
-            if(adresat==null){
-                navrKod |= Util.md(14);
+        if (akce == 6) {
+            if (adresat == null) {
+                navrKod |= Utilities.md(14);
             }
-            if(rozhr!=null){
-                navrKod |= Util.md(18);
+            if (rozhr != null) {
+                navrKod |= Utilities.md(18);
             }
         }
 
@@ -243,14 +232,14 @@ public class IpRoute extends LinuxCommand {
      * Sama si vypisuje chybovy hlaseni.
      */
     protected void vykonejPrikaz() {
-        if(navrKod != 0){
-            navrKod |= Util.md(11);
+        if (navrKod != 0) {
+            navrKod |= Utilities.md(11);
             return;
         }
 
-        if(akce==2){//add
-            if(rTable.existRecordWithSameAdresat(adresat)!=null){
-                navrKod |= Util.md(8);
+        if (akce == 2) {//add
+            if (rTable.existRecordWithSameAdresat(adresat) != null) {
+                navrKod |= Utilities.md(8);
                 printLine("RTNETLINK answers: File exists");
             } else { //v poradku, zaznam se muze pridat
                 if (brana == null) { //brana nezadana
@@ -258,25 +247,25 @@ public class IpRoute extends LinuxCommand {
                     // -> tohle uz musi projit, protoze se predtim zkontrolovalo, ze neexistuje
                     //    zaznam se stejnym adresatem
                 } else {
-                    int nk=0;
+                    int nk = 0;
                     nk = rTable.addRecord(adresat, brana, rozhr);
-                    if(nk==2){//zaznam nejde pridat, protoze na brana neni dosazitelna
-                        navrKod |= Util.md(15);
+                    if (nk == 2) {//zaznam nejde pridat, protoze na brana neni dosazitelna
+                        navrKod |= Utilities.md(15);
                         printLine("RTNETLINK answers: Network is unreachable");
                     }
                 }
             }
         }
         if (akce == 3) {//del
-            if(!rTable.deleteRecord(adresat, brana, rozhr)){
-                navrKod |= Util.md(9);
+            if (!rTable.deleteRecord(adresat, brana, rozhr)) {
+                navrKod |= Utilities.md(9);
                 printLine("RTNETLINK answers: No such process");
             }
         }
-        if(akce==1){ //show - vypsani
+        if (akce == 1) { //show - vypsani
             String v;
-            for(int i=0; i<rTable.size();i++){ //vypisuje abulku po radcich
-                v="";
+            for (int i = 0; i < rTable.size(); i++) { //vypisuje abulku po radcich
+                v = "";
                 RoutingTable.Record z = rTable.getRecord(i);
                 if (z.iface.isUp) {
                     //radek se zobrazi jen za nejakejch podminek:
@@ -309,11 +298,11 @@ public class IpRoute extends LinuxCommand {
                         && (brana == null || brana.equals(zazn.brana))) //brana nezadana, nebo dobra
                 {
                     keSmazani.add(zazn); //zatim se to jen oznacuje, aby to spravne fungovalo, kdyz
-                        //se jede forcyklem...
+                    //se jede forcyklem...
                 }
             }
             if (keSmazani.isEmpty()) {
-                navrKod |= Util.md(16);
+                navrKod |= Utilities.md(16);
                 printLine("Nothing to flush.");
             } else {
                 for (RoutingTable.Record z : keSmazani) {
@@ -321,21 +310,21 @@ public class IpRoute extends LinuxCommand {
                 }
             }
         }
-        if (akce==5){
+        if (akce == 5) {
             vypisHelp();
         }
-        if(akce==6){ //get
-            RoutingTable.Record zazn=rTable.findRoute(adresat.getIp());
-            if(zazn==null){
+        if (akce == 6) { //get
+            RoutingTable.Record zazn = rTable.findRoute(adresat.getIp());
+            if (zazn == null) {
                 printLine("RTNETLINK answers: Network is unreachable");
-                navrKod |=Util.md(17);
-            }else{ //zaznam se podarilo najit, vypise se
-                String prvni=adresat.getIp().toString();
-                if(zazn.brana!=null){
-                    prvni+= " via "+zazn.brana.toString();
+                navrKod |= Utilities.md(17);
+            } else { //zaznam se podarilo najit, vypise se
+                String prvni = adresat.getIp().toString();
+                if (zazn.brana != null) {
+                    prvni += " via " + zazn.brana.toString();
                 }
-                prvni+=" dev "+zazn.iface.name+
-                        "  src "+zazn.iface.getIpAddress().getIp().toString();
+                prvni += " dev " + zazn.iface.name +
+                        "  src " + zazn.iface.getIpAddress().getIp().toString();
                 printLine(prvni);
                 printLine("    cache  mtu 1500 advmss 1460 hoplimit 64");
             }
@@ -351,57 +340,57 @@ public class IpRoute extends LinuxCommand {
      * Jakmile parser narazi na jednu chybu, dal uz nepokracuje. <br />
      */
     private void parsujPrikaz() {
-        slovo=dalsiSlovo();
-        if(slovo.equals("")){   // nic nezadano - vsecho vypsat
-            akce=1;
-        } else if ("add".startsWith(slovo)){
-            akce=2;
+        slovo = dalsiSlovo();
+        if (slovo.equals("")) {   // nic nezadano - vsecho vypsat
+            akce = 1;
+        } else if ("add".startsWith(slovo)) {
+            akce = 2;
             slovo = dalsiSlovo();
             parsujParametry();
-        } else if ("del".startsWith(slovo)){
-            akce=3;
+        } else if ("del".startsWith(slovo)) {
+            akce = 3;
             slovo = dalsiSlovo();
             parsujParametry();
-        } else if ("show".startsWith(slovo)){
-            akce=1;
+        } else if ("show".startsWith(slovo)) {
+            akce = 1;
             slovo = dalsiSlovo();
-            if(slovo.equals("all")){
-                all=true;
+            if (slovo.equals("all")) {
+                all = true;
                 slovo = dalsiSlovo();
             }
             parsujParametry();
-        } else if ("flush".startsWith(slovo)){
-            akce=4;
+        } else if ("flush".startsWith(slovo)) {
+            akce = 4;
             slovo = dalsiSlovo();
             parsujParametry();
-        } else if ("get".startsWith(slovo)){
-            akce=6;
+        } else if ("get".startsWith(slovo)) {
+            akce = 6;
             slovo = dalsiSlovo();
             parsujParametry();
-        } else if ("help".startsWith(slovo)){
-            akce=5;
+        } else if ("help".startsWith(slovo)) {
+            akce = 5;
             //dal se nepokracuje
-        } else{
-            necoSpatne=slovo;
-            navrKod |= Util.md(6);
+        } else {
+            necoSpatne = slovo;
+            navrKod |= Utilities.md(6);
         }
     }
 
     /**
      * Parsuje vsechny parametry, tzn slova dev, via a adresu, na ne pak zavola specialni funkce
      */
-    private void parsujParametry(){
+    private void parsujParametry() {
         if (slovo.equals("")) {
             //konec prikazu, nic se nedeje...
         } else if (slovo.equals("dev")) {
-            slovo=dalsiSlovo();
+            slovo = dalsiSlovo();
             parsujDev();
         } else if (slovo.equals("via")) {
-            slovo=dalsiSlovo();
+            slovo = dalsiSlovo();
             parsujVia();
-        } else if ( slovo.equals("all") && (akce==1||akce==4 ||akce==6) ) {
-            all=true;
-            slovo=dalsiSlovo();
+        } else if (slovo.equals("all") && (akce == 1 || akce == 4 || akce == 6)) {
+            all = true;
+            slovo = dalsiSlovo();
             parsujParametry();
         } else { //vsechno ostatni se povazuje za adresu...
             parsujAdresu();
@@ -414,7 +403,7 @@ public class IpRoute extends LinuxCommand {
     private void parsujAdresu() {
         IPwithNetmask vytvarena;
         if (zadanaAdresa && (akce == 2 || akce == 3)) {
-            navrKod |= Util.md(0);
+            navrKod |= Utilities.md(0);
             necoSpatne = slovo;
             return;
         }
@@ -428,7 +417,7 @@ public class IpRoute extends LinuxCommand {
             try {
                 vytvarena = new IPwithNetmask(slovo, 32, false);
             } catch (BadNetmaskException | BadIpException ex) {
-                navrKod |= Util.md(1);
+                navrKod |= Utilities.md(1);
                 necoSpatne = slovo;
                 return;
             }
@@ -440,18 +429,18 @@ public class IpRoute extends LinuxCommand {
 
     private void parsujVia() {
         if (akce == 6) { //u akce get neni tenhle parametr povolenej
-            navrKod |= Util.md(12); //jen pro poradek, je to ale jinak brany jako adresa
+            navrKod |= Utilities.md(12); //jen pro poradek, je to ale jinak brany jako adresa
             necoSpatne = "via";
             return; //parsovani se na spatnou adresu konci
         }
         if (slovo.equals("")) { //ip a a 1.1.1.1 via
-            navrKod |= Util.md(2);
+            navrKod |= Utilities.md(2);
         } else {
             //nastovovani brany:
             try {
                 brana = new IpAddress(slovo);
             } catch (BadIpException ex) {
-                navrKod |= Util.md(7);
+                navrKod |= Utilities.md(7);
                 necoSpatne = slovo;
                 return; //POZOR!!!!!!!!! Tady se utika a konci parsovani, kdyz je spatna adresa
             }
@@ -463,27 +452,27 @@ public class IpRoute extends LinuxCommand {
 
     private void parsujDev() {
         if (slovo.equals("")) { //ip a a 1.1.1.1 dev
-            navrKod|=Util.md(2);
+            navrKod |= Utilities.md(2);
         } else {
-            rozhrRet=slovo;
+            rozhrRet = slovo;
             //dalsi pokracovani:
-            slovo=dalsiSlovo();
+            slovo = dalsiSlovo();
             parsujParametry();
         }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String vratit = "--------------------------\r\n   Parametry prikazu ip route" +
                 ":\r\n\tnavratovy kod po parsovani a kontrole: "
-                + Util.rozlozNaLogaritmy2(navrKod);
-        vratit += "\r\n\takce: "+akce;
-        if(rozhrRet!=null)vratit +=  "\r\n\tzapsane rozhrani: "+rozhrRet;
-        if(necoSpatne!=null)vratit +=  "\r\n\tnecoNavic: "+necoSpatne;
+                + Utilities.splitToLogarithmsOf2(navrKod);
+        vratit += "\r\n\takce: " + akce;
+        if (rozhrRet != null) vratit += "\r\n\tzapsane rozhrani: " + rozhrRet;
+        if (necoSpatne != null) vratit += "\r\n\tnecoNavic: " + necoSpatne;
 
-        if(adresat!=null)vratit += "\r\n\tnastaveny adresat: "+adresat.toString();
-        if(rozhr!=null)vratit +=  "\r\n\tnastavene rozhr: "+rozhr.name;
-        if(brana!=null)vratit +=  "\r\n\tnastavena brana: "+brana.toString();
+        if (adresat != null) vratit += "\r\n\tnastaveny adresat: " + adresat.toString();
+        if (rozhr != null) vratit += "\r\n\tnastavene rozhr: " + rozhr.name;
+        if (brana != null) vratit += "\r\n\tnastavena brana: " + brana.toString();
         vratit += "\r\n--------------------------";
         return vratit;
     }

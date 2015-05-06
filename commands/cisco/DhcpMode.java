@@ -9,9 +9,11 @@ import commands.completer.Completer;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -66,7 +68,7 @@ public class DhcpMode extends CiscoCommand {
                 listOfDnsServers.add(dnsServer);
             }
 
-            debug("dns-server: "+listOfDnsServers);
+            debug("dns-server: " + listOfDnsServers);
             // TODO: here set list of DNS server to DHCP application
 
 
@@ -82,7 +84,7 @@ public class DhcpMode extends CiscoCommand {
             }
             IPwithNetmask network = new IPwithNetmask(addr, mask);
 
-            debug("network: "+network);
+            debug("network: " + network);
             // TODO: here set range of assigned IP addresses to DHCP application
 
         } else if (isCommandWithoutOutput("default-router", first, 2)) {
@@ -94,7 +96,7 @@ public class DhcpMode extends CiscoCommand {
                 return;
             }
 
-            debug("gateway: "+gw);
+            debug("gateway: " + gw);
             // TODO: here set default gw to DHCP application
 
 

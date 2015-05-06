@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger
+ * Copyright (c) 2000-2005 Dieter Wimberger 
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -54,20 +54,20 @@ import java.util.Properties;
  */
 public interface ConnectionFilter {
 
-  /**
-   * Initializes this <tt>ConnectionFilter</tt>.
-   *
-   * @param props the properties of the listener that instantiated
-   *              this <tt>ConnectionFilter</tt>.
-   */
-  public void initialize(Properties props);
+    /**
+     * Initializes this <tt>ConnectionFilter</tt>.
+     *
+     * @param props the properties of the listener that instantiated
+     *              this <tt>ConnectionFilter</tt>.
+     */
+    public void initialize(Properties props);
 
-  /**
-   * Tests if a given ip address is allowed to connect.
-   *
-   * @param ip the address to be tested.
-   * @return true if allowed to connect, false otherwise.
-   */
-  public boolean isAllowed(InetAddress ip);
+    /**
+     * Tests if a given ip address is allowed to connect.
+     *
+     * @param ip the address to be tested.
+     * @return true if allowed to connect, false otherwise.
+     */
+    public boolean isAllowed(InetAddress ip);
 
 }//interface ConnectionFilter

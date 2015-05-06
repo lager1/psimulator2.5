@@ -5,9 +5,8 @@
 package dataStructures;
 
 import java.util.Arrays;
-import logging.Logger;
-import logging.LoggingCategory;
-import utils.Util;
+
+import utils.Utilities;
 
 /**
  * Implementation of mac address. Vnitrni representace je pomoci integeru, protoze s bytama byl problem se znainkem.
@@ -29,6 +28,7 @@ public class MacAddress {
     }
 
 // Konstruktory -----------------------------------------------------------------------------------------------
+
     /**
      * Klasickej konstuktor, ocekava mac adresu oddelenou cimkoliv, ale po dvou znakach. Deli se to podle tretiho znaku.
      *
@@ -50,7 +50,7 @@ public class MacAddress {
 
     /**
      * Creates mac address from array of bytes. The array is copied in constructor.
-     *
+     * <p/>
      * To pole se v konstruktoru pro jistotu kopiruje, kdyby ho nekde nekdo mezitim menil.
      *
      * @param representation
@@ -61,6 +61,7 @@ public class MacAddress {
 
 
 // vypisy a porovnavani ---------------------------------------------------------------------------
+
     /**
      * Vrati klasickej vypis s oddelenim dvojteckama.
      *
@@ -78,6 +79,7 @@ public class MacAddress {
 
     /**
      * Vrati ve formatu aabb.ccdd.eeff
+     *
      * @return
      */
     public String getCiscoRepresentation() {
@@ -93,9 +95,10 @@ public class MacAddress {
 
     /**
      * Returns copy of this address inner representation.
+     *
      * @return
      */
-    public byte [] getByteArray(){
+    public byte[] getByteArray() {
         return Arrays.copyOf(representation, 6);
     }
 
@@ -191,7 +194,7 @@ public class MacAddress {
         }
     }
 
-// privatni staticky metody -------------------------------------------------------------------------------
+    // privatni staticky metody -------------------------------------------------------------------------------
     private static byte[] stringToBytes(String adr, char delimiter) {
         byte[] vratit = new byte[6];
         String[] pole = adr.split("\\" + delimiter);
@@ -215,14 +218,14 @@ public class MacAddress {
             throw new BadMacException("Tenhleten bajt nema spravnou dylku: " + s);
         }
         try {
-            return (byte)(Integer.parseInt(s, 16));
+            return (byte) (Integer.parseInt(s, 16));
         } catch (NumberFormatException ex) {
             throw new BadMacException("Tenhleten bajt nema spravnou dylku: " + s);
         }
     }
 
     private static String byteToString(byte bajt) {
-        String v = Integer.toHexString(Util.byteToInt(bajt));
+        String v = Integer.toHexString(Utilities.byteToInt(bajt));
         if (v.length() < 2) {
             return "0" + v;
         } else {
