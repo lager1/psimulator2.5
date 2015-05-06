@@ -41,7 +41,7 @@ public class Alarm implements SmartRunnable, Loggable {
                 try {    // jednou mi to tu hodilo NullPointer, nevim proc, radsi to kontroluju (ale je to asi zbytecny, jen pro jistotu)
                     wakeObject(clients.poll());
                 } catch (NullPointerException ex) {
-                    Logger.log(this,Logger.WARNING,LoggingCategory.ALARM,ex.getMessage(),ex);
+                    Logger.log(this, Logger.WARNING, LoggingCategory.ALARM, ex.getMessage(), ex);
                 }
 
             } else { //nezaspal, jde spat:

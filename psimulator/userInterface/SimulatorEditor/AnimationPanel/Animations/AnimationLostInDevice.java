@@ -13,13 +13,13 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
  */
 public class AnimationLostInDevice extends AnimationLostInCable {
 
-    public AnimationLostInDevice(AnimationPanelInnerInterface animationPanelInnerInterface,
-            DataLayerFacade dataLayer, PacketType packetType,
-            Point defaultZoomSource, Point defaultZoomDest,
+    public AnimationLostInDevice(AnimationPanelInnerInterface animationPanelInnerInterface, 
+            DataLayerFacade dataLayer, PacketType packetType, 
+            Point defaultZoomSource, Point defaultZoomDest, 
             int durationInMilliseconds, EventType eventType) {
 
-        super(animationPanelInnerInterface, dataLayer, packetType,
-                defaultZoomSource, defaultZoomDest,
+        super(animationPanelInnerInterface, dataLayer, packetType, 
+                defaultZoomSource, defaultZoomDest, 
                 durationInMilliseconds, eventType);
     }
     

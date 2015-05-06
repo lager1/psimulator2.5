@@ -1,6 +1,5 @@
 package commands.linux;
 
-import applications.dhcp.DhcpClientThread;
 import commands.AbstractCommandParser;
 
 import java.util.ArrayList;
@@ -26,11 +25,11 @@ public class Dhclient extends LinuxCommand {
 
     @Override
     public void run() {
-        String word = dalsiSlovo();
+        String word = getToken();
 
         while (!word.isEmpty()) {
             parseInput(word);
-            word = dalsiSlovo();
+            word = getToken();
         }
 
         runCommand();

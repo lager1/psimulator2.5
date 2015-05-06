@@ -16,7 +16,7 @@ public class TelnetConfig implements NetworkObject, Serializable {
     /**
      * key is a componentID
      */
-    Map<Integer,ConfigRecord> configRecords;
+    Map<Integer, ConfigRecord> configRecords;
 
     public TelnetConfig() {
         this.configRecords = new HashMap<>();

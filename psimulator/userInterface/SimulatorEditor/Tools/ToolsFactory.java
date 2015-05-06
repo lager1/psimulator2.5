@@ -38,8 +38,8 @@ public class ToolsFactory {
 
                 path = ImageFactorySingleton.TOOL_ROUTER_CISCO_PATH;
 
-                tools.add(new AddDeviceTool(tool,  path, toolChangeInterface,HwTypeEnum.CISCO_ROUTER, 2));
-                tools.add(new AddDeviceTool(tool,  path, toolChangeInterface,HwTypeEnum.CISCO_ROUTER, 4));
+                tools.add(new AddDeviceTool(tool,  path, toolChangeInterface, HwTypeEnum.CISCO_ROUTER, 2));
+                tools.add(new AddDeviceTool(tool,  path, toolChangeInterface, HwTypeEnum.CISCO_ROUTER, 4));
                 break;
             case ADD_SWITCH:
                 path = ImageFactorySingleton.TOOL_SWITCH_PATH;

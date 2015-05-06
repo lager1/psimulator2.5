@@ -15,7 +15,6 @@ public class DeviceSettings {
     private NetworkModuleType netModType;
     private RoutingTableConfig routingTabConfig;
     private NatConfig natConfig;
-    private Boolean stpEnabled;
 
     public NatConfig getNatConfig() {
         return natConfig;
@@ -39,14 +38,6 @@ public class DeviceSettings {
 
     public void setRoutingTabConfig(RoutingTableConfig routingTabConfig) {
         this.routingTabConfig = routingTabConfig;
-    }
-
-    public Boolean getStpConfig() {
-        return stpEnabled;
-    }
-
-    public void setStpConfig(Boolean stpEnabled) {
-        this.stpEnabled = stpEnabled;
     }
 
     public enum NetworkModuleType {

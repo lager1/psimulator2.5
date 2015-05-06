@@ -91,7 +91,7 @@ public class DHCP_server extends Application {
             IpAddress serverAddress = iface.getIpAddress().getIp();
             // sestavim pakety:
             DhcpPacket replyDhcp = new DhcpPacket(replyType, recDhcp.transaction_id, serverAddress,
-                    adrm, adrm.getBroadcast(),config.routers, recDhcp.clientMac);
+                    adrm, adrm.getBroadcast(), config.routers, recDhcp.clientMac);
             UdpPacket replyUdp = new UdpPacket(server_port, recUdp.srcPort, replyDhcp);
             IpPacket replyIp = new IpPacket(serverAddress, adrm.getIp(), ttl, replyUdp);
             // nakonec to poslu pomoci ethernetovy vrstvy:

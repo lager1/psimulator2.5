@@ -172,7 +172,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         Arrays.sort(edgesNodes);
         /*
         for (int i = 0; i < edgesNodes.length; i++) {
-        System.out.print(edgesNodes[i]+",");
+        System.out.print(edgesNodes[i]+", ");
 
         }
         System.out.println("");*/
@@ -459,7 +459,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         for (int i = 0; i < edges.length; i++) {
             Line2D line = new Line2D.Double(nodes[edges[i][0]][0], nodes[edges[i][0]][1], nodes[edges[i][1]][0], nodes[edges[i][1]][1]);
             lines.add(line);
-            //System.out.println("Line: x="+line.getP1()+",="+line.getP2());
+            //System.out.println("Line: x="+line.getP1()+", ="+line.getP2());
         }
 
         int crossings = 0;

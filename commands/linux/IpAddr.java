@@ -297,20 +297,20 @@ public class IpAddr extends LinuxCommand {
      * Pri volani podrazeny metody ta metoda dostava prvni ji uzitecnu slovo.
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         if (slovo.equals("")) {   // nic nezadano - vsecho vypsat
             akce = 1;
         } else if ("add".startsWith(slovo)) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujAdd();
         } else if ("del".startsWith(slovo)) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDel();
         } else if ("show".startsWith(slovo)) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujShow();
         } else if ("flush".startsWith(slovo)) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujFlush();
         } else if ("help".startsWith(slovo)) {
             akce = 5;
@@ -327,7 +327,7 @@ public class IpAddr extends LinuxCommand {
         if (slovo.equals("")) {
             //nic se nedeje, prijde se na to az pri kontrole...
         } else if (slovo.equals("dev")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else { //vsechno ostatni se povazuje za adresu...
             parsujAdresu();
@@ -340,7 +340,7 @@ public class IpAddr extends LinuxCommand {
         if (slovo.equals("")) {
             //nic se nedeje, prijde se na to az pri kontrole...
         } else if (slovo.equals("dev")) { //ip a a dev wlan0 - to se vypise jiny chybovy hlaseni
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else {
             parsujAdresu();
@@ -352,7 +352,7 @@ public class IpAddr extends LinuxCommand {
         if (slovo.equals("")) {
 
         } else if (slovo.equals("dev")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else {//vsechno ostatni se povazuje za nazev rozhrani
             parsujDev();
@@ -364,7 +364,7 @@ public class IpAddr extends LinuxCommand {
         if (slovo.equals("")) {
             //zatim v poradku, bude to kontrolovat az kontrola
         } else if (slovo.equals("dev")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else {//vsechno ostatni se povazuje za nazev rozhrani
             parsujDev();
@@ -383,9 +383,9 @@ public class IpAddr extends LinuxCommand {
         }
         zadanaAdresa = true;
         adresa = slovo;
-        slovo = dalsiSlovo();
+        slovo = getToken();
         if (slovo.equals("dev")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else if (slovo.equals("")) {
             //konec prikazu, nic se nedela...
@@ -401,13 +401,13 @@ public class IpAddr extends LinuxCommand {
         } else {
             rozhrRet = slovo;
             //dalsi pokracovani:
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("")) {
                 //v poradku - nic se nedeje
             } else {
                 if (akce == 2 || akce == 3) { // akce je ad nebo del
                     if (slovo.equals("dev")) {
-                        slovo = dalsiSlovo();
+                        slovo = getToken();
                         parsujDev();
                     } else {//vsechno ostatni se povazuje za adresu
                         parsujAdresu();

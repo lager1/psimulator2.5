@@ -157,7 +157,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         dataLayer.setConnectionIpAddress(connectionIpAddress);
         dataLayer.setConnectionPort(connectionPort);
 
-        // save preferences 
+        // save preferences
         dataLayer.savePreferences();
     }
 

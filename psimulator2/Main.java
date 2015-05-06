@@ -147,8 +147,8 @@ public class Main {
         // v tomto je problem - ale neprisel jsem na to proc - konkretne v logging category
         Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
 
-        Timer.start();
 
+        Timer.start();
         HookManager.callGlobalHook(HookManager.HookType.AFTER_SETUP, null);
     }
 }

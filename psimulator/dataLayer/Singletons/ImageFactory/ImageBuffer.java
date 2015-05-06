@@ -12,17 +12,17 @@ import java.util.Map.Entry;
 public class ImageBuffer {
     /* Data structures for buffering */
     // String is path to image = the identificator
-    private HashMap<String,HashMap<Integer, Image>> hwComponentBuffer;
-    private HashMap<String,HashMap<Integer, Image>> hwMarkedComponentBuffer;
+    private HashMap<String, HashMap<Integer, Image>> hwComponentBuffer;
+    private HashMap<String, HashMap<Integer, Image>> hwMarkedComponentBuffer;
     //
-    private HashMap<String,HashMap<Integer, Image>> textLabelsBuffer;
+    private HashMap<String, HashMap<Integer, Image>> textLabelsBuffer;
 
     public ImageBuffer(){
         // create EnumMap with all HW components
-        hwComponentBuffer = new HashMap<String,HashMap<Integer, Image>>();
-        hwMarkedComponentBuffer = new HashMap<String,HashMap<Integer, Image>>();
+        hwComponentBuffer = new HashMap<String, HashMap<Integer, Image>>();
+        hwMarkedComponentBuffer = new HashMap<String, HashMap<Integer, Image>>();
         //
-        textLabelsBuffer = new HashMap<String,HashMap<Integer, Image>>();
+        textLabelsBuffer = new HashMap<String, HashMap<Integer, Image>>();
     }
 
     /**
@@ -30,15 +30,15 @@ public class ImageBuffer {
      */
     public void clearBuffer(){
         // each HW components HashMap is cleared
-        for(Entry<String,HashMap<Integer, Image>> e : hwComponentBuffer.entrySet()){
+        for(Entry<String, HashMap<Integer, Image>> e : hwComponentBuffer.entrySet()){
             e.getValue().clear();
         }
 
-        for(Entry<String,HashMap<Integer, Image>> e : hwMarkedComponentBuffer.entrySet()){
+        for(Entry<String, HashMap<Integer, Image>> e : hwMarkedComponentBuffer.entrySet()){
             e.getValue().clear();
         }
 
-        for(Entry<String,HashMap<Integer, Image>> e : textLabelsBuffer.entrySet()){
+        for(Entry<String, HashMap<Integer, Image>> e : textLabelsBuffer.entrySet()){
             e.getValue().clear();
         }
     }
@@ -47,7 +47,7 @@ public class ImageBuffer {
      * Clears Text image buffer
      */
     public void clearTextBuffers(){
-        for(Entry<String,HashMap<Integer, Image>> e : textLabelsBuffer.entrySet()){
+        for(Entry<String, HashMap<Integer, Image>> e : textLabelsBuffer.entrySet()){
             e.getValue().clear();
         }
     }
@@ -97,7 +97,7 @@ public class ImageBuffer {
      * @param marked
      */
     public void putBufferedImage(String path, Integer size, Image image, boolean marked){
-        HashMap<String,HashMap<Integer, Image>> map;
+        HashMap<String, HashMap<Integer, Image>> map;
 
         if(marked){
             map = hwMarkedComponentBuffer;
@@ -121,7 +121,7 @@ public class ImageBuffer {
      * @param marked
      */
     public BufferedImage getBufferedImage(String path, Integer size, boolean marked){
-        HashMap<String,HashMap<Integer, Image>> map;
+        HashMap<String, HashMap<Integer, Image>> map;
 
         if(marked){
             map = hwMarkedComponentBuffer;

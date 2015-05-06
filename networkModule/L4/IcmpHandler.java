@@ -40,7 +40,7 @@ public class IcmpHandler implements Loggable {
         switch (p.type) {
             case REQUEST:
                 // odpovedet
-                IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.payloadSize,p.payload);    // zadava se velikost payloadu
+                IcmpPacket reply = new IcmpPacket(IcmpPacket.Type.REPLY, IcmpPacket.Code.ZERO, p.id, p.seq, p.payloadSize, p.payload);    // zadava se velikost payloadu
                 Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Sending ARP reply.", packetItem);
                 getIpLayer().sendPacket(reply, packetItem.packet.dst, packetItem.packet.src);
                 break;

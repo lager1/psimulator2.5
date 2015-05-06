@@ -21,6 +21,7 @@ public class STPGlobalFilter extends GlobalFilter
     @Override
     public void afterSetup()
     {
+        System.out.println("Test");
         STP.configurationBPDUGeneration(state);
     }
 }

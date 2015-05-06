@@ -427,7 +427,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
     /*
      * Manages server connection
-     * 
+     *
      */
     private boolean startServer() {
         String FailureReason = "";
@@ -519,7 +519,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 //            //        System.out.println("spusteno pod adminem");
 //                    return true;
 //            }
-            
+
  //           System.out.println("spusteno bez admina");
               */
 
@@ -549,7 +549,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
             switch (userReaction) {
                 case DO_SAVE:
-                    // save 
+                    // save
                     boolean success = saveLoadManagerGraph.doSaveGraphAction();
                     if (success) {
                         String file = saveLoadManagerGraph.getFile().getPath();
@@ -584,7 +584,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     // user dont want to save, we should proceed
                     return true;
                 case DO_SAVE:
-                    // save 
+                    // save
                     boolean success = saveLoadManagerGraph.doSaveGraphAction();
                     if (success) {
                         String file = saveLoadManagerGraph.getFile().getPath();
@@ -854,7 +854,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         public void actionPerformed(ActionEvent e) {
 
             new ServerLog(server.getLogFile(), dataLayer);
-        
+
         /*
         // if data can be lost after check
         if (!checkDataLoss()) {
@@ -862,14 +862,14 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             return;
         }
             mainWindow.setCursor(defaultCursor);
-            
+
             refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.WELCOME, false);
-            
+
             dataLayer.savePreferences();
-        
+
         if(backend != null)
             backend.terminate();
-            
+
             System.exit(0);
         */
         }

@@ -42,7 +42,7 @@ public class AnimationPanel extends AnimationPanelOuterInterface implements Anim
     private List<AbstractAnimation> animations;
     //
 
-    public AnimationPanel(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface editorPanel,
+    public AnimationPanel(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface editorPanel, 
             DataLayerFacade dataLayer, DrawPanelOuterInterface drawPanel) {
 
         super();
@@ -211,7 +211,7 @@ public class AnimationPanel extends AnimationPanelOuterInterface implements Anim
             case LOST_IN_DEVICE:
                 // destination is near the component
                 src = graph.getAbstractHwComponent(idSource).getCenterLocationDefaultZoom();
-                dest = new Point(src.x+50,src.y+50);
+                dest = new Point(src.x+50, src.y+50);
                 break;
             case SUCCESSFULLY_TRANSMITTED:
             case LOST_IN_CABLE:

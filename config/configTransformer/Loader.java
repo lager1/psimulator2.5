@@ -13,6 +13,11 @@ import filesystem.ArchiveFileSystem;
 import filesystem.FileSystem;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import logging.Loggable;
@@ -115,7 +120,8 @@ public class Loader implements Loggable {
      * @param model
      * @return
      */
-    private Device createDevice(HwComponentModel model) {
+    private Device createDevice(HwComponentModel model) throws UnsupportedEncodingException
+    {
 
         // vytvoreni samotnyho pocitace:
         Device pc = new Device(model.getId(), model.getName(), convertType(model.getHwType()));
@@ -150,7 +156,8 @@ public class Loader implements Loggable {
         return pc;
     }
 
-    private FileSystem setupFilesystem(HwComponentModel model) {
+    private FileSystem setupFilesystem(HwComponentModel model) throws UnsupportedEncodingException
+    {
         String pathSeparator = System.getProperty("file.separator");
 
         File filesystemDir = new File(projectName + "-DATA");
@@ -160,7 +167,7 @@ public class Loader implements Loggable {
 
         String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getIDAsString() + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
 
-        return new ArchiveFileSystem(pathFileSystem);
+        return new ArchiveFileSystem(Paths.get(pathFileSystem).normalize().toUri().toString().substring(8));
     }
 
     /**
@@ -456,8 +463,10 @@ public class Loader implements Loggable {
      * @return
      */
     private Switchport findSwitchportFor(HwComponentModel component1, EthInterfaceModel interface1) {
+        Boolean deviceFound = false;
         for (Device device : s.devices) {
             if (device.configID == component1.getId()) {
+                deviceFound = true;
                 for (Switchport swp : device.physicalModule.getSwitchports().values()) {
                     if ((swp instanceof SimulatorSwitchport || swp instanceof SimulatorSwitchportV2) && swp.configID == interface1.getId()) {
                         return swp;
@@ -466,8 +475,10 @@ public class Loader implements Loggable {
                 break;
             }
         }
-
-        throw new LoaderException(String.format("Could not find Device with id=%d a for Switchport with id=%d", component1.getId(), interface1.getId()));
+        if (!deviceFound)
+            throw new LoaderException(String.format("Could not find Device with id=%d a for Switchport with id=%d", component1.getId(), interface1.getId()));
+        else
+            throw new LoaderException(String.format("Could not find Switchport with id=%d a for Device with id=%d", interface1.getId(), component1.getId()));
     }
 
     @Override

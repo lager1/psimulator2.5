@@ -50,7 +50,7 @@ public class ActionOpenProperties extends AbstractDrawPanelAction {
             //drawPanel.doUpdateImages();
             
             return;
-        }else if(graph.getMarkedCablesCount() == 1){
+        } else if(graph.getMarkedCablesCount() == 1){
             // get calbe
             CableGraphic cable = graph.getMarkedCablesCopy().get(0);
             

@@ -635,7 +635,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
         Point newPosition = component.getLowerRightCornerLocation();
         // update size of graph
         updateSizeMovePosition(oldPosition, newPosition);
-        //System.out.println("tady1: oldpos="+oldPosition.x+","+oldPosition.y+"; newpos="+newPosition.x+","+newPosition.y);
+        //System.out.println("tady1: oldpos="+oldPosition.x+", "+oldPosition.y+"; newpos="+newPosition.x+", "+newPosition.y);
 
         // set timestamp of edit
         editHappend();
@@ -654,7 +654,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
         Point newPosition = getLowerRightBound(components);
         // update size of graph
         updateSizeMovePosition(oldPosition, newPosition);
-        //System.out.println("tady2: oldpos="+oldPosition.x+","+oldPosition.y+"; newpos="+newPosition.x+","+newPosition.y);
+        //System.out.println("tady2: oldpos="+oldPosition.x+", "+oldPosition.y+"; newpos="+newPosition.x+", "+newPosition.y);
 
         // set timestamp of edit
         editHappend();

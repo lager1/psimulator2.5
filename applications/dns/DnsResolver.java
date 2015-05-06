@@ -112,7 +112,7 @@ public class DnsResolver extends Application implements Wakeable {
             return false;
         }
 
-        String DN_PATTERN = "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\\.$";
+        String DN_PATTERN = "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2, })\\.$";
         Pattern dnPattern = Pattern.compile(DN_PATTERN);
         Matcher dnMatcher = dnPattern.matcher(toResolve);
 

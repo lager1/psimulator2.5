@@ -1,6 +1,7 @@
 package shared.Timer;
 
 
+import javafx.util.Pair;
 import logging.Logger;
 import logging.LoggingCategory;
 

@@ -74,7 +74,7 @@ public class Ip extends LinuxCommand {
 // parsovani prikazu: ------------------------------------------------------------------------------------------
 
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         if (prectiPrepinace()) { //po prepinacich se ma pokracovat...
             prectiPrikaz();
         }
@@ -104,7 +104,7 @@ public class Ip extends LinuxCommand {
             } else if (slovo.equals("-0")) {
                 family = fam_ethernet;
             } else if (slovo.equals("-f") || slovo.equals("-family")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 if (slovo.equals("inet")) {
                     family = fam_ipv4;
                 } else if (slovo.equals("inet6")) {
@@ -131,7 +131,7 @@ public class Ip extends LinuxCommand {
                 printLine("Option \"" + slovo + "\" is unknown, try \"ip -help\".");
                 ukoncit = true;
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
         return !ukoncit;
     }

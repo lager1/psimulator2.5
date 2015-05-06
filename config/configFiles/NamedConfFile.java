@@ -105,7 +105,7 @@ public class NamedConfFile extends AbstractLinuxFile {
         }
 
         private boolean isZoneLine(String line) {
-            String DN_PATTERN = "[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,}\\.?)";
+            String DN_PATTERN = "[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2, }\\.?)";
             String ZONE_LINE_PATTERN = "^zone\\s+\"(" + DN_PATTERN + ")\"\\s+\\{$";
             Pattern p = Pattern.compile(ZONE_LINE_PATTERN);
             Matcher m = p.matcher(line.trim());

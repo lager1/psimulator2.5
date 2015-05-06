@@ -340,32 +340,32 @@ public class IpRoute extends LinuxCommand {
      * Jakmile parser narazi na jednu chybu, dal uz nepokracuje. <br />
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         if (slovo.equals("")) {   // nic nezadano - vsecho vypsat
             akce = 1;
         } else if ("add".startsWith(slovo)) {
             akce = 2;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         } else if ("del".startsWith(slovo)) {
             akce = 3;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         } else if ("show".startsWith(slovo)) {
             akce = 1;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("all")) {
                 all = true;
-                slovo = dalsiSlovo();
+                slovo = getToken();
             }
             parsujParametry();
         } else if ("flush".startsWith(slovo)) {
             akce = 4;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         } else if ("get".startsWith(slovo)) {
             akce = 6;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         } else if ("help".startsWith(slovo)) {
             akce = 5;
@@ -383,14 +383,14 @@ public class IpRoute extends LinuxCommand {
         if (slovo.equals("")) {
             //konec prikazu, nic se nedeje...
         } else if (slovo.equals("dev")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujDev();
         } else if (slovo.equals("via")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujVia();
         } else if (slovo.equals("all") && (akce == 1 || akce == 4 || akce == 6)) {
             all = true;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         } else { //vsechno ostatni se povazuje za adresu...
             parsujAdresu();
@@ -423,7 +423,7 @@ public class IpRoute extends LinuxCommand {
             }
         }
         adresat = vytvarena;
-        slovo = dalsiSlovo();
+        slovo = getToken();
         parsujParametry();
     }
 
@@ -445,7 +445,7 @@ public class IpRoute extends LinuxCommand {
                 return; //POZOR!!!!!!!!! Tady se utika a konci parsovani, kdyz je spatna adresa
             }
             //dalsi pokracovani:
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         }
     }
@@ -456,7 +456,7 @@ public class IpRoute extends LinuxCommand {
         } else {
             rozhrRet = slovo;
             //dalsi pokracovani:
-            slovo = dalsiSlovo();
+            slovo = getToken();
             parsujParametry();
         }
     }

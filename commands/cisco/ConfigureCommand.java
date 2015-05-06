@@ -33,7 +33,7 @@ public class ConfigureCommand extends CiscoCommand implements LongTermCommand {
         String nextWord = nextWord();
 
         if (nextWord.isEmpty()) {
-            parser.setRunningCommand(this,true);
+            parser.setRunningCommand(this, true);
             print("Configuring from terminal, memory, or network [terminal]? ");
             return;
         }

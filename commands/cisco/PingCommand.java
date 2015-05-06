@@ -52,7 +52,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
     @Override
     public void run() {
-        parser.setRunningCommand(this,false);
+        parser.setRunningCommand(this, false);
 
         boolean conti = processLine();
         if (conti) {

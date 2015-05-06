@@ -22,12 +22,15 @@ import filesystem.exceptions.FileSystemException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +49,8 @@ public class ArchiveFileSystem implements FileSystem {
         return "fsm";
     }
 
-    public ArchiveFileSystem(String pathToFileSystem) {
+    public ArchiveFileSystem(String pathToFileSystem)
+    {
 
 
         TConfig config = TConfig.get();
@@ -65,6 +69,7 @@ public class ArchiveFileSystem implements FileSystem {
         {
             System.err.println("mkdir failed");
         }
+
 
 
         if (!archiveFile.isArchive() || !archiveFile.isDirectory()) {
@@ -299,7 +304,9 @@ public class ArchiveFileSystem implements FileSystem {
      * @return
      */
     private TFile getRelativeTFile(String path) {
-        return new TFile(pathToFileSystem + normalize(path));
+        if (path.startsWith("/") || path.matches("^[A-Z]:[\\/].*") )
+            return new TFile(Paths.get(path).normalize().toUri().toString().substring(8));
+        return new TFile(Paths.get(pathToFileSystem + path).normalize().toUri().toString().substring(8));
     }
 
     /**
@@ -311,6 +318,7 @@ public class ArchiveFileSystem implements FileSystem {
     @Override
     public String normalize(String path) {
 
+        System.out.println(path);
         TPath tpath = new TPath(this.pathToFileSystem);
 
         String normalized = tpath.getFileSystem().getPath(path).normalize().toString();
