@@ -101,7 +101,7 @@ public class NetworkComponentsFactory {
         List<String> ethInterfaceNames = GeneratorSingleton.getInstance().getInterfaceNames(hwType, interfacesCount);
 
         // create interfaces
-        List<EthInterfaceModel> ethInterfaces = new ArrayList<>();
+        ArrayList<EthInterfaceModel> ethInterfaces = new ArrayList<>();
 
         for (int i = 0; i < interfacesCount; i++) {
             ethInterfaces.add(createEthInterface(ethInterfaceNames.get(i), hwType));

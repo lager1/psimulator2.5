@@ -659,8 +659,8 @@ public class TerminalIO
 
 
     @Override
-    public boolean avaiable() {
-        return m_TelnetIO.avaiable();
+    public boolean available() {
+        return m_TelnetIO.available();
     }
 
 

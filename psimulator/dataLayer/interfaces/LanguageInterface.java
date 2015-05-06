@@ -14,11 +14,11 @@ public interface LanguageInterface {
     public void setCurrentLanguage(int languagePosition);
 
     /**
-     * Gets avaiable language names as string array.
+     * Gets available language names as string array.
      *
      * @return
      */
-    public Object[] getAvaiableLanguageNames();
+    public Object[] getAvailableLanguageNames();
 
     /**
      * Returns position of current language.

@@ -157,7 +157,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         dataLayer.setConnectionIpAddress(connectionIpAddress);
         dataLayer.setConnectionPort(connectionPort);
 
-        // save preferences
+        // save preferences 
         dataLayer.savePreferences();
     }
 
@@ -367,7 +367,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         font = new Font(languageLabel.getFont().getName(), Font.BOLD, languageLabel.getFont().getSize());
         languageLabel.setFont(font);
 
-        languageList = new JComboBox<Object>(dataLayer.getAvaiableLanguageNames());
+        languageList = new JComboBox<Object>(dataLayer.getAvailableLanguageNames());
         languageList.setBackground(Color.white);
 
         languagePanel.add(languageLabel);

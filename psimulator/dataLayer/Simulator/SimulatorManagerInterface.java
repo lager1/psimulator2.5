@@ -3,9 +3,13 @@ package psimulator.dataLayer.Simulator;
 import psimulator.dataLayer.Enums.SimulatorPlayerCommand;
 import psimulator.dataLayer.SimulatorEvents.SimulatorEventWithDetails;
 import psimulator.logicLayer.Simulator.ConnectionFailtureReason;
+import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.telnetConfig.TelnetConfig;
+
+import javax.swing.*;
+import java.util.EnumSet;
 
 /**
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
@@ -259,4 +263,20 @@ public interface SimulatorManagerInterface {
      * Sets internal variables, so server can start again correctly
      */
     void serverShutdown();
+
+
+    /**
+     * Gets Events table sorter for filtering purposes
+     */
+    public RowSorter getEventsTableSorter();
+
+    /**
+     * Gets Enum set of displayed event types
+     */
+    public EnumSet<PacketType> getDisplayedEventTypes();
+
+    /**
+     * Set Enum set of displayed event types
+     */
+    public void setDisplayedEventTypes(EnumSet<PacketType> filter);
 }

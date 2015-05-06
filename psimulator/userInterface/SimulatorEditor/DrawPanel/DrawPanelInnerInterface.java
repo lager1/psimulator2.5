@@ -76,7 +76,7 @@ public interface DrawPanelInnerInterface {
      *
      * @param mainTool
      */
-    public void doSetTollInEditorToolBar(MainTool mainTool);
+    public void doSetToolInEditorToolBar(MainTool mainTool);
 
     /**
      * Updates size of panel according to parameter. If dimension is bigger than actual

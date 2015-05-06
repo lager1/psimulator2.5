@@ -117,7 +117,7 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
     }
 
     public void mousePressedRight(MouseEvent e) {
-        drawPanel.doSetTollInEditorToolBar(MainTool.HAND);
+        drawPanel.doSetToolInEditorToolBar(MainTool.HAND);
     }
 
     public void mouseClickedLeft(MouseEvent e) {

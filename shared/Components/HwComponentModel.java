@@ -1,10 +1,7 @@
 package shared.Components;
 
 import java.util.*;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 
 import shared.Components.simulatorConfig.DeviceSettings;
 
@@ -49,7 +46,32 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      */
     private String realInterface;
 
-    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces,
+    /**
+     * @var Bridge priority
+     */
+    private Integer bridgePriority;
+
+    /**
+     * @var Bridge Message Max age
+     */
+    private Integer maxAge;
+
+    /**
+     * @var Bridge Forward delay
+     */
+    private Integer forwardDelay;
+
+    /**
+     * @var Enabling Spanning tree protocol
+     */
+    private Boolean stpEnabled;
+
+    /**
+     * @var Bridge Hello time
+     */
+    private Integer helloTime;
+
+    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, ArrayList<EthInterfaceModel> ethInterfaces,
                             int defaultZoomXPos, int defaultZoomYPos) {
 
         // add values to variables
@@ -78,7 +100,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     }
 
     /**
-     * Gets first avaiable ethInterface, if no avaiable null is renturned
+     * Gets first available ethInterface, if no available null is renturned
      *
      * @return
      */
@@ -224,23 +246,122 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         return interfacesMap;
     }
 
-    public void setInterfacesMap(Map<Integer, EthInterfaceModel> interfacesMap) {
+
+    public void setInterfacesMap(LinkedHashMap<Integer, EthInterfaceModel> interfacesMap) {
         this.interfacesMap = interfacesMap;
     }
 
     @XmlElement(name = "interface")
-    public List<EthInterfaceModel> getInterfacesAsList() {
+    public ArrayList<EthInterfaceModel> getInterfacesAsList() {
         return new ArrayList<EthInterfaceModel>(this.interfacesMap.values());
     }
 
-    public void setInterfacesAsList(List<EthInterfaceModel> ethInterfaces) {
-
+    public void setInterfacesAsList(ArrayList<EthInterfaceModel> ethInterfaces) {
         this.interfacesMap = new LinkedHashMap<Integer, EthInterfaceModel>();
 
         for (EthInterfaceModel eth : ethInterfaces) {
             interfacesMap.put(eth.getId(), eth);
         }
 
+    }
+
+    /**
+     * Gets bridge priority (STP)
+     *
+     * @return Bridge priority
+     */
+    public Integer getBridgePriority()
+    {
+        return bridgePriority;
+    }
+
+    /**
+     * Sets bridge priority (STP)
+     *
+     * @param bridgePriority
+     */
+    public void setBridgePriority(Integer bridgePriority)
+    {
+        this.bridgePriority = bridgePriority;
+    }
+
+    /**
+     * Get bridge Message max age
+     *
+     * @return Bridge Max age
+     */
+    public Integer getMaxAge()
+    {
+        return maxAge;
+    }
+
+    /**
+     * Sets bridge Maximal message age
+     *
+     * @param maxAge
+     */
+    public void setMaxAge(Integer maxAge)
+    {
+        this.maxAge = maxAge;
+    }
+
+    /**
+     * Gets bridge forward delay
+     * @return Bridge forward delay
+     */
+    public Integer getForwardDelay()
+    {
+        return forwardDelay;
+    }
+
+    /**
+     * Sets Bridge forward delay
+     *
+     * @param forwardDelay
+     */
+    public void setForwardDelay(Integer forwardDelay)
+    {
+        this.forwardDelay = forwardDelay;
+    }
+
+    /**
+     * Gets STP protocol status
+     *
+     * @return true if STP enabled otherwise false
+     */
+    public Boolean getStpEnabled()
+    {
+        return stpEnabled;
+    }
+
+    /**
+     * Sets STP protocol status
+     *
+     * @param stpEnabled
+     */
+    public void setStpEnabled(Boolean stpEnabled)
+    {
+        this.stpEnabled = stpEnabled;
+    }
+
+    /**
+     *  Gets bridge hello time
+     *
+     * @return bridge hello time
+     */
+    public Integer getHelloTime()
+    {
+        return helloTime;
+    }
+
+    /**
+     * Sets Bridge hello time
+     *
+     * @param helloTime
+     */
+    public void setHelloTime(Integer helloTime)
+    {
+        this.helloTime = helloTime;
     }
 
     @Override
@@ -274,7 +395,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     /**
      * Removes interface with specified ID
      *
-     * @param id
+     * @param eth interface object object
      */
     public void removeInterface(EthInterfaceModel eth) {
         interfacesMap.remove(eth.getId());

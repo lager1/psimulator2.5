@@ -431,7 +431,7 @@ public class MenuBar extends JMenuBar implements Observer {
     public void addOpenRecentFileListener(ActionListener listener) {
         openRecentFileListener = listener;
 
-        // create menu with recently opened files - have to create it now, after the action listener is avaiable
+        // create menu with recently opened files - have to create it now, after the action listener is available
         createRecentFilesJMenu();
     }
 

@@ -195,7 +195,7 @@ public class CommandShell extends TerminalApplication implements Loggable {
      * @return
      */
     public boolean available() {
-        return this.terminalIO.avaiable();
+        return this.terminalIO.available();
     }
 
     /**

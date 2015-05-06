@@ -59,6 +59,8 @@ public class ColorMixerSingleton {
             case IP:
             case ETHERNET:
                 return Color.BLACK;
+            case STP:
+                return Color.ORANGE;
             case GENERIC:
             default:
                 return Color.PINK;

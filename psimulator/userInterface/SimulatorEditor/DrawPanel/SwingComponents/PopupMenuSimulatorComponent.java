@@ -96,69 +96,85 @@ public class PopupMenuSimulatorComponent extends JPopupMenu {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            // check if telnet window allready opened
+            openTelnetWindow(dataLayer, hwComponentGraphics, mainWindow);
+
+        }
+    }
+    
+    
+    public static void openTelnetWindow(DataLayerFacade dataLayer, HwComponentGraphic hwComponentGraphics, MainWindowInnerInterface mainWindow) {
+        // check if telnet window allready opened
 //            if(mainWindow.hasTelnetWindow(hwComponentGraphics.getId().intValue())){
 //                //System.out.println("Window allready opened");
-//                
+//
 //                // set focus to opened telnet window
 //                JFrame existingFrame = mainWindow.getTelnetWindow(hwComponentGraphics.getId().intValue());
 //                if(existingFrame.isShowing()){
 //                    System.out.println("window showing");
 //                }
 //                existingFrame.requestFocus();
-//                
+//
 //                return;
 //            }
-            
-            
-            // Set Language
-            String language;
-            if(dataLayer.getString("BUNDLE_LANGUAGE_NAME").equals("Čeština")){
-                language = "cz";
-            }else{
-                language = "en";
-            }
-            
-
-            String [] args;
-            
-            // set HOST and PORT
-            TelnetConfig telnetConfig = dataLayer.getTelnetConfig();
-            if(telnetConfig != null && telnetConfig.getConfigRecords().containsKey(hwComponentGraphics.getId().intValue())){
-                String host = dataLayer.getConnectionIpAddress();
-                String port = ""+telnetConfig.getConfigRecords().get(hwComponentGraphics.getId().intValue()).getPort();
-                
-                args = new String[4];
-                
-                args[2] = host;
-                args[3] = port;
-            }else{
-                args = new String[2];
-            }
-            
-            args[0] = "-lang";
-            args[1] = language;
-
-            //final JFrame frame = new JFrame();
-            de.mud.jta.Main.defaultRows =  30;
-            de.mud.jta.Main.defaultColumns = 100;
-            
-            // set name of device to telnet window
-            de.mud.jta.Main.hostName = hwComponentGraphics.getDeviceName()+": ";
-            
-            
-            final JFrame frame = de.mud.jta.Main.run(args);
-
-            frame.setIconImage(new ImageIcon(getClass().getResource(ImageFactorySingleton.ICON_TERMINAL_32_PATH)).getImage());
-            
-            if(frame == null){
-                System.out.println("Nastala chyba, okno telnetu se nepodařilo vytvořit");
+        switch (hwComponentGraphics.getHwType()){
+            case END_DEVICE_NOTEBOOK:
+            case END_DEVICE_PC:
+            case END_DEVICE_WORKSTATION:
+            case LINUX_ROUTER:
+            case CISCO_ROUTER:
+                break;
+            default:
                 return;
-            }
-            
+        }
+
+        // Set Language
+        String language;
+        if(dataLayer.getString("BUNDLE_LANGUAGE_NAME").equals("Čeština")){
+            language = "cz";
+        }else{
+            language = "en";
+        }
+
+
+        String [] args;
+
+        // set HOST and PORT
+        TelnetConfig telnetConfig = dataLayer.getTelnetConfig();
+        if(telnetConfig != null && telnetConfig.getConfigRecords().containsKey(hwComponentGraphics.getId().intValue())){
+            String host = dataLayer.getConnectionIpAddress();
+            String port = ""+telnetConfig.getConfigRecords().get(hwComponentGraphics.getId().intValue()).getPort();
+
+            args = new String[4];
+
+            args[2] = host;
+            args[3] = port;
+        }else{
+            args = new String[2];
+        }
+
+        args[0] = "-lang";
+        args[1] = language;
+
+        //final JFrame frame = new JFrame();
+        de.mud.jta.Main.defaultRows =  30;
+        de.mud.jta.Main.defaultColumns = 100;
+
+        // set name of device to telnet window
+        de.mud.jta.Main.hostName = hwComponentGraphics.getDeviceName()+": ";
+
+
+        final JFrame frame = de.mud.jta.Main.run(args);
+
+        frame.setIconImage(new ImageIcon(JMenuItemOpenTelnetListener.class.getResource(ImageFactorySingleton.ICON_TERMINAL_32_PATH)).getImage());
+
+        if(frame == null){
+            System.out.println("Nastala chyba, okno telnetu se nepodařilo vytvořit");
+            return;
+        }
+
 //            frame.addWindowListener(new WindowListener() {
 //                int id;
-//                
+//
 //                @Override
 //                public void windowOpened(WindowEvent we) {
 //                    //System.out.println("Window ");
@@ -189,11 +205,9 @@ public class PopupMenuSimulatorComponent extends JPopupMenu {
 //                public void windowDeactivated(WindowEvent we) {
 //                }
 //            });
-            
-            frame.setLocationRelativeTo(mainWindow.getMainWindowComponent());
-            frame.setResizable(false);
-            frame.setVisible(true);
 
-        }
+        frame.setLocationRelativeTo(mainWindow.getMainWindowComponent());
+        frame.setResizable(false);
+        frame.setVisible(true);
     }
 }
