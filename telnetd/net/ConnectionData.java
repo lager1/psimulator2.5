@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -48,21 +48,21 @@ import java.util.Locale;
 public class ConnectionData {
 
   //Associations
-  private ConnectionManager m_CM;		//the connection's ConnectionManager
-  private Socket m_Socket;			    //the connection's socket
-  private InetAddress m_IP;				  //the connection's IP Address Object
+  private ConnectionManager m_CM;        //the connection's ConnectionManager
+  private Socket m_Socket;                //the connection's socket
+  private InetAddress m_IP;                  //the connection's IP Address Object
   private HashMap m_Environment;  //the environment
 
   //Members
-  private String m_HostName;						//cache for the hostname
-  private String m_HostAddress;						//cache for the host ip
-  private int m_Port;								//port of the connection
-  private Locale m_Locale;						//locale of the connection
-  private long m_LastActivity;						//timestamp for the last activity
-  private boolean m_Warned;							//warned flag
-  private String m_NegotiatedTerminalType;			//negotiated TerminalType as String
-  private int[] m_TerminalGeometry;					//negotiated terminal geometry
-  private boolean m_TerminalGeometryChanged = true;	//flag for changes in the terminal geometry
+  private String m_HostName;                        //cache for the hostname
+  private String m_HostAddress;                        //cache for the host ip
+  private int m_Port;                                //port of the connection
+  private Locale m_Locale;                        //locale of the connection
+  private long m_LastActivity;                        //timestamp for the last activity
+  private boolean m_Warned;                            //warned flag
+  private String m_NegotiatedTerminalType;            //negotiated TerminalType as String
+  private int[] m_TerminalGeometry;                    //negotiated terminal geometry
+  private boolean m_TerminalGeometryChanged = true;    //flag for changes in the terminal geometry
   private String m_LoginShell;       //the login shell
   private boolean m_LineMode = false;
   private String m_EchoMode = "server";
@@ -83,8 +83,8 @@ public class ConnectionData {
     m_Port = sock.getPort();
     //this will set a default geometry and terminal type for the terminal
     m_TerminalGeometry = new int[2];
-    m_TerminalGeometry[0] = 80;	//width
-    m_TerminalGeometry[1] = 25;	//height
+    m_TerminalGeometry[0] = 80;    //width
+    m_TerminalGeometry[1] = 25;    //height
     m_NegotiatedTerminalType = "default";
     m_Environment = new HashMap(20);
     //this will stamp the first activity for validity :)

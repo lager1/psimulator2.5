@@ -29,29 +29,29 @@ import utils.Util;
  */
 public class IpRouteCommand extends CiscoCommand {
 
-	private final boolean no;
+    private final boolean no;
 
-	private IPwithNetmask target;
+    private IPwithNetmask target;
     private IpAddress gateway;
     private NetworkInterface iface;
 
-	private final CiscoIPLayer ipLayer = (CiscoIPLayer)getNetMod().ipLayer;
+    private final CiscoIPLayer ipLayer = (CiscoIPLayer)getNetMod().ipLayer;
 
-	public IpRouteCommand(AbstractCommandParser parser, boolean no) {
-		super(parser);
-		this.no = no;
-	}
+    public IpRouteCommand(AbstractCommandParser parser, boolean no) {
+        super(parser);
+        this.no = no;
+    }
 
-	private boolean process() {
+    private boolean process() {
 
-		String adr = "";
-		String maska = "";
+        String adr = "";
+        String maska = "";
         try {
             adr = nextWord();
-			debug("address: "+adr);
+            debug("address: "+adr);
 
             maska = nextWord();
-			debug("mask: "+maska);
+            debug("mask: "+maska);
 
             if (adr.isEmpty() || maska.isEmpty()) {
                 incompleteCommand();
@@ -59,18 +59,18 @@ public class IpRouteCommand extends CiscoCommand {
             }
             target = new IPwithNetmask(adr, maska);
         } catch (BadNetmaskException e) {
-			debug("bad mask: "+maska);
-			invalidInputDetected();
-			return false;
-		} catch (BadIpException e) {
-			debug("bad address: "+adr);
+            debug("bad mask: "+maska);
+            invalidInputDetected();
+            return false;
+        } catch (BadIpException e) {
+            debug("bad address: "+adr);
             invalidInputDetected();
             return false;
         } catch (Exception e) {
-			debug(Util.stackToString(e));
+            debug(Util.stackToString(e));
             invalidInputDetected();
             return false;
-		}
+        }
 
         if (!target.isNetworkNumber()) {
             printLine("%Inconsistent address and mask");
@@ -83,7 +83,7 @@ public class IpRouteCommand extends CiscoCommand {
         }
 
         String next = nextWord();
-		debug("next: "+next);
+        debug("next: "+next);
 
         if (Util.zacinaCislem(next)) { // na branu
             try {
@@ -123,18 +123,18 @@ public class IpRouteCommand extends CiscoCommand {
         return true;
     }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		boolean cont = process();
+        boolean cont = process();
         if (cont) {
             start();
         }
-	}
+    }
 
-	private void start() {
+    private void start() {
 
-//		if (debug) pc.vypis("pridej="+no);
+//        if (debug) pc.vypis("pridej="+no);
         if (no == false) {
             if (gateway != null) { // on gateway
                 ipLayer.wrapper.addRecord(target, gateway);
@@ -150,12 +150,12 @@ public class IpRouteCommand extends CiscoCommand {
                 printLine("%No matching route to delete");
             }
         }
-	}
+    }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
-		tmp.addCommand("ip route");
-		tmp.addCommand("no ip route");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+        tmp.addCommand("ip route");
+        tmp.addCommand("no ip route");
+    }
 }

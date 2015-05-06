@@ -60,15 +60,15 @@ public class Ip extends LinuxCommand {
     private AbstractCommand pr;
 
 
-	public Ip(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public Ip(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
-		parsujPrikaz();
+    @Override
+    public void run() {
+        parsujPrikaz();
         vykonejPrikaz();
-	}
+    }
 
 
 
@@ -197,24 +197,24 @@ public class Ip extends LinuxCommand {
             return;
         }
 //        podSlova=slova.subList(getUk()-1, slova.size());
-//			// -> getUk-1, aby ty slova obsahovaly i nazev prikazu, napr link.
+//            // -> getUk-1, aby ty slova obsahovaly i nazev prikazu, napr link.
 
         if(ladiciVypisovani)printLine(toString());
 
-		switch (cisloPrikazu){
-			case 1:
-				pr = new IpLink(parser);
-				break;
-			case 2:
-				pr = new IpAddr(parser, this);
-				break;
-			case 3:
-				pr = new IpRoute(parser);
-				break;
-		}
-		if (pr != null) {	// bez ty podminky to hazelo nullpointer - tak jsem ji sem pridal
-			pr.run();
-		}
+        switch (cisloPrikazu){
+            case 1:
+                pr = new IpLink(parser);
+                break;
+            case 2:
+                pr = new IpAddr(parser, this);
+                break;
+            case 3:
+                pr = new IpRoute(parser);
+                break;
+        }
+        if (pr != null) {    // bez ty podminky to hazelo nullpointer - tak jsem ji sem pridal
+            pr.run();
+        }
 
     }
 
@@ -233,11 +233,11 @@ public class Ip extends LinuxCommand {
 
 // ostatni: ---------------------------------------------------------------------------------------------------------
 
-	/**
-	 * Jen pro ladeni.
-	 *
-	 * @return
-	 */
+    /**
+     * Jen pro ladeni.
+     *
+     * @return
+     */
     @Override
     public String toString(){
         String vratit = "--------------------------\r\n   Parametry prikazu ip:\r\n\tnavratovyKodParseru: "

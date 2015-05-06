@@ -9,30 +9,30 @@ package shared.Components.simulatorConfig;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class StaticRule {
-	private String in;
-	private String out;
+    private String in;
+    private String out;
 
-	public StaticRule() {
-	}
+    public StaticRule() {
+    }
 
-	public StaticRule(String in, String out) {
-		this.in = in;
-		this.out = out;
-	}
+    public StaticRule(String in, String out) {
+        this.in = in;
+        this.out = out;
+    }
 
-	public String getIn() {
-		return in;
-	}
+    public String getIn() {
+        return in;
+    }
 
-	public void setIn(String in) {
-		this.in = in;
-	}
+    public void setIn(String in) {
+        this.in = in;
+    }
 
-	public String getOut() {
-		return out;
-	}
+    public String getOut() {
+        return out;
+    }
 
-	public void setOut(String out) {
-		this.out = out;
-	}
+    public void setOut(String out) {
+        this.out = out;
+    }
 }

@@ -35,7 +35,7 @@ public class DataLayer extends DataLayerFacade {
 
     private LanguageManager languageManager;
     private PreferencesManager preferencesManager;
-    private SimulatorManager simulatorManager; 
+    private SimulatorManager simulatorManager;
     //
     private AbstractNetworkSerializer abstractNetworkSerializer;
     //
@@ -55,24 +55,24 @@ public class DataLayer extends DataLayerFacade {
         preferencesManager = new PreferencesManager();
         languageManager = new LanguageManager();
         simulatorManager = new SimulatorManager((DataLayerFacade)this);
-        
+
         abstractNetworkSerializer = new NetworkModelSerializerXML();
         //abstractNetworkSerializer = new NetworkModelSerializer();
 
         //simulatorEventsSerializer = new SimulatorEventsSerializer();
         simulatorEventsSerializer = new SimulatorEventsSerializerXML();
-        
+
         // get instance to init imageFactory
         ImageFactorySingleton.getInstance();
-        
+
         //
-        
+
     }
-    
-    
+
+
     /**
      * Returns current icon toolbar size.
-     * @return 
+     * @return
      */
     @Override
     public ToolbarIconSizeEnum getToolbarIconSize() {
@@ -81,7 +81,7 @@ public class DataLayer extends DataLayerFacade {
 
     /**
      * Sets toolbar icon size in preferences.
-     * @param size 
+     * @param size
      */
     @Override
     public void setToolbarIconSize(ToolbarIconSizeEnum size) {
@@ -90,7 +90,7 @@ public class DataLayer extends DataLayerFacade {
 
     /**
      * Saves aplication preferences.
-     * 
+     *
      * Call before program exit.
      */
     @Override
@@ -100,7 +100,7 @@ public class DataLayer extends DataLayerFacade {
         ZoomManagerSingleton.getInstance().savePreferences();
     }
 
-    
+
     @Override
     public void setCurrentLanguage(int languagePosition) {
         languageManager.setCurrentLanguage(languagePosition);
@@ -150,7 +150,7 @@ public class DataLayer extends DataLayerFacade {
     public SimulatorManagerInterface getSimulatorManager() {
         return simulatorManager;
     }
-    
+
     @Override
     public void saveNetworkModelToFile(File file) throws SaveLoadException {
         abstractNetworkSerializer.saveNetworkModelToFile(networkFacade.getNetworkModel(), file);
@@ -161,7 +161,7 @@ public class DataLayer extends DataLayerFacade {
         NetworkModel networkModel = abstractNetworkSerializer.loadNetworkModelFromFile(file);
         return networkModel;
     }
-  
+
     @Override
     public void saveEventsToFile(SimulatorEventsWrapper simulatorEvents, File file) throws SaveLoadException {
         simulatorEventsSerializer.saveEventsToFile(simulatorEvents, file);
@@ -259,12 +259,12 @@ public class DataLayer extends DataLayerFacade {
 
     @Override
     public void setMainPanelState(UserInterfaceMainPanelState newState) {
-    	MainPanelState = newState;
+        MainPanelState = newState;
     }
 
     @Override
     public UserInterfaceMainPanelState getMainPanelState() {
-    	return MainPanelState;
+        return MainPanelState;
     }
 
     @Override

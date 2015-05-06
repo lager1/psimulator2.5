@@ -32,20 +32,20 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
     protected MainWindowInnerInterface mainWindow;
     protected UndoManager undoManager;
     protected DataLayerFacade dataLayer;
-    
+
     protected JComponent comp;
     protected JViewport vport;
-    
+
     protected final Cursor defCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     protected final Cursor hndCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-    
-    
+
+
     /**
      * list for all marked components
      */
     //protected List<Markable> markedComponents = new ArrayList<Markable>();
 
-    public DrawPanelListenerStrategy(DrawPanelInnerInterface drawPanel, UndoManager undoManager, 
+    public DrawPanelListenerStrategy(DrawPanelInnerInterface drawPanel, UndoManager undoManager,
             MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
         super();
 
@@ -57,11 +57,11 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
 
     public void initialize(){
         drawPanel.setCursor(defCursor);
-        
+
         comp = (DrawPanel) drawPanel;
         vport = drawPanel.getJScrollPane().getViewport();
     }
-    
+
     public abstract void deInitialize();
 
     public abstract void setTool(AbstractTool tool);
@@ -73,7 +73,7 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
             // scroll down
             if (e.getWheelRotation() == -1) {
                 ZoomManagerSingleton.getInstance().zoomIn(convertPoint(e.getPoint()), ZoomType.MOUSE);
-                //scroll up    
+                //scroll up
             } else if (e.getWheelRotation() == 1) {
                 ZoomManagerSingleton.getInstance().zoomOut(convertPoint(e.getPoint()), ZoomType.MOUSE);
             }
@@ -115,7 +115,7 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
             mouseDraggedRight(e);
         }
     }
-    
+
     public void mousePressedRight(MouseEvent e) {
         drawPanel.doSetTollInEditorToolBar(MainTool.HAND);
     }
@@ -144,11 +144,11 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
     protected Point convertPoint(Point point){
         return SwingUtilities.convertPoint(vport,point,comp);
     }
-    
+
     protected MouseEvent convertMouseEvent(MouseEvent mouseEvent){
         return SwingUtilities.convertMouseEvent(vport,mouseEvent,comp);
     }
-    
+
     /**
      * Return component at point
      * @param point
@@ -163,22 +163,22 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
         }
 
         // create small rectangle arround clicked point
-        
+
         // search cables
         for (BundleOfCablesGraphic boc : drawPanel.getGraphOuterInterface().getBundlesOfCables()) {
             clickedComponent = boc.getIntersectingCable(point);
             if(clickedComponent != null){
-               return clickedComponent; 
+               return clickedComponent;
             }
         }
 
         return clickedComponent;
     }
-    
+
     /**
      * Get clicked AbstractHWComponent at point
      * @param point
-     * @return 
+     * @return
      */
     protected HwComponentGraphic getClickedAbstractHwComponent(Point point) {
         HwComponentGraphic clickedComponent = null;
@@ -193,5 +193,5 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
 
         return clickedComponent;
     }
-    
+
 }

@@ -52,12 +52,12 @@ public class DhcpClient extends Application {
         IpPacket recIp;
         DhcpPacket recDhcp;
 
-	// prelozim pakety, a kdyby bylo neco spatne, koncim
+    // prelozim pakety, a kdyby bylo neco spatne, koncim
         // delam to vsechno najednou
         try {
             recIp = pItem.packet;
             recDhcp = (DhcpPacket) ((UdpPacket) recIp.data).getData();
-            recDhcp.getSize();	// abych si overil, ze to neni null
+            recDhcp.getSize();    // abych si overil, ze to neni null
         } catch (Exception ex) {
             return;
         }

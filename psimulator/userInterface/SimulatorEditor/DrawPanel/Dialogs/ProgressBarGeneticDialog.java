@@ -32,8 +32,8 @@ import psimulator.userInterface.MainWindowInnerInterface;
 public class ProgressBarGeneticDialog extends JDialog implements ActionListener, ProgresBarGeneticInterface {
     // commands
 
- 	private static final long serialVersionUID = -5347527199908531423L;
-	private static final String CANCEL_COMMAND = "cancel";
+     private static final long serialVersionUID = -5347527199908531423L;
+    private static final String CANCEL_COMMAND = "cancel";
     private static final String ENOUGH_QUALITY_COMMAND = "enough";
     //
     private DataLayerFacade dataLayer;
@@ -96,7 +96,7 @@ public class ProgressBarGeneticDialog extends JDialog implements ActionListener,
 
         this.setSize(new Dimension(400, 300));
         this.setResizable(false);
-        
+
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override

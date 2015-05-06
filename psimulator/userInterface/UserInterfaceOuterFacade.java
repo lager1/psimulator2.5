@@ -10,13 +10,13 @@ import psimulator.userInterface.SimulatorEditor.AnimationPanel.AnimationPanelOut
 public interface UserInterfaceOuterFacade {
     /**
      * inits view and calls setVisible(true)
-     * @param controller 
+     * @param controller
      */
     public void initView(ControllerFacade controller);
-    
+
     /**
      * Use from logicLayer to get animation panel.
-     * @return 
+     * @return
      */
     public AnimationPanelOuterInterface getAnimationPanelOuterInterface();
 }

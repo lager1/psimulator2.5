@@ -11,6 +11,6 @@ import dataStructures.EventDescriptive;
  */
 public interface PacketData extends  EventDescriptive{
 
-	public int getSize();
+    public int getSize();
 
 }

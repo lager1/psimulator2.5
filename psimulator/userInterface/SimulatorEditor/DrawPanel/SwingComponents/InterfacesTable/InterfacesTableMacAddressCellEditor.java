@@ -19,8 +19,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.Valida
  */
 public class InterfacesTableMacAddressCellEditor extends DefaultCellEditor {
 
-	private static final long serialVersionUID = 4965652925703847961L;
-	protected LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
+    private static final long serialVersionUID = 4965652925703847961L;
+    protected LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
 
     public InterfacesTableMacAddressCellEditor() {
         super(new JFormattedTextField());

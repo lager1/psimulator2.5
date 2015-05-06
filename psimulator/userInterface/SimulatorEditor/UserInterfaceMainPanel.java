@@ -29,10 +29,10 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
         Observer {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4766913398078995472L;
-	private MainWindowInnerInterface mainWindow;
+     *
+     */
+    private static final long serialVersionUID = 4766913398078995472L;
+    private MainWindowInnerInterface mainWindow;
     private DataLayerFacade dataLayer;
     //
     //
@@ -51,13 +51,13 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
     //
     private WelcomePanel jPanelWelcome;
 
-    public UserInterfaceMainPanel(MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer, 
+    public UserInterfaceMainPanel(MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer,
             UserInterfaceMainPanelState userInterfaceState) {
         super(new BorderLayout());
 
         this.mainWindow = mainWindow;
         this.dataLayer = dataLayer;
-        
+
         // set border
         this.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
@@ -71,7 +71,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
                 if (flag) {
                     return;
                 }
-                
+
                 super.revalidate();
             }
 
@@ -85,9 +85,9 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
         };
         // create layered pane
         jLayeredPane = new UserInterfaceLayeredPane(mainWindow, this, dataLayer);
-        
+
         //AnimationPanel panel  = new AnimationPanel(mainWindow, this, imageFactory, dataLayer, null, null);
-        
+
         // add layered pane to viewport
         jViewPort.add(jLayeredPane);
         //jViewPort.add(panel);
@@ -125,7 +125,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
 
         // add as an icon size observer
         dataLayer.addPreferencesObserver((Observer) jPanelSimulator);
-        
+
 
         // ----------- WELCOME STUFF CREATION -----------------------
         // create welcome panel
@@ -138,7 +138,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
         // ----------- rest of constructor -----------------------
         // add this to zoom Manager as Observer
         //jLayeredPane.addObserverToZoomManager((Observer) this);
-        
+
         ZoomManagerSingleton.getInstance().addObserver((Observer) this);
 
         doChangeMode(userInterfaceState);
@@ -149,7 +149,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
          // turn of activities in simulator
         jPanelSimulator.setTurnedOff();
     }
-    
+
     @Override
     public final void doChangeMode(UserInterfaceMainPanelState userInterfaceState) {
         this.userInterfaceState = userInterfaceState;
@@ -239,7 +239,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
             viewportHeight = jLayeredPane.getGraph().getHeight();
         }
 
-        // calculate center position 
+        // calculate center position
         int centerXOldZoom = (int) (jScrollPane.getViewport().getViewPosition().x + ((viewportWidth / 2.0)));
         int centerYOldZoom = (int) (jScrollPane.getViewport().getViewPosition().y + ((viewportHeight / 2.0)));
 
@@ -365,7 +365,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
     public void redo() {
         jLayeredPane.redo();
     }
-    
+
     @Override
     public final void doSetToolInToolBar(MainTool mainTool){
          jToolBarEditor.setTool(mainTool);

@@ -12,14 +12,14 @@ package commands;
 public interface ApplicationNotifiable {
 
 
-	public void printLine(String s);
+    public void printLine(String s);
 
 
-	public void print(String s);
+    public void print(String s);
 
 
-	/**
-	 * Application notifies that application has finished.
-	 */
-	public void applicationFinished();
+    /**
+     * Application notifies that application has finished.
+     */
+    public void applicationFinished();
 }

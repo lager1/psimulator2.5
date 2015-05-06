@@ -13,8 +13,8 @@ import psimulator.dataLayer.DataLayerFacade;
  */
 public class InterfacesTableCellRendererCheckBox extends JCheckBox implements TableCellRenderer {
 
-	private static final long serialVersionUID = 3130655395113780132L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = 3130655395113780132L;
+    private DataLayerFacade dataLayer;
 
     public InterfacesTableCellRendererCheckBox(DataLayerFacade dataLayer) {
         super();

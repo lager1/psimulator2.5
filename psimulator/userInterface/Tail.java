@@ -27,15 +27,15 @@ public class Tail implements LogFileTailerListener
 
   /**
    * A new line has been added to the tailed log file
-   * 
+   *
    * @param line   The new line that has been added to the tailed log file
    */
 
   public String newLogFileLine(String line) {
-	  return line;
+      return line;
   }
 
   public LogFileTailer getFileTailer() {
-	  return tailer;
+      return tailer;
   }
 }

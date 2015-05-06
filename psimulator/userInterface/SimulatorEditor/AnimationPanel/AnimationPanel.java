@@ -32,8 +32,8 @@ import shared.SimulatorEvents.SerializedComponents.EventType;
 public class AnimationPanel extends AnimationPanelOuterInterface implements AnimationPanelInnerInterface {
     //
 
-	private static final long serialVersionUID = -387961393096199688L;
-	//private static final TimingSource f_repaintTimer = new SwingTimerTimingSource();
+    private static final long serialVersionUID = -387961393096199688L;
+    //private static final TimingSource f_repaintTimer = new SwingTimerTimingSource();
     private PostTickListener postTickListener;
     //
     private DataLayerFacade dataLayer;

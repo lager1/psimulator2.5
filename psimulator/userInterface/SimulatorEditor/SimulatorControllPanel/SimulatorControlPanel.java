@@ -37,10 +37,10 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 public class SimulatorControlPanel extends JPanel implements Observer {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4730580419660387961L;
-	// Save / Load panel
+     * 
+     */
+    private static final long serialVersionUID = 4730580419660387961L;
+    // Save / Load panel
     private JPanel jPanelSaveLoad;
     private JPanel jPanelSaveLoadButtons;
     private JButton jButtonSaveListToFile;
@@ -106,7 +106,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
     private ConnectionAnimation connectionAnimation;
 
     public SimulatorControlPanel(MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
-    	this.dataLayer = dataLayer;
+        this.dataLayer = dataLayer;
         this.simulatorManagerInterface = dataLayer.getSimulatorManager();
         this.mainWindow = mainWindow;
 
@@ -142,7 +142,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
 
     @Override
     public void update(Observable o, Object o1) {
-    	switch ((ObserverUpdateEventType) o1) {
+        switch ((ObserverUpdateEventType) o1) {
             case LANGUAGE:
                 setTextsToComponents();
                 break;
@@ -158,22 +158,22 @@ public class SimulatorControlPanel extends JPanel implements Observer {
                 break;
                 
             case CONNECTION_CONNECTING_FAILED:  // only during connection establishing
-            	if (connectionAnimation != null) {
+                if (connectionAnimation != null) {
                     connectionAnimation.connectingFailed();
                 }
                 break;
             case SIMULATOR_CONNECTED:           // when connection established
-            	if (connectionAnimation != null) {
-                	connectionAnimation.connected();
+                if (connectionAnimation != null) {
+                    connectionAnimation.connected();
                 }
                 //updateConnectionInfoAccordingToModel();
                 break;
             case CONNECTION_CONNECTION_FAILED:  // when connection failed
-            	JOptionPane.showMessageDialog(mainWindow.getMainWindowComponent(),
+                JOptionPane.showMessageDialog(mainWindow.getMainWindowComponent(),
                         dataLayer.getString("CONNECTION_BROKE_DOWN"),
                         dataLayer.getString("WARNING"),
                         JOptionPane.WARNING_MESSAGE);
-            	mainWindow.refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);	// set main window state to EDITOR
+                mainWindow.refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);    // set main window state to EDITOR
                 break;
             case SERVER_SHUTDOWN:  // when hen server was shut down by user by shutdown button
                 //updateConnectionInfoAccordingToModel();
@@ -200,8 +200,8 @@ public class SimulatorControlPanel extends JPanel implements Observer {
             case PACKET_RECIEVER_WRONG_PACKET:
                 showWarningDialog(dataLayer.getString("WARNING"), dataLayer.getString("REVIEVED_WRONG_EVENT"));
                 break;
-		default:
-			break;
+        default:
+            break;
 
         }
     }
@@ -342,7 +342,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
                 }
             }
         });
-		*/
+        */
 
         //
         jButtonDeleteEvents.addActionListener(new ActionListener() {
@@ -922,7 +922,7 @@ public class SimulatorControlPanel extends JPanel implements Observer {
     /*
     private void updateConnectionInfoAccordingToModel() {
         if (simulatorManagerInterface.isConnectedToServer()) {
-        	jLabelConnectionStatusValue.setIcon(ImageFactorySingleton.getInstance().getImageIcon("/resources/toolbarIcons/16/button_ok.png")); // NOI18N
+            jLabelConnectionStatusValue.setIcon(ImageFactorySingleton.getInstance().getImageIcon("/resources/toolbarIcons/16/button_ok.png")); // NOI18N
             jLabelConnectionStatusValue.setText(dataLayer.getString("CONNECTED"));
             //
             jToggleButtonCapture.setEnabled(true);

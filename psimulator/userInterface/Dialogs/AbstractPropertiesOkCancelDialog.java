@@ -13,8 +13,8 @@ import psimulator.dataLayer.DataLayerFacade;
  */
 public abstract class AbstractPropertiesOkCancelDialog extends AbstractPropertiesDialog {
 
-	private static final long serialVersionUID = 6136731895619808945L;
-	/*
+    private static final long serialVersionUID = 6136731895619808945L;
+    /*
      * window componenets
      */
     protected JButton jButtonOk;

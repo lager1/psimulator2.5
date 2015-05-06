@@ -59,11 +59,11 @@ public class SocketRequest implements PluginMessage {
    */
   public Object firePluginMessage(PluginListener pl) {
     if(pl instanceof SocketListener) try {
-      if(host != null) 
+      if(host != null)
         ((SocketListener)pl).connect(host, port);
       else
         ((SocketListener)pl).disconnect();
-    } catch(Exception e) { 
+    } catch(Exception e) {
       e.printStackTrace();
     }
     return null;

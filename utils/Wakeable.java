@@ -9,9 +9,9 @@ package utils;
  */
 public interface Wakeable {
 
-	/**
-	 * Slouzi jen ke vzbuzeni, samotna cinnost se musi delat v jinym vlakne.
-	 */
-	public void wake();
+    /**
+     * Slouzi jen ke vzbuzeni, samotna cinnost se musi delat v jinym vlakne.
+     */
+    public void wake();
 
 }

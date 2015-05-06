@@ -15,33 +15,33 @@ import filesystem.exceptions.FileSystemException;
  */
 public class Cp  extends MvOrCp {
 
-	public Cp(AbstractCommandParser parser) {
-		super(parser, "cp");
-	}
+    public Cp(AbstractCommandParser parser) {
+        super(parser, "cp");
+    }
 
-	@Override
-	protected int processFile(String source, String target) {
-	
-		try{
-		String currentDir = getCurrentDir();
-			
-			String mySource = resolvePath(currentDir, source);
-			String myTarget = resolvePath(currentDir, target);
-			
-			parser.device.getFilesystem().cp_r(mySource, myTarget);
-			
-			return 0;
-		} catch (FileNotFoundException ex) {
-			printLine("cp: "+ source + " to " + target + "failed. Directory or file doesnt exist" );
-			return -1;
-		}catch(AlreadyExistsException ex){
-			printLine("cp: "+ source + " to " + target + "failed. Directory or file already exist");
-			return -1;
-		}catch(FileSystemException ex){}
-	
-		return 0;
-	
-		
-		
-	}
+    @Override
+    protected int processFile(String source, String target) {
+
+        try{
+        String currentDir = getCurrentDir();
+
+            String mySource = resolvePath(currentDir, source);
+            String myTarget = resolvePath(currentDir, target);
+
+            parser.device.getFilesystem().cp_r(mySource, myTarget);
+
+            return 0;
+        } catch (FileNotFoundException ex) {
+            printLine("cp: "+ source + " to " + target + "failed. Directory or file doesnt exist" );
+            return -1;
+        }catch(AlreadyExistsException ex){
+            printLine("cp: "+ source + " to " + target + "failed. Directory or file already exist");
+            return -1;
+        }catch(FileSystemException ex){}
+
+        return 0;
+
+
+
+    }
 }

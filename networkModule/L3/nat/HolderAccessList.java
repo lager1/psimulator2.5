@@ -22,9 +22,9 @@ public class HolderAccessList {
 
     private final List<AccessList> list = new ArrayList<>(); // nechat jako List, mapa to byti nemuze!
 
-	public List<AccessList> getList() {
-		return list;
-	}
+    public List<AccessList> getList() {
+        return list;
+    }
 
     /**
      * Prida do seznamu Access-listu na spravnou pozici dalsi pravidlo. <br />
@@ -61,7 +61,7 @@ public class HolderAccessList {
             }
         }
 
-		list.removeAll(smazat);
+        list.removeAll(smazat);
     }
 
     /**

@@ -16,54 +16,54 @@ public class IPwithNetmask {
 
 // konstruktory: ----------------------------------------------------------------------------------------------------
 
-	/**
-	 * Creates a new instance from string of IP address, the mask is computed automatically.
-	 * @param adr
-	 */
+    /**
+     * Creates a new instance from string of IP address, the mask is computed automatically.
+     * @param adr
+     */
     public IPwithNetmask(String adr) {
         ip = new IpAddress(adr);
         dopocitejMasku();
     }
 
-	/**
-	 * Creates new instance from two strings.
-	 * @param adr
-	 * @param maska
-	 */
+    /**
+     * Creates new instance from two strings.
+     * @param adr
+     * @param maska
+     */
     public IPwithNetmask(String adr, String maska) {
         ip = new IpAddress(adr);
         mask = new IpNetmask(maska);
     }
 
-	/**
-	 * Creates new instance from IP as string and mask as number of bits (tedy pocet jednickovejch bitu).
-	 * @param adr
-	 * @param maska number of bits
-	 */
+    /**
+     * Creates new instance from IP as string and mask as number of bits (tedy pocet jednickovejch bitu).
+     * @param adr
+     * @param maska number of bits
+     */
     public IPwithNetmask(String adr, int maska) {
         ip = new IpAddress(adr);
         mask = new IpNetmask(maska);
     }
 
-	/**
-	 * Creates new instance from existing IP and mask as number of bits.
-	 * @param adr
-	 * @param maska number of bits
-	 */
+    /**
+     * Creates new instance from existing IP and mask as number of bits.
+     * @param adr
+     * @param maska number of bits
+     */
     public IPwithNetmask(IpAddress adr, int maska) {
         ip = adr;
         mask = new IpNetmask(maska);
     }
 
-	/**
-	 * Creates new instance from existing IP and netmask.
-	 * @param adr
-	 * @param mask
-	 */
+    /**
+     * Creates new instance from existing IP and netmask.
+     * @param adr
+     * @param mask
+     */
     public IPwithNetmask(IpAddress adr, IpNetmask mask) {
-		ip = adr;
-		this.mask = mask;
-	}
+        ip = adr;
+        this.mask = mask;
+    }
 
     /**
      * Vytvori adresu s maskou ze zadaneho Stringu, kde muze nebo nemusi byt
@@ -140,11 +140,11 @@ public class IPwithNetmask {
         return true;
     }
 
-	/**
-	 * Returns IP address with slash and netmask as number of bits.
-	 * Vypise jako IP lomitko pocet bitu.
-	 * @return
-	 */
+    /**
+     * Returns IP address with slash and netmask as number of bits.
+     * Vypise jako IP lomitko pocet bitu.
+     * @return
+     */
     @Override
     public String toString() {
         return ip.toString() + "/" + mask.getNumberOfBits();
@@ -174,14 +174,14 @@ public class IPwithNetmask {
         else return false;
     }
 
-	/**
-	 * Vraci true, kdyz je adresa s maskou broadcastem site.
-	 * @return
-	 */
-	public boolean isBroadcast() {
-		if (this.getIp().equals(getBroadcast())) return true;
-		else return false;
-	}
+    /**
+     * Vraci true, kdyz je adresa s maskou broadcastem site.
+     * @return
+     */
+    public boolean isBroadcast() {
+        if (this.getIp().equals(getBroadcast())) return true;
+        else return false;
+    }
 
     /**
      * Vraci true, jestlize adresa v parametru (comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
@@ -197,28 +197,28 @@ public class IPwithNetmask {
 
 // privatni metody: ----------------------------------------------------------------------------------------------------------------------
 
-	/**
-	 * Setts the automatically computed mask. The mask is computed from IP address according to rules in comentar.
-	 *
-	 * Nastavi dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
-	 */
-	private void dopocitejMasku() {
+    /**
+     * Setts the automatically computed mask. The mask is computed from IP address according to rules in comentar.
+     *
+     * Nastavi dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
+     */
+    private void dopocitejMasku() {
 
-//            A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
-//            B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
-//            C 	110 	192-223 	255.255.255.0 	21 	8 	2 097 152 	254
-//            D 	1110 	224-239 	multicast
-//            E 	1111 	240-255 	vyhrazeno jako rezerva
+//            A     0     0–127        255.0.0.0     7     24     126     16 777 214
+//            B     10     128-191     255.255.0.0     14     16     16384     65534
+//            C     110     192-223     255.255.255.0     21     8     2 097 152     254
+//            D     1110     224-239     multicast
+//            E     1111     240-255     vyhrazeno jako rezerva
 
-		int bajt = IpAddress.bitsToArray(ip.getBits())[0]; //tady je ulozenej prvni bajt adresy
-		if (bajt < 128) {
-			mask = new IpNetmask(8);
-		} else if (bajt >= 128 && bajt < 192) {
-			mask = new IpNetmask(16);
-		} else if (bajt >= 192) {
-			mask = new IpNetmask(24);
-		}
-	}
+        int bajt = IpAddress.bitsToArray(ip.getBits())[0]; //tady je ulozenej prvni bajt adresy
+        if (bajt < 128) {
+            mask = new IpNetmask(8);
+        } else if (bajt >= 128 && bajt < 192) {
+            mask = new IpNetmask(16);
+        } else if (bajt >= 192) {
+            mask = new IpNetmask(24);
+        }
+    }
 
     /**
      * Da vnitrni representaci cisla site.

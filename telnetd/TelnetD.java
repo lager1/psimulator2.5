@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -55,8 +55,8 @@ import logging.LoggingCategory;
  */
 public class TelnetD {
 
-  
-  private static TelnetD c_Self = null;	//reference of the running singleton
+
+  private static TelnetD c_Self = null;    //reference of the running singleton
   private List m_Listeners;
   private ShellManager m_ShellManager;
 
@@ -67,7 +67,7 @@ public class TelnetD {
    * singleton instance.
    */
   private TelnetD() {
-    c_Self = this;	//sets the singleton reference
+    c_Self = this;    //sets the singleton reference
     m_Listeners = new ArrayList(5);
   }//constructor
 
@@ -76,8 +76,8 @@ public class TelnetD {
    * all configured listeners.<br>
    */
   public void start() {
-	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
-    
+      Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
+
     for (int i = 0; i < m_Listeners.size(); i++) {
       PortListener plis = (PortListener) m_Listeners.get(i);
       plis.start();
@@ -218,8 +218,8 @@ public class TelnetD {
     try {
       return createTelnetD(PropertiesLoader.loadProperties(urlprefix));
     } catch (IOException ex) {
-		Logger.log(Logger.ERROR, LoggingCategory.TELNET, ex.toString());
-      
+        Logger.log(Logger.ERROR, LoggingCategory.TELNET, ex.toString());
+
       throw new BootException("Failed to load configuration from given URL.");
     }
   }//createTelnetD

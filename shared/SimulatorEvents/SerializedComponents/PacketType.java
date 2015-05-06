@@ -10,6 +10,6 @@ public enum PacketType {
     ICMP,       // gray
     ARP,        // yellow
     GENERIC,    // pink
-	ETHERNET,	// shouldn't happen, black
-	IP;		    // shouldn't happen, black
+    ETHERNET,    // shouldn't happen, black
+    IP;            // shouldn't happen, black
 }

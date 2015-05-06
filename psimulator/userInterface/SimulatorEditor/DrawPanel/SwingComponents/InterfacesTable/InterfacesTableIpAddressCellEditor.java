@@ -19,8 +19,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.Valida
  */
 public class InterfacesTableIpAddressCellEditor extends DefaultCellEditor {
 
-	private static final long serialVersionUID = -4542525473907285387L;
-	protected LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
+    private static final long serialVersionUID = -4542525473907285387L;
+    protected LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
 
     public InterfacesTableIpAddressCellEditor() {
         super(new JFormattedTextField());

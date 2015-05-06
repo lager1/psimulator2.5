@@ -22,14 +22,14 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelState;
  * @author lager1
  */
 public final class ToolBar extends JToolBar implements Observer {
-    
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3003452553897338438L;
 
-	private DataLayerFacade dataLayer;
-    
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3003452553897338438L;
+
+    private DataLayerFacade dataLayer;
+
     private JButton jButtonNew;
     private JButton jButtonClose;
     private JButton jButtonOpen;
@@ -50,45 +50,45 @@ public final class ToolBar extends JToolBar implements Observer {
     //private JToggleButton jToggleButtonSimulator;
     //
     //private Font font;
-    
+
     //private Color backgroundColor = new Color(198, 83, 83);
-    
-    
+
+
     public ToolBar(DataLayerFacade dataLayer){
         super();
         this.dataLayer = dataLayer;
-        
-                
+
+
         // add this ToolBar as observer to languageManager
         dataLayer.addLanguageObserver((Observer)this);
-        
+
         // add this as observer to preferences manager
         dataLayer.addPreferencesObserver((Observer)this);
-       
+
         // tool bar is not possible to move
         this.setFloatable(false);
-        
+
         jButtonNew = new JButton();
-        
+
         jButtonClose = new JButton();
         jButtonOpen = new JButton();
         jButtonSave = new JButton();
         jButtonSaveAs = new JButton();
-        
+
         jButtonPreferences = new JButton();
-        
+
         jButtonUndo = new JButton();
         jButtonUndo.setActionCommand(UndoRedo.UNDO.toString());
-        
+
         jButtonRedo = new JButton();
         jButtonRedo.setActionCommand(UndoRedo.REDO.toString());
-        
+
         jButtonZoomIn = new JButton();
         jButtonZoomIn.setActionCommand(Zoom.IN.toString());
-        
+
         jButtonZoomOut = new JButton();
         jButtonZoomOut.setActionCommand(Zoom.OUT.toString());
-                
+
         jButtonZoomReset = new JButton();
         jButtonZoomReset.setActionCommand(Zoom.RESET.toString());
 
@@ -99,36 +99,36 @@ public final class ToolBar extends JToolBar implements Observer {
         jButtonStopSimulation.setActionCommand(UserInterfaceMainPanelState.EDITOR.toString());
 
         jButtonServerLog = new JButton();
-        
+
         //modeButtonGroup = new ButtonGroup();
-        
+
         //jToggleButtonEditor = new JToggleButton();
         //jToggleButtonEditor.setActionCommand(UserInterfaceMainPanelState.EDITOR.toString());
         //jToggleButtonSimulator = new JToggleButton();
         //jToggleButtonSimulator.setActionCommand(UserInterfaceMainPanelState.SIMULATOR.toString());
 
 
-        
+
         //modeButtonGroup.add(jToggleButtonEditor);
         //modeButtonGroup.add(jToggleButtonSimulator);
-        
+
         this.add(jButtonNew);
         this.add(jButtonClose);
         this.addSeparator();
-        
+
         this.add(jButtonOpen);
         this.add(jButtonSave);
         this.add(jButtonSaveAs);
         this.addSeparator();
-        
+
         this.add(jButtonPreferences);
         this.addSeparator();
-        
+
         this.add(jButtonZoomIn);
         this.add(jButtonZoomOut);
         this.add(jButtonZoomReset);
         this.addSeparator();
-        
+
         this.add(jButtonUndo);
         this.add(jButtonRedo);
         this.addSeparator();
@@ -136,23 +136,23 @@ public final class ToolBar extends JToolBar implements Observer {
         this.add(jButtonStopSimulation);
         this.add(jButtonServerLog);
 
-        
+
         this.add(Box.createHorizontalGlue());
         //this.add(jToggleButtonEditor);
         //this.add(jToggleButtonSimulator);
-        
+
         setTextsToComponents();
-        
+
         // apply background color
         this.setBackground(ColorMixerSingleton.mainToolbarColor);
         Component [] comp = this.getComponents();
-        
+
         for(Component c : comp){
             c.setBackground(ColorMixerSingleton.mainToolbarColor);
             // tool icon cannot be marked (ugly frame)
             c.setFocusable(false);
         }
-        
+
         updateIconSize(dataLayer.getToolbarIconSize());
     }
 
@@ -166,18 +166,18 @@ public final class ToolBar extends JToolBar implements Observer {
             case ICON_SIZE:
                 this.updateIconSize(dataLayer.getToolbarIconSize());
                 break;
-		default:
-			break;
+        default:
+            break;
         }
     }
-    
+
     /**
      * Updates images on toolbar buttons according to size
-     * @param size 
+     * @param size
      */
     public void updateIconSize(ToolbarIconSizeEnum size){
         String path = "/resources/toolbarIcons/";
-        
+
         switch(size){
             case TINY:
                 path += "16";
@@ -214,39 +214,39 @@ public final class ToolBar extends JToolBar implements Observer {
         jButtonStartSimulation.setIcon(new ImageIcon(getClass().getResource(path+"backend_start.png")));
         jButtonStopSimulation.setIcon(new ImageIcon(getClass().getResource(path+"backend_stop.png")));
         jButtonServerLog.setIcon(new ImageIcon(getClass().getResource(path+"server_log.png")));
-        
+
         //jToggleButtonEditor.setFont(font);
         //jToggleButtonSimulator.setFont(font);
     }
-    
-    
+
+
     public void setUndoEnabled(boolean enabled){
         jButtonUndo.setEnabled(enabled);
     }
-    
+
     public void setRedoEnabled(boolean enabled){
         jButtonRedo.setEnabled(enabled);
     }
-    
+
     public void setZoomInEnabled(boolean enabled){
         jButtonZoomIn.setEnabled(enabled);
     }
-    
+
     public void setZoomOutEnabled(boolean enabled){
         jButtonZoomOut.setEnabled(enabled);
     }
-    
+
     public void setZoomResetEnabled(boolean enabled){
         jButtonZoomReset.setEnabled(enabled);
     }
-    
+
     public void setSimulatorSelected(boolean selected){
         //jToggleButtonSimulator.setSelected(selected);
         jButtonStartSimulation.setVisible(false);
         jButtonStopSimulation.setVisible(true);
         jButtonServerLog.setVisible(true);
     }
-    
+
     public void setEditorSelected(boolean selected){
         //jToggleButtonEditor.setSelected(selected);
         jButtonStartSimulation.setVisible(true);
@@ -276,7 +276,7 @@ public final class ToolBar extends JToolBar implements Observer {
 
         //jToggleButtonEditor.setVisible(enabled);
         //jToggleButtonSimulator.setVisible(enabled);
-        
+
         if(userInterfaceState == UserInterfaceMainPanelState.EDITOR){
             jButtonUndo.setVisible(enabled);
             jButtonRedo.setVisible(enabled);
@@ -295,7 +295,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addNewProjectActionListener(ActionListener listener){
         jButtonNew.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButtonClose
      * @param listener Action listener
@@ -303,7 +303,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addCloseActionListener(ActionListener listener){
         jButtonClose.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButtonOpen
      * @param listener Action listener
@@ -311,7 +311,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addOpenActionListener(ActionListener listener){
         jButtonOpen.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButtonSave
      * @param listener Action listener
@@ -319,7 +319,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addSaveActionListener(ActionListener listener){
         jButtonSave.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButtonSaveAs
      * @param listener Action listener
@@ -327,7 +327,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addSaveAsActionListener(ActionListener listener){
         jButtonSaveAs.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButton preferences
      * @param listener Action listener
@@ -335,7 +335,7 @@ public final class ToolBar extends JToolBar implements Observer {
     public void addPreferencesActionListener(ActionListener listener){
         jButtonPreferences.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jButtonUndo and jButtonRedo
      * @param listener Action listener
@@ -344,7 +344,7 @@ public final class ToolBar extends JToolBar implements Observer {
         jButtonUndo.addActionListener(listener);
         jButtonRedo.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to Zoom Buttons
      * @param listener Action listener
@@ -357,12 +357,12 @@ public final class ToolBar extends JToolBar implements Observer {
 
     /**
      * Adds action listener to editor and simulator toggle buttons
-     * @param listener 
+     * @param listener
      */
     public void addSimulatorEditorActionListener(ActionListener listener){
         //jToggleButtonEditor.addActionListener(listener);
         //jToggleButtonSimulator.addActionListener(listener);
-        
+
         jButtonStartSimulation.addActionListener(listener);
         jButtonStopSimulation.addActionListener(listener);
     }
@@ -375,8 +375,8 @@ public final class ToolBar extends JToolBar implements Observer {
         jButtonServerLog.addActionListener(listener);
     }
 
-    
-    
+
+
     /*
     jButtonStartSimulation.addActionListener(new ActionListener() {
 
@@ -396,16 +396,16 @@ public final class ToolBar extends JToolBar implements Observer {
         }
     });
     */
-    
+
     /*
     public void addBackendActionListener(ActionListener listener){
         jButtonBackendConnection.addActionListener(listener);
     }
-	*/
-    
-    
+    */
+
+
     ////////------------ PRIVATE------------///////////
-    
+
     private void setTextsToComponents() {
         jButtonNew.setToolTipText(dataLayer.getString("NEW_PROJECT"));
         jButtonClose.setToolTipText(dataLayer.getString("CLOSE"));

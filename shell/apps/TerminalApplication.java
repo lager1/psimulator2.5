@@ -16,14 +16,14 @@ public abstract class TerminalApplication {
 
     protected BasicTerminalIO terminalIO;
     protected Device device;
-	protected TerminalApplication childProcess;
-	
+    protected TerminalApplication childProcess;
+
 
     public TerminalApplication(BasicTerminalIO terminalIO, Device device) {
         this.terminalIO = terminalIO;
         this.device=device;
     }
-    
+
     /**
      * execute application
      * @param terminalIO
@@ -31,17 +31,17 @@ public abstract class TerminalApplication {
      * @return return exit value of program retValue == 0 ==> OK , retValue <-1  ==> fail
      */
     public abstract int run();
-	
-	public abstract int quit();
 
-	public TerminalApplication getChildProcess() {
-		return childProcess;
-	}
+    public abstract int quit();
 
-	public void setChildProcess(TerminalApplication childProcess) {
-		this.childProcess = childProcess;
-	}
-	
-	 
+    public TerminalApplication getChildProcess() {
+        return childProcess;
+    }
+
+    public void setChildProcess(TerminalApplication childProcess) {
+        this.childProcess = childProcess;
+    }
+
+
 
 }

@@ -12,8 +12,8 @@ import psimulator.dataLayer.SimulatorEvents.SimulatorEventWithDetails;
  */
 public class EventTableModel extends AbstractTableModel {
 
-	private static final long serialVersionUID = 1529886210107627921L;
-	private List<SimulatorEventWithDetails> eventList;
+    private static final long serialVersionUID = 1529886210107627921L;
+    private List<SimulatorEventWithDetails> eventList;
     /**
      * Flag set to true when all events deleted. 
      */

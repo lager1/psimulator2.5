@@ -18,7 +18,7 @@ public class PreferencesActionListener implements ActionListener {
 
     public PreferencesActionListener(MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
         super();
-        
+
         this.mainWindow = mainWindow;
         this.dataLayer = dataLayer;
     }

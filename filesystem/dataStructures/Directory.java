@@ -8,9 +8,9 @@ package filesystem.dataStructures;
  */
 public class Directory extends Node{
 
-	@Override
-	public String toString() {
-		return "Dir : "+super.getName();
-	}
+    @Override
+    public String toString() {
+        return "Dir : "+super.getName();
+    }
 
 }

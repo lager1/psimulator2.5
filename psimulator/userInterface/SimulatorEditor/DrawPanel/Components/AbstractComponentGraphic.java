@@ -19,9 +19,9 @@ import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
  */
 public abstract class AbstractComponentGraphic extends JComponent implements Markable, Identifiable {
 
-	private static final long serialVersionUID = 8527534353801517514L;
+    private static final long serialVersionUID = 8527534353801517514L;
 
-	//
+    //
     protected DataLayerFacade dataLayer;
     //
 
@@ -35,13 +35,13 @@ public abstract class AbstractComponentGraphic extends JComponent implements Mar
     public AbstractComponentGraphic(DataLayerFacade dataLayer){
         this.dataLayer = dataLayer;
     }
-    
+
     /**
      * Use when building graph from Network.
      */
     public AbstractComponentGraphic(){
     }
-    
+
     /**
      * Use when building graph from Network.
      * @param dataLayer
@@ -60,7 +60,7 @@ public abstract class AbstractComponentGraphic extends JComponent implements Mar
     public void setMarked(boolean marked) {
         this.marked = marked;
     }
-    
+
     public abstract HwTypeEnum getHwType();
 
     public abstract boolean intersects(Point p);

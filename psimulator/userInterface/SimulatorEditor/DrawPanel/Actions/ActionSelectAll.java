@@ -12,16 +12,16 @@ import psimulator.userInterface.MainWindowInnerInterface;
  */
 public class ActionSelectAll extends AbstractDrawPanelAction {
 
-	private static final long serialVersionUID = -2832742292139584925L;
+    private static final long serialVersionUID = -2832742292139584925L;
 
-	public ActionSelectAll(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
+    public ActionSelectAll(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
         super(undoManager, drawPanel, mainWindow);
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         // unmark all
         graph.doUnmarkAllComponents();
         // mark all

@@ -81,7 +81,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
   protected void sendTelnetCommand(byte cmd) {
   }
 
-  /** 
+  /**
    * Sent the changed window size from the terminal to all listeners.
    */
   protected void setWindowSize(int c, int r) {
@@ -97,7 +97,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
     /* Tricky, since the VDUBuffer works strangely. */
     if (r > oldrows) {
-      setCursorPosition(C, R + (r-oldrows)); 
+      setCursorPosition(C, R + (r-oldrows));
       redraw();
     }
     if (broadcast) {
@@ -148,9 +148,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     KeyEnd[0] = KeyEnd[1] = KeyEnd[2] = KeyEnd[3] = "\u001b[F";
     Escape[0] = Escape[1] = Escape[2] = Escape[3] = "\u001b";
     if (vms) {
-      BackSpace[1] = "" + (char) 10;	//  VMS shift deletes word back
-      BackSpace[2] = "\u0018";	//  VMS control deletes line back
-      BackSpace[0] = BackSpace[3] = "\u007f";	//  VMS other is delete
+      BackSpace[1] = "" + (char) 10;    //  VMS shift deletes word back
+      BackSpace[2] = "\u0018";    //  VMS control deletes line back
+      BackSpace[0] = BackSpace[3] = "\u007f";    //  VMS other is delete
     } else {
       BackSpace[0] = BackSpace[1] = BackSpace[2] = BackSpace[3] = "\b";
     }
@@ -257,9 +257,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     if ((mods & 4) == 4) mousebut = 2;
 
     int mousecode;
-    if (mouserpt == 9)	/* X10 Mouse */
+    if (mouserpt == 9)    /* X10 Mouse */
       mousecode = 0x20 | mousebut;
-    else			/* normal xterm mouse reporting */
+    else            /* normal xterm mouse reporting */
       mousecode = mousebut | 0x20 | ((mods & 7) << 2);
 
     byte b[] = new byte[6];
@@ -295,7 +295,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
 
     int mousecode;
     if (mouserpt == 9)
-      mousecode = 0x20 + mousebut;	/* same as press? appears so. */
+      mousecode = 0x20 + mousebut;    /* same as press? appears so. */
     else
       mousecode = '#';
 
@@ -537,9 +537,9 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
     'B', // g2
     'B', // g3
   };
-  char gl = 0;		// default GL to G0
-  char gr = 2;		// default GR to G2
-  int onegl = -1;	// single shift override for GL.
+  char gl = 0;        // default GL to G0
+  char gr = 2;        // default GR to G2
+  int onegl = -1;    // single shift override for GL.
 
   // Map from scoansi linedrawing to DEC _and_ unicode (for the stuff which
   // is not in linedrawing). Got from experimenting with scoadmin.
@@ -787,13 +787,13 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
         break;
       case KeyEvent.VK_BACK_SPACE:
         writeSpecial(BackSpace[xind]);
-	if (localecho) {
-	  if (BackSpace[xind] == "\b") {
-	    putString("\b \b"); // make the last char 'deleted'
-	  } else {
-	    putString(BackSpace[xind]); // echo it
-	  }
-	}
+    if (localecho) {
+      if (BackSpace[xind] == "\b") {
+        putString("\b \b"); // make the last char 'deleted'
+      } else {
+        putString(BackSpace[xind]); // echo it
+      }
+    }
         break;
       case KeyEvent.VK_HOME:
         writeSpecial(KeyHome[xind]);
@@ -1902,8 +1902,8 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                   break;
                 case 12:/* local echo off */
                   break;
-                case 9: 	/* X10 mouse */
-                case 1000:	/* xterm style mouse report on */
+                case 9:     /* X10 mouse */
+                case 1000:    /* xterm style mouse report on */
                 case 1001:
                 case 1002:
                 case 1003:
@@ -1941,8 +1941,8 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 case 25: /* turn cursor on */
                   showCursor(true);
                   break;
-                case 9: 	/* X10 mouse */
-                case 1000:	/* xterm style mouse report on */
+                case 9:     /* X10 mouse */
+                case 1000:    /* xterm style mouse report on */
                 case 1001:
                 case 1002:
                 case 1003:
@@ -1981,7 +1981,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 break;
             }
             break;
-          case 'l':	//DECRST
+          case 'l':    //DECRST
             /* DEC Mode reset */
             if (debug > 0)
               de.mud.jta.OutputSingleton.out.println("ESC [ ? " + DCEvars[0] + " l");
@@ -2015,8 +2015,8 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                   /* 12 - local echo on */
                   /* 18 - DECPFF - Printer Form Feed Mode -> Off*/
                   /* 19 - DECPEX - Printer Extent Mode -> Scrolling Region */
-                case 9: 	/* X10 mouse */
-                case 1000:	/* xterm style mouse report OFF */
+                case 9:     /* X10 mouse */
+                case 1000:    /* xterm style mouse report OFF */
                 case 1001:
                 case 1002:
                 case 1003:
@@ -2101,38 +2101,38 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             break;
 
           case 'F': /* SCO ANSI foreground */
-	  {
-	    int newcolor;
+      {
+        int newcolor;
 
             de.mud.jta.OutputSingleton.out.println("ESC [ = "+DCEvars[0]+" F");
 
             attributes &= ~COLOR_FG;
-	    newcolor =	((DCEvars[0] & 1) << 2)	|
-	    		 (DCEvars[0] & 2)	|
-	    		((DCEvars[0] & 4) >> 2) ;
+        newcolor =    ((DCEvars[0] & 1) << 2)    |
+                 (DCEvars[0] & 2)    |
+                ((DCEvars[0] & 4) >> 2) ;
             attributes |= (newcolor+1) << COLOR_FG_SHIFT;
 
-	    break;
-	  }
+        break;
+      }
           case 'G': /* SCO ANSI background */
-	  {
-	    int newcolor;
+      {
+        int newcolor;
 
             de.mud.jta.OutputSingleton.out.println("ESC [ = "+DCEvars[0]+" G");
 
             attributes &= ~COLOR_BG;
-	    newcolor =	((DCEvars[0] & 1) << 2)	|
-	    		 (DCEvars[0] & 2)	|
-	    		((DCEvars[0] & 4) >> 2) ;
+        newcolor =    ((DCEvars[0] & 1) << 2)    |
+                 (DCEvars[0] & 2)    |
+                ((DCEvars[0] & 4) >> 2) ;
             attributes |= (newcolor+1) << COLOR_BG_SHIFT;
-	    break;
+        break;
           }
 
           default:
             de.mud.jta.OutputSingleton.out.print("Unknown ESC [ = ");
-	    for (int i=0;i<=DCEvar;i++)
-		de.mud.jta.OutputSingleton.out.print(DCEvars[i]+",");
-	    de.mud.jta.OutputSingleton.out.println("" + c);
+        for (int i=0;i<=DCEvar;i++)
+        de.mud.jta.OutputSingleton.out.print(DCEvars[i]+",");
+        de.mud.jta.OutputSingleton.out.println("" + c);
             break;
         }
         break;
@@ -2296,7 +2296,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
                 de.mud.jta.OutputSingleton.out.println("ESC [ " + DCEvars[0] + " A");
               break;
             }
-          case 'B':	// CUD
+          case 'B':    // CUD
             /* cursor down n (1) times */
             {
               int limit;
@@ -2375,7 +2375,7 @@ public abstract class vt320 extends VDUBuffer implements VDUInput {
             _SetCursor(DCEvars[0] - 1, DCEvars[1] - 1);
             if (debug > 2) {
               de.mud.jta.OutputSingleton.out.println("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " H, moveoutsidemargins " + moveoutsidemargins);
-              de.mud.jta.OutputSingleton.out.println("	-> R now " + R + ", C now " + C);
+              de.mud.jta.OutputSingleton.out.println("    -> R now " + R + ", C now " + C);
             }
             break;
           case 'f':  /* move cursor 2 */

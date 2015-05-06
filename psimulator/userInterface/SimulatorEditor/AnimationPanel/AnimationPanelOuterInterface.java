@@ -14,9 +14,9 @@ public abstract class AnimationPanelOuterInterface extends JComponent implements
     
     
     
-	private static final long serialVersionUID = 4658669510999587189L;
+    private static final long serialVersionUID = 4658669510999587189L;
 
-	/**
+    /**
      * removes graph from draw panel a resets state of draw panel
      * @return 
      */

@@ -19,195 +19,195 @@ import telnetd.io.TerminalIO;
  */
 public class HistorySearchRenderer {
 
-	ShellRenderer shellRenderer;
-	private BasicTerminalIO m_IO;
-	private StringBuilder sb;
-	private String currentResult;
-	private boolean stop = false;
-	private static String searchPrompt = "(reverse-i-search)`";
-	private History currentHistory;
-	private int lastSearchedIndex = 0;
-	private Stack<Integer> searchBuffer;
+    ShellRenderer shellRenderer;
+    private BasicTerminalIO m_IO;
+    private StringBuilder sb;
+    private String currentResult;
+    private boolean stop = false;
+    private static String searchPrompt = "(reverse-i-search)`";
+    private History currentHistory;
+    private int lastSearchedIndex = 0;
+    private Stack<Integer> searchBuffer;
 
-	public HistorySearchRenderer(ShellRenderer shellRenderer, BasicTerminalIO m_IO) {
-		this.shellRenderer = shellRenderer;
-		this.m_IO = m_IO;
-		this.sb = new StringBuilder();
+    public HistorySearchRenderer(ShellRenderer shellRenderer, BasicTerminalIO m_IO) {
+        this.shellRenderer = shellRenderer;
+        this.m_IO = m_IO;
+        this.sb = new StringBuilder();
 
-	}
+    }
 
-	public String getResult() {
-		return currentResult;
-	}
+    public String getResult() {
+        return currentResult;
+    }
 
-	public int run(History history, String initialResult) {
-		this.currentHistory = history;
-		this.currentResult = initialResult;
+    public int run(History history, String initialResult) {
+        this.currentHistory = history;
+        this.currentResult = initialResult;
 
-		this.searchBuffer = new Stack<>();
-		this.resetSearchIndex();
-		this.stop = false;
+        this.searchBuffer = new Stack<>();
+        this.resetSearchIndex();
+        this.stop = false;
 
-		try {
-			draw();
+        try {
+            draw();
 
-			while (!stop) {
+            while (!stop) {
 
-				int inputValue;
+                int inputValue;
 
-				try {
-					inputValue = this.m_IO.read();
-				} catch (SocketTimeoutException ex) {
-					inputValue = 0;
-				}
+                try {
+                    inputValue = this.m_IO.read();
+                } catch (SocketTimeoutException ex) {
+                    inputValue = 0;
+                }
 
-				if (inputValue == 0) {
-					continue;
-				}
-
-
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
-
-				if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
-					this.handleInput(inputValue);
-					continue; // continue while
-				}
-
-				// else it is a control key
-
-				switch (inputValue) {
-					case TerminalIO.CTRL_R:
-						if (lastSearchedIndex > 0) {
-							lastSearchedIndex--;
-						} else {
-							resetSearchIndex();
-							//break;
-						}
-						updateSearch();  // continue searching
-						draw();
-						break;
-
-					case TerminalIO.BACKSPACE:
-
-						if (this.sb.length() < 1) {
-							this.resetSearchIndex();
-							break;
-						}
-
-						this.sb.deleteCharAt(sb.length() - 1); // delete last character
-
-						if (this.sb.length() < 1) {
-							this.resetSearchIndex();
-							this.draw();
-							break;
-						}
-
-						if (checkLastOne()) {
-							this.draw();
-							break;
-						}
+                if (inputValue == 0) {
+                    continue;
+                }
 
 
-						if (!this.searchBuffer.empty()) {
-							this.lastSearchedIndex = this.searchBuffer.pop();
-						} else {
-							this.resetSearchIndex();
-						}
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 
-						this.updateSearch();
-						this.draw();
-						break;
-					case TerminalIO.ENTER:
-					case TerminalIO.LEFT:
-					case TerminalIO.RIGHT:
-					case TerminalIO.UP:
-					case TerminalIO.DOWN:
-					case TerminalIO.CTRL_C:
-						return inputValue;
+                if (ShellUtils.isPrintable(inputValue)) {  // is a regular character like abc...
+                    this.handleInput(inputValue);
+                    continue; // continue while
+                }
 
-				}
+                // else it is a control key
 
-			}
+                switch (inputValue) {
+                    case TerminalIO.CTRL_R:
+                        if (lastSearchedIndex > 0) {
+                            lastSearchedIndex--;
+                        } else {
+                            resetSearchIndex();
+                            //break;
+                        }
+                        updateSearch();  // continue searching
+                        draw();
+                        break;
 
-		} catch (Exception ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when running historySearch:" + ex.toString());
-		}
+                    case TerminalIO.BACKSPACE:
 
-		this.currentHistory = null;
-		return -1;
+                        if (this.sb.length() < 1) {
+                            this.resetSearchIndex();
+                            break;
+                        }
 
-	}
+                        this.sb.deleteCharAt(sb.length() - 1); // delete last character
 
-	private void draw() throws IOException {
-		shellRenderer.eraseLine();
-		m_IO.write(searchPrompt);  // PRINT SEARCH PROMPT
+                        if (this.sb.length() < 1) {
+                            this.resetSearchIndex();
+                            this.draw();
+                            break;
+                        }
 
-		m_IO.write(this.sb.toString()); // PRINT ACCTUAL SEARCH STRING
-		m_IO.write("':");
+                        if (checkLastOne()) {
+                            this.draw();
+                            break;
+                        }
 
-		if (currentResult != null) {
-			m_IO.write(currentResult);
-		}
 
-	}
+                        if (!this.searchBuffer.empty()) {
+                            this.lastSearchedIndex = this.searchBuffer.pop();
+                        } else {
+                            this.resetSearchIndex();
+                        }
 
-	private boolean checkLastOne() {
+                        this.updateSearch();
+                        this.draw();
+                        break;
+                    case TerminalIO.ENTER:
+                    case TerminalIO.LEFT:
+                    case TerminalIO.RIGHT:
+                    case TerminalIO.UP:
+                    case TerminalIO.DOWN:
+                    case TerminalIO.CTRL_C:
+                        return inputValue;
 
-		if( !( lastSearchedIndex >=0 && lastSearchedIndex<currentHistory.getCommands().size() ) )  // if it is not a index of array
-			return false;
-		
-		Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
-		return searchPattern.matcher(currentHistory.getCommands().get(lastSearchedIndex)).find();
+                }
 
-	}
+            }
 
-	private boolean updateSearch() {
+        } catch (Exception ex) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "IOException occured when running historySearch:" + ex.toString());
+        }
 
-		if (currentHistory == null) {  // if history object is null,
-			return false;
-		}
+        this.currentHistory = null;
+        return -1;
 
-		Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
+    }
 
-		for (int i = lastSearchedIndex; i >= 0; i--) {
-			String command = currentHistory.getCommands().get(i);
+    private void draw() throws IOException {
+        shellRenderer.eraseLine();
+        m_IO.write(searchPrompt);  // PRINT SEARCH PROMPT
 
-			if (searchPattern.matcher(command).find()) {  // FOUND COMMAND
-				lastSearchedIndex = i;
-				currentResult = command;
-				return true;
-			}
+        m_IO.write(this.sb.toString()); // PRINT ACCTUAL SEARCH STRING
+        m_IO.write("':");
 
-		}
+        if (currentResult != null) {
+            m_IO.write(currentResult);
+        }
 
-		// DID NOT FOUND
-		lastSearchedIndex = -1;
-		//currentResult = null;
-		return false;
+    }
 
-	}
+    private boolean checkLastOne() {
 
-	/**
-	 * handle printable input
-	 *
-	 * @param inputValue
-	 */
-	private void handleInput(int inputValue) throws IOException {
-		this.sb.append((char) inputValue);
+        if( !( lastSearchedIndex >=0 && lastSearchedIndex<currentHistory.getCommands().size() ) )  // if it is not a index of array
+            return false;
 
-		
+        Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
+        return searchPattern.matcher(currentHistory.getCommands().get(lastSearchedIndex)).find();
 
-		boolean updated = this.updateSearch();
+    }
 
-		if (updated) {
-			searchBuffer.push(lastSearchedIndex);
-		}
+    private boolean updateSearch() {
 
-		draw();
+        if (currentHistory == null) {  // if history object is null,
+            return false;
+        }
 
-	}
+        Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
 
-	private void resetSearchIndex() {
-		this.lastSearchedIndex = this.currentHistory.getCommands().size() - 1;
-	}
+        for (int i = lastSearchedIndex; i >= 0; i--) {
+            String command = currentHistory.getCommands().get(i);
+
+            if (searchPattern.matcher(command).find()) {  // FOUND COMMAND
+                lastSearchedIndex = i;
+                currentResult = command;
+                return true;
+            }
+
+        }
+
+        // DID NOT FOUND
+        lastSearchedIndex = -1;
+        //currentResult = null;
+        return false;
+
+    }
+
+    /**
+     * handle printable input
+     *
+     * @param inputValue
+     */
+    private void handleInput(int inputValue) throws IOException {
+        this.sb.append((char) inputValue);
+
+
+
+        boolean updated = this.updateSearch();
+
+        if (updated) {
+            searchBuffer.push(lastSearchedIndex);
+        }
+
+        draw();
+
+    }
+
+    private void resetSearchIndex() {
+        this.lastSearchedIndex = this.currentHistory.getCommands().size() - 1;
+    }
 }

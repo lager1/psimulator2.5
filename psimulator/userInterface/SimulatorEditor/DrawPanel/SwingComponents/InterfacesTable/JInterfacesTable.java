@@ -13,8 +13,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Components.HwComponent
  */
 public class JInterfacesTable extends JTable {
 
-	private static final long serialVersionUID = 7478287035869354559L;
-	private HwComponentGraphic abstractHwComponent;
+    private static final long serialVersionUID = 7478287035869354559L;
+    private HwComponentGraphic abstractHwComponent;
     private DataLayerFacade dataLayer;
     //
     public JInterfacesTable(TableModel tableModel, HwComponentGraphic abstractHwComponent, DataLayerFacade dataLayer) {
@@ -56,8 +56,8 @@ public class JInterfacesTable extends JTable {
     private JTableHeader createTableHeader() {
         return new JTableHeader(columnModel) {
 
-			private static final long serialVersionUID = 6691291805716907299L;
-			String[] columnToolTips = {
+            private static final long serialVersionUID = 6691291805716907299L;
+            String[] columnToolTips = {
                 null,
                 null,
                 null,

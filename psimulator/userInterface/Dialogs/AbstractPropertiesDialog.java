@@ -15,10 +15,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.Valida
 public abstract class AbstractPropertiesDialog extends JDialog{
     
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6277141092814005851L;
-	protected JDialog thisDialog;
+     * 
+     */
+    private static final long serialVersionUID = 6277141092814005851L;
+    protected JDialog thisDialog;
     protected JButton jButtonDefault;
     
     // A single LayerUI for all the fields.

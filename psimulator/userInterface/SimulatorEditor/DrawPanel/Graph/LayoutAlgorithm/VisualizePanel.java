@@ -10,8 +10,8 @@ import javax.swing.JPanel;
  */
 public class VisualizePanel extends JPanel {
 
-	private static final long serialVersionUID = 9209264783937429850L;
-	private GeneticGraph graph;
+    private static final long serialVersionUID = 9209264783937429850L;
+    private GeneticGraph graph;
     private int multiplier = 5;
 
     @Override

@@ -32,15 +32,15 @@ public class OutputInferfaceSelector {
     private DataLayerFacade dataLayer;
     private String selectedInterface = "";
     private String os;
-    
+
     public OutputInferfaceSelector(DataLayerFacade dataLayer){
         this.dataLayer = dataLayer;
 
         // TODO - jeste napozicovat v ramci okna, kdyz bude cas
-        
+
         realPcPanel = new JPanel();
         realPcPanel.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("REAL_PC")));
-        
+
         if(getInterfaces() != false) {
             createComboBox();
             //setDeviceRealInterface();
@@ -55,13 +55,13 @@ public class OutputInferfaceSelector {
     }
 
     private boolean getInterfaces() {
-        alldevs = new ArrayList<PcapIf>();              // Will be filled with NICs  
-        StringBuilder errbuf = new StringBuilder();     // For any error msgs  
+        alldevs = new ArrayList<PcapIf>();              // Will be filled with NICs
+        StringBuilder errbuf = new StringBuilder();     // For any error msgs
 
-        int r = Pcap.findAllDevs(alldevs, errbuf);  
+        int r = Pcap.findAllDevs(alldevs, errbuf);
         if (r == Pcap.NOT_OK || alldevs.isEmpty()) {
-            return false;  
-        }  
+            return false;
+        }
 
         return true;
     }
@@ -71,7 +71,7 @@ public class OutputInferfaceSelector {
 
         List <String> devices = new ArrayList<String>();
         List <String> winDevNames = new ArrayList<String>();
-        
+
         if(os.startsWith("Win")) {
             Enumeration<NetworkInterface> nets;
             try {
@@ -86,7 +86,7 @@ public class OutputInferfaceSelector {
             }
         }
 
-        
+
         for (PcapIf device : alldevs) {
             if(os.startsWith("Win")) {
                 for(String s : winDevNames) {
@@ -105,12 +105,12 @@ public class OutputInferfaceSelector {
 
         combo = new JComboBox(devices.toArray());
         combo.setSelectedItem(dataLayer.getRealInterface());
-    
+
         if(dataLayer.getRealInterface() != null)
             selectedInterface = dataLayer.getRealInterface();
-        
+
         realPcPanel.add(combo);
-        
+
         combo.addItemListener(new ItemListener(){
 
             @Override
@@ -124,7 +124,7 @@ public class OutputInferfaceSelector {
     private void setErrorLabel() {
         JLabel realPcLabel = new JLabel();
         realPcLabel.setText("<html>"+ dataLayer.getString("FAILED_TO_GET_INTERFACES") +"</html>");  // html for text wrapping
-        
+
         realPcPanel.add(realPcLabel);
     }
 

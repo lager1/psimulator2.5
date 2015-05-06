@@ -51,10 +51,10 @@ public class TelnetCommandRequest implements PluginMessage {
   public Object firePluginMessage(PluginListener pl) {
     if(pl instanceof TelnetCommandListener) {
       try {
-	  ((TelnetCommandListener)pl).sendTelnetCommand(cmd);
+      ((TelnetCommandListener)pl).sendTelnetCommand(cmd);
       } catch (IOException io) {
-      	de.mud.jta.OutputSingleton.err.println("io exception caught:"+io);
-	io.printStackTrace();
+          de.mud.jta.OutputSingleton.err.println("io exception caught:"+io);
+    io.printStackTrace();
       }
     }
     return null;

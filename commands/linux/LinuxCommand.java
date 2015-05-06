@@ -17,36 +17,36 @@ import psimulator2.Psimulator;
  */
 public abstract class LinuxCommand extends AbstractCommand {
 
-	protected boolean ladiciVypisovani; //pro debug
+    protected boolean ladiciVypisovani; //pro debug
 
-	protected final IPLayer ipLayer;	// zkratka
-	
-	public LinuxCommandType type = LinuxCommandType.ELSE;
+    protected final IPLayer ipLayer;    // zkratka
 
-	public LinuxCommand(AbstractCommandParser parser) {
-		super(parser);
-		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
-			ladiciVypisovani = true;
-		}
-		ipLayer = getNetMod().ipLayer;
-		if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
-			ladiciVypisovani = true;
-		}
+    public LinuxCommandType type = LinuxCommandType.ELSE;
 
-	}
+    public LinuxCommand(AbstractCommandParser parser) {
+        super(parser);
+        if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
+            ladiciVypisovani = true;
+        }
+        ipLayer = getNetMod().ipLayer;
+        if (Psimulator.getPsimulator().systemListener.configuration.get(LoggingCategory.LINUX_COMMANDS) == Logger.DEBUG) {
+            ladiciVypisovani = true;
+        }
+
+    }
 
 
-	/**
-	 * Zkratka volani pro pro route ze stary verze psimulatoru.
-	 * @return
-	 */
-	protected String dalsiSlovo() {
-		return parser.nextWord();
-	}
+    /**
+     * Zkratka volani pro pro route ze stary verze psimulatoru.
+     * @return
+     */
+    protected String dalsiSlovo() {
+        return parser.nextWord();
+    }
 
-	public enum LinuxCommandType {
-		PING,
-		TRACEROUTE,
-		ELSE,
-	}
+    public enum LinuxCommandType {
+        PING,
+        TRACEROUTE,
+        ELSE,
+    }
 }

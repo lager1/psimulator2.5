@@ -18,240 +18,240 @@ import logging.LoggingCategory;
  */
 public class History {
 
-	private ArrayList<String> commands;
-	private ListIterator<String> commandIterartor;
-	private String historyPathFile;
-	private boolean calledNext = false;
-	private boolean calledPrevious = false;
-	private String activeHistoryLine;
-	private Device deviceReference;
-	private Date loaded;
-	private Date saved;
-	private int lastSavedSize;
+    private ArrayList<String> commands;
+    private ListIterator<String> commandIterartor;
+    private String historyPathFile;
+    private boolean calledNext = false;
+    private boolean calledPrevious = false;
+    private String activeHistoryLine;
+    private Device deviceReference;
+    private Date loaded;
+    private Date saved;
+    private int lastSavedSize;
 
-	public History(String historyPathFile, Device deviceReference) {
-		this.historyPathFile = historyPathFile;
-		this.deviceReference = deviceReference;
-	}
+    public History(String historyPathFile, Device deviceReference) {
+        this.historyPathFile = historyPathFile;
+        this.deviceReference = deviceReference;
+    }
 
-	public Date getLoaded() {
-		return loaded;
-	}
+    public Date getLoaded() {
+        return loaded;
+    }
 
-	public Date getSaved() {
-		return saved;
-	}
+    public Date getSaved() {
+        return saved;
+    }
 
-	public ArrayList<String> getCommands() {
-		return commands;
-	}
+    public ArrayList<String> getCommands() {
+        return commands;
+    }
 
-	/**
-	 * reseting history command iteration method. When command is commited or ..
-	 */
-	private void resetIterator() {
-		this.commandIterartor = this.commands.listIterator(this.commands.size());
-	}
+    /**
+     * reseting history command iteration method. When command is commited or ..
+     */
+    private void resetIterator() {
+        this.commandIterartor = this.commands.listIterator(this.commands.size());
+    }
 
-	/**
-	 * if this history object was not used for last, then it should be activated with this method. This method basicaly
-	 * just reset history commands iteration and load data from file if needed
-	 */
-	public void activate() {
+    /**
+     * if this history object was not used for last, then it should be activated with this method. This method basicaly
+     * just reset history commands iteration and load data from file if needed
+     */
+    public void activate() {
 
-		if (this.loaded == null) {
-			this.load();
-		}
+        if (this.loaded == null) {
+            this.load();
+        }
 
-		this.resetIterator();
-	}
+        this.resetIterator();
+    }
 
-	/**
-	 * add commited command into history list
-	 *
-	 * @param command
-	 */
-	public void addCommand(String command) {
+    /**
+     * add commited command into history list
+     *
+     * @param command
+     */
+    public void addCommand(String command) {
 
-		if (command == null) {
-			return;
-		}
+        if (command == null) {
+            return;
+        }
 
-		command = command.trim();
+        command = command.trim();
 
-		if (command.isEmpty() || command.equalsIgnoreCase("")) { // do not add empty command
-			return;
-		}
+        if (command.isEmpty() || command.equalsIgnoreCase("")) { // do not add empty command
+            return;
+        }
 
-		if (!this.commands.isEmpty()) {		// if history is not empty
+        if (!this.commands.isEmpty()) {        // if history is not empty
 
-			String lastCommand = this.commands.get(this.commands.size() - 1).trim();
+            String lastCommand = this.commands.get(this.commands.size() - 1).trim();
 
-			if (command.equalsIgnoreCase(lastCommand)) { // do not add two same commands
-				resetIterator();
-				return;
-			}
-		}
+            if (command.equalsIgnoreCase(lastCommand)) { // do not add two same commands
+                resetIterator();
+                return;
+            }
+        }
 
-		this.calledNext = false;
-		this.calledPrevious = false;
-		this.activeHistoryLine = null;
-		this.commands.add(command);
-		resetIterator();
-	}
+        this.calledNext = false;
+        this.calledPrevious = false;
+        this.activeHistoryLine = null;
+        this.commands.add(command);
+        resetIterator();
+    }
 
-	/**
-	 * iterating in history to the oldest command
-	 *
-	 * @param sb
-	 * @return
-	 */
-	public String handlePrevious(StringBuilder sb) {
+    /**
+     * iterating in history to the oldest command
+     *
+     * @param sb
+     * @return
+     */
+    public String handlePrevious(StringBuilder sb) {
 
-		String ret = "";
+        String ret = "";
 
-		if (this.commands.isEmpty()) {
-			return ret;
-		}
+        if (this.commands.isEmpty()) {
+            return ret;
+        }
 
-		if (!this.commandIterartor.hasNext()) // there is no next = iterator pointing at the end => store active commandLine
-		{
-			this.activeHistoryLine = sb.toString();
-		}
+        if (!this.commandIterartor.hasNext()) // there is no next = iterator pointing at the end => store active commandLine
+        {
+            this.activeHistoryLine = sb.toString();
+        }
 
-		if (calledNext) { // double iterate
-			if (this.commandIterartor.hasPrevious()) {
-				this.commandIterartor.previous();
-			}
+        if (calledNext) { // double iterate
+            if (this.commandIterartor.hasPrevious()) {
+                this.commandIterartor.previous();
+            }
 
-		}
+        }
 
-		if (this.commandIterartor.hasPrevious()) {
+        if (this.commandIterartor.hasPrevious()) {
 
-			ret = this.commandIterartor.previous();
-			calledNext = false;
-			calledPrevious = true;
-
-
-			sb.setLength(0);
-			sb.append(ret);
-
-		}
-
-		return ret;
-
-	}
-
-	/**
-	 * iterating in history to the newest command
-	 *
-	 * @param sb
-	 * @return
-	 */
-	public String handleNext(StringBuilder sb) {
-
-		String ret = "";
-
-		if (this.commands.isEmpty()) {
-			return ret;
-		}
-
-		if (calledPrevious) { // double iterate
-			if (this.commandIterartor.hasNext()) {
-				this.commandIterartor.next();
-			}
-		}
+            ret = this.commandIterartor.previous();
+            calledNext = false;
+            calledPrevious = true;
 
 
-		if (this.commandIterartor.hasNext()) {
-			ret = this.commandIterartor.next();
+            sb.setLength(0);
+            sb.append(ret);
 
-			this.calledNext = true;
-			this.calledPrevious = false;
+        }
 
-			sb.setLength(0);
-			sb.append(ret);
+        return ret;
 
-		} else if (this.activeHistoryLine != null) {
-			ret = this.activeHistoryLine;
-			this.activeHistoryLine = null;
+    }
 
-			this.calledNext = false;
-			this.calledPrevious = false;
+    /**
+     * iterating in history to the newest command
+     *
+     * @param sb
+     * @return
+     */
+    public String handleNext(StringBuilder sb) {
 
-			sb.setLength(0);
-			sb.append(ret);
+        String ret = "";
 
-		}
+        if (this.commands.isEmpty()) {
+            return ret;
+        }
 
-		return ret;
-	}
-
-	public void save() {
-
-		if (lastSavedSize == this.commands.size()) // nothing to save
-		{
-			return;
-		}
-
-		this.deviceReference.getFilesystem().runOutputFileJob(this.historyPathFile, new OutputFileJob() {
-
-			@Override
-			public int workOnFile(OutputStream output) throws Exception {
-
-				PrintWriter historyWriter = new PrintWriter(output);
-
-				for (String command : commands) {
-					historyWriter.println(command);
-				}
-
-				historyWriter.flush();
-
-				return 0;
-			}
-		});
-
-		this.lastSavedSize = this.commands.size();
-		this.saved = new Date();
+        if (calledPrevious) { // double iterate
+            if (this.commandIterartor.hasNext()) {
+                this.commandIterartor.next();
+            }
+        }
 
 
-	}
+        if (this.commandIterartor.hasNext()) {
+            ret = this.commandIterartor.next();
 
-	public void load() {
+            this.calledNext = true;
+            this.calledPrevious = false;
 
-		final LinkedList<String> tempList = new LinkedList<>();
+            sb.setLength(0);
+            sb.append(ret);
 
-		if (!this.deviceReference.getFilesystem().isFile(historyPathFile)) // if there is no such history file
-		{
-			Logger.log(Logger.INFO, LoggingCategory.TELNET, "History file: " + historyPathFile + "not found. Using empty history.");
-			commands = new ArrayList<>();
-			return;
-		}
-		try {
-			this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
+        } else if (this.activeHistoryLine != null) {
+            ret = this.activeHistoryLine;
+            this.activeHistoryLine = null;
 
-				@Override
-				public int workOnFile(InputStream input) throws Exception {
+            this.calledNext = false;
+            this.calledPrevious = false;
 
-					Scanner sc = new Scanner(input);
+            sb.setLength(0);
+            sb.append(ret);
 
-					while (sc.hasNextLine()) {
-						tempList.add(sc.nextLine().trim());
-					}
+        }
 
-					return 0;
-				}
-			});
-		} catch (FileNotFoundException ex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Something weird. Catched FileNotFoundException but file existence was confirmed. Using empty history.");
-			commands = new ArrayList<>();
-		}
+        return ret;
+    }
+
+    public void save() {
+
+        if (lastSavedSize == this.commands.size()) // nothing to save
+        {
+            return;
+        }
+
+        this.deviceReference.getFilesystem().runOutputFileJob(this.historyPathFile, new OutputFileJob() {
+
+            @Override
+            public int workOnFile(OutputStream output) throws Exception {
+
+                PrintWriter historyWriter = new PrintWriter(output);
+
+                for (String command : commands) {
+                    historyWriter.println(command);
+                }
+
+                historyWriter.flush();
+
+                return 0;
+            }
+        });
+
+        this.lastSavedSize = this.commands.size();
+        this.saved = new Date();
+
+
+    }
+
+    public void load() {
+
+        final LinkedList<String> tempList = new LinkedList<>();
+
+        if (!this.deviceReference.getFilesystem().isFile(historyPathFile)) // if there is no such history file
+        {
+            Logger.log(Logger.INFO, LoggingCategory.TELNET, "History file: " + historyPathFile + "not found. Using empty history.");
+            commands = new ArrayList<>();
+            return;
+        }
+        try {
+            this.deviceReference.getFilesystem().runInputFileJob(this.historyPathFile, new InputFileJob() {
+
+                @Override
+                public int workOnFile(InputStream input) throws Exception {
+
+                    Scanner sc = new Scanner(input);
+
+                    while (sc.hasNextLine()) {
+                        tempList.add(sc.nextLine().trim());
+                    }
+
+                    return 0;
+                }
+            });
+        } catch (FileNotFoundException ex) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Something weird. Catched FileNotFoundException but file existence was confirmed. Using empty history.");
+            commands = new ArrayList<>();
+        }
 
 // copy LINKEDLIST INTO ARRAYLIST -- using temporary linkedlist because of unknown size of list
-		commands = new ArrayList<>(tempList.size() + 20);
-		commands.addAll(tempList);
+        commands = new ArrayList<>(tempList.size() + 20);
+        commands.addAll(tempList);
 
 
-		this.loaded = new Date();
-	}
+        this.loaded = new Date();
+    }
 }

@@ -13,36 +13,36 @@ import dataStructures.EventDescriptive;
 public abstract class L3Packet implements EventDescriptive {
 
     public final L4Packet data;
-	protected int size;
+    protected int size;
 
-	public L3Packet(L4Packet data) {
-		this.data = data;
-	}
+    public L3Packet(L4Packet data) {
+        this.data = data;
+    }
 
-	public enum L3PacketType{
-		IPv4,
-		ARP,
-		UNKNOWN,	// nejakej neznamej typ
-	}
+    public enum L3PacketType{
+        IPv4,
+        ARP,
+        UNKNOWN,    // nejakej neznamej typ
+    }
 
-	protected int getDataSize() {
-		return (data != null ? data.getSize() : 0);
-	}
+    protected int getDataSize() {
+        return (data != null ? data.getSize() : 0);
+    }
 
-	/**
-	 * Call in constructor in your classes.
-	 * @return
-	 */
-	protected abstract void countSize();
+    /**
+     * Call in constructor in your classes.
+     * @return
+     */
+    protected abstract void countSize();
 
-	public int getSize() {
-		return size;
-	}
+    public int getSize() {
+        return size;
+    }
 
-	public abstract L3PacketType getType();
+    public abstract L3PacketType getType();
 
-	@Override
-	public String toString(){
-		return "L3Packet: generic packet on Layer 3.";
-	}
+    @Override
+    public String toString(){
+        return "L3Packet: generic packet on Layer 3.";
+    }
 }

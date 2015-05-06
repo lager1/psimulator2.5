@@ -21,10 +21,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Support.GraphicUtils;
  */
 public class CableGraphic extends AbstractComponentGraphic {
 
-	private static final long serialVersionUID = -8742547962291567222L;
+    private static final long serialVersionUID = -8742547962291567222L;
 
-	private CableModel cableModel;
-    
+    private CableModel cableModel;
+
     // HAS TO HAVE GRAPHIC COMPONENTS
     private HwComponentGraphic component1;
     private HwComponentGraphic component2;
@@ -48,18 +48,18 @@ public class CableGraphic extends AbstractComponentGraphic {
      */
     public CableGraphic(DataLayerFacade dataLayer, CableModel cableModel, HwComponentGraphic component1, HwComponentGraphic component2){
         super(dataLayer);
-        
+
         this.cableModel = cableModel;
         this.component1 = component1;
         this.component2 = component2;
     }
-     
+
     /**
      * Use when building graph from Network.
      */
     public CableGraphic(CableModel cableModel, HwComponentGraphic component1, HwComponentGraphic component2){
         super();
-        
+
         this.cableModel = cableModel;
         this.component1 = component1;
         this.component2 = component2;
@@ -68,8 +68,8 @@ public class CableGraphic extends AbstractComponentGraphic {
     public CableModel getCableModel() {
         return cableModel;
     }
-    
-    
+
+
     @Override
     public HwTypeEnum getHwType() {
         return cableModel.getHwType();
@@ -80,7 +80,7 @@ public class CableGraphic extends AbstractComponentGraphic {
         return cableModel.getId();
     }
 
- 
+
     @Override
     public void initialize() {
         doUpdateImages();
@@ -96,12 +96,12 @@ public class CableGraphic extends AbstractComponentGraphic {
 
         // get texts that have to be painted
         List<String> texts = getInterfaceTexts(getEth1());
-        
+
         // get images that have to be painted
         eth1TextImages = getTextsImages(texts, ZoomManagerSingleton.getInstance().getCurrentFontSize() - 2);
-        
+
         texts = getInterfaceTexts(getEth2());
-        
+
         // get images that have to be painted
         eth2TextImages = getTextsImages(texts, ZoomManagerSingleton.getInstance().getCurrentFontSize() - 2);
     }
@@ -140,7 +140,7 @@ public class CableGraphic extends AbstractComponentGraphic {
         g2.setColor(tmpC);
         g2.setStroke(tmpS);
 
-        
+
         paintCableLabels(g2);
 
         if (paintDelay) {
@@ -192,13 +192,13 @@ public class CableGraphic extends AbstractComponentGraphic {
     private void paintTexts(Graphics2D g2, List<BufferedImage> images, HwComponentGraphic component, Point intersectingPoint) {
         int x;
         int y;
-        
+
         int width = 0;
         int height = 0;
-        
+
         boolean leftAlign;
-        
-        
+
+
         for (BufferedImage image : images) {
             if(image.getWidth() > width){
                 width = image.getWidth();
@@ -230,20 +230,20 @@ public class CableGraphic extends AbstractComponentGraphic {
             }
             leftAlign = true;
         }
-        
+
         int tmpX;
         int tmpY;
-        
+
         tmpX = x;
         tmpY = y;
-        
-        
+
+
         for (BufferedImage image : images) {
             //x = (int) (getX() - ((image.getWidth() - getWidth()) / 2.0));
             if(!leftAlign){ // right align
                 tmpX = x + width - image.getWidth();
             }
-            
+
             g2.drawImage(image, tmpX, tmpY, null);
 
             tmpY = tmpY + image.getHeight();// + margin;
@@ -392,7 +392,7 @@ public class CableGraphic extends AbstractComponentGraphic {
     public void setDelay(int delay) {
         cableModel.setDelay(delay);
     }
-    
+
     public void swapComponentsAndEthInterfaces(){
         HwComponentGraphic tmpComponent = component1;
         component1 = component2;

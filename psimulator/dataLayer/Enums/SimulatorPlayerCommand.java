@@ -7,7 +7,7 @@ package psimulator.dataLayer.Enums;
 public enum SimulatorPlayerCommand {
     //PLAY,
     //STOP,
-    FIRST, 
+    FIRST,
     LAST,
     PREVIOUS,
     NEXT;

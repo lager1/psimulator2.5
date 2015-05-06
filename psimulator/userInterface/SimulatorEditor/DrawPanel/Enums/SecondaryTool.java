@@ -6,5 +6,5 @@ package psimulator.userInterface.SimulatorEditor.DrawPanel.Enums;
  */
 public enum SecondaryTool {
     ALIGN_TO_GRID,
-    FIT_TO_SIZE; 
+    FIT_TO_SIZE;
 }

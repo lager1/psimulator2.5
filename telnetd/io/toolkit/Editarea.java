@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 package telnetd.io.toolkit;
@@ -117,11 +117,11 @@ public class Editarea
      */
     public void setValue(ArrayList<String> textLines) {
 
-		if(textLines == null || textLines.isEmpty())
-			return;
-		
-		m_Firstrun = false;  // next call run() method will not be the first one
-		
+        if(textLines == null || textLines.isEmpty())
+            return;
+
+        m_Firstrun = false;  // next call run() method will not be the first one
+
         //buffers
         lines.removeAllElements();
         //cursor
@@ -139,7 +139,7 @@ public class Editarea
                     firstRun = false;
                     line = createLine();
                     appendLine(line);
-                    
+
                 } else {
                     String wrap = line.getHardwrap();
                     line.setHardwrapped(true);
@@ -192,10 +192,10 @@ public class Editarea
             //reset flag
             m_Firstrun = false;
             //make a new editline
-			if(lines.isEmpty()){
-				line = createLine();
-				appendLine(line);
-			}
+            if(lines.isEmpty()){
+                line = createLine();
+                appendLine(line);
+            }
         }
 
         do {

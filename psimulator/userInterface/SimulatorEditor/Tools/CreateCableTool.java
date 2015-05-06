@@ -13,13 +13,13 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.MainTool;
 public class CreateCableTool extends AbstractCreationTool{
 
     protected int delay;
-    
+
     public CreateCableTool(MainTool tool, String path, DrawPanelToolChangeOuterInterface toolChangeInterface, HwTypeEnum hwType, int delay) {
         super(tool, path, toolChangeInterface, hwType);
-        
+
         this.delay = delay;
     }
-  
+
     public int getDelay(){
         return delay;
     }
@@ -38,5 +38,5 @@ public class CreateCableTool extends AbstractCreationTool{
     public String getToolTip(DataLayerFacade dataLayer) {
         return getTranslatedName(dataLayer) + " - "+dataLayer.getString("DELAY") +": " + getParameter();
     }
-    
+
 }

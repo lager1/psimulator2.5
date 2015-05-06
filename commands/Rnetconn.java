@@ -24,40 +24,40 @@ import psimulator2.Psimulator;
 public class Rnetconn extends AbstractCommand {
     private List<PcapIf> alldevs;
     //private DataLayerFacade dataLayer;
-    
-	public Rnetconn(AbstractCommandParser parser) {
-		super(parser);
-	}
 
-	@Override
-	public void run() {
-		parsujAVykonejPrikaz();
-	}
+    public Rnetconn(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	private void parsujAVykonejPrikaz(){
+    @Override
+    public void run() {
+        parsujAVykonejPrikaz();
+    }
 
-		String prikaz = nextWord();
+    private void parsujAVykonejPrikaz(){
+
+        String prikaz = nextWord();
 
                 if (prikaz.equals("")) {
-			parser.printService("This command isn't present on real cisco or linux device. It's in this simulator to manage connection to real network.");
-			printHelp();
-		} 
+            parser.printService("This command isn't present on real cisco or linux device. It's in this simulator to manage connection to real network.");
+            printHelp();
+        }
                 else if (prikaz.equals("on")) {
                     connectToRealNetwork();
-                }                
+                }
                 else if (prikaz.equals("off")) {
                     disconnectFromRealNetwork();
-                }                
-		else if (prikaz.equals("help")) {
-			printHelp();
-		} else if (prikaz.equals("help-cz")) {
-			printHelpCz();
-		} else{
-			printLine("Unsupported command: "+prikaz);
-			printHelp();
-		}
-                
-	}
+                }
+        else if (prikaz.equals("help")) {
+            printHelp();
+        } else if (prikaz.equals("help-cz")) {
+            printHelpCz();
+        } else{
+            printLine("Unsupported command: "+prikaz);
+            printHelp();
+        }
+
+    }
 
         private Device getRealDevice() {
             for (Device dev : Psimulator.getPsimulator().devices) {
@@ -67,7 +67,7 @@ public class Rnetconn extends AbstractCommand {
                     }
                 }
             }
-            
+
             return null;
         }
 
@@ -77,65 +77,65 @@ public class Rnetconn extends AbstractCommand {
                         return (RealSwitchport) swport;
                     }
                 }
-                
+
             return null;
         }
 
-	private void printHelp() {
-		printLine("");
-		printLine("Usage:");
-		printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
-		printLine("The command can manage all real switchports on all simulated devices in virtual network.");
-		printLine("SYNOPSIS: rnetconn command options");
-		printLine("  The possible commands are:");
-		printLine("    rnetconn on                   connects simulated network with real network.");
-		printLine("    rnetconn off                  disconnects simulated network from real network.");
-		printLine("    help                          prints this help.");
-		printLine("    help-cz                       prints this help in czech.");
-		printLine("");
-	}
+    private void printHelp() {
+        printLine("");
+        printLine("Usage:");
+        printLine("This command is not present on real linux or cisco device. It's only command of this simulator to manage connection to real network.");
+        printLine("The command can manage all real switchports on all simulated devices in virtual network.");
+        printLine("SYNOPSIS: rnetconn command options");
+        printLine("  The possible commands are:");
+        printLine("    rnetconn on                   connects simulated network with real network.");
+        printLine("    rnetconn off                  disconnects simulated network from real network.");
+        printLine("    help                          prints this help.");
+        printLine("    help-cz                       prints this help in czech.");
+        printLine("");
+    }
 
-	private void printHelpCz() {
-		printLine("");
-		printLine("Pouziti:");
-		printLine("Tento prikaz neexistuje na realnem cisco ani linux pocitaci. Je implementovan pouze v tomto simulatoru ke sprave pripojeni na realnou sit.");
-		printLine("Timto prikazem je mozno obsluhovat realna pripojeni vsech virtualnich sitovych zarizeni v simulatoru.");
-		printLine("");
-		printLine("PREHLED: moznosti prikazu rnetconn");
-		printLine("  Mozne prikazy jsou:");
-		printLine("    rnetconn on                   propoji simulovanou sit s realnou siti.");
-		printLine("    rnetconn off                  odpoji simulovanou sit od realne site.");
-		printLine("    help                          vypise napovedu v anglictine.");
-		printLine("    help-cz                       vypise napovedu v cestine.");
-		printLine("");
-	}
-        
-	/**
-	 * provede tedy pripojeni rozhrani na realnej switchport.
-	 */
-	private boolean connectSwitchport(Device d, RealSwitchport p, String realInterface) {
+    private void printHelpCz() {
+        printLine("");
+        printLine("Pouziti:");
+        printLine("Tento prikaz neexistuje na realnem cisco ani linux pocitaci. Je implementovan pouze v tomto simulatoru ke sprave pripojeni na realnou sit.");
+        printLine("Timto prikazem je mozno obsluhovat realna pripojeni vsech virtualnich sitovych zarizeni v simulatoru.");
+        printLine("");
+        printLine("PREHLED: moznosti prikazu rnetconn");
+        printLine("  Mozne prikazy jsou:");
+        printLine("    rnetconn on                   propoji simulovanou sit s realnou siti.");
+        printLine("    rnetconn off                  odpoji simulovanou sit od realne site.");
+        printLine("    help                          vypise napovedu v anglictine.");
+        printLine("    help-cz                       vypise napovedu v cestine.");
+        printLine("");
+    }
+
+    /**
+     * provede tedy pripojeni rozhrani na realnej switchport.
+     */
+    private boolean connectSwitchport(Device d, RealSwitchport p, String realInterface) {
 
                 if(p.isConnected()){
                     return false;
-		}
-                
+        }
+
                 int navrKod = p.start(realInterface);       // interface selected in frontend in options of real pc
-		if (navrKod == 1) {
+        if (navrKod == 1) {
                     printLine("An error occured while trying to connect to interface. For more informations see the programms main console.");
                     return false;
-		} else if (navrKod == 2) {
+        } else if (navrKod == 2) {
                     printLine("An error occured while trying to connect to interface. For more informations see the programms main console.");
                     // should not happen
                     return false;
-		} else {
+        } else {
                     return true;
-		}
-	}
+        }
+    }
 
-	/**
-	 * provede odpojeni rozhrani od realneho switchportu.
-	 */
-	private boolean disconnectSwitchport(Device d, RealSwitchport p) {
+    /**
+     * provede odpojeni rozhrani od realneho switchportu.
+     */
+    private boolean disconnectSwitchport(Device d, RealSwitchport p) {
             if(!p.isConnected()){
                 return false;
             }
@@ -144,7 +144,7 @@ public class Rnetconn extends AbstractCommand {
             return true;
         }
 
-        
+
         // returns the name of the selected real interface
         private String getRealInterface() {
             File real;
@@ -170,7 +170,7 @@ public class Rnetconn extends AbstractCommand {
 
             String realInterface = null;
 
-            BufferedReader br = null; 
+            BufferedReader br = null;
             try {
                 String line;
                 br = new BufferedReader(new FileReader(real));
@@ -192,7 +192,7 @@ public class Rnetconn extends AbstractCommand {
             return realInterface;
         }
 
-    
+
         private void disconnectFromRealNetwork() {
             Device device;
             RealSwitchport realport;

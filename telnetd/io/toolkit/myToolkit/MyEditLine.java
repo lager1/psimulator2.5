@@ -15,121 +15,121 @@ import telnetd.io.toolkit.Editline;
  */
 public class MyEditLine extends Editline implements Quitable {
 
-	/**
-	 * reference to component redrawer
-	 */
-	private ComponentReDrawer componentReDrawer;
-	private boolean quit = false;
+    /**
+     * reference to component redrawer
+     */
+    private ComponentReDrawer componentReDrawer;
+    private boolean quit = false;
 
-	public MyEditLine(BasicTerminalIO io) {
-		super(io);
-	}
+    public MyEditLine(BasicTerminalIO io) {
+        super(io);
+    }
 
-	/**
-	 *
-	 * @param componentReDrawer
-	 */
-	public void setComponentReDrawer(ComponentReDrawer componentReDrawer) {
-		this.componentReDrawer = componentReDrawer;
-	}
+    /**
+     *
+     * @param componentReDrawer
+     */
+    public void setComponentReDrawer(ComponentReDrawer componentReDrawer) {
+        this.componentReDrawer = componentReDrawer;
+    }
 
-	@Override
-	public int run() throws IOException {
-		int in;
-		this.quit = false;
-		//draw();
-		//myIO.flush();
-		do {
-			//get next key
-			try {
-				in = m_IO.read();
-			} catch (SocketTimeoutException ex) {
-				continue;
-			}
-			//store cursorpos
-			m_LastCursPos = m_Cursor;
+    @Override
+    public int run() throws IOException {
+        int in;
+        this.quit = false;
+        //draw();
+        //myIO.flush();
+        do {
+            //get next key
+            try {
+                in = m_IO.read();
+            } catch (SocketTimeoutException ex) {
+                continue;
+            }
+            //store cursorpos
+            m_LastCursPos = m_Cursor;
 
-			this.componentReDrawer.drawComponents();
+            this.componentReDrawer.drawComponents();
 
-			switch (in) {
-				case BasicTerminalIO.LEFT:
-					if (!moveLeft()) {
-						return in;
-					}
-					break;
-				case BasicTerminalIO.RIGHT:
-					if (!moveRight()) {
-						return in;
-					}
-					break;
-				case BasicTerminalIO.BACKSPACE:
-					try {
-						if (m_Cursor == 0) {
-							return in;
-						} else {
-							removeCharAt(m_Cursor - 1);
-						}
-					} catch (IndexOutOfBoundsException ioobex) {
-						m_IO.bell();
-					}
-					break;
-				case BasicTerminalIO.DELETE:
-					try {
-						removeCharAt(m_Cursor);
-					} catch (IndexOutOfBoundsException ioobex) {
-						m_IO.bell();
-					}
-					break;
-				case BasicTerminalIO.TABULATOR: {
-					try {
-						this.append("   ");
-//						this.append("\t");
-					} catch (BufferOverflowException ex) {
-						Logger.log(Logger.WARNING, LoggingCategory.TELNET, "BufferOverflowException occured when running EditLine component");
-					}
+            switch (in) {
+                case BasicTerminalIO.LEFT:
+                    if (!moveLeft()) {
+                        return in;
+                    }
+                    break;
+                case BasicTerminalIO.RIGHT:
+                    if (!moveRight()) {
+                        return in;
+                    }
+                    break;
+                case BasicTerminalIO.BACKSPACE:
+                    try {
+                        if (m_Cursor == 0) {
+                            return in;
+                        } else {
+                            removeCharAt(m_Cursor - 1);
+                        }
+                    } catch (IndexOutOfBoundsException ioobex) {
+                        m_IO.bell();
+                    }
+                    break;
+                case BasicTerminalIO.DELETE:
+                    try {
+                        removeCharAt(m_Cursor);
+                    } catch (IndexOutOfBoundsException ioobex) {
+                        m_IO.bell();
+                    }
+                    break;
+                case BasicTerminalIO.TABULATOR: {
+                    try {
+                        this.append("   ");
+//                        this.append("\t");
+                    } catch (BufferOverflowException ex) {
+                        Logger.log(Logger.WARNING, LoggingCategory.TELNET, "BufferOverflowException occured when running EditLine component");
+                    }
 
-				}
-				break;
-				case TerminalIO.HOME_KEY: {
-					while (moveLeft()) {
-					}
-				}
-				break;
+                }
+                break;
+                case TerminalIO.HOME_KEY: {
+                    while (moveLeft()) {
+                    }
+                }
+                break;
 
-				case TerminalIO.END_KEY: {
-					while (moveRight()) {
-					}
-				}
-				break;
+                case TerminalIO.END_KEY: {
+                    while (moveRight()) {
+                    }
+                }
+                break;
 
-// EXIT KEYS					
-				case BasicTerminalIO.ENTER:
-				case BasicTerminalIO.UP:
-				case BasicTerminalIO.DOWN:
-				case TerminalIO.ESCAPE:
-				case TerminalIO.CTRL_S:		// save key
-				case TerminalIO.CTRL_X:		// quit key
-					return in;
+// EXIT KEYS
+                case BasicTerminalIO.ENTER:
+                case BasicTerminalIO.UP:
+                case BasicTerminalIO.DOWN:
+                case TerminalIO.ESCAPE:
+                case TerminalIO.CTRL_S:        // save key
+                case TerminalIO.CTRL_X:        // quit key
+                    return in;
 
-				case TerminalIO.UNRECOGNIZED:  // do nothing
-					break;
+                case TerminalIO.UNRECOGNIZED:  // do nothing
+                    break;
 
-				default:
-					try {
-						handleCharInput(in);
-					} catch (BufferOverflowException boex) {
-						setLastRead((char) in);
-						return in;
-					}
-			}
-			m_IO.flush();
-		} while (!quit);
-		return 0;
-	}
+                default:
+                    try {
+                        handleCharInput(in);
+                    } catch (BufferOverflowException boex) {
+                        setLastRead((char) in);
+                        return in;
+                    }
+            }
+            m_IO.flush();
+        } while (!quit);
+        return 0;
+    }
 
-	@Override
-	public int quit() {
-		this.quit = true;
-		return 0;
-	}
+    @Override
+    public int quit() {
+        this.quit = true;
+        return 0;
+    }
 }

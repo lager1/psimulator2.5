@@ -25,12 +25,12 @@ import utils.Util;
  */
 public class CiscoWrapperRT implements Loggable {
 
-	/**
+    /**
      * Jednotlive radky wrapperu.
      */
     private List<CiscoRecord> records;
-	private final IPLayer ipLayer;
-	private final Device device;
+    private final IPLayer ipLayer;
+    private final Device device;
     /**
      * Odkaz na routovaci tabulku, ktera je wrapperem ovladana.
      */
@@ -44,9 +44,9 @@ public class CiscoWrapperRT implements Loggable {
 
     public CiscoWrapperRT(Device device, IPLayer ipLayer) {
         records = new ArrayList<>();
-		this.ipLayer = ipLayer;
+        this.ipLayer = ipLayer;
         this.routingTable = ipLayer.routingTable;
-		this.device = device;
+        this.device = device;
     }
 
     /**
@@ -153,11 +153,11 @@ public class CiscoWrapperRT implements Loggable {
      * Tato metoda bude aktualizovat RoutovaciTabulku dle tohoto wrapperu.
      */
     public void update() {
-		Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: "+records.size(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: "+records.size(), null);
 
         // smazu RT
         routingTable.flushAllRecords();
-		Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update, mazu RT.", null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update, mazu RT.", null);
 
         // nastavuju counter
         this.counter = 0;
@@ -165,7 +165,7 @@ public class CiscoWrapperRT implements Loggable {
         // pridam routy na nahozena iface
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
-				Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: "+iface.getIpAddress(), null);
+                Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: "+iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface, true);
             }
         }
@@ -174,20 +174,20 @@ public class CiscoWrapperRT implements Loggable {
         for (CiscoRecord record : records) {
             if (record.iface != null) { // kdyz to je na iface
                 if (record.iface.isUp) {
-					Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam zaznam na rozhrani.", record);
+                    Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Pridavam zaznam na rozhrani.", record);
                     routingTable.addRecord(record.target, record.iface);
                 }
             } else { // kdyz to je na branu
                 NetworkInterface odeslat = findInterfaceForGateway(record.gateway);
                 if (odeslat != null) {
                     if (odeslat.isUp) {
-						Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name, null);
+                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name, null);
                         routingTable.addRecordWithoutControl(record.target, record.gateway, odeslat);
                     } else {
-						Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name+", ale je zhozene!!!", null);
-					}
+                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name+", ale je zhozene!!!", null);
+                    }
                 } else {
-					Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Nenasel jsem pro tento zaznam zadne rozhrani, po kterem by to mohlo odejit..", record);
+                    Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Nenasel jsem pro tento zaznam zadne rozhrani, po kterem by to mohlo odejit..", record);
 //                    System.out.println("nenasel jsem pro "+ zaznam);
                 }
             }
@@ -209,13 +209,13 @@ public class CiscoWrapperRT implements Loggable {
         for (int i = records.size() - 1; i >= 0; i--) { // prochazim opacne (tedy vybiram s nejvyssim poctem jednicek)
 
             // kdyz to je na rozsah vlastniho iface
-			Record record = routingTable.findRoute(gateway);
+            Record record = routingTable.findRoute(gateway);
             if (record != null && record.iface != null) {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: nalezeno rozhrani.. ok", gateway);
+                Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: nalezeno rozhrani.. ok", gateway);
                 return record.iface;
             } else {
-				Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro "+gateway, null);
-			}
+                Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro "+gateway, null);
+            }
 
             // kdyz to je na branu jako v retezu
             CiscoRecord rec = records.get(i);
@@ -258,8 +258,8 @@ public class CiscoWrapperRT implements Loggable {
 
         if (!record.getTarget().isNetworkNumber()) { // vyjimka pro nacitani z konfiguraku, jinak to je osetreno v parserech
 //            throw new RuntimeException("Adresa " + zaznam.getTarget().getIp() + " neni cislem site!");
-			Logger.log(this, Logger.WARNING, LoggingCategory.WRAPPER_CISCO, "Address " + record.getTarget().getIp() + " is not network number! Skipping..", record);
-			return;
+            Logger.log(this, Logger.WARNING, LoggingCategory.WRAPPER_CISCO, "Address " + record.getTarget().getIp() + " is not network number! Skipping..", record);
+            return;
         }
 
         for (CiscoRecord z : records) { // zaznamy ulozene v tabulce se uz znovu nepridavaji
@@ -333,7 +333,7 @@ public class CiscoWrapperRT implements Loggable {
             return 1;
         }
 
-		records.removeAll(delete);
+        records.removeAll(delete);
 
         update();
 
@@ -446,7 +446,7 @@ public class CiscoWrapperRT implements Loggable {
 //        CiscoWrapperRT wrapper = ((CiscoPocitac) pc).getWrapper();
         boolean defaultGW = false;
         String brana = null;
-		IPwithNetmask zeros = new IPwithNetmask("0.0.0.0", 0);
+        IPwithNetmask zeros = new IPwithNetmask("0.0.0.0", 0);
         for (int i = 0; i < getSize(); i++) {
             if (getRecord(i).target.equals(zeros)) {
                 if (getRecord(i).gateway != null) {
@@ -509,8 +509,8 @@ public class CiscoWrapperRT implements Loggable {
         return s;
     }
 
-	@Override
-	public String getDescription() {
-		return Util.zarovnej(device.getName(), Util.deviceNameAlign) + "wrapper";
-	}
+    @Override
+    public String getDescription() {
+        return Util.zarovnej(device.getName(), Util.deviceNameAlign) + "wrapper";
+    }
 }

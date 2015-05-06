@@ -41,12 +41,12 @@ public class ScriptHandler {
   /** debugging level */
   private final static int debug = 0;
 
-  private int matchPos;		// current position in the match
-  private byte[] match;		// the current bytes to look for
-  private boolean done = true;	// nothing to look for!
+  private int matchPos;        // current position in the match
+  private byte[] match;        // the current bytes to look for
+  private boolean done = true;    // nothing to look for!
 
   /**
-   * Setup the parser using the passed string. 
+   * Setup the parser using the passed string.
    * @param match the string to look for
    */
   public void setup(String match) {
@@ -66,7 +66,7 @@ public class ScriptHandler {
     if(done) return true;
     for(int i = 0; !done && i < length; i++) {
       if(s[i] == match[matchPos]) {
-        // the whole thing matched so, return the match answer 
+        // the whole thing matched so, return the match answer
         // and reset to use the next match
         if(++matchPos >= match.length) {
           done = true;

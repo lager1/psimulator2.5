@@ -10,7 +10,7 @@ package exceptions;
  */
 public class UnsupportedL3TypeException extends RuntimeException {
 
-	public UnsupportedL3TypeException(String message) {
-		super(message);
-	}
+    public UnsupportedL3TypeException(String message) {
+        super(message);
+    }
 }

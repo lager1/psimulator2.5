@@ -14,14 +14,14 @@ import dataStructures.ipAddresses.IPwithNetmask;
  */
 public class AccessList {
 
-	public final IPwithNetmask ip;
-	/**
-	 * V podstate unikatni jmeno AccessListu.
-	 */
-	public final int number;
+    public final IPwithNetmask ip;
+    /**
+     * V podstate unikatni jmeno AccessListu.
+     */
+    public final int number;
 
-	public AccessList(IPwithNetmask ip, int cislo) {
-		this.ip = ip;
-		this.number = cislo;
-	}
+    public AccessList(IPwithNetmask ip, int cislo) {
+        this.ip = ip;
+        this.number = cislo;
+    }
 }

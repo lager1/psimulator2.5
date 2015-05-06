@@ -97,7 +97,7 @@ public class TransportLayer implements Loggable {
                     + ", sending port unreachable to: " + packetItem.packet.src, packetItem.packet);
             Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP,
                     "Logging dropped packet.", new DropItem(packetItem.packet, netMod.getDevice().configID));
-//			icmphandler.sendPortUnreachable(packet.src, packet); // zatim posilat nebudeme, protoze by se nam toho tam posilalo moc
+//            icmphandler.sendPortUnreachable(packet.src, packet); // zatim posilat nebudeme, protoze by se nam toho tam posilalo moc
         }
     }
 

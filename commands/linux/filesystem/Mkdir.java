@@ -14,56 +14,56 @@ import filesystem.exceptions.FileNotFoundException;
 public class Mkdir extends FileSystemCommand {
 
 // promenny parseru:
-	public Mkdir(AbstractCommandParser parser) {
-		super(parser, "mkdir");
-	}
+    public Mkdir(AbstractCommandParser parser) {
+        super(parser, "mkdir");
+    }
 
-	@Override
-	protected void parseOption(char c) {
-		// zadny prepinace nepodporuju
+    @Override
+    protected void parseOption(char c) {
+        // zadny prepinace nepodporuju
 
-		invalidOption(c);
+        invalidOption(c);
 
-	}
+    }
 
-	@Override
-	protected void controlComand() {
-		if (files.isEmpty()) {
-			missingOperand();
-		}
-	}
+    @Override
+    protected void controlComand() {
+        if (files.isEmpty()) {
+            missingOperand();
+        }
+    }
 
-	@Override
-	protected void executeCommand() {
-
-
-		String currentDir = getCurrentDir();
-
-		for (String filePath : files) {
-
-			filePath = resolvePath(currentDir, filePath);
+    @Override
+    protected void executeCommand() {
 
 
-			try {
-				boolean mkdir = parser.device.getFilesystem().createNewDir(filePath);
+        String currentDir = getCurrentDir();
 
-				if (mkdir) {
-					continue;
-				} else {
-					parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
-				}
+        for (String filePath : files) {
 
-			} catch (FileNotFoundException ex) {
-				parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
-
-			}
+            filePath = resolvePath(currentDir, filePath);
 
 
+            try {
+                boolean mkdir = parser.device.getFilesystem().createNewDir(filePath);
 
+                if (mkdir) {
+                    continue;
+                } else {
+                    parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
+                }
 
-		}
+            } catch (FileNotFoundException ex) {
+                parser.getShell().printLine("mkdir: " + filePath + "directory creation failed");
+
+            }
 
 
 
-	}
+
+        }
+
+
+
+    }
 }

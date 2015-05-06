@@ -8,39 +8,39 @@ import java.util.Comparator;
  */
 public abstract class Node {
 
-	private static Comparator<Node> comparatorBuffer;
-	private String name;
+    private static Comparator<Node> comparatorBuffer;
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public abstract String toString();
+    @Override
+    public abstract String toString();
 
-	/**
-	 *
-	 * @return
-	 */
-	public static Comparator getAlphaNumericalNameComparator() {
+    /**
+     *
+     * @return
+     */
+    public static Comparator getAlphaNumericalNameComparator() {
 
-		if (comparatorBuffer != null) {
-			return comparatorBuffer;
-		}
+        if (comparatorBuffer != null) {
+            return comparatorBuffer;
+        }
 
-		comparatorBuffer = new Comparator<Node>() {
+        comparatorBuffer = new Comparator<Node>() {
 
-			@Override
-			public int compare(Node o1, Node o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		};
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        };
 
-		return comparatorBuffer;
+        return comparatorBuffer;
 
-	}
+    }
 }

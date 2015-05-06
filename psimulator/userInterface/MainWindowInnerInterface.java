@@ -24,33 +24,33 @@ public interface MainWindowInnerInterface {
      */
     public void updateZoomButtons();
     /**
-     * Updates icons in toolbar according to size 
+     * Updates icons in toolbar according to size
      * @param size Size to update to
      */
     public void updateToolBarIconsSize(ToolbarIconSizeEnum size);
-    
+
     /**
      * Get root pane from main winfow
-     * @return 
+     * @return
      */
     public JRootPane getRootPane();
 
     /**
      * Get main window component. Use for creating dialogs which has to have mainWindow
      * as parent.
-     * @return 
+     * @return
      */
     public Component getMainWindowComponent();
-    
+
     /**
      * Call when user wants to save events.
-     * @param simulatorEventsWrapper 
+     * @param simulatorEventsWrapper
      */
     public void saveEventsAction(SimulatorEventsWrapper simulatorEventsWrapper);
-    
+
     /**
      * Call when user wants to load events.
-     * @return 
+     * @return
      */
     public SimulatorEventsWrapper loadEventsAction();
 
@@ -63,5 +63,5 @@ public interface MainWindowInnerInterface {
      * @param userInterfaceState State to change to.
      * @param changingSimulatorEditor if true, the graph is kept untouched
      */
-	public void refreshUserInterfaceMainPanel(Graph graph, NetworkModel networkModel, UserInterfaceMainPanelState userInterfaceState, boolean changingSimulatorEditor);
+    public void refreshUserInterfaceMainPanel(Graph graph, NetworkModel networkModel, UserInterfaceMainPanelState userInterfaceState, boolean changingSimulatorEditor);
 }

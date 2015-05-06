@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -57,16 +57,16 @@ public class TerminalIO
     implements BasicTerminalIO {
 
 
-  private TelnetIO m_TelnetIO;					//low level I/O
+  private TelnetIO m_TelnetIO;                    //low level I/O
 
-  private Connection m_Connection;			//the connection this instance is working for
-  private ConnectionData m_ConnectionData;	//holds data of the connection
-  private Terminal m_Terminal;					//active terminal object
+  private Connection m_Connection;            //the connection this instance is working for
+  private ConnectionData m_ConnectionData;    //holds data of the connection
+  private Terminal m_Terminal;                    //active terminal object
 
   //Members
-  private boolean m_AcousticSignalling;		//flag for accoustic signalling
-  private boolean m_Autoflush;					//flag for autoflushing mode
-  private boolean m_ForceBold;				//flag for forcing bold output
+  private boolean m_AcousticSignalling;        //flag for accoustic signalling
+  private boolean m_Autoflush;                    //flag for autoflushing mode
+  private boolean m_ForceBold;                //flag for forcing bold output
   private boolean m_LineWrapping;
 
   /**
@@ -94,8 +94,8 @@ public class TerminalIO
     try {
       setDefaultTerminal();
     } catch (Exception ex) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "TerminalIO()" + ex);
-      
+        Logger.log(Logger.WARNING, LoggingCategory.TELNET, "TerminalIO()" + ex);
+
       throw new RuntimeException();
     }
   }//constructor
@@ -103,7 +103,7 @@ public class TerminalIO
 
 
   /************************************************************************
-   * Visible character I/O methods   				                        *
+   * Visible character I/O methods                                           *
    ************************************************************************/
 
   /**
@@ -176,7 +176,7 @@ public class TerminalIO
 
   /**
    * *********************************************************************
-   * Erase methods							                            *
+   * Erase methods                                                        *
    * **********************************************************************
    */
 
@@ -216,7 +216,7 @@ public class TerminalIO
 
   /**
    * *********************************************************************
-   * Cursor related methods							                    *
+   * Cursor related methods                                                *
    * **********************************************************************
    */
 
@@ -274,7 +274,7 @@ public class TerminalIO
 
   /**
    * *********************************************************************
-   * Special terminal function methods							        *
+   * Special terminal function methods                                    *
    * **********************************************************************
    */
 
@@ -401,7 +401,7 @@ public class TerminalIO
   /*** End of special terminal function methods ***************************/
 
   /************************************************************************
-   * Auxiliary I/O methods						                        *
+   * Auxiliary I/O methods                                                *
    ************************************************************************/
 
   /**
@@ -414,10 +414,10 @@ public class TerminalIO
       //FIXME: ensure CAN, broken Escapes etc.
       for (int m = 0; m < bytebuf.length; m++) {
         bytebuf[m] = m_TelnetIO.read();
-		
-		if(bytebuf[m] == Terminal.ESC)
-			return ESCAPE;  // double escape read
-		
+
+        if(bytebuf[m] == Terminal.ESC)
+            return ESCAPE;  // double escape read
+
       }
       return m_Terminal.translateEscapeSequence(bytebuf, m_TelnetIO);
     }
@@ -482,7 +482,7 @@ public class TerminalIO
 
 
   /************************************************************************
-   * Terminal management specific methods			                        *
+   * Terminal management specific methods                                    *
    ************************************************************************/
 
   /**
@@ -517,8 +517,8 @@ public class TerminalIO
     //Terminal is set we init it....
     initTerminal();
     //debug message
-	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Set terminal to " + m_Terminal.toString());
-    
+    Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Set terminal to " + m_Terminal.toString());
+
   }//setTerminal
 
 
@@ -563,40 +563,40 @@ public class TerminalIO
   public static final int[] HOME = {0, 0};
 
   public static final int
-      IOERROR = -1;		//IO error
+      IOERROR = -1;        //IO error
   public static final int// Positioning 10xx
-      UP = 1001; 		//one up
-  public static final int DOWN = 1002; 		//one down
-  public static final int RIGHT = 1003; 	//one left
-  public static final int LEFT = 1004; 		//one right
-  //HOME=1005,		//Home cursor pos(0,0)
+      UP = 1001;         //one up
+  public static final int DOWN = 1002;         //one down
+  public static final int RIGHT = 1003;     //one left
+  public static final int LEFT = 1004;         //one right
+  //HOME=1005,        //Home cursor pos(0,0)
 
 
   public static final int// Functions 105x
-      STORECURSOR = 1051;	//store cursor position + attributes
-  public static final int RESTORECURSOR = 1052;	//restore cursor + attributes
+      STORECURSOR = 1051;    //store cursor position + attributes
+  public static final int RESTORECURSOR = 1052;    //restore cursor + attributes
 
   public static final int// Erasing 11xx
-      EEOL = 1100;		//erase to end of line
-  public static final int EBOL = 1101;		//erase to beginning of line
-  public static final int EEL = 1103;		//erase entire line
-  public static final int EEOS = 1104;		//erase to end of screen
-  public static final int EBOS = 1105;		//erase to beginning of screen
-  public static final int EES = 1106;		//erase entire screen
+      EEOL = 1100;        //erase to end of line
+  public static final int EBOL = 1101;        //erase to beginning of line
+  public static final int EEL = 1103;        //erase entire line
+  public static final int EEOS = 1104;        //erase to end of screen
+  public static final int EBOS = 1105;        //erase to beginning of screen
+  public static final int EES = 1106;        //erase entire screen
 
   public static final int// Escape Sequence-ing 12xx
-      ESCAPE = 1200;		//Escape
-  public static final int BYTEMISSING = 1201;	//another byte needed
-  public static final int UNRECOGNIZED = 1202;	//escape match missed
+      ESCAPE = 1200;        //Escape
+  public static final int BYTEMISSING = 1201;    //another byte needed
+  public static final int UNRECOGNIZED = 1202;    //escape match missed
 
   public static final int// Control Characters 13xx
-      ENTER = 1300;		//LF is ENTER at the moment
-  public static final int TABULATOR = 1301;	 	//Tabulator
-  public static final int DELETE = 1302;		//Delete
-  public static final int BACKSPACE = 1303;		//BACKSPACE
-  public static final int COLORINIT = 1304;		//Color inited
+      ENTER = 1300;        //LF is ENTER at the moment
+  public static final int TABULATOR = 1301;         //Tabulator
+  public static final int DELETE = 1302;        //Delete
+  public static final int BACKSPACE = 1303;        //BACKSPACE
+  public static final int COLORINIT = 1304;        //Color inited
   public static final int HANDLED = 1305;
-  public static final int LOGOUTREQUEST = 1306;		//CTRL-D beim login
+  public static final int LOGOUTREQUEST = 1306;        //CTRL-D beim login
 
   /**
    * Internal UpdateType Constants
@@ -656,13 +656,13 @@ public class TerminalIO
   public static final int PAGE_DOWN = 1054;
   public static final int PAGE_UP = 1053;
   public static final int CTRL_SHIFT_6 = 30;
-  
-  
 
-	@Override
-	public boolean avaiable() {
-		return m_TelnetIO.avaiable();
-	}
-  
-  
+
+
+    @Override
+    public boolean avaiable() {
+        return m_TelnetIO.avaiable();
+    }
+
+
 }//class TerminalIO

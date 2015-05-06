@@ -216,5 +216,5 @@ public interface SimulatorManagerInterface {
     /**
      * Sets internal variables, so server can start again correctly
      */
- 	void serverShutdown();
+     void serverShutdown();
 }

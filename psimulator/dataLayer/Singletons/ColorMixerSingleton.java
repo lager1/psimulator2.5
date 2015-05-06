@@ -14,16 +14,16 @@ public class ColorMixerSingleton {
     //public static Color editToolbarColor = new Color(213, 129, 129);
     public static Color editToolbarColor = Color.LIGHT_GRAY;
     public static Color drawPanelColor = Color.WHITE;
-    
+
     public static Color tableLostEventColor = new Color(255, 83, 83);
     public static Color tableLostEventMarkedColor = new Color(150, 6, 8);
-    
-    
+
+
     private static ColorMixerSingleton colorMixerSignletonObject;
 
     /** A private Constructor prevents any other class from instantiating. */
     private ColorMixerSingleton () {
-        //	 Optional Code
+        //     Optional Code
     }
 
     public static synchronized ColorMixerSingleton getSingletonObject() {
@@ -37,11 +37,11 @@ public class ColorMixerSingleton {
     public Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
-    
+
     /**
      * Gets color for packet type
      * @param packetType
-     * @return 
+     * @return
      */
     public static Color getColorAccodringToPacketType(PacketType packetType){
         switch(packetType){

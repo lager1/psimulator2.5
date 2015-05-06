@@ -14,43 +14,43 @@ import telnetd.io.TerminalIO;
  */
 public class ShellUtils {
 
-	public static Pattern printablePatter = Pattern.compile(ShellUtils.getPrintableRegExp());
+    public static Pattern printablePatter = Pattern.compile(ShellUtils.getPrintableRegExp());
 
-	public static String getPrintableRegExp() {
-		return "\\p{Print}";
-	}
+    public static String getPrintableRegExp() {
+        return "\\p{Print}";
+    }
 
-	public static boolean handleSignalControlCodes(AbstractCommandParser parser, int code) {
+    public static boolean handleSignalControlCodes(AbstractCommandParser parser, int code) {
 
-		boolean handled = true;
+        boolean handled = true;
 
-		switch (code) {
-			case TerminalIO.CTRL_C:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
-				parser.catchSignal(Signal.CTRL_C);
-				break;
-			case TerminalIO.CTRL_Z:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
-				parser.catchSignal(Signal.CTRL_Z);
-				break;
-			case TerminalIO.CTRL_D:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");
-				parser.catchSignal(Signal.CTRL_D);
-				break;
-			case TerminalIO.CTRL_SHIFT_6:
-				Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+SHIFT+6");
-				parser.catchSignal(Signal.CTRL_SHIFT_6);
-				break;
-			default:  // if no control code was handled
-				handled = false;
+        switch (code) {
+            case TerminalIO.CTRL_C:
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+C");
+                parser.catchSignal(Signal.CTRL_C);
+                break;
+            case TerminalIO.CTRL_Z:
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+Z");
+                parser.catchSignal(Signal.CTRL_Z);
+                break;
+            case TerminalIO.CTRL_D:
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+D");
+                parser.catchSignal(Signal.CTRL_D);
+                break;
+            case TerminalIO.CTRL_SHIFT_6:
+                Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečteno CTRL+SHIFT+6");
+                parser.catchSignal(Signal.CTRL_SHIFT_6);
+                break;
+            default:  // if no control code was handled
+                handled = false;
 
-		}
-		
-		return handled;
+        }
 
-	}
+        return handled;
 
-	public static boolean isPrintable(int znakInt) {
-		return ShellUtils.printablePatter.matcher(String.valueOf((char) znakInt)).find();
-	}
+    }
+
+    public static boolean isPrintable(int znakInt) {
+        return ShellUtils.printablePatter.matcher(String.valueOf((char) znakInt)).find();
+    }
 }

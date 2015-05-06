@@ -61,7 +61,7 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
         if (addr == null) {
             return;
         }
-        
+
         parser.setRunningCommand(this, false);
         app = new LinuxTracerouteApplication(getDevice(), this);
         app.setTarget(addr);

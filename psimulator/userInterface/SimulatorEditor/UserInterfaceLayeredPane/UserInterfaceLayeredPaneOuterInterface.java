@@ -13,9 +13,9 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.Graph;
  */
 public abstract class UserInterfaceLayeredPaneOuterInterface extends JLayeredPane implements DrawPanelToolChangeOuterInterface{
     
-	private static final long serialVersionUID = 2961322684082979904L;
+    private static final long serialVersionUID = 2961322684082979904L;
 
-	// USED BY EDITOR PANEL
+    // USED BY EDITOR PANEL
     /**
      * Finds if UNDO can be performed
      * @return true if yes, false if no

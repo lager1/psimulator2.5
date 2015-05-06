@@ -80,30 +80,30 @@ public class IpRoute extends LinuxCommand {
     //spatny parametry:
     String necoSpatne; //do tohodle stringu se ukladaj spatne nastaveny parametry: adresa, via, nesmysly...
 
-	// zkratky:
-	RoutingTable rTable;
+    // zkratky:
+    RoutingTable rTable;
 
 
 
 
 
-	public IpRoute(AbstractCommandParser parser) {
-		super(parser);
-		rTable = ipLayer.routingTable;
-	}
+    public IpRoute(AbstractCommandParser parser) {
+        super(parser);
+        rTable = ipLayer.routingTable;
+    }
 
 
 
-	@Override
-	public void run() {
-		parsujPrikaz();
+    @Override
+    public void run() {
+        parsujPrikaz();
         zkontrolujPrikaz();
         if(ladiciVypisovani){
             printLine(toString());
         }
         vykonejPrikaz();
         vypisChybovyHlaseni();
-	}
+    }
 
 
 
@@ -193,7 +193,7 @@ public class IpRoute extends LinuxCommand {
 
         //kontrola iface, jestlize bylo zadano:
         if (rozhrRet != null) {
-			rozhr = ipLayer.getNetworkInteface(rozhrRet);
+            rozhr = ipLayer.getNetworkInteface(rozhrRet);
             if (rozhr == null) { //rozhrani nenalezeno napr. ip a a 1.1.1.1 dev dsa
                 navrKod |= Util.md(3);
             }
@@ -203,7 +203,7 @@ public class IpRoute extends LinuxCommand {
         if(akce==2 || akce==3){
             //kontrola adresy:
             if(adresat==null){
-				adresat = new IPwithNetmask("0.0.0.0", 0); //jestlize nebyl adresat zadan,
+                adresat = new IPwithNetmask("0.0.0.0", 0); //jestlize nebyl adresat zadan,
                     // hodi se sem implicitni - tzn default (0.0.0.0/0)
             }
         }
@@ -254,12 +254,12 @@ public class IpRoute extends LinuxCommand {
                 printLine("RTNETLINK answers: File exists");
             } else { //v poradku, zaznam se muze pridat
                 if (brana == null) { //brana nezadana
-					rTable.addRecord(adresat, rozhr);
+                    rTable.addRecord(adresat, rozhr);
                     // -> tohle uz musi projit, protoze se predtim zkontrolovalo, ze neexistuje
                     //    zaznam se stejnym adresatem
                 } else {
                     int nk=0;
-					nk = rTable.addRecord(adresat, brana, rozhr);
+                    nk = rTable.addRecord(adresat, brana, rozhr);
                     if(nk==2){//zaznam nejde pridat, protoze na brana neni dosazitelna
                         navrKod |= Util.md(15);
                         printLine("RTNETLINK answers: Network is unreachable");
@@ -268,7 +268,7 @@ public class IpRoute extends LinuxCommand {
             }
         }
         if (akce == 3) {//del
-			if(!rTable.deleteRecord(adresat, brana, rozhr)){
+            if(!rTable.deleteRecord(adresat, brana, rozhr)){
                 navrKod |= Util.md(9);
                 printLine("RTNETLINK answers: No such process");
             }
@@ -408,58 +408,58 @@ public class IpRoute extends LinuxCommand {
         }
     }
 
-	/**
-	 * Parsuje adresu. Predpoklada, ze ji nemuze prijit prazdnej String.
-	 */
-	private void parsujAdresu() {
-		IPwithNetmask vytvarena;
-		if (zadanaAdresa && (akce == 2 || akce == 3)) {
-			navrKod |= Util.md(0);
-			necoSpatne = slovo;
-			return;
-		}
-		zadanaAdresa = true;
-		if (slovo.equals("default")) {//kdyz je to de
-			vytvarena = new IPwithNetmask("0.0.0.0", 0);
-		} else {
-			if (slovo.startsWith("default")) {
-			}
+    /**
+     * Parsuje adresu. Predpoklada, ze ji nemuze prijit prazdnej String.
+     */
+    private void parsujAdresu() {
+        IPwithNetmask vytvarena;
+        if (zadanaAdresa && (akce == 2 || akce == 3)) {
+            navrKod |= Util.md(0);
+            necoSpatne = slovo;
+            return;
+        }
+        zadanaAdresa = true;
+        if (slovo.equals("default")) {//kdyz je to de
+            vytvarena = new IPwithNetmask("0.0.0.0", 0);
+        } else {
+            if (slovo.startsWith("default")) {
+            }
 
-			try {
-				vytvarena = new IPwithNetmask(slovo, 32, false);
-			} catch (BadNetmaskException | BadIpException ex) {
-				navrKod |= Util.md(1);
-				necoSpatne = slovo;
-				return;
-			}
-		}
-		adresat = vytvarena;
-		slovo = dalsiSlovo();
-		parsujParametry();
-	}
+            try {
+                vytvarena = new IPwithNetmask(slovo, 32, false);
+            } catch (BadNetmaskException | BadIpException ex) {
+                navrKod |= Util.md(1);
+                necoSpatne = slovo;
+                return;
+            }
+        }
+        adresat = vytvarena;
+        slovo = dalsiSlovo();
+        parsujParametry();
+    }
 
-	private void parsujVia() {
-		if (akce == 6) { //u akce get neni tenhle parametr povolenej
-			navrKod |= Util.md(12); //jen pro poradek, je to ale jinak brany jako adresa
-			necoSpatne = "via";
-			return; //parsovani se na spatnou adresu konci
-		}
-		if (slovo.equals("")) { //ip a a 1.1.1.1 via
-			navrKod |= Util.md(2);
-		} else {
-			//nastovovani brany:
-			try {
-				brana = new IpAddress(slovo);
-			} catch (BadIpException ex) {
-				navrKod |= Util.md(7);
-				necoSpatne = slovo;
-				return; //POZOR!!!!!!!!! Tady se utika a konci parsovani, kdyz je spatna adresa
-			}
-			//dalsi pokracovani:
-			slovo = dalsiSlovo();
-			parsujParametry();
-		}
-	}
+    private void parsujVia() {
+        if (akce == 6) { //u akce get neni tenhle parametr povolenej
+            navrKod |= Util.md(12); //jen pro poradek, je to ale jinak brany jako adresa
+            necoSpatne = "via";
+            return; //parsovani se na spatnou adresu konci
+        }
+        if (slovo.equals("")) { //ip a a 1.1.1.1 via
+            navrKod |= Util.md(2);
+        } else {
+            //nastovovani brany:
+            try {
+                brana = new IpAddress(slovo);
+            } catch (BadIpException ex) {
+                navrKod |= Util.md(7);
+                necoSpatne = slovo;
+                return; //POZOR!!!!!!!!! Tady se utika a konci parsovani, kdyz je spatna adresa
+            }
+            //dalsi pokracovani:
+            slovo = dalsiSlovo();
+            parsujParametry();
+        }
+    }
 
     private void parsujDev() {
         if (slovo.equals("")) { //ip a a 1.1.1.1 dev

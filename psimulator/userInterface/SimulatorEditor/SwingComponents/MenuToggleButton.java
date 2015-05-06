@@ -16,8 +16,8 @@ import psimulator.userInterface.SimulatorEditor.Tools.AbstractTool;
  */
 public class MenuToggleButton extends JToggleButton {
 
-	private static final long serialVersionUID = -6086806684071840411L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = -6086806684071840411L;
+    private DataLayerFacade dataLayer;
     /**
      * arrow icon for lower right corner
      */
@@ -33,7 +33,7 @@ public class MenuToggleButton extends JToggleButton {
 
     public MenuToggleButton(List<AbstractTool> tools, DataLayerFacade dataLayer) {
         super();
-        
+
         this.dataLayer = dataLayer;
 
         if (tools == null || tools.isEmpty()) {
@@ -58,7 +58,7 @@ public class MenuToggleButton extends JToggleButton {
                                 // show popup menu
                                 pop.show(b, b.getWidth(), 0);
                             }
-                        // uncomment next line for LEFT CLICK CHOOSE, RIGHT CLICK POPUP   
+                        // uncomment next line for LEFT CLICK CHOOSE, RIGHT CLICK POPUP
                         }
                     }
                 });
@@ -66,9 +66,9 @@ public class MenuToggleButton extends JToggleButton {
                 // create and add action
                 Action a = new AbstractAction() {
 
-					private static final long serialVersionUID = -8332610597684624134L;
+                    private static final long serialVersionUID = -8332610597684624134L;
 
-					@Override
+                    @Override
                     public void actionPerformed(ActionEvent ae) {
 
                         MenuToggleButton b = (MenuToggleButton) ae.getSource();
@@ -104,12 +104,12 @@ public class MenuToggleButton extends JToggleButton {
         updateToolTip();
         // set Image icon of this MenuToggleButton
         this.setIcon(currentTool.getImageIcon(dataLayer));
-        // enable current tool in 
+        // enable current tool in
         setCurrentToolEnabled();
         // set toggle button selected
         this.setSelected(true);
     }
-    
+
     public final void updateToolTip(){
         // update tool tip of jToggleButton
         this.setToolTipText(currentTool.getToolTip(dataLayer));
@@ -118,10 +118,10 @@ public class MenuToggleButton extends JToggleButton {
             pop.updateToolNames(dataLayer);
         }
     }
-    
+
     public final void updateIconSize(){
         this.setIcon(currentTool.getImageIcon(dataLayer));
-        
+
         // upadte tool tips in popup menu that belongs to this jToggleButton
         if (pop != null) {
             pop.updateIconSize(dataLayer);
@@ -129,7 +129,7 @@ public class MenuToggleButton extends JToggleButton {
     }
 
     /**
-     * enables current tool in this Menu ToggleButton 
+     * enables current tool in this Menu ToggleButton
      */
     public void setCurrentToolEnabled() {
         currentTool.setEnabled();

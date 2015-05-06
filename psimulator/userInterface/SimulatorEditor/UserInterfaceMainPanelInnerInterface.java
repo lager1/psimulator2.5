@@ -12,19 +12,19 @@ public interface UserInterfaceMainPanelInnerInterface {
 
     /**
      * Sets mainTool active in toolbar.
-     * @param mainTool 
+     * @param mainTool
      */
     public void doSetToolInToolBar(MainTool mainTool);
-    
+
     /**
      * Gets scroll pane
-     * @return 
+     * @return
      */
     public JScrollPane getJScrollPane();
-    
+
     /**
      * Gets view port.
-     * @return 
+     * @return
      */
     public JViewport getJViewport();
 }

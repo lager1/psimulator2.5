@@ -12,7 +12,7 @@ import shared.NetworkObject;
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class TelnetConfig implements NetworkObject, Serializable{
-    
+
     /**
      * key is a componentID
      */
@@ -31,10 +31,10 @@ public class TelnetConfig implements NetworkObject, Serializable{
     }
 
     /**
-     * 
+     *
      * @param key compnent ID / DeviceID
      * @param value {@link ConfigRecord}
-     * @return 
+     * @return
      */
     public ConfigRecord put(Integer key, ConfigRecord value) {
         return configRecords.put(key, value);
@@ -43,19 +43,19 @@ public class TelnetConfig implements NetworkObject, Serializable{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(200);
-        
+
         for (Map.Entry<Integer, ConfigRecord> entry : configRecords.entrySet()) {
             Integer integer = entry.getKey();
             ConfigRecord configRecord = entry.getValue();
-            
+
             sb.append("ComponentID: ").append(configRecord.getComponentId()).append(" port:").append(configRecord.getPort()).append("\n");
         }
-        
-        
+
+
         return sb.toString();
     }
-    
-    
-    
+
+
+
 
 }

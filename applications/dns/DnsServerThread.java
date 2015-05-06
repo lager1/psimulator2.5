@@ -53,7 +53,7 @@ public class DnsServerThread implements Runnable {
             sendAnswer(DnsStatus.FORMAT_ERROR);
             return;
         }
-		
+        
         DnsQuery query = getZoneInfo(dnsPacket.question.qName);
         if (query == null) {
             sendAnswer(DnsStatus.NAME_ERROR);

@@ -29,7 +29,7 @@ import de.mud.jta.PluginListener;
 import java.awt.Dimension;
 
 /**
- * This is the interface for a window size listener. 
+ * This is the interface for a window size listener.
  * <P>
  * <B>Maintainer:</B> Matthias L. Jugel
  *

@@ -24,9 +24,9 @@ import networkModule.L2.EthernetInterface;
 public class LinuxIPLayer extends IPLayer {
 
     /**
-     * Packet forwarding flag. 
+     * Packet forwarding flag.
      */
-//	public boolean ip_forward = true;
+//    public boolean ip_forward = true;
     private IpForwardFile forwardFile;
 
     public LinuxIPLayer(IpNetworkModule netMod) {
@@ -105,9 +105,9 @@ public class LinuxIPLayer extends IPLayer {
         NetworkInterface ifaceIn = findIncommingNetworkIface(iface);
 
         // kdyz je to vuci prichozimu rozhrani broadcast, tak to poslu nahoru (je to pro me) - kvuli DHCP!
-        //if (ifaceIn != null && ifaceIn.getIpAddress() != null && 
+        //if (ifaceIn != null && ifaceIn.getIpAddress() != null &&
         if (ifaceIn != null
-                && //			(ifaceIn.getIpAddress().getBroadcast().equals(packet.dst) || 
+                && //            (ifaceIn.getIpAddress().getBroadcast().equals(packet.dst) ||
                 packet.dst.equals(new IpAddress("255.255.255.255"))) {
             Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
             netMod.transportLayer.receivePacket(new PacketItem(packet, ifaceIn));
@@ -150,7 +150,7 @@ public class LinuxIPLayer extends IPLayer {
         }
 
         // vytvor novy paket a zmensi TTL (kdyz je packet.src null, tak to znamena, ze je odeslan z toho sitoveho device
-        //		a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
+        //        a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
         IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
         Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: " + (ifaceIn == null ? "null" : ifaceIn.name), packet);
         processPacket(p, record, ifaceIn);

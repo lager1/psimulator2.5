@@ -17,42 +17,42 @@ import logging.LoggingCategory;
  */
 public abstract class CiscoCommand extends AbstractCommand {
 
-	protected final CiscoCommandParser parser; // hides field on purpose
-	/**
-	 * nevim, k cemu to tu je
-	 */
-	protected boolean ambiguous = false;
-	protected final boolean debug;
+    protected final CiscoCommandParser parser; // hides field on purpose
+    /**
+     * nevim, k cemu to tu je
+     */
+    protected boolean ambiguous = false;
+    protected final boolean debug;
 
-	public CiscoCommand(AbstractCommandParser parser) {
-		super(parser);
-		this.parser = (CiscoCommandParser) parser;
-		this.debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
-	}
+    public CiscoCommand(AbstractCommandParser parser) {
+        super(parser);
+        this.parser = (CiscoCommandParser) parser;
+        this.debug = Logger.isDebugOn(LoggingCategory.CISCO_COMMAND_PARSER);
+    }
 
-	protected void invalidInputDetected() {
-		parser.invalidInputDetected();
-	}
+    protected void invalidInputDetected() {
+        parser.invalidInputDetected();
+    }
 
-	protected void incompleteCommand() {
-		parser.incompleteCommand();
-	}
+    protected void incompleteCommand() {
+        parser.incompleteCommand();
+    }
 
-	protected void ambiguousCommand() {
-		parser.ambiguousCommand();
-	}
+    protected void ambiguousCommand() {
+        parser.ambiguousCommand();
+    }
 
-	protected void unsupportedCommand() {
-		printService("This command is not yet implemented.");
-	}
+    protected void unsupportedCommand() {
+        printService("This command is not yet implemented.");
+    }
 
-	protected void debug(String s) {
-		if (debug) {
-			printLine(s);
-		}
-	}
+    protected void debug(String s) {
+        if (debug) {
+            printLine(s);
+        }
+    }
 
-	 /**
+     /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
      * Metoda se take stara o vypisy typu: IncompleteCommand, AmbigiousCommand, InvalidInputDetected.
      * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
@@ -104,7 +104,7 @@ public abstract class CiscoCommand extends AbstractCommand {
         return false;
     }
 
-	/**
+    /**
      * Zjisti, zda je rezetec prazdny.
      * Kdyz ano, tak to jeste vypise hlasku incompleteCommand.
      * @param s
@@ -118,5 +118,5 @@ public abstract class CiscoCommand extends AbstractCommand {
         return false;
     }
 
-	protected abstract void fillCompleters(Map<Integer, Completer> completers);
+    protected abstract void fillCompleters(Map<Integer, Completer> completers);
 }

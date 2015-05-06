@@ -16,8 +16,8 @@ import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
  */
 public class WelcomePanel extends JPanel implements Observer{
     
-	private static final long serialVersionUID = -3848352340406922689L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = -3848352340406922689L;
+    private DataLayerFacade dataLayer;
     //
     private JPanel jPanelMainButtons;
     private JButton jButtonNewProject;

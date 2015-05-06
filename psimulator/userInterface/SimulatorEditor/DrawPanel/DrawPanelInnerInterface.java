@@ -15,27 +15,27 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public interface DrawPanelInnerInterface{
-    
+
     /**
      * returns graph
-     * @return 
+     * @return
      */
     public GraphOuterInterface getGraphOuterInterface();
     /**
      * Gets dataLayerFacade;
-     * @return 
+     * @return
      */
     public DataLayerFacade getDataLayerFacade();
     /**
      * Gets AbstractAction corresponding to DrawPanelAction
      * @param action
-     * @return 
+     * @return
      */
     public abstract AbstractAction getAbstractAction(DrawPanelAction action);
-    
+
     /**
      * Sets cursor in draw panel
-     * @param cursor 
+     * @param cursor
      */
     public abstract void setCursor(Cursor cursor);
     public void repaint();
@@ -50,16 +50,16 @@ public interface DrawPanelInnerInterface{
     /**
      * Sets transparent rectangle that is being paint
      * @param rectangleInProgress
-     * @param rectangle 
+     * @param rectangle
      */
     public void setTransparetnRectangleInProgress(boolean rectangleInProgress, Rectangle rectangle);
-    
+
     /**
      * Fits area of DrawPanel to area of Graph. Call whenever need to make DrawPanel
      * smaller according to Graph. There is minimum DrawPanel size.
      */
     public abstract void doFitToGraphSize();
-    
+
     /**
      * Sets tool in EditorPanels toolBar
      * @param mainTool
@@ -70,6 +70,6 @@ public interface DrawPanelInnerInterface{
      * size of drawPanel, than size is changed.
      * @param dimension of Graph
      */
-    
+
     public JScrollPane getJScrollPane();
 }

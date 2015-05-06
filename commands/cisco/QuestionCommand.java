@@ -19,12 +19,12 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class QuestionCommand extends CiscoCommand {
 
-	public QuestionCommand(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public QuestionCommand(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
         List<String> napoveda = new ArrayList<>();
         switch (parser.getShell().getMode()) {
                 case CommandShell.CISCO_USER_MODE:
@@ -75,8 +75,8 @@ public class QuestionCommand extends CiscoCommand {
         }
     }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		// 
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        //
+    }
 }

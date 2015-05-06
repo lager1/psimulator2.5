@@ -27,12 +27,12 @@ import psimulator.userInterface.SimulatorEditor.Tools.ToolsFactory;
 public class EditorToolBar extends JToolBar implements Observer {
 
     private DataLayerFacade dataLayer;
-    
+
     private JButton jButtonFitToSize;
     private JButton jButtonAlignToGrid;
-    
+
     private ButtonGroup toolsButtonGroup;
-    
+
     private MenuToggleButton toggleButtonDragMove;
     private MenuToggleButton toggleButtonHand;
     private MenuToggleButton toggleButtonRouters;
@@ -44,10 +44,10 @@ public class EditorToolBar extends JToolBar implements Observer {
     public EditorToolBar(DataLayerFacade dataLayer, DrawPanelToolChangeOuterInterface toolChangeInterface) {
         super();
         this.dataLayer = dataLayer;
-        
+
         // add this ToolBar as observer to languageManager
         dataLayer.addLanguageObserver((Observer)this);
-        
+
         dataLayer.addPreferencesObserver((Observer)this);
 
         // tool bar is not possible to move
@@ -62,12 +62,12 @@ public class EditorToolBar extends JToolBar implements Observer {
         // BUTTONS
         jButtonFitToSize = new JButton();
         jButtonFitToSize.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        
+
         jButtonAlignToGrid = new JButton();
         jButtonAlignToGrid.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        
+
         toolsButtonGroup = new ButtonGroup();
-        
+
         toggleButtonDragMove = new MenuToggleButton(ToolsFactory.getTools(MainTool.DRAG_MOVE, toolChangeInterface), dataLayer);
         toggleButtonHand = new MenuToggleButton(ToolsFactory.getTools(MainTool.HAND, toolChangeInterface), dataLayer);
         toggleButtonRouters = new MenuToggleButton(ToolsFactory.getTools(MainTool.ADD_ROUTER, toolChangeInterface), dataLayer);
@@ -75,7 +75,7 @@ public class EditorToolBar extends JToolBar implements Observer {
         toggleButtonEndDevices = new MenuToggleButton(ToolsFactory.getTools(MainTool.ADD_END_DEVICE, toolChangeInterface), dataLayer);
         toggleButtonRealPC = new MenuToggleButton(ToolsFactory.getTools(MainTool.ADD_REAL_PC, toolChangeInterface), dataLayer);
         toggleButtonCable = new MenuToggleButton(ToolsFactory.getTools(MainTool.ADD_CABLE, toolChangeInterface), dataLayer);
-                
+
         toolsButtonGroup.add(toggleButtonDragMove);
         toolsButtonGroup.add(toggleButtonHand);
         toolsButtonGroup.add(toggleButtonEndDevices);
@@ -83,8 +83,8 @@ public class EditorToolBar extends JToolBar implements Observer {
         toolsButtonGroup.add(toggleButtonSwitches);
         toolsButtonGroup.add(toggleButtonRealPC);
         toolsButtonGroup.add(toggleButtonCable);
- 
-        
+
+
         this.add(toggleButtonHand);
         this.add(toggleButtonDragMove);
         this.addSeparator();
@@ -97,8 +97,8 @@ public class EditorToolBar extends JToolBar implements Observer {
         this.addSeparator();
         this.add(jButtonFitToSize);
         this.add(jButtonAlignToGrid);
-        
-        
+
+
         // set texts
         setTextsToComponents();
 
@@ -113,10 +113,10 @@ public class EditorToolBar extends JToolBar implements Observer {
 
         updateIconSize(dataLayer.getToolbarIconSize());
     }
- 
+
     /**
      * reaction to update from LanguageManager
-     */ 
+     */
     @Override
     public void update(Observable o, Object o1) {
         switch ((ObserverUpdateEventType) o1) {
@@ -131,12 +131,12 @@ public class EditorToolBar extends JToolBar implements Observer {
 
     /**
      * Updates images on toolbar buttons according to size
-     * @param size 
+     * @param size
      */
     public final void updateIconSize(ToolbarIconSizeEnum size){
         jButtonFitToSize.setIcon(ImageFactorySingleton.getInstance().getImageIconForToolbar(SecondaryTool.FIT_TO_SIZE, dataLayer.getToolbarIconSize()));
         jButtonAlignToGrid.setIcon(ImageFactorySingleton.getInstance().getImageIconForToolbar(SecondaryTool.ALIGN_TO_GRID, dataLayer.getToolbarIconSize()));
-        
+
         toggleButtonDragMove.updateIconSize();
         toggleButtonHand.updateIconSize();
         toggleButtonEndDevices.updateIconSize();
@@ -145,7 +145,7 @@ public class EditorToolBar extends JToolBar implements Observer {
         toggleButtonRealPC.updateIconSize();
         toggleButtonCable.updateIconSize();
     }
-    
+
     /**
      * Enables deafult tool of this toolbar
      */
@@ -160,21 +160,21 @@ public class EditorToolBar extends JToolBar implements Observer {
                 toggleButtonDragMove.setSelected(true);
                 break;
         }
-        
-        
+
+
     }
-    
+
     /**
      * adds action listener to jButtonFitToSize
-     * @param listener 
+     * @param listener
      */
     public void addToolActionFitToSizeListener(ActionListener listener) {
         jButtonFitToSize.addActionListener(listener);
     }
-    
+
     /**
      * adds action listener to jButtonAlignToGrid
-     * @param listener 
+     * @param listener
      */
     public void addToolActionAlignToGridListener(ActionListener listener) {
         jButtonAlignToGrid.addActionListener(listener);
