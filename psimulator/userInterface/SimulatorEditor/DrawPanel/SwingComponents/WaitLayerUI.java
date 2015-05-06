@@ -43,8 +43,8 @@ import javax.swing.plaf.LayerUI;
 
 public class WaitLayerUI extends LayerUI<JPanel> implements ActionListener {
 
-	private static final long serialVersionUID = 7413963929939825464L;
-	private boolean mIsRunning;
+    private static final long serialVersionUID = 7413963929939825464L;
+    private boolean mIsRunning;
     private boolean mIsFadingOut;
     private Timer mTimer;
     private int mAngle;

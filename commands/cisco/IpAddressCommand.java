@@ -23,26 +23,26 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class IpAddressCommand extends CiscoCommand {
 
-	private final boolean no;
-	private final NetworkInterface iface;
-	boolean noBezAdresy = false;
-	private IPwithNetmask pomocna = null;
+    private final boolean no;
+    private final NetworkInterface iface;
+    boolean noBezAdresy = false;
+    private IPwithNetmask pomocna = null;
 
-	public IpAddressCommand(AbstractCommandParser parser, boolean no) {
-		super(parser);
-		this.no = no;
-		this.iface = this.parser.configuredInterface;
-	}
+    public IpAddressCommand(AbstractCommandParser parser, boolean no) {
+        super(parser);
+        this.no = no;
+        this.iface = this.parser.configuredInterface;
+    }
 
-	@Override
-	public void run() {
-		 boolean pokracovat = process();
+    @Override
+    public void run() {
+         boolean pokracovat = process();
         if (pokracovat) {
             start();
         }
-	}
+    }
 
-	/**
+    /**
      * Vim, ze mi prislo '(no) ip address'.
      * @return
      */
@@ -61,20 +61,20 @@ public class IpAddressCommand extends CiscoCommand {
             return false;
         }
 
-		IpAddress adr;
-		try {
-			adr = new IpAddress(ip);
-		} catch (Exception e) {
-			invalidInputDetected();
-			return false;
-		}
+        IpAddress adr;
+        try {
+            adr = new IpAddress(ip);
+        } catch (Exception e) {
+            invalidInputDetected();
+            return false;
+        }
 
         if (IpAddress.isForbiddenIP(adr)) {
             printLine("Not a valid host address - " + ip);
             return false;
         }
 
-		IPwithNetmask entireIp;
+        IPwithNetmask entireIp;
         try {
             entireIp = new IPwithNetmask(ip, maska);
         } catch (BadNetmaskException e) {
@@ -116,16 +116,16 @@ public class IpAddressCommand extends CiscoCommand {
             invalidInputDetected();
             return false;
         }
-		pomocna = entireIp;
+        pomocna = entireIp;
         return true;
     }
 
     private void start() {
-		IPLayer ipLayer = getNetMod().ipLayer;
+        IPLayer ipLayer = getNetMod().ipLayer;
 
         if (no) {
             if (noBezAdresy) {
-				ipLayer.changeIpAddressOnInterface(iface, null);
+                ipLayer.changeIpAddressOnInterface(iface, null);
                 return;
             }
 
@@ -138,17 +138,17 @@ public class IpAddressCommand extends CiscoCommand {
                 return;
             }
 
-			ipLayer.changeIpAddressOnInterface(iface, null);
+            ipLayer.changeIpAddressOnInterface(iface, null);
             return;
         }
 
         ipLayer.changeIpAddressOnInterface(iface, pomocna);
     }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
-		tmp.addCommand("ip address");
-		tmp.addCommand("no ip address");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
+        tmp.addCommand("ip address");
+        tmp.addCommand("no ip address");
+    }
 }

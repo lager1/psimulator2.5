@@ -36,7 +36,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
     boolean hasSecondComponent = false;
     private Point startPointInDefault;
     private CableConnectToInterfacePopupMenu popupMenu;
-    
+
     private CreateCableTool createCableTool;
 
     public DrawPanelListenerStrategyAddCable(DrawPanelInnerInterface drawPanel, UndoManager undoManager, MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
@@ -44,18 +44,18 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
 
         popupMenu = new CableConnectToInterfacePopupMenu(drawPanel, new PopupInterfaceChooseListener(), this);
     }
-    
+
     /**
      * sets cursor to default and inits cable making to start
      */
     @Override
     public void deInitialize() {
         drawPanel.setCursor(defCursor);
-        
+
         initVariablesForCableMaking();
         drawPanel.repaint();
     }
-    
+
     @Override
     public void setTool(AbstractTool tool) {
         this.createCableTool = (CreateCableTool) tool;
@@ -65,10 +65,10 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
     public void mouseMoved(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         if (hasFirstComponent) {
             drawPanel.setLineInProgras(true, startPointInDefault,e.getPoint());
-            
+
             drawPanel.repaint();
         }
 
@@ -86,16 +86,16 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
 
     /**
      * reactin to mouse click or press
-     * @param e 
+     * @param e
      */
     @Override
     public void mousePressedLeft(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         // clicked component
         HwComponentGraphic tmp;
-        
+
         tmp = getClickedAbstractHwComponent(e.getPoint());
 
         // if nothing clicked
@@ -138,7 +138,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
             if (component1 == component2) {
                 // show meesage dialog
                 doShowInformMessageDialog(dataLayer.getString("CANT_CONNECT_TO_ITSELF"), dataLayer.getString("CONNECTION_PROBLEM"));
-                
+
             } else {
                 // if second component dont have any free interface
                 if (!component2.hasFreeInterace()) {
@@ -153,14 +153,14 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
             }
         }
     }
-   
+
     @Override
     public void mousePressedRight(MouseEvent e) {
-        MouseEvent oldMouseEvent = e; 
-        
+        MouseEvent oldMouseEvent = e;
+
         // convert
         e = convertMouseEvent(e);
-        
+
         HwComponentGraphic tmp = getClickedAbstractHwComponent(e.getPoint());
         // if something clicked, or has first component
         if(tmp!= null || hasFirstComponent){
@@ -169,12 +169,12 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
         }else{ // if nothing clicked
             drawPanel.doSetTollInEditorToolBar(MainTool.HAND);
         }
-        
+
     }
-    
+
     /**
      * sets chosen interface to component accornig to actual cable making progres.
-     * @param ethInterface 
+     * @param ethInterface
      */
     @Override
     public void setChosenInterface(EthInterfaceModel ethInterface) {
@@ -196,16 +196,16 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
 
     }
 
-    
+
     /**
      * Shows inform message dialog with message and title
      * @param message
-     * @param title 
+     * @param title
      */
     private void doShowInformMessageDialog(String message, String title){
         JOptionPane.showMessageDialog(mainWindow.getRootPane(), message, title, JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     /**
      * Chooses interface. If right mouse button clicked, than user sets which interface to use, if left
      * button clicked, than it uses first avaiable interface
@@ -222,29 +222,29 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
             setChosenInterface(component.getFirstFreeInterface());
         }
     }
-    
-    
+
+
     /**
      * connects components c1 and c2 on EthInterfaces eth1 and eth2 in Graph
      * @param c1
      * @param c2
      * @param eth1
-     * @param eth2 
+     * @param eth2
      */
     private void connectComponents(HwComponentGraphic c1, HwComponentGraphic c2, EthInterfaceModel eth1, EthInterfaceModel eth2) {
         // create cable model
-        CableModel cableModel = dataLayer.getNetworkFacade().createCableModel(createCableTool.getHwType(), 
+        CableModel cableModel = dataLayer.getNetworkFacade().createCableModel(createCableTool.getHwType(),
                 c1.getHwComponentModel(), c2.getHwComponentModel(), eth1, eth2);
-        
+
         // create new cabel
         CableGraphic cable = new CableGraphic(dataLayer, cableModel, c1, c2);
-        
+
         // initialize cable
         cable.initialize();
-        
+
         // add cabel to graph
         drawPanel.getGraphOuterInterface().addCable(cable);
-        
+
         // add to undo manager
         undoManager.undoableEditHappened(new UndoableEditEvent(this,
                 new UndoableAddCable(cable, drawPanel.getGraphOuterInterface())));
@@ -253,7 +253,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
 
         // repaint draw panel
         drawPanel.repaint();
-        
+
         // update undo redo buttons
         mainWindow.updateUndoRedoButtons();
     }

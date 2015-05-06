@@ -111,9 +111,9 @@ public class SimulatorManager extends Observable implements SimulatorManagerInte
      */
     @Override
     public void connectingFailed() {
-    	// debug
-    	System.out.println("connection failed");
-    	
+        // debug
+        System.out.println("connection failed");
+        
         isConnectedToServer = false;
         SwingUtilities.invokeLater(new Runnable() {
 

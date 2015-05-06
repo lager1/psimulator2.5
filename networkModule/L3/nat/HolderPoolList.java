@@ -20,10 +20,10 @@ import networkModule.L3.nat.NatTable.Record;
  */
 public class HolderPoolList {
 
-	/**
-	 * Key - name of pool <br />
-	 * Value - pool itself
-	 */
+    /**
+     * Key - name of pool <br />
+     * Value - pool itself
+     */
     private final Map<String, Pool> pools = new HashMap<>();
 
     private final NatTable natTable;
@@ -33,11 +33,11 @@ public class HolderPoolList {
         this.natTable = tab;
     }
 
-	public List<Pool> getSortedPools() {
-		List<Pool> list = new ArrayList<>(pools.values());
-		Collections.sort(list);
-		return list;
-	}
+    public List<Pool> getSortedPools() {
+        List<Pool> list = new ArrayList<>(pools.values());
+        Collections.sort(list);
+        return list;
+    }
 
     /**
      * Prida poolName.
@@ -60,11 +60,11 @@ public class HolderPoolList {
             return 3;
         }
 
-		IPwithNetmask start = new IPwithNetmask(par, prefix);
+        IPwithNetmask start = new IPwithNetmask(par, prefix);
 
-		if (!start.isInMyNetwork(konec)) {
-			return 4;
-		}
+        if (!start.isInMyNetwork(konec)) {
+            return 4;
+        }
 
         // smaznout stejne se jmenujici poolName + kontrola jestli vubec ho muzem prespat
         if (deletePool(jmeno) == 2) {
@@ -78,7 +78,7 @@ public class HolderPoolList {
         IPwithNetmask ukazatel = start;
         do {
             pool.pool.add(ukazatel.getIp());
-			ukazatel = new IPwithNetmask(IpAddress.nextAddress(ukazatel.getIp()), prefix);
+            ukazatel = new IPwithNetmask(IpAddress.nextAddress(ukazatel.getIp()), prefix);
 
         } while (ukazatel.getIp().getLongRepresentation() <= konec.getLongRepresentation() && start.isInMyNetwork(ukazatel.getIp()));
 
@@ -103,10 +103,10 @@ public class HolderPoolList {
             return 2;
         }
 
-		Object value = pools.remove(name);
-		if (value == null) {
-			return 1;
-		}
+        Object value = pools.remove(name);
+        if (value == null) {
+            return 1;
+        }
 
         return 0;
     }
@@ -143,10 +143,10 @@ public class HolderPoolList {
         List<Pool> poolsWithIP = new ArrayList<>();
         for (Pool pool : pools.values()) {
             if (pool.getFirst() == null) continue;
-			IPwithNetmask poolRange = new IPwithNetmask(pool.getFirst(), pool.prefix);
-			if (poolRange.isInMyNetwork(address)) {
-				poolsWithIP.add(pool);
-			}
+            IPwithNetmask poolRange = new IPwithNetmask(pool.getFirst(), pool.prefix);
+            if (poolRange.isInMyNetwork(address)) {
+                poolsWithIP.add(pool);
+            }
         }
         if (poolsWithIP.isEmpty()) return null;
         return poolsWithIP;
@@ -166,13 +166,13 @@ public class HolderPoolList {
         return null;
     }
 
-	/**
-	 * Vrati prirazeny poolAccess nebo null, kdyz nic nenajde.
-	 * @param acc
-	 * @return
-	 */
+    /**
+     * Vrati prirazeny poolAccess nebo null, kdyz nic nenajde.
+     * @param acc
+     * @return
+     */
     public PoolAccess getPoolAccess(AccessList acc) {
-		return natTable.lPoolAccess.getPoolAccess().get(acc.number);
+        return natTable.lPoolAccess.getPoolAccess().get(acc.number);
 //
 //        for (PoolAccess pa : natTable.lPoolAccess.getPoolAccess().values()) {
 //            if (acc.number == pa.access) {
@@ -189,10 +189,10 @@ public class HolderPoolList {
      *         null - kdyz neni PoolAccess s timto cislem a nebo neni Pool s nazvem u nalezeneho PoolAccessu.
      */
     public Pool getPool(AccessList access) {
-		PoolAccess pac = natTable.lPoolAccess.getPoolAccess().get(access.number);
-		if (pac == null) return null;
+        PoolAccess pac = natTable.lPoolAccess.getPoolAccess().get(access.number);
+        if (pac == null) return null;
 
-		return pools.get(pac.poolName);
+        return pools.get(pac.poolName);
 //        for (PoolAccess pa : natTable.lPoolAccess.getPoolAccess().values()) {
 //            if (pa.access == access.number) {
 //                for (Pool pool : pools) {
@@ -212,17 +212,17 @@ public class HolderPoolList {
      * @return
      */
     private boolean isPoolInUse(String jmeno) {
-		for (Record zaznam : natTable.table) {
-			List<Pool> pseznam = getPoolForIP(zaznam.out.address);
-			if (pseznam == null) {
-				continue;
-			}
-			for (Pool pool : pseznam) {
-				if (pool.name.equals(jmeno)) {
-					return true;
-				}
-			}
-		}
+        for (Record zaznam : natTable.table) {
+            List<Pool> pseznam = getPoolForIP(zaznam.out.address);
+            if (pseznam == null) {
+                continue;
+            }
+            for (Pool pool : pseznam) {
+                if (pool.name.equals(jmeno)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }

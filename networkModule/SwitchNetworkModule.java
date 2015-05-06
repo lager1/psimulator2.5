@@ -20,40 +20,40 @@ import networkModule.L2.EthernetLayer;
  */
 public class SwitchNetworkModule extends NetworkModule  implements Loggable{
 
-	public final EthernetLayer ethernetLayer;
+    public final EthernetLayer ethernetLayer;
 
-	/**
-	 * Konstruktor sitovyho modulu predpoklada uz hotovej fysickej modul, protoze zkouma jeho nastaveni.
-	 * @param device
-	 */
+    /**
+     * Konstruktor sitovyho modulu predpoklada uz hotovej fysickej modul, protoze zkouma jeho nastaveni.
+     * @param device
+     */
     public SwitchNetworkModule(Device device) {
-		super(device);
-		ethernetLayer = new EthernetLayer(this);
-	}
+        super(device);
+        ethernetLayer = new EthernetLayer(this);
+    }
 
-	/**
-	 * Prijimani od fysickyho modulu.
-	 * @param packet
-	 * @param switchportNumber
-	 */
-	@Override
-	public void receivePacket(L2Packet packet, int switchportNumber) {
-		if (packet.getClass() != EthernetPacket.class) {	//kontrola spravnosti paketu
-			Logger.log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
-					"Dropping packet: It is not Ethernet packet, it is " + packet.getClass().getName());
-			Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getDevice().configID));
-		} else {
-			ethernetLayer.receivePacket((EthernetPacket)packet, switchportNumber);
-		}
-	}
+    /**
+     * Prijimani od fysickyho modulu.
+     * @param packet
+     * @param switchportNumber
+     */
+    @Override
+    public void receivePacket(L2Packet packet, int switchportNumber) {
+        if (packet.getClass() != EthernetPacket.class) {    //kontrola spravnosti paketu
+            Logger.log(getDescription(), Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
+                    "Dropping packet: It is not Ethernet packet, it is " + packet.getClass().getName());
+            Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getDevice().configID));
+        } else {
+            ethernetLayer.receivePacket((EthernetPacket)packet, switchportNumber);
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		return device.getName()+": "+getClass().getName();
-	}
+    @Override
+    public String getDescription() {
+        return device.getName()+": "+getClass().getName();
+    }
 
-	@Override
-	public boolean isSwitch() {
-		return true;
-	}
+    @Override
+    public boolean isSwitch() {
+        return true;
+    }
 }

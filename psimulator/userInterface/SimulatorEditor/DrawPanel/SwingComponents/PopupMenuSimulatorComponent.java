@@ -16,8 +16,8 @@ import shared.telnetConfig.TelnetConfig;
  */
 public class PopupMenuSimulatorComponent extends JPopupMenu {
 
-	private static final long serialVersionUID = 6070881405230319194L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = 6070881405230319194L;
+    private DataLayerFacade dataLayer;
     private DrawPanelInnerInterface drawPanel;
     private MainWindowInnerInterface mainWindow;
     //

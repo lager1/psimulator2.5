@@ -102,7 +102,7 @@ public class Service extends LinuxCommand {
 
     private void printHelp() {
         printLine("Usage: service < option > | --status-all | [ service_name [ command | --full-restart ] ]");
-        printService("There are these services in " + Psimulator.getNameOfProgram() + 
+        printService("There are these services in " + Psimulator.getNameOfProgram() +
                 ": dhcp-server, dns-server, networking");
     }
 }

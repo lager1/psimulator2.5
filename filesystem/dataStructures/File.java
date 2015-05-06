@@ -10,11 +10,11 @@ import javax.print.attribute.standard.MediaSize;
  */
 public class File extends Node{
 
-	@Override
-	public String toString() {
-		return "file: "+super.getName();
-	}
-	
-	
+    @Override
+    public String toString() {
+        return "file: "+super.getName();
+    }
+
+
 
 }

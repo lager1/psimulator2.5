@@ -9,8 +9,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class JTableEventListTimeCellRenderer extends DefaultTableCellRenderer{
 
-	private static final long serialVersionUID = 4311757627914655196L;
-	private DecimalFormat fmt = new DecimalFormat("0.000");  
+    private static final long serialVersionUID = 4311757627914655196L;
+    private DecimalFormat fmt = new DecimalFormat("0.000");  
     
     public JTableEventListTimeCellRenderer(){
         super();

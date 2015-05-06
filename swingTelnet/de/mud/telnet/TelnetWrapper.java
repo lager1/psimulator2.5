@@ -100,7 +100,7 @@ public class TelnetWrapper extends Wrapper {
   public TelnetProtocolHandler getHandler() {
     return handler;
   }
-  
+
   public void connect(String host, int port) throws IOException {
     super.connect(host, port);
     handler.reset();

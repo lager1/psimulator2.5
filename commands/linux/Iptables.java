@@ -76,7 +76,7 @@ public class Iptables extends LinuxCommand {
      * 2 - insert<br />
      * 3 - delete<br />
      * 4 - list (vypsani)<br />
-	 * 5 - flush<br />
+     * 5 - flush<br />
      */
     int provest = 0;
     int cisloPravidla = -1; //cislo pravidla pro smazani nebo pridani
@@ -88,22 +88,22 @@ public class Iptables extends LinuxCommand {
     IpAddress prekladanaAdr;//ip adresa, na kterou se ma prekladat
     NetworkInterface vystupni;
 
-	private final NatTable natTable;	// zkratka
+    private final NatTable natTable;    // zkratka
 
 
 
-	public Iptables(AbstractCommandParser parser) {
-		super(parser);
-		natTable = ipLayer.getNatTable();
-	}
+    public Iptables(AbstractCommandParser parser) {
+        super(parser);
+        natTable = ipLayer.getNatTable();
+    }
 
-	@Override
-	public void run() {
-		parsujPrikaz();
+    @Override
+    public void run() {
+        parsujPrikaz();
         zkontrolujPrikaz();
         vypisChybovyHlaseni();
         vykonejPrikaz();
-	}
+    }
 
 
 
@@ -131,10 +131,10 @@ public class Iptables extends LinuxCommand {
      */
     private void zpracujBeznyPrepinace() {
       if (slovo.equals("-h") || slovo.equals("--help")) {
-			minus_h = true;
-		} else if (slovo.equals("-t")) {
-			zpracujMinus_t();
-		} else if (slovo.equals("-o")) {
+            minus_h = true;
+        } else if (slovo.equals("-t")) {
+            zpracujMinus_t();
+        } else if (slovo.equals("-o")) {
             zpracujMinus_o();
         } else if (slovo.equals("-i")) {
             zpracujMinus_i();
@@ -272,19 +272,19 @@ public class Iptables extends LinuxCommand {
             navrKod |= 256;
         } else {
             provest = 1;
-			zadanRetez = true;
-			if (slovo.equals("-A")) {
-				provest = 1;
-			} else if (slovo.equals("-I")) {
-				provest = 2;
-			} else if (slovo.equals("-D")) {
-				provest = 3;
-			} else if (slovo.equals("-F")) {
-				provest = 5;
-			}
+            zadanRetez = true;
+            if (slovo.equals("-A")) {
+                provest = 1;
+            } else if (slovo.equals("-I")) {
+                provest = 2;
+            } else if (slovo.equals("-D")) {
+                provest = 3;
+            } else if (slovo.equals("-F")) {
+                provest = 5;
+            }
             retez = dalsiSlovo();
             if (provest == 2) {//insert
-				cisloPr = parser.nextWordPeek();
+                cisloPr = parser.nextWordPeek();
                 try {
                     cisloPravidla = Integer.parseInt(cisloPr);
                     dalsiSlovo(); //zvetsovani citace, kdyz se to povedlo
@@ -304,7 +304,7 @@ public class Iptables extends LinuxCommand {
                 navrKod |= 512;
             }
             if( !retez.equals("PREROUTING") && !retez.equals("POSTROUTING") && !(retez.equals("")&&provest==5) ){
-					// -> kdyz retez neni PREROUTING, ani POSTROUTING, ani prazdnej pri flush
+                    // -> kdyz retez neni PREROUTING, ani POSTROUTING, ani prazdnej pri flush
                 navrKod|=32768;
             }
 
@@ -358,7 +358,7 @@ public class Iptables extends LinuxCommand {
                     navrKod |= 4096;
                 }
                 if(zadanoMinus_o){
-					vystupni = ipLayer.getNetworkInteface(vystupniRozhr);
+                    vystupni = ipLayer.getNetworkInteface(vystupniRozhr);
                     if(vystupni==null){
                         navrKod |= 8192;
                     }
@@ -518,24 +518,24 @@ public class Iptables extends LinuxCommand {
         }
 
         if (provest == 4) {
-			vypis();
-		} else if (provest == 1 || provest == 2) { //-A nebo -I
-			if (!natTable.isSetLinuxMasquarade()) {
-				natTable.setLinuxMasquarade(vystupni);
-			} else {
-				parser.printService("Simulator neumoznuje pridat vic nez jedno pravidlo do tabulky. "
-						+ "Nejprve smazte existujici pravidlo.");
-			}
-		} else if (provest == 3) { //mazani
-			if (natTable.isSetLinuxMasquarade()) {
-				natTable.cancelLinuxMasquerade();
-			} else {
-				printLine("iptables: Index of deletion too big");
-			}
+            vypis();
+        } else if (provest == 1 || provest == 2) { //-A nebo -I
+            if (!natTable.isSetLinuxMasquarade()) {
+                natTable.setLinuxMasquarade(vystupni);
+            } else {
+                parser.printService("Simulator neumoznuje pridat vic nez jedno pravidlo do tabulky. "
+                        + "Nejprve smazte existujici pravidlo.");
+            }
+        } else if (provest == 3) { //mazani
+            if (natTable.isSetLinuxMasquarade()) {
+                natTable.cancelLinuxMasquerade();
+            } else {
+                printLine("iptables: Index of deletion too big");
+            }
 
-		} else if(provest==5){
-			natTable.cancelLinuxMasquerade();
-		}
+        } else if(provest==5){
+            natTable.cancelLinuxMasquerade();
+        }
     }
 
 

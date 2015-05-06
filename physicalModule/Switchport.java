@@ -15,53 +15,53 @@ import dataStructures.packets.L2Packet;
  */
 public abstract class Switchport {
 
-	protected AbstractPhysicalModule physicalModule;
+    protected AbstractPhysicalModule physicalModule;
 
-	/**
-	 * Unique number in PhysicMod.
-	 */
-	public final int number;
+    /**
+     * Unique number in PhysicMod.
+     */
+    public final int number;
 
-	/**
-	 * ID takove, jake je v konfiguracnim souboru.
-	 */
-	public final int configID;
+    /**
+     * ID takove, jake je v konfiguracnim souboru.
+     */
+    public final int configID;
 
-	/**
-	 * ID pocitace.
-	 */
-	protected final int deviceID;
-
-
-	public Switchport(AbstractPhysicalModule physicMod, int number, int configID) {
-		this.physicalModule = physicMod;
-		this.number = number;
-		this.configID = configID;
-		this.deviceID = physicMod.device.configID;
-	}
+    /**
+     * ID pocitace.
+     */
+    protected final int deviceID;
 
 
-	/**
-	 * Try to send packet through this interface.
-	 * It just adds packet to buffer (if capacity allows) and notifies connected cable that it has work to do.
-	 */
-	protected abstract void sendPacket(L2Packet packet);
+    public Switchport(AbstractPhysicalModule physicMod, int number, int configID) {
+        this.physicalModule = physicMod;
+        this.number = number;
+        this.configID = configID;
+        this.deviceID = physicMod.device.configID;
+    }
 
-	/**
-	 * Receives packet from cable and pass it to physical module.
-	 */
-	protected abstract void receivePacket(L2Packet packet);
 
-	/**
-	 * Returns true, if on the other end of cable is connected other network device.
-	 * @return
-	 */
-	public abstract boolean isConnected();
+    /**
+     * Try to send packet through this interface.
+     * It just adds packet to buffer (if capacity allows) and notifies connected cable that it has work to do.
+     */
+    protected abstract void sendPacket(L2Packet packet);
 
-	public abstract boolean isReal();
+    /**
+     * Receives packet from cable and pass it to physical module.
+     */
+    protected abstract void receivePacket(L2Packet packet);
 
-	@Override
-	public String toString() {
-		return "Switchport number=" + number + ", configID=" + configID;
-	}
+    /**
+     * Returns true, if on the other end of cable is connected other network device.
+     * @return
+     */
+    public abstract boolean isConnected();
+
+    public abstract boolean isReal();
+
+    @Override
+    public String toString() {
+        return "Switchport number=" + number + ", configID=" + configID;
+    }
 }

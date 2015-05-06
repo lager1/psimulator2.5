@@ -10,17 +10,17 @@ package networkModule.L2;
  */
 public class SwitchportSettings {
 
-	protected final int switchportNumber;
-	protected boolean isUp;
-	protected EthernetInterface assignedInterface;
+    protected final int switchportNumber;
+    protected boolean isUp;
+    protected EthernetInterface assignedInterface;
 
-	public SwitchportSettings(int switchportNumber) {
-		this.switchportNumber = switchportNumber;
-		isUp=true;
-	}
+    public SwitchportSettings(int switchportNumber) {
+        this.switchportNumber = switchportNumber;
+        isUp=true;
+    }
 
-	@Override
-	public String toString() {
-		return "SwitchportSettings: iface="+assignedInterface.name+", isUp="+isUp+", nr="+switchportNumber;
-	}
+    @Override
+    public String toString() {
+        return "SwitchportSettings: iface="+assignedInterface.name+", isUp="+isUp+", nr="+switchportNumber;
+    }
 }

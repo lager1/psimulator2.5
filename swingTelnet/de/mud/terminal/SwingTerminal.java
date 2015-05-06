@@ -86,7 +86,7 @@ public class SwingTerminal extends Component
   private JScrollBar scrollBar;
   private SoftFont sf = new SoftFont();
 
-  private boolean colorPrinting = false;	/* print display in color */
+  private boolean colorPrinting = false;    /* print display in color */
 
   private Image backingStore = null;
 
@@ -166,7 +166,7 @@ public class SwingTerminal extends Component
   public SwingTerminal(VDUBuffer buffer, Font font) {
     setVDUBuffer(buffer);
     addKeyListener(this);
-    
+
     /* we have to make sure the tab key stays within the component */
     String version = System.getProperty("java.version");
     String versionStart = version.substring(0,3);
@@ -303,7 +303,7 @@ public class SwingTerminal extends Component
         buffer.setWindowBase(evt.getValue());
       }
     });
-    
+
     this.addMouseWheelListener(this);
   }
 
@@ -1066,21 +1066,21 @@ public class SwingTerminal extends Component
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        
+
         e.consume();
-        
+
         int scrollBarValue = this.scrollBar.getValue();
         int scrollBarMax = this.scrollBar.getMaximum();
         int scrollBarMin = this.scrollBar.getMinimum();
-        
+
         int newValue=scrollBarValue+e.getWheelRotation()*5;
-        
+
         if(newValue < scrollBarMin)
             newValue=scrollBarMin;
         else if(newValue > scrollBarMax)
             newValue=scrollBarMax;
-        
+
         this.scrollBar.setValue(newValue);
-        
+
     }
 }

@@ -11,6 +11,6 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
  */
 public interface EventDescriptive {
 
-	public String getEventDesc();
-	public PacketType getPacketEventType();
+    public String getEventDesc();
+    public PacketType getPacketEventType();
 }

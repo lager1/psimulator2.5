@@ -15,29 +15,29 @@ import networkModule.L3.NetworkInterface;
  */
 public abstract class AbstractLeaseFile extends AbstractLinuxFile {
 
-	protected final SimpleDateFormat df = new SimpleDateFormat("W yyyy/MM/dd HH:mm:ss");
+    protected final SimpleDateFormat df = new SimpleDateFormat("W yyyy/MM/dd HH:mm:ss");
 
-	public AbstractLeaseFile(FileSystem fs) {
+    public AbstractLeaseFile(FileSystem fs) {
             super(fs);
-	}
+    }
 
-	public abstract void appendLease(final DhcpPacket packet, final NetworkInterface iface);
+    public abstract void appendLease(final DhcpPacket packet, final NetworkInterface iface);
 
-	protected String getDateString(String[] words) {
-		StringBuilder sb = new StringBuilder();
-		if (words.length < 2) { 
-			return null;
-		}
-		
-		for (int i = 1; i < words.length; i++) {
-			sb.append(words[i]);
-			sb.append(" ");
-		}
+    protected String getDateString(String[] words) {
+        StringBuilder sb = new StringBuilder();
+        if (words.length < 2) { 
+            return null;
+        }
+        
+        for (int i = 1; i < words.length; i++) {
+            sb.append(words[i]);
+            sb.append(" ");
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	protected boolean isExpired(Date d) {
-		return new Date().after(d);
-	}
+    protected boolean isExpired(Date d) {
+        return new Date().after(d);
+    }
 }

@@ -14,12 +14,12 @@ import utils.Util;
  */
 public class Exit extends AbstractCommand{
 
-	public Exit(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public Exit(AbstractCommandParser parser) {
+        super(parser);
+    }
 
 
-	@Override
+    @Override
     public void run() {
         printLine("logout");
         if(parser.getWords().size()==2 ){

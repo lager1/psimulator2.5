@@ -101,8 +101,8 @@ public class MudConnector
    */
   class ProgressBar extends JComponent {
 
-	private static final long serialVersionUID = -1618618470981440416L;
-	int max, current;
+    private static final long serialVersionUID = -1618618470981440416L;
+    int max, current;
     String text;
     Dimension size = new Dimension(250, 20);
     Image backingStore;
@@ -132,12 +132,12 @@ public class MudConnector
       g.fill3DRect(0, 0, width, getSize().height, true);
       g.setColor(getForeground());
       g.setXORMode(getBackground());
-      String percent = "" + (current * 100 / (max > 0?max:1)) 
+      String percent = "" + (current * 100 / (max > 0?max:1))
                      + "% / " + current + " of "+max;
       g.drawString(percent,
                    getSize().width / 2 -
                    getFontMetrics(getFont()).stringWidth(percent) / 2,
-		   getSize().height / 2);
+           getSize().height / 2);
       g.drawString(text,
                    getSize().width / 2 -
                    getFontMetrics(getFont()).stringWidth(text) / 2,
@@ -209,9 +209,9 @@ public class MudConnector
     });
     mudListPanel = new JPanel(layouter = new CardLayout()) {
 
-		private static final long serialVersionUID = -4416930482209943639L;
+        private static final long serialVersionUID = -4416930482209943639L;
 
-	public void update(java.awt.Graphics g) {
+    public void update(java.awt.Graphics g) {
         paint(g);
       }
     };
@@ -242,7 +242,7 @@ public class MudConnector
     mudListSelector.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
         JList list = (JList) evt.getSource();
-	list.ensureIndexIsVisible(list.getSelectedIndex());
+    list.ensureIndexIsVisible(list.getSelectedIndex());
         String item = (String) list.getSelectedValue();
         mudName.setText(item);
         Object mud[] = (Object[]) mudList.get(item);
@@ -314,7 +314,7 @@ public class MudConnector
           progress.adjust(++counter, name);
           mudListPanel.repaint();
 
-	  String key = (""+name.charAt(0)).toUpperCase();
+      String key = (""+name.charAt(0)).toUpperCase();
           JMenu subMenu = (JMenu) menuList.get(key);
           if (subMenu == null) {
             subMenu = new JMenu(key);

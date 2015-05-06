@@ -6,8 +6,8 @@ package psimulator.logicLayer.Simulator;
  */
 public class ClientConnectionFailException extends Exception{
     
-	private static final long serialVersionUID = 8756008523348521664L;
-	private ConnectionFailtureReason connectionFailtureReason;
+    private static final long serialVersionUID = 8756008523348521664L;
+    private ConnectionFailtureReason connectionFailtureReason;
 
     public ClientConnectionFailException(ConnectionFailtureReason connectionFailtureReason) {
         this.connectionFailtureReason = connectionFailtureReason;

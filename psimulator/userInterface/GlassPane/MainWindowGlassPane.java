@@ -16,9 +16,9 @@ import org.jdesktop.core.animation.timing.TimingTarget;
  */
 public class MainWindowGlassPane extends JPanel implements TimingTarget{
     
-	private static final long serialVersionUID = 6345917636758466012L;
+    private static final long serialVersionUID = 6345917636758466012L;
 
-	private GridBagConstraints c = new GridBagConstraints();
+    private GridBagConstraints c = new GridBagConstraints();
     //
 
     private Animator f_animator;

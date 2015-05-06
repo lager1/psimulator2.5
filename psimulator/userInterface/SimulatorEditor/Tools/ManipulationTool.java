@@ -30,6 +30,6 @@ public class ManipulationTool extends AbstractTool{
         }
         return "";
     }
-    
-    
+
+
 }

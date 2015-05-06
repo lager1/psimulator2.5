@@ -10,14 +10,14 @@ public class GeneticAutomaticLayout {
 
     private int populationSize;
     private int generationCount;
-    
+
     private GeneticGraph elitisticGraph;
     private Random random = new Random();
     private double lastFitnessRemembered = Integer.MIN_VALUE;
     private int lastFitnessRememberedGeneration = 0;
-    
+
     private boolean countingFinished = false;
-    
+
     private Generation oldGeneration;
 
     public GeneticAutomaticLayout() {
@@ -41,15 +41,15 @@ public class GeneticAutomaticLayout {
         //System.out.println("Best fitness = "+generation.getBestFitness()+", graph:");
         //System.out.println(generation.getBestFitnessGraph());
     }
-    
+
     /**
      * Runs numberOGenerations iterations of genetic algorithm
      * @param numerOfGenerations how many generations compute in this part
      */
     public void runGenericPart(int numerOfGenerations) {
- 
+
         int counter = 0;
-        
+
         while (!termConditionSatisfied(oldGeneration ) && counter < numerOfGenerations) {
             generationCount++;
             counter ++;
@@ -73,26 +73,26 @@ public class GeneticAutomaticLayout {
 
             oldGeneration = newGeneration;
         }
-        
+
     }
-    
+
     public void printResult(){
-  
+
         //visualize(getBestGraph());
-        
+
         //System.out.println("best genetic graph from generation: " + lastFitnessRememberedGeneration + ", fitness = " + lastFitnessRemembered
         //        + "fitness int:" + (int) lastFitnessRemembered);
     }
-    
-    
+
+
     public GeneticGraph getBestGraph(){
         return oldGeneration.getBestFitnessGraph();
     }
-    
+
     public int getActualGeneration(){
         return generationCount;
     }
-    
+
     public double getActualFitness(){
         return lastFitnessRemembered;
     }
@@ -101,11 +101,11 @@ public class GeneticAutomaticLayout {
         return countingFinished;
     }
 
- 
+
     /**
      * Inits initial Generation will be cloned from initialGeneticGraph populationSize times and nodes in
      * the clones will be placed randomly
-     * @param initialGeneticGraph 
+     * @param initialGeneticGraph
      * @return Generation of populationSize size
      */
     private Generation initPopulation(GeneticGraph initialGeneticGraph) {
@@ -129,11 +129,11 @@ public class GeneticAutomaticLayout {
 
         return generation;
     }
-    
+
     /**
      * roulette wheel selection
      * @param oldGeneration
-     * @return 
+     * @return
      */
     private Generation doSelection(Generation oldGeneration) {
 
@@ -165,7 +165,7 @@ public class GeneticAutomaticLayout {
         }
         return newGeneration;
     }
-    
+
     /**
      * crossovers by pairs - two parents creates two offsprings and offsprings replace parents
      * @param oldGeneration
@@ -186,7 +186,7 @@ public class GeneticAutomaticLayout {
     }
     /**
      * Goes through Graphs in generation and mutates with probability of 10%
-     * @param newGeneration 
+     * @param newGeneration
      */
     private void doMutate(Generation newGeneration) {
 
@@ -197,11 +197,11 @@ public class GeneticAutomaticLayout {
             }
         }
     }
-    
+
     /**
      * Chooses randomly one mutation type and executes it
-     * @param gg 
-     */ 
+     * @param gg
+     */
     private void randomMutateExecute(GeneticGraph gg) {
         int number = random.nextInt(5);
         if (number == 0) {
@@ -214,7 +214,7 @@ public class GeneticAutomaticLayout {
             gg.singleEdgeMutate2();
         }
     }
-    
+
     /**
      * Checks if term condition satisfied
      * @param generation

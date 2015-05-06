@@ -21,8 +21,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.RegexF
  */
 public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
 
-	private static final long serialVersionUID = 1416419385189524575L;
-	private Font font;
+    private static final long serialVersionUID = 1416419385189524575L;
+    private Font font;
     /*
      * window componenets
      */
@@ -42,7 +42,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
     private JRadioButton jRadioButtonAutoLOD;
     //
     private JCheckBox jCheckBoxNetworkBounds;
-    
+
     //
     private JRadioButton envelopePacketIconButton;
     private JRadioButton classicPacketIconButton;
@@ -85,7 +85,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
 
         // set icon to dialog
         this.setIconImage(ImageFactorySingleton.getInstance().getImageIcon("/resources/toolbarIcons/32/configure.png").getImage());
-        
+
         // set title
         this.setTitle(dataLayer.getString("PREFERENCES"));
 
@@ -94,7 +94,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
 
         // initialize
         initialize();
-        
+
         // update swing components
         setElementsAccordingToLocal();
 
@@ -134,7 +134,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         viewMacAddresses = jCheckBoxMacAddresses.isSelected();
         viewNetworkBounds = jCheckBoxNetworkBounds.isSelected();
         //
-        
+
         connectionIpAddress = jTextFieldPsimulatorIpAddress.getText();
         connectionPort = jTextFieldPsimulatorPort.getText();
     }
@@ -157,8 +157,8 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         //
         dataLayer.setConnectionIpAddress(connectionIpAddress);
         dataLayer.setConnectionPort(connectionPort);
-        
-        // save preferences 
+
+        // save preferences
         dataLayer.savePreferences();
     }
 
@@ -199,7 +199,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         if (viewMacAddresses != dataLayer.isViewDetails(ViewDetailsType.MAC_ADDRESS)) {
             return true;
         }
-        
+
         if (viewNetworkBounds != dataLayer.isViewDetails(ViewDetailsType.NETWORK_BOUNDS)) {
             return true;
         }
@@ -207,19 +207,19 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         if (levelOfDetails != dataLayer.getLevelOfDetails()) {
             return true;
         }
-        
+
         if(!connectionIpAddress.equals(dataLayer.getConnectionIpAddress())){
             return true;
         }
-        
+
         if(!connectionPort.equals(dataLayer.getConnectionPort())){
             return true;
         }
 
         return false;
     }
-    
-    
+
+
     @Override
     protected void windowClosing() {
         jButtonCancel.requestFocusInWindow();
@@ -250,7 +250,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         tabbedPane.addTab(dataLayer.getString("SIMULATOR"), new ImageIcon(getClass().getResource("/resources/toolbarIcons/32/exec.png")), createCardSimulator());
 
         tabbedPane.addTab(dataLayer.getString("EDITOR"), new ImageIcon(getClass().getResource("/resources/toolbarIcons/32/editor.png")), createCardEditor());
-        
+
         mainPanel.add(tabbedPane);
 
         return mainPanel;
@@ -453,12 +453,12 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         pane.add(createPacketIconPanel());
 
         pane.add(Box.createRigidArea(new Dimension(0, 6)));
-        
+
         // add Connection properties panel
         pane.add(createConnectionPropertiesPanel());
 
         pane.add(Box.createRigidArea(new Dimension(0, 130)));
-        
+
         return pane;
     }
 
@@ -470,8 +470,8 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
 
         JLabel iconSizeLabel = new JLabel(dataLayer.getString("PACKET_IMAGE_TYPE"));
         iconSizeLabel.setFont(font);
-        
-        
+
+
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -481,7 +481,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         envelopePacketIconButton = new JRadioButton(dataLayer.getString("ENVELOPE"));
         envelopePacketIconButton.setActionCommand(PacketImageType.ENVELOPE.toString());
         envelopePacketIconButton.addActionListener(packetImageTypeListener);
-        
+
         classicPacketIconButton = new JRadioButton(dataLayer.getString("PACKAGE"));
         classicPacketIconButton.setActionCommand(PacketImageType.CLASSIC.toString());
         classicPacketIconButton.addActionListener(packetImageTypeListener);
@@ -509,7 +509,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         packetImageTypePanel.add(iconSizeLabel);
         packetImageTypePanel.add(Box.createRigidArea(new Dimension(5, 0)));
         packetImageTypePanel.add(panel);
-        
+
         return packetImageTypePanel;
     }
 
@@ -539,25 +539,25 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
 
         JLabel ipAddressTip = new JLabel("10.0.0.1 (IP)");
         addressesPanel.add(ipAddressTip);
-        
+
         // PORT
         JLabel portName = new JLabel(dataLayer.getString("PORT"));
         portName.setFont(font);
         addressesPanel.add(portName);
-        
+
         portFormatter = new RegexFormatter(Validator.PORT_PATTERN);
         portFormatter.setAllowsInvalid(true);         // allow to enter invalid value for short time
         portFormatter.setCommitsOnValidEdit(true);    // value is immedeatly published to textField
         portFormatter.setOverwriteMode(false);        // do notoverwrite charracters
-        
+
         jTextFieldPsimulatorPort = new JFormattedTextField(portFormatter);
         jTextFieldPsimulatorPort.setToolTipText(dataLayer.getString("REQUIRED_FORMAT_IS") + " 1-49 999");
         jTextFieldPsimulatorPort.setText(connectionPort);
         addressesPanel.add(new JLayer<>(jTextFieldPsimulatorPort, layerUI));
-        
+
         JLabel portTip = new JLabel("1-49 999");
         addressesPanel.add(portTip);
-        
+
         return addressesPanel;
     }
 
@@ -565,32 +565,32 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         JPanel card = new JPanel();
 
         card.add(createNetworkBoundsPanel());
-        
+
         card.setLayout(new BoxLayout(card, BoxLayout.PAGE_AXIS));
 
         card.add(Box.createRigidArea(new Dimension(0, 250)));
 
         return card;
     }
-    
+
     private JPanel createNetworkBoundsPanel(){
         JPanel displayPanel = new JPanel();
         displayPanel.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("DETAILS")));
-        
+
         // set layout
         GridLayout displayPanelLayout = new GridLayout(0, 2);
         displayPanelLayout.setHgap(10);
         displayPanel.setLayout(displayPanelLayout);
-        
+
         // network bounds
         jCheckBoxNetworkBounds = new JCheckBox(dataLayer.getString("NETWORK_BOUNDS"));
         jCheckBoxNetworkBounds.setAlignmentX(Component.LEFT_ALIGNMENT);
         jCheckBoxNetworkBounds.setSelected(viewNetworkBounds);
         displayPanel.add(jCheckBoxNetworkBounds);
-        
+
         return displayPanel;
     }
-    
+
     private void setIconSize() {
         // set icon size
         switch (toolbarIconSize) {

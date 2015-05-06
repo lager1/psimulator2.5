@@ -23,7 +23,7 @@ public class Main {
     public static void main(String[] args) {
         // init timing source for animations
         TimerKeeperSingleton.getInstance().initTimingSource();
-        
+
         try {
 
             SwingUtilities.invokeLater(new Runnable() {
@@ -43,7 +43,7 @@ public class Main {
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Error occured. Program will exit", "Error in application!", JOptionPane.ERROR_MESSAGE);
                 }
-            });           
+            });
         }
     }
 }

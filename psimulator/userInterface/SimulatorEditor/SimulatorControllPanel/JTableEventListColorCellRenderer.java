@@ -13,9 +13,9 @@ import javax.swing.table.TableCellRenderer;
  */
 public class JTableEventListColorCellRenderer extends JLabel implements TableCellRenderer{
 
-	private static final long serialVersionUID = 531235625072576972L;
+    private static final long serialVersionUID = 531235625072576972L;
 
-	public JTableEventListColorCellRenderer(){
+    public JTableEventListColorCellRenderer(){
         setOpaque(true); //MUST do this for background to show up.
     }
     

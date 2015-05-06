@@ -58,7 +58,7 @@ public class FocusStatus implements PluginMessage {
       switch(event.getID()) {
         case FocusEvent.FOCUS_GAINED:
           ((FocusStatusListener)pl).pluginGainedFocus(plugin); break;
-	case FocusEvent.FOCUS_LOST:
+    case FocusEvent.FOCUS_LOST:
           ((FocusStatusListener)pl).pluginLostFocus(plugin);
       }
     return null;

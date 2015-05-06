@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -52,9 +52,9 @@ import logging.LoggingCategory;
  */
 public class TerminalManager {
 
-  
-  private static TerminalManager c_Self;	//Singleton reference
-  private HashMap m_Terminals;			//datastructure for terminals
+
+  private static TerminalManager c_Self;    //Singleton reference
+  private HashMap m_Terminals;            //datastructure for terminals
   private boolean m_WindoofHack = false;
 
   /**
@@ -98,8 +98,8 @@ public class TerminalManager {
         }
       }
     } catch (Exception e) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET,"getTerminal()"+e );
-    
+        Logger.log(Logger.WARNING, LoggingCategory.TELNET,"getTerminal()"+e );
+
     }
 
     return term;
@@ -141,8 +141,8 @@ public class TerminalManager {
 
         //then the fully qualified class string
         termclass = (String) entry[0];
-		Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Preparing terminal [" + termname + "] " + termclass);
-        
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Preparing terminal [" + termname + "] " + termclass);
+
 
         //get a new class object instance (e.g. load class and instantiate it)
         term = (Terminal) Class.forName(termclass).newInstance();
@@ -158,18 +158,18 @@ public class TerminalManager {
         }
 
       } catch (Exception e) {
-		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "setupTerminals()" + e);
-        
+          Logger.log(Logger.WARNING, LoggingCategory.TELNET, "setupTerminals()" + e);
+
       }
 
     }
     //check if we got all
-	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Terminals:");
-    
+    Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Terminals:");
+
     for (Iterator iter = m_Terminals.keySet().iterator(); iter.hasNext();) {
       String tn = (String) iter.next();
-	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET,tn + "=" + m_Terminals.get(tn) );
-      
+      Logger.log(Logger.DEBUG, LoggingCategory.TELNET,tn + "=" + m_Terminals.get(tn) );
+
     }
   }//setupTerminals
 
@@ -186,23 +186,23 @@ public class TerminalManager {
   public static TerminalManager createTerminalManager(Properties settings)
       throws BootException {
 
-    HashMap terminals = new HashMap(20);	//a storage for class
+    HashMap terminals = new HashMap(20);    //a storage for class
     //names and aliases
 
-    boolean defaultFlag = false;				//a flag for the default
+    boolean defaultFlag = false;                //a flag for the default
     TerminalManager tmgr = new TerminalManager();
 
     //Loading and applying settings
     try {
-		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Creating terminal manager.....");
-      
+          Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Creating terminal manager.....");
+
       boolean winhack = new Boolean(settings.getProperty("terminals.windoof")).booleanValue();
 
       //Get the declared terminals
       String terms = settings.getProperty("terminals");
       if (terms == null) {
-		  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "No terminals declared.");
-        
+          Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "No terminals declared.");
+
         throw new BootException("No terminals declared.");
       }
 
@@ -245,7 +245,7 @@ public class TerminalManager {
       return tmgr;
 
     } catch (Exception ex) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createManager()" + ex);
+        Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createManager()" + ex);
       throw new BootException("Creating TerminalManager Instance failed:\n" + ex.getMessage());
     }
   }//createManager

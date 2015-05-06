@@ -18,38 +18,38 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class IpDhcpExcludedCommand extends CiscoCommand {
 
-	final private boolean no;
+    final private boolean no;
 
-	public IpDhcpExcludedCommand(AbstractCommandParser parser, boolean no) {
-		super(parser);
-		this.no = no;
-	}
+    public IpDhcpExcludedCommand(AbstractCommandParser parser, boolean no) {
+        super(parser);
+        this.no = no;
+    }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		completers.get(CommandShell.CISCO_CONFIG_MODE).addCommand("ip dhcp excluded-address");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        completers.get(CommandShell.CISCO_CONFIG_MODE).addCommand("ip dhcp excluded-address");
+    }
 
-	@Override
-	public void run() {
-		if (isCommand("excluded-address", nextWord(), 1)) {
-			List<IpAddress> listOfExcluded = new ArrayList<>();
+    @Override
+    public void run() {
+        if (isCommand("excluded-address", nextWord(), 1)) {
+            List<IpAddress> listOfExcluded = new ArrayList<>();
 
-			while (!nextWordPeek().equals("")) {
-				IpAddress excludeIP;
-				try {
-					excludeIP = new IpAddress(nextWord());
-				} catch (Exception e) {
-					invalidInputDetected();
-					return;
-				}
-				listOfExcluded.add(excludeIP);
-			}
+            while (!nextWordPeek().equals("")) {
+                IpAddress excludeIP;
+                try {
+                    excludeIP = new IpAddress(nextWord());
+                } catch (Exception e) {
+                    invalidInputDetected();
+                    return;
+                }
+                listOfExcluded.add(excludeIP);
+            }
 
-			// TODO: tady pridat aplikaci neco
-			debug("excluded-address: "+listOfExcluded);
-		}
-	}
+            // TODO: tady pridat aplikaci neco
+            debug("excluded-address: "+listOfExcluded);
+        }
+    }
 
 
 

@@ -45,7 +45,7 @@ import java.io.IOException;
  * @version $Id: Timeout.java 499 2005-09-29 08:24:54Z leo $
  * @author Matthias L. Jugel, Marcus Mei�ner
  */
-public class Timeout extends Plugin 
+public class Timeout extends Plugin
   implements FilterPlugin, SocketListener, Runnable {
 
   private final static int debug = 0;
@@ -68,22 +68,22 @@ public class Timeout extends Plugin
 
      bus.registerPluginListener(new ConfigurationListener() {
        public void setConfiguration(PluginConfig config) {
-	 String tos = config.getProperty("Timeout", id, "seconds");
-	 if(tos != null) {
-	   try {
-	     timeout = Integer.parseInt(tos);
+     String tos = config.getProperty("Timeout", id, "seconds");
+     if(tos != null) {
+       try {
+         timeout = Integer.parseInt(tos);
            } catch(Exception e) {
-	     Timeout.this.error("timeout ("+timeout+") "
-	                       +"is not an integer, timeout disabled");
-	   }
-	   timeoutCommand = 
-	     config.getProperty("Timeout", id, "command");
-	   timeoutWarning = 
-	     config.getProperty("Timeout", id, "warning");
-	 }
+         Timeout.this.error("timeout ("+timeout+") "
+                           +"is not an integer, timeout disabled");
+       }
+       timeoutCommand =
+         config.getProperty("Timeout", id, "command");
+       timeoutWarning =
+         config.getProperty("Timeout", id, "warning");
+     }
        }
      });
-     pluginBus = bus; 
+     pluginBus = bus;
   }
 
   /**
@@ -100,36 +100,36 @@ public class Timeout extends Plugin
         ok = false;
         Thread.sleep(1000*timeout);
       } catch(InterruptedException e) {
-	ok = true;
+    ok = true;
       }
 
       // if the timeout finished sucessfully close the connection
       if(!ok) {
         error("data connection timeout, shutting down");
 
-	// first try it gracefully by sending the configured exit command
-	if(timeoutCommand != null) {
-	  error("sending graceful exit command ...");
-	  try {
-	    write(timeoutCommand.getBytes());
-	  } catch(IOException e) {
-	    error("could not send exit command");
-	  }
-	  timeoutThread = null;
-	  final Thread grace = new Thread(new Runnable() {
-	    public void run() {
-	      try {
+    // first try it gracefully by sending the configured exit command
+    if(timeoutCommand != null) {
+      error("sending graceful exit command ...");
+      try {
+        write(timeoutCommand.getBytes());
+      } catch(IOException e) {
+        error("could not send exit command");
+      }
+      timeoutThread = null;
+      final Thread grace = new Thread(new Runnable() {
+        public void run() {
+          try {
                 Thread.currentThread();
-				Thread.sleep(1000*timeout); 
-	        Timeout.this.pluginBus.broadcast(new SocketRequest());
+                Thread.sleep(1000*timeout);
+            Timeout.this.pluginBus.broadcast(new SocketRequest());
               } catch(InterruptedException e) {
-	        // ignore exception
-	      }
-	    }
-	  });
-	  grace.start();
-	} else // if not graceful exit exists, be rude
-	  bus.broadcast(new SocketRequest());
+            // ignore exception
+          }
+        }
+      });
+      grace.start();
+    } else // if not graceful exit exists, be rude
+      bus.broadcast(new SocketRequest());
       }
     }
   }
@@ -140,9 +140,9 @@ public class Timeout extends Plugin
       timeoutThread = new Thread(Timeout.this);
       timeoutThread.start();
     }
-  }  
+  }
 
-  /** Stop the timeout */ 
+  /** Stop the timeout */
   public void disconnect() throws IOException {
     if(timeoutThread != null) {
       Thread tmp = timeoutThread;

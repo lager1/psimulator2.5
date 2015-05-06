@@ -38,12 +38,12 @@ public class BufferedImageLoader {
             return image;
         }
     }
-    
-    
+
+
     /**
      * Gets image icon from path. It uses buffer
      * @param path
-     * @return 
+     * @return
      */
     public ImageIcon getImageIcon(String path){
         // if hash map contains key, return value

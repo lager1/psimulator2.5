@@ -9,7 +9,7 @@ import java.util.List;
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class Generation {
-    
+
     private List<GeneticGraph> graphList;
     private GeneticGraph bestFitnessGraph;
     private double bestFitness;
@@ -17,7 +17,7 @@ public class Generation {
     public Generation(){
         graphList = new ArrayList<GeneticGraph>();
     }
-    
+
     public void addGeneticGraph(GeneticGraph geneticGraph){
         graphList.add(geneticGraph);
     }
@@ -29,7 +29,7 @@ public class Generation {
     public void evaluateFitness(){
         bestFitnessGraph = null;
         bestFitness = Integer.MIN_VALUE;
-        
+
         for(GeneticGraph gg : graphList){
             gg.evaluateFitness();
             //System.out.println("fitness "+gg.getFitness());
@@ -38,24 +38,24 @@ public class Generation {
                 bestFitnessGraph = gg;
             }
         }
-        
+
         Collections.sort(graphList);
-        
+
         int score = 1;
-        
+
         for(GeneticGraph gg : graphList){
             gg.setScore(score);
             score ++;
         }
     }
-    
+
     public double getBestFitness(){
         return bestFitness;
     }
-    
+
     public GeneticGraph getBestFitnessGraph(){
         return bestFitnessGraph;
     }
-    
-    
+
+
 }

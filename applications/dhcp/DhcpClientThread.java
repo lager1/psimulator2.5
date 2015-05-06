@@ -33,7 +33,7 @@ import utils.WorkerThread;
 public class DhcpClientThread implements Wakeable, SmartRunnable {
 
     private final List<DhcpPacket> buffer = Collections.synchronizedList(new LinkedList<DhcpPacket>());
-    private static final int ttl = 64;	// ttl, se kterym se budoui odesilat pakety
+    private static final int ttl = 64;    // ttl, se kterym se budoui odesilat pakety
     private static final int request_wait_time = 1; // jak dlouho se po odeslani requestu ceka na ACK
     private static final int maxDiscoverCount = 6;
     private static final int maxRequestCount = 6;
@@ -177,20 +177,20 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
             expectedAddr = recDhcp.ipToAssign;
             serverIdentifier = recDhcp.serverIdentifier;
             requestCount = 0;
-            sendPacket(DhcpPacketType.REQUEST, null, serverIdentifier);	// posilam request
+            sendPacket(DhcpPacketType.REQUEST, null, serverIdentifier);    // posilam request
             state = State.REQUEST_SENT;
-            Psimulator.getPsimulator().budik.registerWake(this, request_wait_time * 1000);	// nastavuju cekani na ACK
+            Psimulator.getPsimulator().budik.registerWake(this, request_wait_time * 1000);    // nastavuju cekani na ACK
         }
     }
 
     private void handleIncomingAck(DhcpPacket recDhcp) {
         if (state == State.REQUEST_SENT) {
-            
+
             // adresa prijata v ACK packetu se lisi od adresy v OFFER packetu
             if (!recDhcp.ipToAssign.equals(expectedAddr)) {
                 return;
             }
-            
+
             // nastaveni nove adresy na rozhrani
             setNewIpAddress(recDhcp.ipToAssign);
             leaseFile.appendLease(recDhcp, iface);
@@ -199,7 +199,7 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
             setExpirationDate(getExpirationDate(recDhcp));
             expectedAddr = null;
             state = State.LEASED;
-            
+
             // ulozi konfiguraci do xml souboru site
             Psimulator psimulator = Psimulator.getPsimulator();
             psimulator.saveSimulatorToConfigFile(psimulator.lastConfigFile);
@@ -226,14 +226,14 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
 
     private void handleRouting(DhcpPacket recDhcp) {
         if (recDhcp.options.containsKey("routers")) {
-            
+
             // z dhcp packetu ziskam seznam vsech rout
             String routersOption = recDhcp.options.get("routers");
             String[] routers = routersOption.split(" ");
-            
+
             for (String router : routers) {
                 IpAddress routerAddr = IpAddress.correctAddress(router);
-                
+
                 // pokud je string platna ip adresa, pridam do routovaci tabulky
                 if (routerAddr != null) {
                     IPwithNetmask routeAddr =
@@ -294,10 +294,10 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
         // vymazani starych informaci o routach a ip adrese
         ipLayer.routingTable.flushRecords(iface);
         ipLayer.changeIpAddressOnInterface(iface, null);
-        
+
         // update interface souboru
         ipLayer.getNetMod().applicationLayer.getInterfacesFile().createFile();
-        
+
         // nacteni novych informaci
         ipLayer.changeIpAddressOnInterface(iface, newIpAddress);
         iface.isDhcp = true;

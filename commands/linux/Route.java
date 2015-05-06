@@ -82,55 +82,55 @@ public class Route extends LinuxCommand {
     private int navratovyKodProvedeni=0;
 
 
-	public Route(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public Route(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
-		parsujPrikaz();
+    @Override
+    public void run() {
+        parsujPrikaz();
         vykonejPrikaz();
-	}
+    }
 
 
-	/**
-	 * Samotny provedeni uz hotovyho prikazu.
-	 */
+    /**
+     * Samotny provedeni uz hotovyho prikazu.
+     */
    protected void vykonejPrikaz() {
-		if (ladiciVypisovani) {
-			printLine(this.toString());
-		}
-		if (minus_h) {
-			vypisDelsiNapovedu();
-			return; //POZOR, tady se utika
-		}
-		if (navratovyKod == 0) { //bez chyby
-			if (akce == 0) { //nic nedelat, jenom vypsat
-				vypisTabulku();
-			}
-			if (akce == 1) { //add
-				if (brana == null) { //brana nezadana
-					navratovyKodProvedeni = ipLayer.routingTable.addRecord(ipAdresa, rozhr);
-				} else {
-					navratovyKodProvedeni = ipLayer.routingTable.addRecord(ipAdresa, brana, rozhr);
-				}
-				if (navratovyKodProvedeni == 1) {
-					printLine("SIOCADDRT: File exists");
-				} else if (navratovyKodProvedeni == 2) {
-					printLine("SIOCADDRT: No such process");
-//					Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Nemuzu pridat zaznam do tabulky "
-//							+navratovyKodProvedeni, null);
-				}
-			} else if (akce == 2) {
-				if (!ipLayer.routingTable.deleteRecord(ipAdresa, brana, rozhr)) {
-					printLine("SIOCDELRT: No such process");
-					navratovyKodProvedeni = 4;
-				}
-			} else if (akce == 4) {
-				ipLayer.routingTable.flushAllRecords();
-			}
-		}
-	}
+        if (ladiciVypisovani) {
+            printLine(this.toString());
+        }
+        if (minus_h) {
+            vypisDelsiNapovedu();
+            return; //POZOR, tady se utika
+        }
+        if (navratovyKod == 0) { //bez chyby
+            if (akce == 0) { //nic nedelat, jenom vypsat
+                vypisTabulku();
+            }
+            if (akce == 1) { //add
+                if (brana == null) { //brana nezadana
+                    navratovyKodProvedeni = ipLayer.routingTable.addRecord(ipAdresa, rozhr);
+                } else {
+                    navratovyKodProvedeni = ipLayer.routingTable.addRecord(ipAdresa, brana, rozhr);
+                }
+                if (navratovyKodProvedeni == 1) {
+                    printLine("SIOCADDRT: File exists");
+                } else if (navratovyKodProvedeni == 2) {
+                    printLine("SIOCADDRT: No such process");
+//                    Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Nemuzu pridat zaznam do tabulky "
+//                            +navratovyKodProvedeni, null);
+                }
+            } else if (akce == 2) {
+                if (!ipLayer.routingTable.deleteRecord(ipAdresa, brana, rozhr)) {
+                    printLine("SIOCDELRT: No such process");
+                    navratovyKodProvedeni = 4;
+                }
+            } else if (akce == 4) {
+                ipLayer.routingTable.flushAllRecords();
+            }
+        }
+    }
 //*******************************************************************************************************
 //metody na parsovani prikazu:
 
@@ -139,28 +139,28 @@ public class Route extends LinuxCommand {
      * Odchylka: Nezparsuje route -ven
      */
     private void parsujPrikaz() {
-		// prepinace:
-		slovo = dalsiSlovo();
-		while (slovo.length() > 1 && slovo.charAt(0) == '-') {
-			if (slovo.equals("-n") || slovo.equals("--numeric")) {
-				minus_n = true;
-			} else if (slovo.equals("-v") || slovo.equals("--verbose")) {
-				minus_v = true;
-			} else if (slovo.equals("-e") || slovo.equals("--extend")) {
-				minus_e = true;
-			} else if (slovo.equals("-en") || slovo.equals("-ne")) {	// bylo to v navodu na eduxu, tak jsem to sem pridal
-				minus_e = true;
-				minus_n = true;
-			} else if (slovo.equals("-h") || slovo.equals("--help")) {
-				minus_h = true;
-			} else {
-				printLine("route: invalid option -- " + slovo); //neznamej prepinac
-				vypisDelsiNapovedu();
-				navratovyKod = navratovyKod | 1;
-				return;
-			}
-			slovo = dalsiSlovo();
-		}
+        // prepinace:
+        slovo = dalsiSlovo();
+        while (slovo.length() > 1 && slovo.charAt(0) == '-') {
+            if (slovo.equals("-n") || slovo.equals("--numeric")) {
+                minus_n = true;
+            } else if (slovo.equals("-v") || slovo.equals("--verbose")) {
+                minus_v = true;
+            } else if (slovo.equals("-e") || slovo.equals("--extend")) {
+                minus_e = true;
+            } else if (slovo.equals("-en") || slovo.equals("-ne")) {    // bylo to v navodu na eduxu, tak jsem to sem pridal
+                minus_e = true;
+                minus_n = true;
+            } else if (slovo.equals("-h") || slovo.equals("--help")) {
+                minus_h = true;
+            } else {
+                printLine("route: invalid option -- " + slovo); //neznamej prepinac
+                vypisDelsiNapovedu();
+                navratovyKod = navratovyKod | 1;
+                return;
+            }
+            slovo = dalsiSlovo();
+        }
         // dalsi parsovani:
         if(minus_h){
             //to se pak uz nic neparsuje.
@@ -182,24 +182,24 @@ public class Route extends LinuxCommand {
         }
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavAdd() { //i ukazuje na posici prvniho prvku za add
         akce |= 1;
         nastavAddNeboDel();
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavDel() {
         akce |= 2;
         nastavAddNeboDel();
     }
 
     /**
-	 * Parsovani.
+     * Parsovani.
      * Protoze add a del maji stejnou syntaxi, spolecnej kod z jejich metod jsem hodil do tyhle metody.
      */
     private void nastavAddNeboDel(){
@@ -223,26 +223,26 @@ public class Route extends LinuxCommand {
         akce=4;
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavMinus_net() {
         minusNet = true;
-		boolean bezChyby = true;
-		//cteni stringu:
-		if (slovo.equals("default") || slovo.equals("0.0.0.0") || slovo.equals("0.0.0.0/0")) { //default
-			nastavDefault();
-		} else if (slovo.contains("/")) { // slovo obsahuje lomitko -> mohla by to bejt adresa s maskou
-			bezChyby = parsujIpSMaskou(slovo);
-		} else { // slovo neobsahuje lomitko -> mohla by to bejt samotna IP adresa
-			if (IpAddress.isCorrectAddress(slovo)) { //samotna IP je spravna
-				adr = slovo;
-			} else { //samotna IP neni spravna
-				printLine(adr + ": unknown host");
-				navratovyKod |= 4; //spatny adresat
-				bezChyby = false;
-			}
-		}
+        boolean bezChyby = true;
+        //cteni stringu:
+        if (slovo.equals("default") || slovo.equals("0.0.0.0") || slovo.equals("0.0.0.0/0")) { //default
+            nastavDefault();
+        } else if (slovo.contains("/")) { // slovo obsahuje lomitko -> mohla by to bejt adresa s maskou
+            bezChyby = parsujIpSMaskou(slovo);
+        } else { // slovo neobsahuje lomitko -> mohla by to bejt samotna IP adresa
+            if (IpAddress.isCorrectAddress(slovo)) { //samotna IP je spravna
+                adr = slovo;
+            } else { //samotna IP neni spravna
+                printLine(adr + ": unknown host");
+                navratovyKod |= 4; //spatny adresat
+                bezChyby = false;
+            }
+        }
         //adresa je prectena, kdyz je vsechno v poradku, pokracuje se dal:
         if(bezChyby) {
             slovo=dalsiSlovo();
@@ -275,9 +275,9 @@ public class Route extends LinuxCommand {
 
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavMinus_host() { //predpokladam, ze ve slove je ulozena uz ta adresa
         minusHost=true;
         boolean chyba=false;
@@ -317,9 +317,9 @@ public class Route extends LinuxCommand {
         }
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavGw() {//ceka, ze ve slove je uz ta IP adresa
         if(nastavovanaBrana){ //kontroluje se, jestli se to necykli s nastavDev()
             vypisKratkouNapovedu();
@@ -329,75 +329,75 @@ public class Route extends LinuxCommand {
         nastavovanaBrana=true;
         boolean chyba=false;
         try {
-			brana = new IpAddress(slovo);
-		} catch (RuntimeException e) {
-			chyba = true;
-		}
+            brana = new IpAddress(slovo);
+        } catch (RuntimeException e) {
+            chyba = true;
+        }
         if ( chyba ){
             printLine(slovo+": unknown host");
             navratovyKod |= 8;
         }else{ //spravna brana
             slovo=dalsiSlovo();
             if (slovo.equals("dev")) {
-				slovo = dalsiSlovo();
-				nastavDev();
-			} else if (slovo.equals("netmask")) {
-				slovo = dalsiSlovo();
-				nastavNetmask();
-			} else if (slovo.equals("")) { //konec prikazu
-			} else { //vsechno ostatni se povazuje za nazev iface
-				poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
-				nastavDev();
-			}
+                slovo = dalsiSlovo();
+                nastavDev();
+            } else if (slovo.equals("netmask")) {
+                slovo = dalsiSlovo();
+                nastavNetmask();
+            } else if (slovo.equals("")) { //konec prikazu
+            } else { //vsechno ostatni se povazuje za nazev iface
+                poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
+                nastavDev();
+            }
         }
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavDev() {
-		if (nastavovanoRozhrani) { //kontroluje se, jestli se to necykli s nastavGw()
-			vypisKratkouNapovedu();
-			navratovyKod |= 16;
-		}
-		nastavovanoRozhrani = true;
-		rozhr = ipLayer.getNetworkInteface(slovo);
-		if (rozhr == null) { // iface nebylo nalezeno
-			if (ladiciVypisovani) {
-				rozhr = new NetworkInterface(-1, slovo, null);
-			}
-			printLine("SIOCADDRT: No such device");
-			navratovyKod |= 32;
-		} else { //rozhrani je spravne a je jiz ulozeno v promenne rozhr
-			slovo = dalsiSlovo();
-			if (slovo.equals("gw")) {
-				if (poDevNepokracovat) { //rozhrani bylo zadano bez dev -> to uz se pak nesmi pokracovat
-					vypisKratkouNapovedu();
-					navratovyKod |= 64;
-				} else {
-					slovo = dalsiSlovo();
-					nastavGw();
-				}
-			} else if (slovo.equals("netmask")) {
-				if (poDevNepokracovat) { //rozhrani bylo zadano bez dev -> to uz se pak nesmi pokracovat
-					vypisKratkouNapovedu();
-					navratovyKod |= 64;
-				} else {
-					slovo = dalsiSlovo();
-					nastavNetmask();
-				}
-			} else if (slovo.equals("")) { //konec prikazu
-				//v poradku, konci se
-			} else { //nejakej dalsi nesmysl
-				vypisKratkouNapovedu();
-				navratovyKod |= 128; //nic se neprovede
-			}
-		}
-	}
+        if (nastavovanoRozhrani) { //kontroluje se, jestli se to necykli s nastavGw()
+            vypisKratkouNapovedu();
+            navratovyKod |= 16;
+        }
+        nastavovanoRozhrani = true;
+        rozhr = ipLayer.getNetworkInteface(slovo);
+        if (rozhr == null) { // iface nebylo nalezeno
+            if (ladiciVypisovani) {
+                rozhr = new NetworkInterface(-1, slovo, null);
+            }
+            printLine("SIOCADDRT: No such device");
+            navratovyKod |= 32;
+        } else { //rozhrani je spravne a je jiz ulozeno v promenne rozhr
+            slovo = dalsiSlovo();
+            if (slovo.equals("gw")) {
+                if (poDevNepokracovat) { //rozhrani bylo zadano bez dev -> to uz se pak nesmi pokracovat
+                    vypisKratkouNapovedu();
+                    navratovyKod |= 64;
+                } else {
+                    slovo = dalsiSlovo();
+                    nastavGw();
+                }
+            } else if (slovo.equals("netmask")) {
+                if (poDevNepokracovat) { //rozhrani bylo zadano bez dev -> to uz se pak nesmi pokracovat
+                    vypisKratkouNapovedu();
+                    navratovyKod |= 64;
+                } else {
+                    slovo = dalsiSlovo();
+                    nastavNetmask();
+                }
+            } else if (slovo.equals("")) { //konec prikazu
+                //v poradku, konci se
+            } else { //nejakej dalsi nesmysl
+                vypisKratkouNapovedu();
+                navratovyKod |= 128; //nic se neprovede
+            }
+        }
+    }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavNetmask(){
         if(minusHost){ // kontrola, jestli to vubec muzu nastavovat
             navratovyKod |= 256;
@@ -411,34 +411,34 @@ public class Route extends LinuxCommand {
             return; //nic se nema nastavovat
         }
         nastavovanaMaska=true;
-		if (!IpNetmask.isCorrectNetmask(slovo)) {
-			printLine("route: bogus netmask " + slovo + "");
-			navratovyKod |= 1024;
-		} else { //spravna maska
-			maska = slovo;
-			slovo = dalsiSlovo();
-			if (slovo.equals("dev")) {
-				slovo = dalsiSlovo();
-				nastavDev();
-			} else if (slovo.equals("gw")) {
-				slovo = dalsiSlovo();
-				nastavGw();
-			} else if (slovo.equals("")) {
-				//konec prikazu
-			} else { //vsechno ostatni se povazuje za nazev iface
-				poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
-				nastavDev();
-			}
+        if (!IpNetmask.isCorrectNetmask(slovo)) {
+            printLine("route: bogus netmask " + slovo + "");
+            navratovyKod |= 1024;
+        } else { //spravna maska
+            maska = slovo;
+            slovo = dalsiSlovo();
+            if (slovo.equals("dev")) {
+                slovo = dalsiSlovo();
+                nastavDev();
+            } else if (slovo.equals("gw")) {
+                slovo = dalsiSlovo();
+                nastavGw();
+            } else if (slovo.equals("")) {
+                //konec prikazu
+            } else { //vsechno ostatni se povazuje za nazev iface
+                poDevNepokracovat = true; //zadano bez dev -> uz se nemuze pokracovat
+                nastavDev();
+            }
         }
     }
 
-	/**
-	 * Parsovani.
-	 */
+    /**
+     * Parsovani.
+     */
     private void nastavDefault() { //slouzi k nastavovani deafult
         adr="default";
         pocetBituMasky=0;
-		ipAdresa = new IPwithNetmask("0.0.0.0", 0);	// a adresa se rovnou vytvori
+        ipAdresa = new IPwithNetmask("0.0.0.0", 0);    // a adresa se rovnou vytvori
         defaultni=true;
         //nastavovanaMaska=true;    //zakomentovano 18.5.2011, potom, co jsem zjistil, ze na mym pocitaci projde i
             // "route add default netmask 255.0.0.0 gw 192.168.0.20", pricemz to nastavi
@@ -449,52 +449,52 @@ public class Route extends LinuxCommand {
 //*********************************************************************************************************
 //dalsi funkce:
 
-	/**
-	 * Kdyz obsahuje lomitko, pred lomitkem precte IP adresu a za lomitkem pocet bitu masky, zada to do tridnich
-	 * promennejch adr a pocetBituMasky a vyplni nastavovanaMaska na true. Kdyz je neco spatne, vrati false a nastavi
-	 * navratovy kod na |= 4. Kdyz vsechno probehne v poradku, tak se nakonec pokusi vytvori IP adresu adresata.
-	 *
-	 * @param adrm
-	 * @return
-	 */
-	private boolean parsujIpSMaskou(String adrm) {
-		nastavovanaMaska = true;
-		int lomitko = adrm.indexOf('/');
-		if (lomitko == -1) {// string musi obsahovat lomitko
-			throw new RuntimeException("Tohle by nikdy nemelo nastat. Kontaktujte prosim tvurce softwaru.");
-		} else {
-			if (lomitko < adrm.length() - 1) { // lomitko nesmi byt poslednim znakem retezce
-				String adresa = adrm.substring(0, lomitko);
-				String mask = adrm.substring(lomitko + 1, adrm.length());
-				if (IpAddress.isCorrectAddress(adresa)) { //adresa je spravna
-					boolean chyba = false;
-					try {        // pokus o parsovani masky
-						pocetBituMasky = Integer.parseInt(mask); //parsuje se jako integer
-					} catch (NumberFormatException ex) { //integer se nepovedlo zparsovat
-						chyba = true; //kdyz to neni integer
-						vypisKratkouNapovedu(); //napr: route add -net 128.0.0.0/3d dev eth0
-					}
-					if (!chyba) { //vsechno v poradku, muze se to nastavit
-						adr = adresa;
-						pocetBituMasky = pocetBituMasky % 32; //opravdu to tak funguje, dokonce i se zapornejma
-						//cislama
-						if (pocetBituMasky == 0) { //tohle jediny neni povoleny, opravdu
-							printLine("SIOCADDRT: Invalid argument");//napr: route add -net 128.0.0.0/64 dev eth0
-						} else { //konecne vsechno spravne
-							return true; // NAVRAT Z METODY, KDYZ JE VSECHNO SPRAVNE
-						}
-					}
-				} else { //adresa neni spravna
-					printLine(adresa + ": Unknown host");
-				}
-			} else { //kdyz je lomitko poslednim znakem retezce
-				printLine("SIOCADDRT: Invalid argument"); //napr: route add -net 1.0.0.0/ dev eth0
-			}
-		}
-		// kdyz se vyskytne nejaka chyba:
-		navratovyKod |= 4; //spatny adresat
-		return false;
-	}
+    /**
+     * Kdyz obsahuje lomitko, pred lomitkem precte IP adresu a za lomitkem pocet bitu masky, zada to do tridnich
+     * promennejch adr a pocetBituMasky a vyplni nastavovanaMaska na true. Kdyz je neco spatne, vrati false a nastavi
+     * navratovy kod na |= 4. Kdyz vsechno probehne v poradku, tak se nakonec pokusi vytvori IP adresu adresata.
+     *
+     * @param adrm
+     * @return
+     */
+    private boolean parsujIpSMaskou(String adrm) {
+        nastavovanaMaska = true;
+        int lomitko = adrm.indexOf('/');
+        if (lomitko == -1) {// string musi obsahovat lomitko
+            throw new RuntimeException("Tohle by nikdy nemelo nastat. Kontaktujte prosim tvurce softwaru.");
+        } else {
+            if (lomitko < adrm.length() - 1) { // lomitko nesmi byt poslednim znakem retezce
+                String adresa = adrm.substring(0, lomitko);
+                String mask = adrm.substring(lomitko + 1, adrm.length());
+                if (IpAddress.isCorrectAddress(adresa)) { //adresa je spravna
+                    boolean chyba = false;
+                    try {        // pokus o parsovani masky
+                        pocetBituMasky = Integer.parseInt(mask); //parsuje se jako integer
+                    } catch (NumberFormatException ex) { //integer se nepovedlo zparsovat
+                        chyba = true; //kdyz to neni integer
+                        vypisKratkouNapovedu(); //napr: route add -net 128.0.0.0/3d dev eth0
+                    }
+                    if (!chyba) { //vsechno v poradku, muze se to nastavit
+                        adr = adresa;
+                        pocetBituMasky = pocetBituMasky % 32; //opravdu to tak funguje, dokonce i se zapornejma
+                        //cislama
+                        if (pocetBituMasky == 0) { //tohle jediny neni povoleny, opravdu
+                            printLine("SIOCADDRT: Invalid argument");//napr: route add -net 128.0.0.0/64 dev eth0
+                        } else { //konecne vsechno spravne
+                            return true; // NAVRAT Z METODY, KDYZ JE VSECHNO SPRAVNE
+                        }
+                    }
+                } else { //adresa neni spravna
+                    printLine(adresa + ": Unknown host");
+                }
+            } else { //kdyz je lomitko poslednim znakem retezce
+                printLine("SIOCADDRT: Invalid argument"); //napr: route add -net 1.0.0.0/ dev eth0
+            }
+        }
+        // kdyz se vyskytne nejaka chyba:
+        navratovyKod |= 4; //spatny adresat
+        return false;
+    }
 
     /**
      * Tahlecta metoda vezme String adr a String maska nebo int pocetBituMasky a udela z nich instanci
@@ -562,9 +562,9 @@ public class Route extends LinuxCommand {
     @Override
     public String toString(){
         String vratit = "----------------------------------"
-				+ "\n   Parametry prikazu route:\r\n\tnavratovyKodParseru: "
-				+ Util.rozlozNaMocniny2(navratovyKod)
-				+ "\n\t" + parser.getWordsAsString();
+                + "\n   Parametry prikazu route:\r\n\tnavratovyKodParseru: "
+                + Util.rozlozNaMocniny2(navratovyKod)
+                + "\n\t" + parser.getWordsAsString();
         vratit += "\r\n\takce (1=add, 2=del): " + akce;
         vratit+="\r\n\tprepinace: ";
         if(minus_n)vratit+=" -n";if(minus_e)vratit+=" -e";if(minus_v)vratit+=" -v";
@@ -594,7 +594,7 @@ public class Route extends LinuxCommand {
                 vratit += "\r\n\trozhrani: " + rozhr.name;
             }
         }
-		vratit+="\n----------------------------------";
+        vratit+="\n----------------------------------";
 
         return vratit;
     }

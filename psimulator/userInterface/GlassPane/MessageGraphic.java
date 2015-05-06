@@ -14,8 +14,8 @@ import javax.swing.JPanel;
  */
 public class MessageGraphic extends JPanel{
     
-	private static final long serialVersionUID = 8663154486012234571L;
-	//
+    private static final long serialVersionUID = 8663154486012234571L;
+    //
     private Font titleFont;
     private Font nameFont;
     private Font valueFont;

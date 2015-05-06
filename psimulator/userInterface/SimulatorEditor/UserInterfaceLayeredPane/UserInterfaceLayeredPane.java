@@ -26,8 +26,8 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelInnerInter
 public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInterface implements Observer,
         UserInterfaceLayeredPaneInnerInterface{
 
-	private static final long serialVersionUID = 1680118781506333985L;
-	private DrawPanelOuterInterface jPanelDraw; // draw panel
+    private static final long serialVersionUID = 1680118781506333985L;
+    private DrawPanelOuterInterface jPanelDraw; // draw panel
     private AnimationPanelOuterInterface jPanelAnimation; // animation panel
     //
     //private MainWindowInnerInterface mainWindow;

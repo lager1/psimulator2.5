@@ -9,7 +9,7 @@ package exceptions;
  */
 public class ApplicationNotFoundException extends Exception {
 
-	public ApplicationNotFoundException() {
-	}
+    public ApplicationNotFoundException() {
+    }
 
 }

@@ -29,14 +29,14 @@ public class IpAddress {
         bits=stringToBits(ret);
     }
 
-	/**
-	 * Creates IP address from byte array.
-	 * @param array
-	 * @throws BadIpException iff the array hasn't length=4
-	 */
-	public IpAddress(byte[]array){
-		bits = byteArrayToInt(array);
-	}
+    /**
+     * Creates IP address from byte array.
+     * @param array
+     * @throws BadIpException iff the array hasn't length=4
+     */
+    public IpAddress(byte[]array){
+        bits = byteArrayToInt(array);
+    }
 
     /**
      * Only for construktor classes in this package.
@@ -45,10 +45,10 @@ public class IpAddress {
 
 
 // verejny metody: ----------------------------------------------------------------------------------------------
-	/**
-	 * Returns inner representation.
-	 * @return
-	 */
+    /**
+     * Returns inner representation.
+     * @return
+     */
     public int getBits(){
         return bits;
     }
@@ -77,14 +77,14 @@ public class IpAddress {
         return true;
     }
 
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 59 * hash + this.bits;
-		return hash;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + this.bits;
+        return hash;
+    }
 
-	/**
+    /**
      * Vrati long hodnotu z adresy. Vhodne pro porovnavani adres.
      * @param ip
      * @return
@@ -100,31 +100,31 @@ public class IpAddress {
         return l;
     }
 
-	/**
-	 * Returns IP address as array of byte.
-	 *
-	 * @return
-	 */
-	public byte[] getByteArray() {
-		int[] poleInt = bitsToArray(bits);
-		byte[] vratit = new byte[4];
-		for (int i = 0; i < 4; i++) {
-			vratit[i] = (byte) poleInt[i];
-		}
-		return vratit;
-	}
+    /**
+     * Returns IP address as array of byte.
+     *
+     * @return
+     */
+    public byte[] getByteArray() {
+        int[] poleInt = bitsToArray(bits);
+        byte[] vratit = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            vratit[i] = (byte) poleInt[i];
+        }
+        return vratit;
+    }
 
-	/**
-	 * Returns true iff IP addrees is from range 127.0.0.0 - 127.255.255.255.
-	 * @return
-	 */
-	public boolean isLocalSubnet127() {
-		int[] pole = bitsToArray(bits);
-		if (pole[0] == 127) {
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Returns true iff IP addrees is from range 127.0.0.0 - 127.255.255.255.
+     * @return
+     */
+    public boolean isLocalSubnet127() {
+        int[] pole = bitsToArray(bits);
+        if (pole[0] == 127) {
+            return true;
+        }
+        return false;
+    }
 
 
 // staticky metody pro ruzny prevadeni a tak: ----------------------------------------------------------------------------------------
@@ -143,12 +143,12 @@ public class IpAddress {
         }
     }
 
-	public static boolean isCorrectAddress(String ret) {
-		if (correctAddress(ret) != null) {
-			return true;
-		}
-		return false;
-	}
+    public static boolean isCorrectAddress(String ret) {
+        if (correctAddress(ret) != null) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Vrati adresu o jedna vetsi.
@@ -173,27 +173,27 @@ public class IpAddress {
         return createIpFromBits(~ip.bits);
     }
 
-	/**
-	 * Vrati true, kdyz je adresa v RFC zakazana, tedy kdyz je prvni bajt vetsi nez 223.
-	 * Odpovida jeZakazanaIpAdresa ze staryho psimulatoru.
-	 * @param ip
-	 * @return
-	 */
-	public static boolean isForbiddenIP(IpAddress ip) {
-		/*
-        A 	0 	0–127    	255.0.0.0 	7 	24 	126 	16 777 214
-        B 	10 	128-191 	255.255.0.0 	14 	16 	16384 	65534
-        C 	110 	192-223 	255.255.255.0 	21 	8 	2 097 152 	254
-        D 	1110 	224-239 	multicast
-        E 	1111 	240-255 	vyhrazeno jako rezerva
+    /**
+     * Vrati true, kdyz je adresa v RFC zakazana, tedy kdyz je prvni bajt vetsi nez 223.
+     * Odpovida jeZakazanaIpAdresa ze staryho psimulatoru.
+     * @param ip
+     * @return
+     */
+    public static boolean isForbiddenIP(IpAddress ip) {
+        /*
+        A     0     0–127        255.0.0.0     7     24     126     16 777 214
+        B     10     128-191     255.255.0.0     14     16     16384     65534
+        C     110     192-223     255.255.255.0     21     8     2 097 152     254
+        D     1110     224-239     multicast
+        E     1111     240-255     vyhrazeno jako rezerva
          */
-		int[] pole = bitsToArray(ip.getBits());
-		if (pole[0] >= 224) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+        int[] pole = bitsToArray(ip.getBits());
+        if (pole[0] >= 224) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Vytvori adresu ze integeru vnitrni reprezentace (z bitu)
@@ -264,16 +264,16 @@ public class IpAddress {
         return arrayToString(bitsToArray(bits));
     }
 
-	protected static int byteArrayToInt(byte[] array) {
-		int vratit = 0;
-		if (array.length != 4) {
-			throw new BadIpException("Given array has length=" + array.length);
-		}
-		for (int i = 0; i < 4; i++) {
-			vratit = vratit * 256 + Util.byteToInt(array[i]);
-		}
-		return vratit;
-	}
+    protected static int byteArrayToInt(byte[] array) {
+        int vratit = 0;
+        if (array.length != 4) {
+            throw new BadIpException("Given array has length=" + array.length);
+        }
+        for (int i = 0; i < 4; i++) {
+            vratit = vratit * 256 + Util.byteToInt(array[i]);
+        }
+        return vratit;
+    }
 
 
 

@@ -17,19 +17,19 @@ import utils.Util;
  */
 public class UdpHandler implements Loggable {
 
-	private final TransportLayer transportLayer;
+    private final TransportLayer transportLayer;
 
-	public UdpHandler(TransportLayer transportLayer) {
-		this.transportLayer = transportLayer;
-	}
+    public UdpHandler(TransportLayer transportLayer) {
+        this.transportLayer = transportLayer;
+    }
 
-	public void handleReceivedUdpPacket(PacketItem m) {
-		TcpUdpPacket p = (TcpUdpPacket) m.packet.data;
-		transportLayer.forwardPacketToApplication(m, p.dstPort);
-	}
+    public void handleReceivedUdpPacket(PacketItem m) {
+        TcpUdpPacket p = (TcpUdpPacket) m.packet.data;
+        transportLayer.forwardPacketToApplication(m, p.dstPort);
+    }
 
-	@Override
-	public String getDescription() {
-		return Util.zarovnej(transportLayer.netMod.getDevice().getName(), Util.deviceNameAlign)+" UdpHandler";
-	}
+    @Override
+    public String getDescription() {
+        return Util.zarovnej(transportLayer.netMod.getDevice().getName(), Util.deviceNameAlign)+" UdpHandler";
+    }
 }

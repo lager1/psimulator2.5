@@ -33,7 +33,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     private static final String RECENTLY_OPENED_FILES = "RECENTLY_OPENED_FILES";
     private static final String RECENTLY_OPENED_NETWORK_DIR = "RECENTLY_OPENED_NETWORK_DIR";
     private static final String RECENTLY_OPENED_EVENT_DIR = "RECENTLY_OPENED_EVENT_DIR";
-    // 
+    //
     private Preferences prefs;
     // set to default
     private ToolbarIconSizeEnum toolbarIconSize = ToolbarIconSizeEnum.MEDIUM;
@@ -139,10 +139,10 @@ public final class PreferencesManager extends Observable implements SaveableInte
     }
 
     // GETTERS AND SETTERS
-    
+
     /**
      * Gets current toolbar icon size.
-     * @return 
+     * @return
      */
     public ToolbarIconSizeEnum getToolbarIconSize() {
         return toolbarIconSize;
@@ -151,7 +151,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets current toolbar icon size and notifies observers.
      * ICON_SIZE
-     * @param toolbarIconSize 
+     * @param toolbarIconSize
      */
     public void setToolbarIconSize(ToolbarIconSizeEnum toolbarIconSize) {
         this.toolbarIconSize = toolbarIconSize;
@@ -163,7 +163,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets current packet image type.
-     * @return 
+     * @return
      */
     public PacketImageType getPackageImageType() {
         return packageImageType;
@@ -172,7 +172,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets packet image type and notifies observers.
      * PACKET_IMAGE_TYPE_CHANGE
-     * @param packageImageType 
+     * @param packageImageType
      */
     public void setPackageImageType(PacketImageType packageImageType) {
         this.packageImageType = packageImageType;
@@ -184,7 +184,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets current level of details mode.
-     * @return 
+     * @return
      */
     public LevelOfDetailsMode getLevelOfDetails() {
         return levelOfDetails;
@@ -193,7 +193,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Sets level of details mode and notifies the observers.
      * VIEW_DETAILS
-     * @param levelOfDetails 
+     * @param levelOfDetails
      */
     public void setLevelOfDetails(LevelOfDetailsMode levelOfDetails) {
         this.levelOfDetails = levelOfDetails;
@@ -205,7 +205,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets IP address to psimulator server.
-     * @return 
+     * @return
      */
     public String getConnectionIpAddress() {
         return connectionIpAddress;
@@ -213,7 +213,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Sets IP address to psimulator server
-     * @param connectionPort 
+     * @param connectionPort
      */
     public void setConnectionIpAddress(String connectionIpAddress) {
         this.connectionIpAddress = connectionIpAddress;
@@ -221,7 +221,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets connection port to psimulator server.
-     * @return 
+     * @return
      */
     public String getConnectionPort() {
         return connectionPort;
@@ -229,7 +229,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Sets connection port to psimulator server
-     * @param connectionPort 
+     * @param connectionPort
      */
     public void setConnectionPort(String connectionPort) {
         this.connectionPort = connectionPort;
@@ -237,7 +237,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
 
     /**
      * Gets recently opened files.
-     * @return 
+     * @return
      */
     public List<File> getRecentOpenedFiles() {
         return recentOpenedFilesManager.getRecentOpenedFiles();
@@ -246,7 +246,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Adds file to recently opened and notifies observers.
      * RECENT_OPENED_FILES_CHANGED
-     * @param file 
+     * @param file
      */
     public void addRecentOpenedFile(File file) {
         recentOpenedFilesManager.addFile(file);
@@ -259,7 +259,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Saves directory of type into preferences
      * @param directoryType
-     * @param file 
+     * @param file
      */
     public void setRecentDirectory(RecentlyOpenedDirectoryType directoryType, File file) {
         switch (directoryType) {
@@ -298,7 +298,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
             default:
                 break;
         }
-        
+
         if (file.exists() && file.isDirectory() && file.canRead() && file.canWrite()) {
             return file;
         }
@@ -309,7 +309,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Gets value of specified view details type.
      * @param viewDetailsType
-     * @return 
+     * @return
      */
     public boolean isViewDetails(ViewDetailsType viewDetailsType) {
         switch (viewDetailsType) {
@@ -335,7 +335,7 @@ public final class PreferencesManager extends Observable implements SaveableInte
     /**
      * Set specified view details to value.
      * @param viewDetailsType
-     * @param value 
+     * @param value
      */
     public void setViewDetails(ViewDetailsType viewDetailsType, boolean value) {
         switch (viewDetailsType) {

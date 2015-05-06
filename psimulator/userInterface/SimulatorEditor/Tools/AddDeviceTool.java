@@ -12,7 +12,7 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.MainTool;
 public class AddDeviceTool extends AbstractCreationTool{
 
     protected int interfaces;
-    
+
     public AddDeviceTool(MainTool tool, String path, DrawPanelToolChangeOuterInterface toolChangeInterface, HwTypeEnum hwType, int interfaces) {
         super(tool, path, toolChangeInterface, hwType);
         this.interfaces = interfaces;

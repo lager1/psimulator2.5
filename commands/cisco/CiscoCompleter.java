@@ -15,11 +15,11 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class CiscoCompleter extends Completer {
 
-	@Override
-	protected void handleMorePossibilities(List<Node> possibilities, CommandShell shell) {
-		log("vice moznosti: "+possibilities.toString());
-		// do nothing
-	}
+    @Override
+    protected void handleMorePossibilities(List<Node> possibilities, CommandShell shell) {
+        log("vice moznosti: "+possibilities.toString());
+        // do nothing
+    }
 
 
 }

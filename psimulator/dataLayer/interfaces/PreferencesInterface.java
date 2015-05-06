@@ -16,108 +16,108 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.PacketImageType;
 public interface PreferencesInterface {
     /**
      * Gets current toolbar icon size.
-     * @return 
+     * @return
      */
     public ToolbarIconSizeEnum getToolbarIconSize();
     /**
      * Sets current toolbar icon size.
-     * @param size 
+     * @param size
      */
-    public void setToolbarIconSize(ToolbarIconSizeEnum size); 
+    public void setToolbarIconSize(ToolbarIconSizeEnum size);
     /**
      * Gets level of details mode.
-     * @return 
+     * @return
      */
     public LevelOfDetailsMode getLevelOfDetails();
     /**
      * Sets current level of details mode.
-     * @param levelOfDetails 
+     * @param levelOfDetails
      */
     public void setLevelOfDetails(LevelOfDetailsMode levelOfDetails);
-    
-    
+
+
     /**
      * Gets if viewDetailsType in parameter is set to true.
      * @param viewDetailsType
-     * @return 
+     * @return
      */
     public boolean isViewDetails(ViewDetailsType viewDetailsType);
     /**
      * Sets view details type in parameter to value.
      * @param viewDetailsType
-     * @param value 
+     * @param value
      */
     public void setViewDetails(ViewDetailsType viewDetailsType, boolean value);
 
     /**
      * Gets current package image type
-     * @return 
+     * @return
      */
     public PacketImageType getPackageImageType();
     /**
      * Sets current package image type
-     * @param packageImageType 
+     * @param packageImageType
      */
     public void setPackageImageType(PacketImageType packageImageType);
-    
+
     /**
      * Gets current IP address of psimulator server.
-     * @return 
+     * @return
      */
     public String getConnectionIpAddress();
     /**
      * Sets current IP address of psimulator server
-     * @param connectionIpAddress 
+     * @param connectionIpAddress
      */
     public void setConnectionIpAddress(String connectionIpAddress);
     /**
      * Gets port of psimulator server.
-     * @return 
+     * @return
      */
     public String getConnectionPort();
     /**
      * Sets port of psimulator server.
-     * @param connectionPort 
+     * @param connectionPort
      */
     public void setConnectionPort(String connectionPort);
-    
+
     /**
      * Saves preferences to preferences store.
      */
     public void savePreferences();
-    
+
     /**
      * Adds observer to prefereneces changes.
-     * @param observer 
+     * @param observer
      */
     public void addPreferencesObserver(Observer observer);
     /**
      * Removes observer from preferences.
-     * @param observer 
+     * @param observer
      */
     public void deletePreferencesObserver(Observer observer);
-    
+
     /**
      * Gets list of recently opened files.
-     * @return 
+     * @return
      */
     public List<File> getRecentOpenedFiles();
     /**
      * Adds file to recently opened.
-     * @param file 
+     * @param file
      */
     public void addRecentOpenedFile(File file);
-    
+
     /**
      * Sets recent directory of directory type.
      * @param directoryType
-     * @param file 
+     * @param file
      */
     public void setRecentDirectory(RecentlyOpenedDirectoryType directoryType, File file);
     /**
      * Gets recent directory of directory type.
      * @param directoryType
-     * @return 
+     * @return
      */
     public File getRecentDirectory(RecentlyOpenedDirectoryType directoryType);
 }

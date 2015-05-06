@@ -11,42 +11,42 @@ package shared.Components.simulatorConfig;
  */
 public class DeviceSettings {
 
-	private NetworkModuleType netModType;
-	private RoutingTableConfig routingTabConfig;
-	private NatConfig natConfig;
+    private NetworkModuleType netModType;
+    private RoutingTableConfig routingTabConfig;
+    private NatConfig natConfig;
 
-	public NatConfig getNatConfig() {
-		return natConfig;
-	}
+    public NatConfig getNatConfig() {
+        return natConfig;
+    }
 
-	public void setNatConfig(NatConfig natConfig) {
-		this.natConfig = natConfig;
-	}
+    public void setNatConfig(NatConfig natConfig) {
+        this.natConfig = natConfig;
+    }
 
-	public NetworkModuleType getNetModType() {
-		return netModType;
-	}
+    public NetworkModuleType getNetModType() {
+        return netModType;
+    }
 
-	public RoutingTableConfig getRoutingTabConfig() {
-		return routingTabConfig;
-	}
+    public RoutingTableConfig getRoutingTabConfig() {
+        return routingTabConfig;
+    }
 
-	public void setNetModType(NetworkModuleType netModType) {
-		this.netModType = netModType;
-	}
+    public void setNetModType(NetworkModuleType netModType) {
+        this.netModType = netModType;
+    }
 
-	public void setRoutingTabConfig(RoutingTableConfig routingTabConfig) {
-		this.routingTabConfig = routingTabConfig;
-	}
-
-
+    public void setRoutingTabConfig(RoutingTableConfig routingTabConfig) {
+        this.routingTabConfig = routingTabConfig;
+    }
 
 
 
 
-	public enum NetworkModuleType{
-		tcp_ip_netmod,
-		simple_switch_netMod,
-	}
+
+
+    public enum NetworkModuleType{
+        tcp_ip_netmod,
+        simple_switch_netMod,
+    }
 
 }

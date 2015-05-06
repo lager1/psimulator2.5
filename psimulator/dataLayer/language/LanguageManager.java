@@ -72,7 +72,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Sets current language to language at languagePosition
-     * @param languagePosition 
+     * @param languagePosition
      */
     public void setCurrentLanguage(int languagePosition) {
         // if language position not possible
@@ -85,7 +85,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
         String language = (String) avaiableLanguagesSorted[languagePosition];
         // set changed language as current
         setCurrentLanguage(language, languagePosition);
-        
+
         // notify all observers
         setChanged();
         notifyObservers(ObserverUpdateEventType.LANGUAGE);
@@ -109,7 +109,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Returns string from current ResourceBundle
-     * 
+     *
      * @param string
      * @return Expression in current language
      */

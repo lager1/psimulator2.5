@@ -21,115 +21,115 @@ import utils.Util;
  */
 public class TelnetProperties {
 
-	public enum Shell {
+    public enum Shell {
 
-		LINUX, CISCO
-	}
-	private static Properties properties = new Properties();
-	private static int lastPort = 11000;
-	private static List<String> listenerNames = new LinkedList<String>();
-	private static boolean finalConfiguration = false;
-	private static TelnetConfig telnetConfig = new TelnetConfig();
+        LINUX, CISCO
+    }
+    private static Properties properties = new Properties();
+    private static int lastPort = 11000;
+    private static List<String> listenerNames = new LinkedList<String>();
+    private static boolean finalConfiguration = false;
+    private static TelnetConfig telnetConfig = new TelnetConfig();
 
-	/**
-	 * this method should be executed only once
-	 */
-	private static void commonSetup() {
+    /**
+     * this method should be executed only once
+     */
+    private static void commonSetup() {
 
-		finalConfiguration = true;
+        finalConfiguration = true;
 
-		properties.setProperty("terminals", "vt100,ansi,windoof,xterm");
-		properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
-		properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
-		properties.setProperty("term.ansi.class", "telnetd.io.terminal.ansi");
-		properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt220,linux,screen");   // vt320 is not working properly
-		// properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt320,vt220,linux,screen");
-		properties.setProperty("term.windoof.class", "telnetd.io.terminal.Windoof");
-		properties.setProperty("term.windoof.aliases", "");
-		properties.setProperty("term.xterm.class", "telnetd.io.terminal.xterm");
-		properties.setProperty("term.xterm.aliases", "");
-		properties.setProperty("shells", "std");
-		//   properties.setProperty("shell.std.class", "telnetd.shell.DummyShell");
-		properties.setProperty("shell.std.class", "shell.TelnetSession");
-
-
-		StringBuilder listeners = null;
-
-		for (String name : listenerNames) {
-			if (listeners == null) {
-				listeners = new StringBuilder(name);
-			} else {
-				listeners.append(",").append(name);
-			}
-		}
-
-		properties.setProperty("listeners", listeners.toString());
-
-	}
-
-	public static Properties getProperties() {
-
-		if (!TelnetProperties.finalConfiguration) {
-			commonSetup();
-		}
-
-		return properties;
-
-	}
-	
-	public static TelnetConfig getTelnetConfig(){
-		return telnetConfig;
-	}
-
-	public static void addListener(Device device) {
+        properties.setProperty("terminals", "vt100,ansi,windoof,xterm");
+        properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
+        properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
+        properties.setProperty("term.ansi.class", "telnetd.io.terminal.ansi");
+        properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt220,linux,screen");   // vt320 is not working properly
+        // properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt320,vt220,linux,screen");
+        properties.setProperty("term.windoof.class", "telnetd.io.terminal.Windoof");
+        properties.setProperty("term.windoof.aliases", "");
+        properties.setProperty("term.xterm.class", "telnetd.io.terminal.xterm");
+        properties.setProperty("term.xterm.aliases", "");
+        properties.setProperty("shells", "std");
+        //   properties.setProperty("shell.std.class", "telnetd.shell.DummyShell");
+        properties.setProperty("shell.std.class", "shell.TelnetSession");
 
 
-		String name = String.valueOf(device.configID);
-		int port = lastPort;
-		lastPort += 1;
+        StringBuilder listeners = null;
 
-		int maxTestedPort = 10;
-		int testedPort = 0;
+        for (String name : listenerNames) {
+            if (listeners == null) {
+                listeners = new StringBuilder(name);
+            } else {
+                listeners.append(",").append(name);
+            }
+        }
 
-		while (!utils.Util.availablePort(port)) {
-			port++;
-			lastPort++;
-			testedPort++;
-			if (testedPort > maxTestedPort) {
-				Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot start telnet server for device "+name+" . I have tried 10 port, but none one is available");
-				return;
-			}
-		}
+        properties.setProperty("listeners", listeners.toString());
 
-		device.setTelnetPort(port);
+    }
 
-		Logger.log("TELNET LISTENING PORT: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
+    public static Properties getProperties() {
 
-		// now add records for UI editor
-		ConfigRecord cfgr = new ConfigRecord();
-		cfgr.setComponentId(device.configID);
-		cfgr.setPort(device.getTelnetPort());
-		
-		telnetConfig.put(device.configID, cfgr);
-		
-		listenerNames.add(name);
+        if (!TelnetProperties.finalConfiguration) {
+            commonSetup();
+        }
 
-		properties.setProperty(name + ".loginshell", "std");
-		properties.setProperty(name + ".port", String.valueOf(port));
-		properties.setProperty(name + ".floodprotection", "5");
-		properties.setProperty(name + ".maxcon", "25");
-		properties.setProperty(name + ".time_to_warning", "3600000");
-		properties.setProperty(name + ".time_to_timedout", "60000");
-		properties.setProperty(name + ".housekeepinginterval", "1000");
-		properties.setProperty(name + ".inputmode", "character");
-		properties.setProperty(name + ".connectionfilter", "none");
+        return properties;
+
+    }
+
+    public static TelnetConfig getTelnetConfig(){
+        return telnetConfig;
+    }
+
+    public static void addListener(Device device) {
 
 
-	}
+        String name = String.valueOf(device.configID);
+        int port = lastPort;
+        lastPort += 1;
 
-	public static void setStartPort(int port) {
-		lastPort = port;
-	}
+        int maxTestedPort = 10;
+        int testedPort = 0;
+
+        while (!utils.Util.availablePort(port)) {
+            port++;
+            lastPort++;
+            testedPort++;
+            if (testedPort > maxTestedPort) {
+                Logger.log(Logger.ERROR, LoggingCategory.TELNET, "Cannot start telnet server for device "+name+" . I have tried 10 port, but none one is available");
+                return;
+            }
+        }
+
+        device.setTelnetPort(port);
+
+        Logger.log("TELNET LISTENING PORT: ", Logger.IMPORTANT, LoggingCategory.TELNET, "Device: " + Util.zarovnej(device.getName(), 7) + " listening port: " + device.getTelnetPort() + " (" + device.getName() + ")");
+
+        // now add records for UI editor
+        ConfigRecord cfgr = new ConfigRecord();
+        cfgr.setComponentId(device.configID);
+        cfgr.setPort(device.getTelnetPort());
+
+        telnetConfig.put(device.configID, cfgr);
+
+        listenerNames.add(name);
+
+        properties.setProperty(name + ".loginshell", "std");
+        properties.setProperty(name + ".port", String.valueOf(port));
+        properties.setProperty(name + ".floodprotection", "5");
+        properties.setProperty(name + ".maxcon", "25");
+        properties.setProperty(name + ".time_to_warning", "3600000");
+        properties.setProperty(name + ".time_to_timedout", "60000");
+        properties.setProperty(name + ".housekeepinginterval", "1000");
+        properties.setProperty(name + ".inputmode", "character");
+        properties.setProperty(name + ".connectionfilter", "none");
+
+
+    }
+
+    public static void setStartPort(int port) {
+        lastPort = port;
+    }
 }
 
 /*

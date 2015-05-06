@@ -17,9 +17,9 @@ import psimulator.userInterface.MainWindowInnerInterface;
  */
 public class ActionAlignComponentsToGrid extends AbstractDrawPanelAction {
 
-	private static final long serialVersionUID = -1277934641760609822L;
+    private static final long serialVersionUID = -1277934641760609822L;
 
-	public ActionAlignComponentsToGrid(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
+    public ActionAlignComponentsToGrid(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
         super(undoManager, drawPanel, mainWindow);
     }
 
@@ -27,17 +27,17 @@ public class ActionAlignComponentsToGrid extends AbstractDrawPanelAction {
     public void actionPerformed(ActionEvent ae) {
         // align components to grid
         HashMap<HwComponentGraphic, Dimension> movedComponentsMap;
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         if(graph.getMarkedAbstractHWComponentsCount() > 0){
             movedComponentsMap = graph.doAlignMarkedComponentsToGrid();
         }else{
             movedComponentsMap = graph.doAlignComponentsToGrid();
         }
-        
+
         graph.doUnmarkAllComponents();
-        
+
         // if map not empty set undoable edit
         if (!movedComponentsMap.isEmpty()) {
             // add to undo manager
@@ -47,10 +47,10 @@ public class ActionAlignComponentsToGrid extends AbstractDrawPanelAction {
             // update Undo and Redo buttons
             mainWindow.updateUndoRedoButtons();
 
-            
+
         }
         // repaint draw Panel
         drawPanel.repaint();
-        
+
     }
 }

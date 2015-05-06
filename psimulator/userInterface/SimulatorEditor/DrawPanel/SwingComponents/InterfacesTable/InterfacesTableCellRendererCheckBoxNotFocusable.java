@@ -13,8 +13,8 @@ import psimulator.dataLayer.DataLayerFacade;
  */
 public class InterfacesTableCellRendererCheckBoxNotFocusable extends JCheckBox implements TableCellRenderer {
 
-	private static final long serialVersionUID = 5532604072424651517L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = 5532604072424651517L;
+    private DataLayerFacade dataLayer;
 
     public InterfacesTableCellRendererCheckBoxNotFocusable(DataLayerFacade dataLayer) {
         this.dataLayer = dataLayer;

@@ -19,7 +19,7 @@ import utils.Util;
  */
 public class IpAddr extends LinuxCommand {
 
-	private Ip puv;
+    private Ip puv;
 
     //promenny parseru:
     private String slovo;
@@ -66,20 +66,20 @@ public class IpAddr extends LinuxCommand {
 
 
 
-	public IpAddr(AbstractCommandParser parser, Ip puv) {
-		super(parser);
-		this.puv = puv;
-	}
+    public IpAddr(AbstractCommandParser parser, Ip puv) {
+        super(parser);
+        this.puv = puv;
+    }
 
 
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
         parsujPrikaz();
         zkontrolujPrikaz();
         vykonejPrikaz();
         vypisChybovyHlaseni();
-	}
+    }
 
 
 
@@ -93,7 +93,7 @@ public class IpAddr extends LinuxCommand {
 
         if(akce==2){
             if(rozhr.getIpAddress()==null){
-				ipLayer.changeIpAddressOnInterface(rozhr, adr);
+                ipLayer.changeIpAddressOnInterface(rozhr, adr);
             }else{
                 if(rozhr.getIpAddress().equals(adr)){ //je tam nastavena stejna adresa
                     navrKod |= Util.md(8);
@@ -109,14 +109,14 @@ public class IpAddr extends LinuxCommand {
                 if (nastavenaMaska) { //kdyz byla nastavena maska za lomitkem, tak tato maska musi pri
                     //mazani souhlasit
                     if (rozhr.getIpAddress().equals(adr)) { // souhlasi i maska
-						ipLayer.changeIpAddressOnInterface(rozhr, null);
+                        ipLayer.changeIpAddressOnInterface(rozhr, null);
                     } else {
                         navrKod |= Util.md(9);
                     }
                 } else {//kdyz maska nebyla zadana, smaze se prvni, ktera odpovida, ale vypise se
                     //chybovy hlaseni (resi metoda na jejich vypis
                     if (rozhr.getIpAddress().getIp().equals(adr)){//souhlasi jen adresa
-						ipLayer.changeIpAddressOnInterface(rozhr, null);
+                        ipLayer.changeIpAddressOnInterface(rozhr, null);
                     } else {
                         navrKod |= Util.md(9);
                     }
@@ -124,7 +124,7 @@ public class IpAddr extends LinuxCommand {
             }
         }
         if(akce==4){
-			ipLayer.changeIpAddressOnInterface(rozhr, null);//u me se muze smazat jen jedna adresa
+            ipLayer.changeIpAddressOnInterface(rozhr, null);//u me se muze smazat jen jedna adresa
         }
         if(akce==1){
             vypisInfo();
@@ -134,20 +134,20 @@ public class IpAddr extends LinuxCommand {
         }
     }
 
-	private void vypisInfo() {
-		int poradi = 1;
-		for (NetworkInterface r : ipLayer.getSortedNetworkIfaces()) {
-			if (rozhr == null || rozhr == r) {	// bylo-li zadano rozhrani, musi souhlasit
-				vypisRozhrani(r, poradi);
-				poradi++;
-			}
-		}
-	}
+    private void vypisInfo() {
+        int poradi = 1;
+        for (NetworkInterface r : ipLayer.getSortedNetworkIfaces()) {
+            if (rozhr == null || rozhr == r) {    // bylo-li zadano rozhrani, musi souhlasit
+                vypisRozhrani(r, poradi);
+                poradi++;
+            }
+        }
+    }
 
 
     private void vypisRozhrani(NetworkInterface r, int poradi){
         String prvniRadek=poradi+": "+r.name+": <";
-		if(!r.ethernetInterface.isConnected()){	// kdyz neni rozhrani k nicemu pripojeny:
+        if(!r.ethernetInterface.isConnected()){    // kdyz neni rozhrani k nicemu pripojeny:
             prvniRadek+="NO-CARRIER,";
         }
         prvniRadek+="BROADCAST,MULTICAST,UP,10000> mtu 1500 qdisc pfifo_fast qlen 1000";

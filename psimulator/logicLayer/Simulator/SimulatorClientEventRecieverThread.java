@@ -47,7 +47,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
     private ObjectOutputStream outputStream;
 
     public SimulatorClientEventRecieverThread(DataLayerFacade dataLayer, UserInterfaceOuterFacade userInterfaceOuterFacade) {
-    	this.dataLayer = dataLayer;
+        this.dataLayer = dataLayer;
         this.simulatorManagerInterface = dataLayer.getSimulatorManager();
         this.isRecording = simulatorManagerInterface.isRecording();
     }
@@ -81,7 +81,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                         simulatorEvent = getEventFromServer();
                     } catch (ClientConnectionFailException ex) {
 
-                    	if(dataLayer.getMainPanelState() == UserInterfaceMainPanelState.EDITOR) {	// server was shut down by user - returned to EDITOR mode
+                        if(dataLayer.getMainPanelState() == UserInterfaceMainPanelState.EDITOR) {    // server was shut down by user - returned to EDITOR mode
                             simulatorManagerInterface.serverShutdown();
 
                             // set recording false immedeately
@@ -112,10 +112,10 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                                     isRecording = false;
                                 }
                             }
-                    		break;
-                    	}
-                    		
-                    	// connection broke down
+                            break;
+                        }
+                            
+                        // connection broke down
                         simulatorManagerInterface.connectionFailed(ex.getConnectionFailtureReason());
                         //simulatorManagerInterface.serverShutdown();
 
@@ -166,7 +166,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
 
     @Override
     public void update(Observable o, Object o1) {
-    	switch ((ObserverUpdateEventType) o1) {
+        switch ((ObserverUpdateEventType) o1) {
             case CONNECTION_DO_CONNECT:
                 if (DEBUG) {
                     System.out.println("Event reciever: DO_CONNECT");
@@ -306,7 +306,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
             timeOfFirstEvent = System.currentTimeMillis();
         }
 
-        try {        	
+        try {            
             NetworkObject networkObject = (NetworkObject) inputStream.readObject();
 
             SimulatorEvent simulatorEvent = (SimulatorEvent) networkObject;
@@ -325,7 +325,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
             //Logger.getLogger(SimulatorClientEventRecieverThread.class.getName()).log(Level.SEVERE, null, ex);
             throw new ClientConnectionFailException(ConnectionFailtureReason.SERVER_DISCONNECTED);
         } catch (ClassNotFoundException ex) {
-        	
+            
             if (DEBUG)System.out.println("Class cast exception during get simulator event");
             throw new ClientConnectionFailException(ConnectionFailtureReason.SERVER_SENT_WRONG_OBJECT);
         }

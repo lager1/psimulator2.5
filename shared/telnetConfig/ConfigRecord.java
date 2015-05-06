@@ -18,7 +18,7 @@ public class ConfigRecord implements Serializable{
      * component ID
      */
     private int componentId;
-    
+
     public ConfigRecord() {
     }
 
@@ -38,7 +38,7 @@ public class ConfigRecord implements Serializable{
         this.port = port;
     }
 
-    
-    
-    
+
+
+
 }

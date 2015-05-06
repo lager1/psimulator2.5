@@ -14,31 +14,31 @@ import networkModule.L3.nat.NatTable;
  */
 public class PacketFilter {
 
-	private final NatTable natTable;
+    private final NatTable natTable;
 
-	public PacketFilter(IPLayer ipLayer) {
-		this.natTable = new NatTable(ipLayer);
-	}
+    public PacketFilter(IPLayer ipLayer) {
+        this.natTable = new NatTable(ipLayer);
+    }
 
-	public NatTable getNatTable() {
-		return natTable;
-	}
+    public NatTable getNatTable() {
+        return natTable;
+    }
 
-	public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
+    public IpPacket preRouting(IpPacket packet, NetworkInterface in) {
 
-		packet = natTable.backwardTranslate(packet, in);
+        packet = natTable.backwardTranslate(packet, in);
 
 
-		return packet;
-	}
+        return packet;
+    }
 
-	public IpPacket postRouting(IpPacket packet, NetworkInterface in, NetworkInterface out) {
+    public IpPacket postRouting(IpPacket packet, NetworkInterface in, NetworkInterface out) {
 
-		packet = natTable.translate(packet, in, out);
+        packet = natTable.translate(packet, in, out);
 
-		return packet;
-	}
+        return packet;
+    }
 
-	// cisco NAT
-	// http://www.cisco.com/en/US/tech/tk648/tk361/technologies_tech_note09186a0080133ddd.shtml
+    // cisco NAT
+    // http://www.cisco.com/en/US/tech/tk648/tk361/technologies_tech_note09186a0080133ddd.shtml
 }

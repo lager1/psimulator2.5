@@ -32,11 +32,11 @@ public class IpNetmask extends IpAddress{
         }
     }
 
-	public static IpNetmask maskFromWildcard(String dlouhejFormat) {
-		IpAddress adr = new IpAddress(dlouhejFormat);
-		IpAddress prevracena = IpAddress.negateAddress(adr);
-		return new IpNetmask(prevracena);
-	}
+    public static IpNetmask maskFromWildcard(String dlouhejFormat) {
+        IpAddress adr = new IpAddress(dlouhejFormat);
+        IpAddress prevracena = IpAddress.negateAddress(adr);
+        return new IpNetmask(prevracena);
+    }
 
     /**
      *
@@ -66,7 +66,7 @@ public class IpNetmask extends IpAddress{
         return pocet;
     }
 
-	/**
+    /**
      * Spocita wildcard z masky a vrati ho jako retezec.
      * @return
      * @author Stanislav Řehák
@@ -100,12 +100,12 @@ public class IpNetmask extends IpAddress{
         }
     }
 
-	public static boolean isCorrectNetmask(String ret) {
-		if (correctNetmask(ret) != null) {
-			return true;
-		}
-		return false;
-	}
+    public static boolean isCorrectNetmask(String ret) {
+        if (correctNetmask(ret) != null) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Vraci true, kdyz je zadany integer maskou, tzn., kdyz jsou to nejdriv jednicky a pak nuly.

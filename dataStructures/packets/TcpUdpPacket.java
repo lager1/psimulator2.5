@@ -13,21 +13,21 @@ import dataStructures.packets.L4Packet;
  */
 public abstract class TcpUdpPacket extends L4Packet {
 
-	public final int srcPort;
-	public final int dstPort;
+    public final int srcPort;
+    public final int dstPort;
 
-	public TcpUdpPacket(int srcPort, int dstPort) {
-		this.srcPort = srcPort;
-		this.dstPort = dstPort;
-	}
+    public TcpUdpPacket(int srcPort, int dstPort) {
+        this.srcPort = srcPort;
+        this.dstPort = dstPort;
+    }
 
-	@Override
-	public int getPortSrc() {
-		return srcPort;
-	}
+    @Override
+    public int getPortSrc() {
+        return srcPort;
+    }
 
-	@Override
-	public int getPortDst() {
-		return dstPort;
-	}
+    @Override
+    public int getPortDst() {
+        return dstPort;
+    }
 }

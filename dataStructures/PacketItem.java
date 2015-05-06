@@ -14,13 +14,13 @@ import networkModule.L3.NetworkInterface;
  */
 public class PacketItem {
 
-	public final IpPacket packet;
-	public final NetworkInterface iface;
+    public final IpPacket packet;
+    public final NetworkInterface iface;
 
-	public PacketItem(IpPacket packet, NetworkInterface iface) {
-		this.packet = packet;
-		this.iface = iface;
-	}
+    public PacketItem(IpPacket packet, NetworkInterface iface) {
+        this.packet = packet;
+        this.iface = iface;
+    }
 
 
 }

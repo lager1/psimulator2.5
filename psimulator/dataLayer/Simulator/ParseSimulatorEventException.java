@@ -6,9 +6,9 @@ package psimulator.dataLayer.Simulator;
  */
 public class ParseSimulatorEventException extends Exception{
     
-	private static final long serialVersionUID = 6890802054968981902L;
+    private static final long serialVersionUID = 6890802054968981902L;
 
-	public ParseSimulatorEventException(){
+    public ParseSimulatorEventException(){
         
     }
     

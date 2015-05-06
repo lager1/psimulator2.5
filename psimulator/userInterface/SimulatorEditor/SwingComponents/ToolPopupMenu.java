@@ -16,31 +16,31 @@ import psimulator.userInterface.SimulatorEditor.Tools.AbstractTool;
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class ToolPopupMenu extends JPopupMenu{
-    
-	private static final long serialVersionUID = 3801555825978611719L;
-	private List<AbstractTool> tools;
+
+    private static final long serialVersionUID = 3801555825978611719L;
+    private List<AbstractTool> tools;
     private List<JRadioButtonMenuItem> jMenuItems;
     private MenuToggleButton toggleButton;
     private ButtonGroup toolsButtonGroup;
-    
+
     public ToolPopupMenu(List<AbstractTool> tools, final MenuToggleButton toggleButton){
         super();
-        
+
         this.toggleButton = toggleButton;
         this.tools = tools;
-     
+
         jMenuItems = new ArrayList<>();
         toolsButtonGroup = new ButtonGroup();
-        
+
         for (final AbstractTool tool : tools) {
             //AddDeviceTool tmp = (AddDeviceTool)tool;
             AbstractCreationTool tmp = (AbstractCreationTool)tool;
 
             // create menu item for tool
             JRadioButtonMenuItem mi = new JRadioButtonMenuItem();
-            
+
             jMenuItems.add(mi);
-            
+
             mi.addActionListener(new ActionListener() {
 
                 @Override
@@ -52,11 +52,11 @@ public class ToolPopupMenu extends JPopupMenu{
             this.add(mi);
             toolsButtonGroup.add(mi);
         }
-        
+
         // set the first selected
         jMenuItems.get(0).setSelected(true);
     }
-    
+
     @Override
     public void show(Component cmpnt, int x , int y){
         // show
@@ -68,12 +68,12 @@ public class ToolPopupMenu extends JPopupMenu{
             jMenuItems.get(i).setText(tools.get(i).getToolTip(dataLayer));
         }
     }
-    
+
     public final void updateIconSize(DataLayerFacade dataLayer){
         for (int i=0;i<jMenuItems.size();i++) {
             ImageIcon icon = tools.get(i).getImageIconForPopup(dataLayer);
             jMenuItems.get(i).setIcon(icon);
         }
     }
-    
+
 }

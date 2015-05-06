@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -67,14 +67,14 @@ public class DummyShell
    * @param con Connection that runs the shell.
    */
   public void run(Connection con) {
-    
+
       try {
       m_Connection = con;
       //mycon.setNextShell("nothing");
       m_IO = m_Connection.getTerminalIO();
       //dont forget to register listener
       m_Connection.addConnectionListener(this);
-	 
+
       //clear the screen and start from zero
       m_IO.eraseScreen();
       m_IO.homeCursor();
@@ -298,7 +298,7 @@ public class DummyShell
 //      log.error("connectionLogoutRequest()", ex);
     }
   }//connectionLogout
-  
+
   public void connectionSentBreak(ConnectionEvent ce) {
     try {
       m_IO.write("CONNECTION_BREAK");

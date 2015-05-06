@@ -12,21 +12,21 @@ import java.util.*;
  */
 public class HolderPoolAccess {
 
-	/**
-	 * Key - number of poolAccess <br />
-	 * Value - poolAccess itself
-	 */
+    /**
+     * Key - number of poolAccess <br />
+     * Value - poolAccess itself
+     */
     private final Map<Integer, PoolAccess> poolAccess = new HashMap<>();
 
-	public Map<Integer, PoolAccess> getPoolAccess() {
-		return poolAccess;
-	}
+    public Map<Integer, PoolAccess> getPoolAccess() {
+        return poolAccess;
+    }
 
-	public List<PoolAccess> getSortedPoolAccess() {
-		List<PoolAccess> list = new ArrayList<>(poolAccess.values());
-		Collections.sort(list);
-		return list;
-	}
+    public List<PoolAccess> getSortedPoolAccess() {
+        List<PoolAccess> list = new ArrayList<>(poolAccess.values());
+        Collections.sort(list);
+        return list;
+    }
 
     /**
      * Prida novy poolAccess na spravnou pozici. Kdyz najde PoolAccess se stejnym jmenem,
@@ -56,9 +56,9 @@ public class HolderPoolAccess {
     public int deletePoolAccess(int access) {
 
         Object object = poolAccess.remove(access);
-		if (object == null) {
-			return 1;
-		}
+        if (object == null) {
+            return 1;
+        }
 
         return 0;
     }
@@ -76,7 +76,7 @@ public class HolderPoolAccess {
      * @return
      */
     public PoolAccess getPoolAccess(Pool pool) {
-		for (PoolAccess pa : poolAccess.values()) {
+        for (PoolAccess pa : poolAccess.values()) {
             if (pa.poolName.equals(pool.name)) {
                 return pa;
             }

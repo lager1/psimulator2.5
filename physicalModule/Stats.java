@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Stats {
 
-	public AtomicInteger droppedPackets = new AtomicInteger(0);
-	public AtomicInteger processedPackets = new AtomicInteger(0);
-	public AtomicInteger processedBytes = new AtomicInteger(0);
+    public AtomicInteger droppedPackets = new AtomicInteger(0);
+    public AtomicInteger processedPackets = new AtomicInteger(0);
+    public AtomicInteger processedBytes = new AtomicInteger(0);
 }

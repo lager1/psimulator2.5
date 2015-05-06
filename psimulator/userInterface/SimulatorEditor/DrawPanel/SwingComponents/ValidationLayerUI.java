@@ -16,7 +16,7 @@ import javax.swing.plaf.LayerUI;
 public class ValidationLayerUI extends LayerUI<JFormattedTextField> {
     
   
-	private static final long serialVersionUID = -5307963913883665825L;
+    private static final long serialVersionUID = -5307963913883665825L;
 
 @Override
   public void paint (Graphics g, JComponent c) {

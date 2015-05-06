@@ -34,7 +34,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     boolean minus_b = false; //dovoluje pingat na broadcastovou adresu
     boolean minus_h = false;
     //dalsi prepinace, ktery bych mel minimalne akceptovat: -a, -v
-    int timeout = 10_000;	// timeout v milisekundach
+    int timeout = 10_000;    // timeout v milisekundach
 
     //parametry parseru:
     private String slovo; //slovo parseru, se kterym se zrovna pracuje
@@ -56,7 +56,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
     @Override
     public void run() {
-        parser.setRunningCommand(this, false);	// registrovani u parseru
+        parser.setRunningCommand(this, false);    // registrovani u parseru
         parsujPrikaz();
         if (ladiciVypisovani) {
             printLine(toString());
@@ -66,7 +66,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
         }
         boolean applicationStarted = vykonejPrikaz();
         if (!applicationStarted) {
-            parser.deleteRunningCommand();	// odregistrovani, kdyz nebyla aplikace spustena
+            parser.deleteRunningCommand();    // odregistrovani, kdyz nebyla aplikace spustena
         }
         //Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Konec metody run. ", null);
     }
@@ -233,7 +233,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
                 } else if (p < 0.2) {
                     navratovyKod |= 4;
-                    printLine("ping: cannot flood; minimal interva is 200ms");	// zakazali jsme to, protoze to simulator nevytezovalo
+                    printLine("ping: cannot flood; minimal interva is 200ms");    // zakazali jsme to, protoze to simulator nevytezovalo
                 } else {
                     interval = p;
                 }

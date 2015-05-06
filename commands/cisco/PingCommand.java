@@ -19,50 +19,50 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class PingCommand extends CiscoCommand implements ApplicationNotifiable, LongTermCommand {
 
-	private final CiscoPingApplication app;
+    private final CiscoPingApplication app;
 
-	public PingCommand(AbstractCommandParser parser) {
-		super(parser);
-		this.app = new CiscoPingApplication(getDevice(), this.parser, this);
-	}
+    public PingCommand(AbstractCommandParser parser) {
+        super(parser);
+        this.app = new CiscoPingApplication(getDevice(), this.parser, this);
+    }
 
 
-	@Override
-	public void catchSignal(Signal signal) {
-		switch (signal) {
-			case CTRL_SHIFT_6:
-				app.exit();
-				break;
-			case CTRL_C:
-				if (debug) {
-					app.exit();
-				}
-				break;
+    @Override
+    public void catchSignal(Signal signal) {
+        switch (signal) {
+            case CTRL_SHIFT_6:
+                app.exit();
+                break;
+            case CTRL_C:
+                if (debug) {
+                    app.exit();
+                }
+                break;
 
-			default:
-				// ok
-		}
-	}
+            default:
+                // ok
+        }
+    }
 
-	@Override
-	public void catchUserInput(String input) {
-//		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    @Override
+    public void catchUserInput(String input) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	@Override
-	public void run() {
-		parser.setRunningCommand(this,false);
+    @Override
+    public void run() {
+        parser.setRunningCommand(this,false);
 
-		boolean conti = processLine();
-		if (conti) {
-			// vytvor aplikaci
-			app.start();
-		} else {
-			parser.deleteRunningCommand();
-		}
-	}
+        boolean conti = processLine();
+        if (conti) {
+            // vytvor aplikaci
+            app.start();
+        } else {
+            parser.deleteRunningCommand();
+        }
+    }
 
-	/**
+    /**
      * Ulozi vsechny parametry do tridnich promennych nebo vypise chybovou hlasku.
      * @param typVolby, ktery ma zpracovavat
      * @return true pokud se ma pokracovat v posilani pingu
@@ -83,30 +83,30 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
 
 
         if (check("timeout", typVolby)) {
-			int timeout;
+            int timeout;
             try {
                 timeout = Integer.valueOf(volba) * 1000; // TODO: povolit maximalne 0.2 s (200ms)
-				if (timeout > 3600 || timeout < 0) {
-					invalidInputDetected();
-					return false;
-				}
+                if (timeout > 3600 || timeout < 0) {
+                    invalidInputDetected();
+                    return false;
+                }
             } catch (NumberFormatException e) {
                 invalidInputDetected();
                 return false;
             }
-			app.setTimeout(timeout);
+            app.setTimeout(timeout);
         }
 
 
         if (check("repeat", typVolby)) {
-			int count;
+            int count;
             try {
                 count = Integer.valueOf(volba);
             } catch (NumberFormatException e) {
                 invalidInputDetected();
                 return false;
             }
-			app.setCount(count);
+            app.setCount(count);
         }
         if (check("size", typVolby)) {
             int n;
@@ -137,21 +137,21 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
      */
     private boolean processLine() {
 //        if (parser.words.size() < 2) {
-		if (nextWordPeek().isEmpty()) { // TODO: overit funkcnost
+        if (nextWordPeek().isEmpty()) { // TODO: overit funkcnost
 
             printService("podporovana syntaxe: <IP> (<size|timeout|repeat> <cislo>)* ");
             return false;
         }
         String ip = nextWord();
-		IpAddress target;
+        IpAddress target;
         try {
             target = new IpAddress(ip);
         } catch (Exception e) {
-			printWithDelay("Translating \"" + ip + "\"" + "...domain server (255.255.255.255)\n"
-					+ "% Unrecognized host or address, or protocol not running.", 500);
+            printWithDelay("Translating \"" + ip + "\"" + "...domain server (255.255.255.255)\n"
+                    + "% Unrecognized host or address, or protocol not running.", 500);
             return false;
         }
-		app.setTarget(target);
+        app.setTarget(target);
 
         String typVolby = nextWord();
         if (typVolby.equals("")) {
@@ -161,7 +161,7 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         return processParameters(typVolby);
     }
 
-	/**
+    /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
      * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
      * @param cmd prikaz, ktery zadal uzivatel
@@ -178,15 +178,15 @@ public class PingCommand extends CiscoCommand implements ApplicationNotifiable, 
         return false;
     }
 
-	@Override
-	public void applicationFinished() {
-		parser.deleteRunningCommand();
-	}
+    @Override
+    public void applicationFinished() {
+        parser.deleteRunningCommand();
+    }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		completers.get(CommandShell.CISCO_USER_MODE).addCommand("ping");
-		completers.get(CommandShell.CISCO_PRIVILEGED_MODE).addCommand("ping");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        completers.get(CommandShell.CISCO_USER_MODE).addCommand("ping");
+        completers.get(CommandShell.CISCO_PRIVILEGED_MODE).addCommand("ping");
+    }
 
 }

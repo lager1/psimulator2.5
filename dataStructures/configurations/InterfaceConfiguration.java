@@ -9,11 +9,11 @@ import dataStructures.ipAddresses.IpNetmask;
  * @author Michal Horacek
  */
 public class InterfaceConfiguration {
-	public String ifaceName;
-	public String type;
-	public String inetType;
-	public IpAddress address;
-	public IpNetmask mask;
-	public IpAddress broadcast;
+    public String ifaceName;
+    public String type;
+    public String inetType;
+    public IpAddress address;
+    public IpNetmask mask;
+    public IpAddress broadcast;
         public IpAddress gateway;
 }
