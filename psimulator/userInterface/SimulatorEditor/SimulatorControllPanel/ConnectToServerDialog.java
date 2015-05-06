@@ -61,9 +61,9 @@ public final class ConnectToServerDialog extends AbstractPropertiesDialog {
         waitLayerUI.stop();
 
         // inform user
-        JOptionPane.showMessageDialog(parentComponent,
-                dataLayer.getString("CONNECTION_ESTABLISH_NOT_SUCCESSFUL"),
-                dataLayer.getString("WARNING"),
+        JOptionPane.showMessageDialog(parentComponent, 
+                dataLayer.getString("CONNECTION_ESTABLISH_NOT_SUCCESSFUL"), 
+                dataLayer.getString("WARNING"), 
                 JOptionPane.WARNING_MESSAGE);
     }
 

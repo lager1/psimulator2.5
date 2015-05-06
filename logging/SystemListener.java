@@ -24,7 +24,7 @@ public class SystemListener implements LoggerListener {
 
     /**
      * Key - logging cathegory <br />
-     * Value - Logger.{ERROR,WARNING,IMPORTAN,INFO,DEBUG}, if INFO selected all facilities before it are also selected.
+     * Value - Logger.{ERROR, WARNING, IMPORTAN, INFO, DEBUG}, if INFO selected all facilities before it are also selected.
      */
     public final Map<LoggingCategory, Integer> configuration = new EnumMap<>(LoggingCategory.class);
     private DateFormat currentTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");

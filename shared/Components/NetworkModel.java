@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 //@XmlType(propOrder={"componentsMap", "cablesMap", "networkCounterModel", "lastEditTimestamp" })
-public class NetworkModel implements Identifiable, Serializable{
+public class NetworkModel implements Identifiable, Serializable {
     /**
      * Map with components. Identified by component ID.
      */
@@ -63,7 +63,7 @@ public class NetworkModel implements Identifiable, Serializable{
     /**
      * Sets timestamp of last edit
      *
-     * @param lastEditTimestamp 
+     * @param lastEditTimestamp
      */
     public void setLastEditTimestamp(long lastEditTimestamp) {
         this.lastEditTimestamp = lastEditTimestamp;

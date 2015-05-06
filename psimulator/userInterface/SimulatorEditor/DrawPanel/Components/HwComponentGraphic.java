@@ -173,14 +173,14 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         for(int i = textImages.size()-1;i>=0;i--){
             BufferedImage image = textImages.get(i);
 
-            int x,y,w,h;
+            int x, y, w, h;
 
             x=(int) (ZoomManagerSingleton.getInstance().doScaleToActual(hwComponentModel.getDefaultZoomXPos()) - ((image.getWidth() - ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomWidth))/2.0));
             y= ZoomManagerSingleton.getInstance().doScaleToActual(hwComponentModel.getDefaultZoomYPos()) + ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomHeight) + i*image.getHeight();
             w = image.getWidth();
             h = image.getHeight();
 
-            rectangle = new Rectangle(x,y,w,h);
+            rectangle = new Rectangle(x, y, w, h);
 
             line.setLine(insidePoint, outsidePoint);
 
@@ -390,6 +390,8 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     public int getDefaultZoomTextWidth() {
         return defaultZoomTextWidth;
     }
+
+    public HwComponentModel getDevice() { return hwComponentModel; }
 
     @Override
     public void initialize() {

@@ -142,11 +142,11 @@ public abstract class DrawPanelListenerStrategy extends MouseInputAdapter implem
     }
 
     protected Point convertPoint(Point point){
-        return SwingUtilities.convertPoint(vport,point,comp);
+        return SwingUtilities.convertPoint(vport, point, comp);
     }
 
     protected MouseEvent convertMouseEvent(MouseEvent mouseEvent){
-        return SwingUtilities.convertMouseEvent(vport,mouseEvent,comp);
+        return SwingUtilities.convertMouseEvent(vport, mouseEvent, comp);
     }
 
     /**

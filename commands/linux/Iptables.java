@@ -109,11 +109,11 @@ public class Iptables extends LinuxCommand {
      * Parsuje prikaz, k cemuz vola i metody dole. Kontroluje gramatiku prikazu.
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (!slovo.equals("")) {
             zpracujBeznyPrepinace();
             if (minus_h) break; // po -h se uz nic dalsiho neparsuje.
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
     }
 
@@ -162,7 +162,7 @@ public class Iptables extends LinuxCommand {
     }
 
     private void zpracujMinus_t() {
-        tabulka = dalsiSlovo();
+        tabulka = getToken();
         if (!tabulka.equals("nat")) {
             if (tabulka.equals("")) {
                 navrKod |= 4; //zadano jen -t
@@ -180,7 +180,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_o = true;
         }
-        vystupniRozhr = dalsiSlovo();
+        vystupniRozhr = getToken();
         if (vystupniRozhr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-o";
@@ -194,7 +194,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_i = true;
         }
-        vstupniRozhr = dalsiSlovo();
+        vstupniRozhr = getToken();
         if (vstupniRozhr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-i";
@@ -208,7 +208,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_j = true;
         }
-        akceJump = dalsiSlovo();
+        akceJump = getToken();
         if (akceJump.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-j";
@@ -226,7 +226,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_d = true;
         }
-        cilAdr = dalsiSlovo();
+        cilAdr = getToken();
         if (cilAdr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-d";
@@ -246,7 +246,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoToDestination = true;
         }
-        preklAdr = dalsiSlovo();
+        preklAdr = getToken();
         if (preklAdr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "--to-destination";
@@ -277,18 +277,18 @@ public class Iptables extends LinuxCommand {
             } else if (slovo.equals("-F")) {
                 provest = 5;
             }
-            retez = dalsiSlovo();
+            retez = getToken();
             if (provest == 2) {//insert
                 cisloPr = parser.nextWordPeek();
                 try {
                     cisloPravidla = Integer.parseInt(cisloPr);
-                    dalsiSlovo(); //zvetsovani citace, kdyz se to povedlo
+                    getToken(); //zvetsovani citace, kdyz se to povedlo
                 } catch (NumberFormatException ex) {
                     cisloPravidla = 1;
                 }
             }
             if (provest == 3) { //delete
-                cisloPr = dalsiSlovo();
+                cisloPr = getToken();
                 try {
                     cisloPravidla = Integer.parseInt(cisloPr);
                 } catch (NumberFormatException ex) {

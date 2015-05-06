@@ -258,7 +258,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
 
         //System.out.println("New viewport x="+newPosition.x+", y="+newPosition.y);
 
-        // do not allow position below 0,0
+        // do not allow position below 0, 0
         if (newPosition.x < 0) {
             newPosition.x = 0;
         }
@@ -293,7 +293,7 @@ public class UserInterfaceMainPanel extends UserInterfaceMainPanelOuterInterface
         newPosition.x = mouseXNewZoom - width;
         newPosition.y = mouseYNewZoom - height;
 
-        // do not allow position below 0,0
+        // do not allow position below 0, 0
         if (newPosition.x < 0) {
             newPosition.x = 0;
         }

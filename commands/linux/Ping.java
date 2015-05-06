@@ -156,7 +156,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
      * Parsovani. Cte prikaz, zatim cte jenom IP adresu a nic nekontroluje.
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (!slovo.isEmpty()) {
             if (slovo.length() > 1 && slovo.charAt(0) == '-') { //cteni prepinacu
                 zpracujPrepinace();
@@ -170,7 +170,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
                     translatingName = true;
                 }
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
         //kdyz se vsechno zparsovalo, zkontroluje se, je-li zadana adresa:
         if (cil == null) {
@@ -263,7 +263,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
         uk++; //aby ukazoval az za to pismeno
         if (uk >= slovo.length()) { //pismeno toho prepinace bylo poslednim znakem slova, mezi pismenem a
             // hodnotou je mezera
-            slovo = dalsiSlovo(); //nacitani dalsiho slova
+            slovo = getToken(); //nacitani dalsiho slova
             uk = 0;
         }
         while (uk < slovo.length() && Character.isDigit(slovo.charAt(uk))) { //ten cyklus bere jen cislice, to za
@@ -285,7 +285,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
      * @return
      */
     private double zpracujDoublePrepinac(int uk) {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         try {
             return Double.parseDouble(slovo);
         } catch (NumberFormatException ex) {

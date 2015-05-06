@@ -58,11 +58,11 @@ public class JInterfacesTable extends JTable {
 
             private static final long serialVersionUID = 6691291805716907299L;
             String[] columnToolTips = {
-                null,
-                null,
-                null,
-                dataLayer.getString("SETS_THAT_INTERFACE_ON_OFF"),
-                dataLayer.getString("REQUIRED_FORMAT_IS") + " 192.168.1.1/24 (IP/mask)",
+                null, 
+                null, 
+                null, 
+                dataLayer.getString("SETS_THAT_INTERFACE_ON_OFF"), 
+                dataLayer.getString("REQUIRED_FORMAT_IS") + " 192.168.1.1/24 (IP/mask)", 
                 dataLayer.getString("REQUIRED_FORMAT_IS") + " HH-HH-HH-HH-HH-HH (H = hexadecimal n.)"};
 
             @Override

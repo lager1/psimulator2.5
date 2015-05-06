@@ -135,7 +135,7 @@ public class Route extends LinuxCommand {
      */
     private void parsujPrikaz() {
         // prepinace:
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (slovo.length() > 1 && slovo.charAt(0) == '-') {
             if (slovo.equals("-n") || slovo.equals("--numeric")) {
                 minus_n = true;
@@ -154,20 +154,20 @@ public class Route extends LinuxCommand {
                 navratovyKod = navratovyKod | 1;
                 return;
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
         // dalsi parsovani:
         if (minus_h) {
             //to se pak uz nic neparsuje.
         } else {
             if (slovo.equals("add")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavAdd();
             } else if (slovo.equals("del")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavDel();
             } else if (slovo.equals("flush")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavFlush();
             } else if (!slovo.equals("")) { //nejakej nesmysl
                 vypisDelsiNapovedu();
@@ -201,10 +201,10 @@ public class Route extends LinuxCommand {
             navratovyKod = navratovyKod | 2;
             vypisKratkouNapovedu();
         } else if (slovo.equals("-net")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             nastavMinus_net();
         } else if (slovo.equals("-host")) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             nastavMinus_host();
         } else { //cokoliv jinyho se povazuje za adresu adresata - hosta
             nastavMinus_host();
@@ -239,15 +239,15 @@ public class Route extends LinuxCommand {
         }
         //adresa je prectena, kdyz je vsechno v poradku, pokracuje se dal:
         if (bezChyby) {
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("gw")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavGw();
             } else if (slovo.equals("dev")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavDev();
             } else if (slovo.equals("netmask")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavNetmask();
             } else if (slovo.equals("") && akce == 2) { //prazdnej retezec u akce del
                 //konec prikazu
@@ -293,12 +293,12 @@ public class Route extends LinuxCommand {
             ipAdresa = new IPwithNetmask(adr, 32); // a adresa se rovnou vytvori
         }
         if (!chyba) { //kdyz nenastala chyba, tak se rozhoduje, co bude dal
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("gw")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavGw();
             } else if (slovo.equals("dev")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavDev();
             } else if (slovo.equals("netmask")) { //on to pozna a hodi chybu
                 nastavNetmask();
@@ -331,12 +331,12 @@ public class Route extends LinuxCommand {
             printLine(slovo + ": unknown host");
             navratovyKod |= 8;
         } else { //spravna brana
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("dev")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavDev();
             } else if (slovo.equals("netmask")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavNetmask();
             } else if (slovo.equals("")) { //konec prikazu
             } else { //vsechno ostatni se povazuje za nazev iface
@@ -363,13 +363,13 @@ public class Route extends LinuxCommand {
             printLine("SIOCADDRT: No such device");
             navratovyKod |= 32;
         } else { //rozhrani je spravne a je jiz ulozeno v promenne rozhr
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("gw")) {
                 if (poDevNepokracovat) { //rozhrani bylo zadano bez dev -> to uz se pak nesmi pokracovat
                     vypisKratkouNapovedu();
                     navratovyKod |= 64;
                 } else {
-                    slovo = dalsiSlovo();
+                    slovo = getToken();
                     nastavGw();
                 }
             } else if (slovo.equals("netmask")) {
@@ -377,7 +377,7 @@ public class Route extends LinuxCommand {
                     vypisKratkouNapovedu();
                     navratovyKod |= 64;
                 } else {
-                    slovo = dalsiSlovo();
+                    slovo = getToken();
                     nastavNetmask();
                 }
             } else if (slovo.equals("")) { //konec prikazu
@@ -410,12 +410,12 @@ public class Route extends LinuxCommand {
             navratovyKod |= 1024;
         } else { //spravna maska
             maska = slovo;
-            slovo = dalsiSlovo();
+            slovo = getToken();
             if (slovo.equals("dev")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavDev();
             } else if (slovo.equals("gw")) {
-                slovo = dalsiSlovo();
+                slovo = getToken();
                 nastavGw();
             } else if (slovo.equals("")) {
                 //konec prikazu

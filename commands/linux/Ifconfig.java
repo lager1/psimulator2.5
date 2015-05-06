@@ -80,7 +80,7 @@ public class Ifconfig extends LinuxCommand {
     protected void parsujPrikaz() {
         String slovo;
         // prepinace:
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (slovo.startsWith("-")) { //kdyz je prvnim znakem slova minus
             if (slovo.equals("-a")) {
                 minus_a = true;
@@ -94,37 +94,37 @@ public class Ifconfig extends LinuxCommand {
                 errorUnknownSwitch(slovo);
                 return; //tady ifconfig uz zbytek neprovadi, i kdyby byl dobrej
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
         //jmenoRozhrani je to prvni za prepinacema:
         if (!slovo.isEmpty()) {
             jmenoRozhrani = slovo;
         }
-        slovo = dalsiSlovo();
+        slovo = getToken();
         //parametry:
         //Zjistil jsem, ze neznamej parametr se povazuje za adresu nebo za adresu s maskou.
         boolean pokracovat = true;
         while (!slovo.isEmpty() && pokracovat) { //dokud v tom slove neco je
             if (slovo.equals("netmask")) {//m
-                maska = dalsiSlovo();
+                maska = getToken();
                 if (maska.isEmpty()) {
                     maska = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("broadcast")) {//adresa pro broadcast, ta si vubec dela uplne, co se ji zachce
-                broadcast = dalsiSlovo();
+                broadcast = getToken();
                 if (broadcast.isEmpty()) {
                     broadcast = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("add")) {
-                add.add(dalsiSlovo());
+                add.add(getToken());
                 if (add.isEmpty()) {
                     add = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("del")) {
-                del.add(dalsiSlovo());
+                del.add(getToken());
                 if (del.isEmpty()) {
                     del = null;
                     navrKod |= 2;
@@ -150,7 +150,7 @@ public class Ifconfig extends LinuxCommand {
                     navrKod |= 16;
                 }
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
     }
 

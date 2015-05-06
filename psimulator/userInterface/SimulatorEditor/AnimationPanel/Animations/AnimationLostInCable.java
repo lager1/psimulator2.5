@@ -13,13 +13,13 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
  */
 public class AnimationLostInCable extends AbstractAnimation {
 
-    public AnimationLostInCable(AnimationPanelInnerInterface animationPanelInnerInterface,
-            DataLayerFacade dataLayer, PacketType packetType,
-            Point defaultZoomSource, Point defaultZoomDest,
+    public AnimationLostInCable(AnimationPanelInnerInterface animationPanelInnerInterface, 
+            DataLayerFacade dataLayer, PacketType packetType, 
+            Point defaultZoomSource, Point defaultZoomDest, 
             int durationInMilliseconds, EventType eventType) {
 
-        super(animationPanelInnerInterface, dataLayer, packetType,
-                defaultZoomSource, defaultZoomDest,
+        super(animationPanelInnerInterface, dataLayer, packetType, 
+                defaultZoomSource, defaultZoomDest, 
                 durationInMilliseconds, eventType);
     }
 
@@ -52,7 +52,7 @@ public class AnimationLostInCable extends AbstractAnimation {
             }
 
             // set antialiasing
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
             int width = (int) (getImage().getWidth(null) * 0.7);

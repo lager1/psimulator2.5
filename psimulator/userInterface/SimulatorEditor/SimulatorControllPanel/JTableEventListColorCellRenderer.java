@@ -26,7 +26,7 @@ public class JTableEventListColorCellRenderer extends JLabel implements TableCel
         
         this.setBackground(color);
         
-        this.setBorder(BorderFactory.createMatteBorder(2,5,2,5,jTable.getBackground()));
+        this.setBorder(BorderFactory.createMatteBorder(2, 5, 2, 5, jTable.getBackground()));
         
         return this;
     }

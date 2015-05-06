@@ -31,7 +31,7 @@ public final class WorkerThread implements Runnable, Loggable {
     public WorkerThread(SmartRunnable smartRunnable) {
         assert smartRunnable != null;
         this.smartRunnable = smartRunnable;
-        myThread = new Thread(this,smartRunnable.getDescription());
+        myThread = new Thread(this, smartRunnable.getDescription());
         myThread.start();
     }
 
@@ -89,6 +89,7 @@ public final class WorkerThread implements Runnable, Loggable {
                 smartRunnable.doMyWork();
             } catch (Exception e) {
                 Logger.log(this, Logger.WARNING, LoggingCategory.THREADS, "Some exception occured: " + e.toString(), e);
+                throw e;
             }
 
             if (!dieCalled) {    // ma-li se umrit po metode doMyWork nespousti se sleep, tzn. jde se na zacatek a skonci se

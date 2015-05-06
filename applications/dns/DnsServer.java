@@ -1,7 +1,7 @@
 package applications.dns;
 
 import applications.Application;
-import com.sun.rmi.rmid.ExecOptionPermission;
+//import com.sun.rmi.rmid.ExecOptionPermission;
 import config.configFiles.NamedConfFile;
 import dataStructures.PacketItem;
 import device.Device;

@@ -17,7 +17,7 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public abstract class AbstractAnimation implements TimingTarget{
+public abstract class AbstractAnimation implements TimingTarget {
     //
     protected Animator animator;
     //
@@ -41,10 +41,10 @@ public abstract class AbstractAnimation implements TimingTarget{
     //
     protected double fraction;
     
-    public AbstractAnimation(final AnimationPanelInnerInterface animationPanelInnerInterface,
-            DataLayerFacade dataLayer,
-            PacketType packetType, Point defaultZoomSource, Point defaultZoomDest,
-            int durationInMilliseconds,
+    public AbstractAnimation(final AnimationPanelInnerInterface animationPanelInnerInterface, 
+            DataLayerFacade dataLayer, 
+            PacketType packetType, Point defaultZoomSource, Point defaultZoomDest, 
+            int durationInMilliseconds, 
             EventType eventType) {
 
         this.dataLayer = dataLayer;
@@ -54,7 +54,7 @@ public abstract class AbstractAnimation implements TimingTarget{
         this.eventType = eventType;
 
         // get image
-        image = ImageFactorySingleton.getInstance().getPacketImage(packetType, animationPanelInnerInterface.getPacketImageType(),
+        image = ImageFactorySingleton.getInstance().getPacketImage(packetType, animationPanelInnerInterface.getPacketImageType(), 
                 ZoomManagerSingleton.getInstance().getPackageIconWidth());
 
         // get start coordinates in default zoom
@@ -88,7 +88,7 @@ public abstract class AbstractAnimation implements TimingTarget{
      * @return
      */
     public Image getImage() {
-        image = ImageFactorySingleton.getInstance().getPacketImage(packetType, animationPanelInnerInterface.getPacketImageType(),
+        image = ImageFactorySingleton.getInstance().getPacketImage(packetType, animationPanelInnerInterface.getPacketImageType(), 
                 ZoomManagerSingleton.getInstance().getPackageIconWidth());
         return image;
     }
@@ -122,7 +122,7 @@ public abstract class AbstractAnimation implements TimingTarget{
     }
 
     /**
-     * Gets current fraction of animation <0,1>
+     * Gets current fraction of animation <0, 1>
      */
     public double getFraction() {
         return fraction;

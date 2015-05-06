@@ -1,5 +1,6 @@
 package shared.Timer;
 
+import sun.nio.cs.Surrogate;
 
 /**
  * Class representing timer callback entry

@@ -30,8 +30,8 @@ public class Service extends LinuxCommand {
 
     @Override
     public void run() {
-        if (parsujPrikaz() == 0) { //parsuju, pokud vse v poradku
-            vykonejPrikaz();
+        if (parseCommand() == 0) { //parsuju, pokud vse v poradku
+            runCommand();
         }
     }
 
@@ -40,8 +40,8 @@ public class Service extends LinuxCommand {
      *
      * @return 1 iff parsing error
      */
-    private int parsujPrikaz() {
-        String serviceName = dalsiSlovo();
+    private int parseCommand() {
+        String serviceName = getToken();
         if (serviceName.equals("dhcp-server")) {
             newApp = new DhcpServer(getDevice());
         } else if (serviceName.equals("dns-server")) {
@@ -55,7 +55,7 @@ public class Service extends LinuxCommand {
             return 1;
         }
 
-        command = dalsiSlovo();
+        command = getToken();
         if (command.equals("")) {
             printLine("Usage: service <service_name> {start|stop|restart|force-reload|status}");
             return 1;
@@ -65,7 +65,7 @@ public class Service extends LinuxCommand {
         return 0;
     }
 
-    private void vykonejPrikaz() {
+    private void runCommand() {
         Application app = getDevice().getAppByName(newApp.name);
         if (command.equals("start")) {
             startNewApp(app);

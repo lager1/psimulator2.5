@@ -40,7 +40,7 @@ public abstract class LinuxCommand extends AbstractCommand {
      *
      * @return
      */
-    protected String dalsiSlovo() {
+    protected String getToken() {
         return parser.nextWord();
     }
 

@@ -67,7 +67,7 @@ public class DrawPanelListenerStrategyAddCable extends DrawPanelListenerStrategy
         e = convertMouseEvent(e);
 
         if (hasFirstComponent) {
-            drawPanel.setLineInProgras(true, startPointInDefault,e.getPoint());
+            drawPanel.setLineInProgras(true, startPointInDefault, e.getPoint());
 
             drawPanel.repaint();
         }

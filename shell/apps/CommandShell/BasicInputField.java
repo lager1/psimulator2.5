@@ -117,7 +117,7 @@ public abstract class BasicInputField extends ActiveComponent {
 
     protected void handleInput(int inputValue) throws IOException {
 
-        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " ,který má kód: " + inputValue);
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, " Tisknul jsem znak: " + String.valueOf((char) inputValue) + " , který má kód: " + inputValue);
         m_IO.write(inputValue);
         sb.insert(cursor, (char) inputValue);
         cursor++;

@@ -72,7 +72,7 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 
     // privatni metody - parsovani:
     protected IpAddress parseCommand() {
-        String word = dalsiSlovo();
+        String word = getToken();
         IpAddress adr;
         try {
             adr = new IpAddress(word);

@@ -28,7 +28,7 @@ public class ValidationLayerUI extends LayerUI<JFormattedTextField> {
       Graphics2D g2 = (Graphics2D)g.create();
 
       // Paint the red X.
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
           RenderingHints.VALUE_ANTIALIAS_ON);
       int w = c.getWidth();
       int h = c.getHeight();

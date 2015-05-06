@@ -116,7 +116,7 @@ public class CiscoIPLayer extends IPLayer {
         // kdyz je to vuci prichozimu rozhrani broadcast, tak to poslu nahoru (je to pro me) - kvuli DHCP!
         if (ifaceIn != null && ifaceIn.getIpAddress() != null && ifaceIn.getIpAddress().getBroadcast().equals(packet.dst)) {
             Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet which was sent as broadcast for this interface.", packet);
-            netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
+            netMod.transportLayer.receivePacket(new PacketItem(packet, ifaceIn));
             return;
         }
 
@@ -129,7 +129,7 @@ public class CiscoIPLayer extends IPLayer {
         // je pro me?
         if (isItMyIpAddress(packet.dst)) { // TODO: cisco asi pravdepovodne se nejdriv podiva do RT, a asi tam bude muset byt zaznam na svoji IP, aby se to dostalo nahoru..
             Logger.log(this, Logger.INFO, LoggingCategory.NET, "Received IP packet destined to be mine.", packet);
-            netMod.transportLayer.receivePacket(new PacketItem(packet,ifaceIn));
+            netMod.transportLayer.receivePacket(new PacketItem(packet, ifaceIn));
             return;
         }
 

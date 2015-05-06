@@ -73,7 +73,7 @@ public class MenuBar extends JMenuBar implements Observer {
         // add this MenuBar as observer to langage manager
         dataLayer.addLanguageObserver((Observer) this);
         dataLayer.addPreferencesObserver((Observer) this);
-        
+
         /* menu File */
         jMenuFile = new JMenu();
 
@@ -125,9 +125,9 @@ public class MenuBar extends JMenuBar implements Observer {
         //jMenuEdit.addSeparator();
         //jMenuEdit.add(jMenuItemSelectAll);
         //jMenuEdit.add(jMenuItemDelete);
-        
+
         /* END menu Edit */
-        
+
         /* menu View */
         jMenuView = new JMenu();
 
@@ -145,15 +145,15 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuView.add(jMenuItemZoomOut);
         jMenuView.add(jMenuItemZoomReset);
         /* END menu View */
-        
+
         /* menu Options */
         jMenuOptions = new JMenu();
         jMenuItemPreferences = new JMenuItem();
         jMenuItemPreferences.setIcon(new ImageIcon(getClass().getResource("/resources/toolbarIcons/16/configure.png")));
         jMenuOptions.add(jMenuItemPreferences);
         /* END menu Options */
-        
-        
+
+
         /* menu HELP */
         jMenuHelp = new JMenu();
         jMenuItemHelp = new JMenuItem();
@@ -163,7 +163,7 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuHelp.addSeparator();
         jMenuHelp.add(jMenuItemAbout);
         /* END menu HELP */
-        
+
         /* add menus to menu bar */
         this.add(jMenuFile);
         this.add(jMenuEdit);
@@ -217,7 +217,7 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuItemSaveAs.setText(dataLayer.getString("SAVE_AS"));
         jMenuItemExit.setText(dataLayer.getString("EXIT"));
         /* END menu File */
-        
+
         /* menu Edit */
         jMenuEdit.setText(dataLayer.getString("EDIT"));
 
@@ -228,7 +228,7 @@ public class MenuBar extends JMenuBar implements Observer {
 
         //jMenuItemDelete.setText(dataLayer.getString("DELETE"));
         /* END menu Edit */
-        
+
         /* menu View */
         jMenuView.setText(dataLayer.getString("VIEW"));
 
@@ -236,14 +236,14 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuItemZoomOut.setText(dataLayer.getString("ZOOM_OUT"));
         jMenuItemZoomReset.setText(dataLayer.getString("ZOOM_RESET"));
         /* END menu View */
-        
+
         /* menu Options */
         jMenuOptions.setText(dataLayer.getString("OPTIONS"));
 
         jMenuItemPreferences.setText(dataLayer.getString("PREFERENCES"));
         /* END menu Options */
-      
-        
+
+
         /* menu HELP */
         jMenuHelp.setText(dataLayer.getString("HELP"));
         jMenuItemHelp.setText(dataLayer.getString("HELP"));

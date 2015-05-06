@@ -22,9 +22,9 @@ public class DrawPanelListenerStrategyDragMove extends DrawPanelListenerStrategy
     private final Point pp = new Point();
     //
 
-    public DrawPanelListenerStrategyDragMove(DrawPanelInnerInterface drawPanel, UndoManager undoManager,
+    public DrawPanelListenerStrategyDragMove(DrawPanelInnerInterface drawPanel, UndoManager undoManager, 
             MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
-        super(drawPanel, undoManager,mainWindow, dataLayer);
+        super(drawPanel, undoManager, mainWindow, dataLayer);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DrawPanelListenerStrategyDragMove extends DrawPanelListenerStrategy
         
         Point cp = e.getPoint();
         Point vp = vport.getViewPosition();
-        //= SwingUtilities.convertPoint(vport,0,0,label);
+        //= SwingUtilities.convertPoint(vport, 0, 0, label);
         vp.translate(pp.x - cp.x, pp.y - cp.y);
         
         //if(vport)
