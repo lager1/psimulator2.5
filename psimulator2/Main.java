@@ -14,6 +14,7 @@ import logging.Logger;
 import logging.LoggingCategory;
 import logging.networkEvents.EventServer;
 import shared.Components.NetworkModel;
+import shared.HookManager;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
 import shared.Serializer.SaveLoadException;
@@ -84,6 +85,7 @@ public class Main {
 
             networkModel = serializer.loadNetworkModelFromFile(new File(configFileName));    // nacita se xmlko do ukladacich struktur
 
+
         } catch (SaveLoadException ex) {
             Logger.log(Logger.DEBUG, LoggingCategory.XML_LOAD_SAVE, Utilities.stackToString(ex));
             Logger.log(Logger.ERROR, LoggingCategory.XML_LOAD_SAVE, "Cannot load network model from: " + configFileName);
@@ -146,5 +148,7 @@ public class Main {
         Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
 
         Timer.start();
-	}
+
+        HookManager.callGlobalHook(HookManager.HookType.AFTER_SETUP, null);
+    }
 }

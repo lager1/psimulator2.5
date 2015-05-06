@@ -10,10 +10,9 @@ import dataStructures.MacAddress;
 import java.util.*;
 
 import logging.*;
-import networkModule.Layer;
-import networkModule.NetworkModule;
-import networkModule.IpNetworkModule;
+import networkModule.*;
 import physicalModule.AbstractPhysicalModule;
+import shared.HookManager;
 import utils.SmartRunnable;
 import utils.Utilities;
 import utils.WorkerThread;
@@ -112,11 +111,19 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
         return Utilities.alignFromRight(netMod.getDevice().getName(), Utilities.deviceNameAlign) + " EthLayer";
     }
 
+    public Map<Integer, SwitchportSettings> getSwitchports() {
+        return switchports;
+    }
+
     public SwitchportSettings getSwitchport(int i) {
         return switchports.get(i);
     }
 
-    public EthernetInterface getIfaceToSwitchport(int switchportNumber) {
+    public int getSwitchportsCount() {
+        return switchports.size();
+    }
+
+    public EthernetInterface getIterfaceOfSwitchport(int switchportNumber) {
         SwitchportSettings swport = switchports.get(switchportNumber);
         if (swport != null) {
             return swport.assignedInterface;
@@ -146,12 +153,14 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
         }
     }
 
+
     /**
      * Obsluhuje pakety, ktery dostal sitovej modul od fysickyho.
      *
      * @param packet
      * @param switchportNumber
      */
+
     private void handleReceivePacket(EthernetPacket packet, int switchportNumber) {
 
         //kontrola existence switchportu:
@@ -167,10 +176,27 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
             return;
         }
 
-        //linkDebug("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". ", packet);
+        linkDebug("Prijal jsem paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ". ", packet);
+        if (!HookManager.callNetworkingHook(this,
+                HookManager.HookType.DATALINK_PRE_LEARNING,
+                packet,
+                iface,
+                netMod.getPhysicMod().getSwitchports().get(switchportNumber),
+                switchportNumber,
+                netMod.getDevice()))
+        {
+            System.out.println("[" + netMod.getDevice().getName() + "][Port #" + switchportNumber + "] Dropping packet " + System.identityHashCode(packet));
+            return;
+        }
 
         //pridani do switchovaci tabulky:
-        iface.addSwitchTableItem(packet.src, swport);
+        iface.addMacTableEntry(packet.src, swport);
+
+        if (!HookManager.callNetworkingHook(this, HookManager.HookType.DATALINK_POST_LEARNING, packet, iface, netMod.getPhysicMod().getSwitchports().get(switchportNumber), switchportNumber, netMod.getDevice()))
+            return;
+
+        if (!HookManager.callNetworkingHook(this, HookManager.HookType.DATALINK_PRE_FORWARDING, packet, iface, netMod.getPhysicMod().getSwitchports().get(switchportNumber), switchportNumber, netMod.getDevice()))
+            return;
 
         //samotny vyrizovani paketu:
         if (packet.dst.equals(iface.getMac())) {    //pokud je paket pro me
@@ -192,6 +218,8 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
                 linkInfo("Prijal jsem paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ", kterej neni pro me. Nemam ale povoleny switchovani, tak ho zahazuju. ", packet);
             }
         }
+        if (!HookManager.callNetworkingHook(this, HookManager.HookType.DATALINK_POST_FORWARDING, packet, iface, netMod.getPhysicMod().getSwitchports().get(switchportNumber), switchportNumber, netMod.getDevice()))
+            return;
 
     }
 

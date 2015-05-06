@@ -125,6 +125,16 @@ public enum LoggingCategory {
      */
     COMPLETER,
 
+    /**
+     * Messages from Hook manager
+     */
+    HOOK_MANAGER,
+
+    /**
+     * Messages from Timer
+     */
+    TIMER,
+
     // !!! PRI PRIDAVANI KATEGORII PROSIM UVEDTE KRATKY JAVADOC, CO KATEGORIE ZNAMENA A KDE SE BUDE POUZIVAT !!!
 
 }
