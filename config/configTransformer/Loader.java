@@ -31,6 +31,7 @@ import psimulator2.Psimulator;
 import shared.Components.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
 import shared.Components.simulatorConfig.*;
+import shared.HookManager;
 
 /**
  * @author Tomas Pitrinec
@@ -72,7 +73,6 @@ public class Loader implements Loggable {
      * Metoda slouzi k nahravani konfigurace z Martinova modelu.
      */
     public void loadFromModel() {
-
         try {    // chytaji se tady vsechny vyjimky vyhozeny z konfigurace
 
             for (HwComponentModel device : networkModel.getHwComponents()) {
@@ -96,7 +96,12 @@ public class Loader implements Loggable {
 
             updateRoutingTableForCisco();
 
+            for (Device device : s.devices)
+                HookManager.callDeviceHook(device, HookManager.HookType.DEVICE_AFTER_LOAD);
+
         } catch (Exception ex) {
+            ex.printStackTrace();
+
             Logger.log(this, Logger.INFO, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "XML configuration file is corrupted: ", ex);
             Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "XML configuration file is corrupted. Exiting. " + ex.toString(), null);
         }
@@ -153,6 +158,7 @@ public class Loader implements Loggable {
             Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
 
         String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getIDAsString() + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
+
         return new ArchiveFileSystem(pathFileSystem);
     }
 
@@ -352,7 +358,6 @@ public class Loader implements Loggable {
     /**
      * Projde vsechny kabely a spoji nase sitovy prvky. Specialne taky resi realny switchporty.
      *
-     * @param network
      */
     private void connectCables() {
         for (CableModel cableModel : networkModel.getCables()) {    // pro vsechny kabely
@@ -396,8 +401,6 @@ public class Loader implements Loggable {
 
     /**
      * Projde vsechny kabely a spoji nase sitovy prvky. Specialne taky resi realny switchporty.
-     *
-     * @param network
      */
     private void connectCablesV2() {
         for (CableModel cableModel : networkModel.getCables()) {    // pro vsechny kabely
@@ -458,6 +461,7 @@ public class Loader implements Loggable {
                         return swp;
                     }
                 }
+                break;
             }
         }
 

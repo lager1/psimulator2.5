@@ -87,7 +87,7 @@ public class EthernetInterface implements Loggable {
 // funkce k sitovy komunikaci: ----------------------------------------------------------------------------------
 
 
-    public void addSwitchTableItem(MacAddress mac, SwitchportSettings swportSett) {
+    public void addMacTableEntry(MacAddress mac, SwitchportSettings swportSett) {
         if (switchports.size() == 1) {
             // nic se nedela
         } else {
@@ -125,9 +125,14 @@ public class EthernetInterface implements Loggable {
      */
     void transmitPacketOnAllSwitchports(EthernetPacket p, SwitchportSettings incoming) {
         for (SwitchportSettings switchport : switchports.values()) {
-            if (switchport.isUp && switchport != incoming && etherLayer.physicMod.isSwitchportConnected(switchport.switchportNumber)) {
-                etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
-            }
+            if (!switchport.isUp)
+                continue;
+            if (switchport == incoming)
+                continue;
+            if (!etherLayer.physicMod.isSwitchportConnected(switchport.switchportNumber))
+                continue;
+	
+            etherLayer.getNetMod().getPhysicMod().sendPacket(p, switchport.switchportNumber);
         }
     }
 
