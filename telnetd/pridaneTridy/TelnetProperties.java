@@ -41,12 +41,12 @@ public class TelnetProperties {
 
         finalConfiguration = true;
 
-        properties.setProperty("terminals", "vt100,ansi,windoof,xterm");
+        properties.setProperty("terminals", "vt100, ansi, windoof, xterm");
         properties.setProperty("term.vt100.class", "telnetd.io.terminal.vt100");
-        properties.setProperty("term.vt100.aliases", "default,vt100-am,vt102,dec-vt100");
+        properties.setProperty("term.vt100.aliases", "default, vt100-am, vt102, dec-vt100");
         properties.setProperty("term.ansi.class", "telnetd.io.terminal.ansi");
-        properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt220,linux,screen");   // vt320 is not working properly
-        // properties.setProperty("term.ansi.aliases", "color-xterm,xterm-color,vt320,vt220,linux,screen");
+        properties.setProperty("term.ansi.aliases", "color-xterm, xterm-color, vt220, linux, screen");   // vt320 is not working properly
+        // properties.setProperty("term.ansi.aliases", "color-xterm, xterm-color, vt320, vt220, linux, screen");
         properties.setProperty("term.windoof.class", "telnetd.io.terminal.Windoof");
         properties.setProperty("term.windoof.aliases", "");
         properties.setProperty("term.xterm.class", "telnetd.io.terminal.xterm");
@@ -62,12 +62,12 @@ public class TelnetProperties {
             if (listeners == null) {
                 listeners = new StringBuilder(name);
             } else {
-                listeners.append(",").append(name);
+                listeners.append(", ").append(name);
             }
         }
 
-        properties.setProperty("listeners", listeners.toString());
-
+        if (listeners != null)
+            properties.setProperty("listeners", listeners.toString());
     }
 
     public static Properties getProperties() {
@@ -144,13 +144,13 @@ public class TelnetProperties {
  *
  * ##################### # Terminals Section # #####################
  *
- * # List of terminals available and defined below terminals=vt100,ansi,windoof,xterm
+ * # List of terminals available and defined below terminals=vt100, ansi, windoof, xterm
  *
  * # vt100 implementation and aliases term.vt100.class=net.wimpi.telnetd.io.terminal.vt100
- * term.vt100.aliases=default,vt100-am,vt102,dec-vt100
+ * term.vt100.aliases=default, vt100-am, vt102, dec-vt100
  *
  * # ansi implementation and aliases term.ansi.class=net.wimpi.telnetd.io.terminal.ansi
- * term.ansi.aliases=color-xterm,xterm-color,vt320,vt220,linux,screen
+ * term.ansi.aliases=color-xterm, xterm-color, vt320, vt220, linux, screen
  *
  * # windoof implementation and aliases term.windoof.class=net.wimpi.telnetd.io.terminal.Windoof term.windoof.aliases=
  *

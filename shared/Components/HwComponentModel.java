@@ -2,6 +2,7 @@ package shared.Components;
 
 import java.util.*;
 import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import shared.Components.simulatorConfig.DeviceSettings;
 
@@ -15,6 +16,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * LinkedHashMap of EthInterfaces that component owns. Key is the
      * ethInterface ID.
      */
+    @XmlElement
     private Map<Integer, EthInterfaceModel> interfacesMap;
     // -------------------------------------------------------
     /**
@@ -251,7 +253,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         this.interfacesMap = interfacesMap;
     }
 
-    @XmlElement(name = "interface")
+    @XmlTransient
     public ArrayList<EthInterfaceModel> getInterfacesAsList() {
         return new ArrayList<EthInterfaceModel>(this.interfacesMap.values());
     }

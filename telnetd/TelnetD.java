@@ -192,7 +192,10 @@ public class TelnetD {
             TelnetD td = new TelnetD();
             td.prepareShellManager(main);
             td.prepareTerminals(main);
-            String[] listnames = StringUtil.split(main.getProperty("listeners"), ", ");
+            String listeners = main.getProperty("listeners");
+            if (listeners == null)
+                return td;
+            String[] listnames = StringUtil.split(listeners, ", ");
             for (int i = 0; i < listnames.length; i++) {
                 td.prepareListener(listnames[i], main);
             }
