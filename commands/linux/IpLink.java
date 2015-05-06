@@ -7,7 +7,6 @@ package commands.linux;
 import commands.AbstractCommandParser;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class IpLink extends LinuxCommand {
@@ -15,7 +14,6 @@ public class IpLink extends LinuxCommand {
     public IpLink(AbstractCommandParser parser) {
         super(parser);
     }
-
 
 
     @Override

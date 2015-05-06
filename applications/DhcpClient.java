@@ -9,9 +9,9 @@ import dataStructures.MacAddress;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.DhcpPacket;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
+import dataStructures.packets.L7.DhcpPacket;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -20,12 +20,13 @@ import networkModule.L3.NetworkInterface;
 import networkModule.SwitchNetworkModule;
 import psimulator2.Psimulator;
 import utils.Wakeable;
-import static dataStructures.packets.DhcpPacket.DhcpType.*;
+
+import static dataStructures.packets.L7.DhcpPacket.DhcpType.*;
+
 import networkModule.L3.IPLayer;
 import networkModule.IpNetworkModule;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class DhcpClient extends Application implements Wakeable {
@@ -72,7 +73,7 @@ public class DhcpClient extends Application implements Wakeable {
 
     @Override
     public void wake() {
-        if(isRunning()){
+        if (isRunning()) {
             wakedByAlarm = true;
             worker.wake();
         }
@@ -81,13 +82,13 @@ public class DhcpClient extends Application implements Wakeable {
     @Override
     public void doMyWork() {
         // metoda se vykonava ve dvou pripadech - bud bylo vlakno vzbuzeno budikem nebo prisel nejakej pozadavek, ten pozadavek ma prednost
-        if(!buffer.isEmpty()) {        // neco je v bufferu
-            while(!buffer.isEmpty()){
+        if (!buffer.isEmpty()) {        // neco je v bufferu
+            while (!buffer.isEmpty()) {
                 handleIncomingPacket(buffer.remove(0));
             }
 
-        } else if (wakedByAlarm){ // probuzeno budikem
-             if(state == 1){ // budik zavolan potom, co nedorazil OFFER
+        } else if (wakedByAlarm) { // probuzeno budikem
+            if (state == 1) { // budik zavolan potom, co nedorazil OFFER
                 if (discoverCount <= maxDiscoverCount) {
                     sendDiscover();
                 } else {
@@ -121,39 +122,40 @@ public class DhcpClient extends Application implements Wakeable {
         }
 
         // samotny zpracovavani, v kazdym stavu jinak:
-        if(state==0){
+        if (state == 0) {
             // nic se nedela
-        }else if(state==1) { // odeslal se discover, ceka se na offer
-            command.printLine("DHCP"+recDhcp.type+" from "+recDhcp.serverIdentifier);    // vypisu co prislo:
-            if (recDhcp.type == OFFER){
+        } else if (state == 1) { // odeslal se discover, ceka se na offer
+            command.printLine("DHCP" + recDhcp.type + " from " + recDhcp.serverIdentifier);    // vypisu co prislo:
+            if (recDhcp.type == OFFER) {
                 serverIdentifier = recDhcp.serverIdentifier;
                 sendPacket(REQUEST, recDhcp.ipToAssign, recDhcp.serverIdentifier);    // posilam request
                 state = 2;
-                Psimulator.getPsimulator().budik.registerWake(this, request_wait_time*1000);    // nastavuju cekani na ACK
+                Psimulator.getPsimulator().budik.registerWake(this, request_wait_time * 1000);    // nastavuju cekani na ACK
             }
             // jinak se v tomhle stavu nic nedela
 
-        } else if (state == 2){ // odeslan request, cekam na odpoved
-            command.printLine("DHCP"+recDhcp.type+" from "+recDhcp.serverIdentifier);    // vypisu co prislo:
-            if (recDhcp.type == ACK){
+        } else if (state == 2) { // odeslan request, cekam na odpoved
+            command.printLine("DHCP" + recDhcp.type + " from " + recDhcp.serverIdentifier);    // vypisu co prislo:
+            if (recDhcp.type == ACK) {
                 ipLayer.routingTable.flushRecords(iface);
                 ipLayer.changeIpAddressOnInterface(iface, recDhcp.ipToAssign);
-                ipLayer.routingTable.addRecord(new IPwithNetmask("0.0.0.0",0), recDhcp.router, iface);
+                ipLayer.routingTable.addRecord(new IPwithNetmask("0.0.0.0", 0), recDhcp.router, iface);
             }
-        } else if (state == 3){
+        } else if (state == 3) {
             // uz konec - nic se nedela
         }
     }
 
     /**
      * Odesle DHCP paket. Udelana tak, aby omhla posilat veskery klientsky pakety.
+     *
      * @param type
-     * @param ipToAssign null if type is discover
+     * @param ipToAssign     null if type is discover
      * @param serverIdentier null if type is discover
      */
-    private void sendPacket(DhcpPacket.DhcpType type, IPwithNetmask ipToAssign, IpAddress serverIdentier){
+    private void sendPacket(DhcpPacket.DhcpType type, IPwithNetmask ipToAssign, IpAddress serverIdentier) {
         // sestavim paket:
-        DhcpPacket discover = new DhcpPacket(type, transaction_id, serverIdentier, ipToAssign, null,null, myMac);
+        DhcpPacket discover = new DhcpPacket(type, transaction_id, serverIdentier, ipToAssign, null, null, myMac);
         UdpPacket udp = new UdpPacket(DHCP_server.client_port, DHCP_server.server_port, discover);
         IpPacket ip = new IpPacket(new IpAddress("0.0.0.0"), new IpAddress("255.255.255.255"), ttl, udp);
         // poslui paket:
@@ -164,29 +166,25 @@ public class DhcpClient extends Application implements Wakeable {
     /**
      * Posle DHCP discover a naridi budik, kdy se ma zas vzbudit
      */
-    private void sendDiscover(){
+    private void sendDiscover() {
         // poslu paket discover:
         sendPacket(DhcpPacket.DhcpType.DISCOVER, null, null);
 
         // nastavim budik pro vzbuzeni
         int interval = ((int) Math.random()) * 5 + 3; // nahodne se generuje interval, kdy se bude znova posilat discover
-                // -> asi je to opravdu nahodne, ale ty cisla jsem si vymyslel
-        Psimulator.getPsimulator().budik.registerWake(this, interval*1000);
+        // -> asi je to opravdu nahodne, ale ty cisla jsem si vymyslel
+        Psimulator.getPsimulator().budik.registerWake(this, interval * 1000);
         // vypisu a nastavim stav:
-        command.printLine("DHCPDISCOVER on "+iface.name+" to 255.255.255.255 port "+DHCP_server.server_port+" interval "+interval);
+        command.printLine("DHCPDISCOVER on " + iface.name + " to 255.255.255.255 port " + DHCP_server.server_port + " interval " + interval);
         state = 1;
         discoverCount++;
     }
 
 
-
-
-
-
     @Override
     protected void atStart() {
         printStart();
-        ipLayer.routingTable.deleteRecord(new IPwithNetmask("0.0.0.0",0), null, null);
+        ipLayer.routingTable.deleteRecord(new IPwithNetmask("0.0.0.0", 0), null, null);
         sendDiscover();
     }
 
@@ -201,18 +199,15 @@ public class DhcpClient extends Application implements Wakeable {
     }
 
 
-
-
-
-    private void printStart(){
+    private void printStart() {
         command.printLine("RTNETLINK answers: No such process");
         command.printLine("Internet Systems Consortium DHCP Client 4.2.2");
         command.printLine("Copyright 2004-2011 Internet Systems Consortium.");
         command.printLine("All rights reserved.");
         command.printLine("For info, please visit https://www.isc.org/software/dhcp/");
         command.printLine("");
-        command.printLine("Listening on LPF/"+iface.name+"/"+myMac.toString());
-        command.printLine("Sending on   LPF/"+iface.name+"/"+myMac.toString());
+        command.printLine("Listening on LPF/" + iface.name + "/" + myMac.toString());
+        command.printLine("Sending on   LPF/" + iface.name + "/" + myMac.toString());
         command.printLine("Sending on   Socket/fallback");
         command.printLine("");
     }
@@ -233,7 +228,6 @@ public class DhcpClient extends Application implements Wakeable {
     private void log(int logLevel, String msg, Object obj) {
         Logger.log(this, logLevel, LoggingCategory.DHCP, msg, obj);
     }
-
 
 
 }

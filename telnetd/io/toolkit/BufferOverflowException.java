@@ -40,6 +40,6 @@ package telnetd.io.toolkit;
  * @version 2.0 (16/07/2006)
  */
 public class BufferOverflowException
-    extends ToolkitException {
+        extends ToolkitException {
 
 }//class BufferOverFlowException

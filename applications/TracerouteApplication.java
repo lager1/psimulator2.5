@@ -7,19 +7,20 @@ package applications;
 import commands.ApplicationNotifiable;
 import dataStructures.DropItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IpPacket;
 import device.Device;
+
 import java.util.*;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L4.TransportLayer;
 import psimulator2.Psimulator;
-import utils.Util;
+import utils.Utilities;
 import utils.Wakeable;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public abstract class TracerouteApplication extends TwoThreadApplication implements Wakeable {
@@ -100,7 +101,6 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     //pak je tady jeste receivePacket, ktera je podedena od Application
 
 
-
     // metody na vyrizovani sitovejch pozadavku: --------------------------------------------------------------------------
 
     /**
@@ -109,7 +109,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     @Override
     public void doMyWork() {
 
-        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda doMyWork vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda doMyWork vlaknem " + Utilities.threadName(), null);
         if (buffer.isEmpty()) {
             if (!timestamps.containsKey(firstTTL)) { // nebyl jeste odeslan 1. paket s TTL=1
                 return;
@@ -123,7 +123,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
             double arrivalTime = (double) System.nanoTime() / 1_000_000;
 
             // zkouseni, jestli je ten paket spravnej:
-            if (! (p.data instanceof IcmpPacket)) {
+            if (!(p.data instanceof IcmpPacket)) {
                 Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, "Dropping packet: TracerouteApplication recieved non ICMP packet", p);
                 Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(p, device.configID));
                 continue;
@@ -152,7 +152,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
                 }
 
 //                try {
-                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pridavam paket: ttl="+t.ttl+", seq="+packet.seq+", seznamu c."+(t.ttl), null);
+                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pridavam paket: ttl=" + t.ttl + ", seq=" + packet.seq + ", seznamu c." + (t.ttl), null);
                 recordsNew.get(t.ttl).add(new Record(delay, packet, p.src)); // pridavam paket do spravnyho seznamu
 //                } catch (IndexOutOfBoundsException e) {
 //                    Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Paket s TTL: "+t.ttl, null);
@@ -161,7 +161,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 //                    e.printStackTrace();
 //                }
             } else {
-                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout. delay="+delay+", ale timout="+timeout, packet);
+                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Dorazil mi nejaky ping, ale vyprsel timeout. delay=" + delay + ", ale timout=" + timeout, packet);
 
                 recordsNew.get(t.ttl).add(new Record(null, packet, p.src)); // dam tam null, aby se to jednodusejc vypisovalo
             }
@@ -197,8 +197,8 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
         for (int ttl = printedTTL + 1; ttl <= maxTTL; ttl++) {
             written = processTTL(ttl);
             if (!written) {
-                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "ttl="+ttl + " jeste nebylo vypsano, takze nemusim kontrolovat ostatni vyssi ttl", null);
-                return ;
+                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "ttl=" + ttl + " jeste nebylo vypsano, takze nemusim kontrolovat ostatni vyssi ttl", null);
+                return;
             }
         }
     }
@@ -208,15 +208,15 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 //        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "processTTL() ttl="+ttl, null);
 
         if (printedTTL >= ttl) {
-            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Uz vypsano. ttl="+ttl + ", printedTTL="+printedTTL, null);
+            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Uz vypsano. ttl=" + ttl + ", printedTTL=" + printedTTL, null);
             return false;
         }
 
-        Double now = (double)System.nanoTime()/1_000_000;
+        Double now = (double) System.nanoTime() / 1_000_000;
         Double timeTTL = timeForTTL.get(ttl);
 
         if (timeTTL == null) {
-//            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, "Toto by nikdy nemelo nastat,ttl="+ttl+" printedTTL="+printedTTL+" vlakno: "+Util.threadName(), null);
+//            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, "Toto by nikdy nemelo nastat, ttl="+ttl+" printedTTL="+printedTTL+" vlakno: "+Utilities.threadName(), null);
             return false;
         }
 
@@ -233,7 +233,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
                 address = temp.sender.toString();
             }
 
-            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c."+(ttl) + ", size:"+recordsNew.get(ttl).size(), null);
+            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Pocet zaznamu v seznamu c." + (ttl) + ", size:" + recordsNew.get(ttl).size(), null);
 
             lineBeginning(ttl, address);
             int count = 0;
@@ -247,8 +247,8 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
             command.print("\n");
 
             printedTTL = ttl;
-            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vypsan radek s ttl="+ttl, null);
-            if ( (targetReached && targetTTL == printedTTL) || (printedTTL == maxTTL) ) {
+            Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vypsan radek s ttl=" + ttl, null);
+            if ((targetReached && targetTTL == printedTTL) || (printedTTL == maxTTL)) {
                 Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "volam metodu exit, protoze jsem dosahl cile.", null);
                 exit();
                 return true;
@@ -266,35 +266,35 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     @Override
     public void run() {
         TransportLayer transportLayer = applicationLayer.getNetMod().transportLayer;
-        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Spustena metoda run vlaknem " + Utilities.threadName(), null);
         int seq = 1;
         int ttl = firstTTL;
 
         while ((ttl <= maxTTL && !targetReached) && isRunning()) {    // bezi se jen dokud je running
 
-            timeForTTL.put(ttl, (double)System.nanoTime()/1_000_000); // musi tu byt kvuli tomu, ze uz pak prijde paket
+            timeForTTL.put(ttl, (double) System.nanoTime() / 1_000_000); // musi tu byt kvuli tomu, ze uz pak prijde paket
 
             for (int attempt = 0; attempt < queryPerTTL; attempt++) {
-                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName() + " posilam ping seq=" + seq + ", ttl="+ ttl, null);
-                timestamps.put(seq, new Timestamp((double)System.nanoTime()/1_000_000, ttl));
+                Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName() + " posilam ping seq=" + seq + ", ttl=" + ttl, null);
+                timestamps.put(seq, new Timestamp((double) System.nanoTime() / 1_000_000, ttl));
                 transportLayer.icmpHandler.sendRequest(target, ttl, seq, port, payload);
 
                 if (seq == 1) {
-                    Util.sleep(500); // aby se stihlo pockat na ARP protokol, tak se u 1. requestu ceka dyl
+                    Utilities.sleep(500); // aby se stihlo pockat na ARP protokol, tak se u 1. requestu ceka dyl
                 } else {
-                    Util.sleep(100); // aby to moc nezatezovalo, tak se tu ceka
+                    Utilities.sleep(100); // aby to moc nezatezovalo, tak se tu ceka
                 }
 
                 seq++;
             }
 
-            timeForTTL.put(ttl, (double)System.nanoTime()/1_000_000); // spravne pocitani casu
+            timeForTTL.put(ttl, (double) System.nanoTime() / 1_000_000); // spravne pocitani casu
 
             ttl++;
             Psimulator.getPsimulator().budik.registerWake(this, timeout); // vypsat hlasku o pripadnych nedoslych paketech - bude se vypisovat po celym radku!
 
         }
-        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Konci metoda run. Opustena vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Konci metoda run. Opustena vlaknem " + Utilities.threadName(), null);
     }
 
     // abstraktni metody, ktery je potreba doimplementovat v konkretnich traceroutech: ----------------------------------------
@@ -303,12 +303,16 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
      * Message at start.
      */
     protected abstract void startMessage();
+
     /**
      * Prints beginning of each line: ' 1  192.168.1.254 (192.168.1.254)  '.
+     *
      * @param ttl
      */
     protected abstract void lineBeginning(int ttl, String address);
+
     protected abstract void printPacket(Record record);
+
     /**
      * Prints string when 1 packet not arrived.
      */
@@ -322,7 +326,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     }
 
     @Override
-    protected void atKill(){
+    protected void atKill() {
         command.applicationFinished();
     }
 
@@ -331,23 +335,23 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     protected void atStart() {
         //kontrola cilovy adresy:
         if (target == null) {
-            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, name+" has no target! Exiting..", null);
+            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, name + " has no target! Exiting..", null);
             kill();
         }
 
         //kontrola, jestli mam port:
         if (getPort() == null) {
-            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, name+" has no port assigned! Exiting..", null);
+            Logger.log(this, Logger.WARNING, LoggingCategory.TRACEROUTE_APPLICATION, name + " has no port assigned! Exiting..", null);
             kill();
         }
 
-        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName()+" atStart()", null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, getName() + " atStart()", null);
 
         recordsNew = new HashMap<>();
         for (int ttl = firstTTL; ttl <= maxTTL; ttl++) {
             recordsNew.put(ttl, new ArrayList<Record>());
         }
-        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vytvoreno tolik TTL seznamu: "+recordsNew.size(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "Vytvoreno tolik TTL seznamu: " + recordsNew.size(), null);
 //        Logger.log(this, Logger.DEBUG, LoggingCategory.TRACEROUTE_APPLICATION, "TTLka a casy odeslani: "+timeForTTL.toString(), null);
 //        vypisMapu();
 
@@ -364,6 +368,7 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
 
     /**
      * Set timout in ms.
+     *
      * @param timeout
      */
     public void setTimeout(int timeout) {
@@ -383,8 +388,8 @@ public abstract class TracerouteApplication extends TwoThreadApplication impleme
     }
 
     @Override
-    public String toString(){
-        return name+" "+PID;
+    public String toString() {
+        return name + " " + PID;
     }
 
     public class Record {

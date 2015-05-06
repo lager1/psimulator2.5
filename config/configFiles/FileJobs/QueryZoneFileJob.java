@@ -3,17 +3,17 @@ package config.configFiles.FileJobs;
 import applications.dns.DnsResolver;
 import applications.dns.DnsServerThread.DnsQuery;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.dns.DnsAnswer;
-import dataStructures.packets.dns.DnsPacket;
-import dataStructures.packets.dns.DnsType;
+import dataStructures.packets.L7.dns.DnsAnswer;
+import dataStructures.packets.L7.DnsPacket;
+import dataStructures.packets.L7.dns.DnsType;
 import filesystem.dataStructures.jobs.InputFileJob;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 /**
- *
  * @author Michal Horacek
  */
 public class QueryZoneFileJob implements InputFileJob {
@@ -27,7 +27,6 @@ public class QueryZoneFileJob implements InputFileJob {
     private Map<String, String> nameServers;
 
     /**
-     *
      * @param packet
      * @param dnsQuery
      */
@@ -44,7 +43,7 @@ public class QueryZoneFileJob implements InputFileJob {
     @Override
     public int workOnFile(InputStream input) throws Exception {
         Scanner sc = new Scanner(input);
-       
+
         while (sc.hasNextLine()) {
             parseLine(sc.nextLine().trim());
         }
@@ -62,8 +61,8 @@ public class QueryZoneFileJob implements InputFileJob {
 
         if (words.length == 2) {
             handleDirectiveLine(words);
-        // possible if line contains blank substitution
-        } else if (words.length == 3) {     
+            // possible if line contains blank substitution
+        } else if (words.length == 3) {
             handleLine(words);
         } else if (words.length == 4) {
             if (words[0].equals("@")) {
@@ -98,13 +97,13 @@ public class QueryZoneFileJob implements InputFileJob {
             case "CNAME":
             case "PTR":
             default:
-            // to be implemented
+                // to be implemented
         }
     }
 
     private void handleAddressLine(String[] words) {
         int ansIndex = words.length - 1;
-        
+
         IpAddress addr = IpAddress.correctAddress(words[3]);
         if (addr == null) {
             return;
@@ -124,7 +123,7 @@ public class QueryZoneFileJob implements InputFileJob {
         } // address of an already defined nameserver, adding to the additional section
         else if (nameServers.get(label) != null
                 && nameServers.get(label).equals(authDomain)) {
-            
+
             if (!packet.containsData(label, packet.authority)) {
                 packet.authority.add(
                         new DnsAnswer(nameServers.get(label),
@@ -138,11 +137,11 @@ public class QueryZoneFileJob implements InputFileJob {
 
     private void handleNsLine(String[] words) {
         int ansIndex = words.length - 1;
-        
+
         if (!words[ansIndex].endsWith(".")) {
             words[ansIndex] += ".";
         }
-            
+
         if (DnsResolver.isValidDomainName(words[ansIndex])) {
             nameServers.put(words[ansIndex], label);
         }

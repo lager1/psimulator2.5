@@ -43,13 +43,13 @@ package telnetd;
  */
 public class BootException extends Exception {
 
-  /**
-   * Constructor method for a BootException.<br>
-   *
-   * @param msg String that contains an understandable failure message.
-   */
-  public BootException(String msg) {
-    super(msg);
-  }//constructor
+    /**
+     * Constructor method for a BootException.<br>
+     *
+     * @param msg String that contains an understandable failure message.
+     */
+    public BootException(String msg) {
+        super(msg);
+    }//constructor
 
 }//class BootException

@@ -9,7 +9,9 @@ import commands.completer.Completer;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+
 import java.util.Map;
+
 import networkModule.L3.nat.NatTable;
 import shell.apps.CommandShell.CommandShell;
 

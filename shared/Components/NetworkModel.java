@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 @XmlRootElement
@@ -35,12 +34,12 @@ public class NetworkModel implements Identifiable, Serializable{
      * Id of network
      */
     private Integer id;
- 
-    public NetworkModel(LinkedHashMap<Integer, HwComponentModel> componentsMap, LinkedHashMap<Integer, CableModel> cablesMap, 
-            long lastEditTimestamp, Integer id, NetworkCounterModel networkCounterModel) {
+
+    public NetworkModel(LinkedHashMap<Integer, HwComponentModel> componentsMap, LinkedHashMap<Integer, CableModel> cablesMap,
+                        long lastEditTimestamp, Integer id, NetworkCounterModel networkCounterModel) {
         this.componentsMap = componentsMap;
         this.cablesMap = cablesMap;
-        this.networkCounterModel = networkCounterModel; 
+        this.networkCounterModel = networkCounterModel;
         this.lastEditTimestamp = lastEditTimestamp;
         this.id = id;
     }
@@ -51,10 +50,11 @@ public class NetworkModel implements Identifiable, Serializable{
     public NetworkModel() {
     }
 
-    
+
     /**
      * Gets timestamp of last edit
-     * @return 
+     *
+     * @return
      */
     public long getLastEditTimestamp() {
         return lastEditTimestamp;
@@ -62,6 +62,7 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Sets timestamp of last edit
+     *
      * @param lastEditTimestamp 
      */
     public void setLastEditTimestamp(long lastEditTimestamp) {
@@ -72,35 +73,39 @@ public class NetworkModel implements Identifiable, Serializable{
     public NetworkCounterModel getNetworkCounterModel() {
         return networkCounterModel;
     }
-    
+
     /**
      * Gets unique ID
-     * @return 
+     *
+     * @return
      */
     @Override
     public Integer getId() {
         return id;
     }
-    
+
     /**
      * Gets count of hw components
-     * @return 
+     *
+     * @return
      */
     public int getHwComponentsCount() {
         return componentsMap.size();
     }
-    
+
     /**
      * Gets all components as collection
-     * @return 
+     *
+     * @return
      */
     public Collection<HwComponentModel> getHwComponents() {
         return componentsMap.values();
     }
-    
+
     /**
      * Gets all cables as collection
-     * @return 
+     *
+     * @return
      */
     public Collection<CableModel> getCables() {
         return cablesMap.values();
@@ -108,85 +113,95 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Adds component to components
-     * @param component 
+     *
+     * @param component
      */
     public void addHwComponent(HwComponentModel component) {
         componentsMap.put(component.getId(), component);
     }
-    
+
     /**
      * Adds all components from list to components
-     * @param componentList 
+     *
+     * @param componentList
      */
     public void addHwComponents(List<HwComponentModel> componentList) {
         for (HwComponentModel component : componentList) {
             addHwComponent(component);
         }
     }
-    
+
     /**
      * Removes component from components
-     * @param component 
+     *
+     * @param component
      */
     public void removeHwComponent(HwComponentModel component) {
         componentsMap.remove(component.getId());
     }
-    
+
     /**
      * Removes all components from components
-     * @param componentList 
+     *
+     * @param componentList
      */
     public void removeHwComponents(List<HwComponentModel> componentList) {
-        for(HwComponentModel component : componentList){
+        for (HwComponentModel component : componentList) {
             removeHwComponent(component);
         }
     }
 
     /**
      * Add cable to cables map
-     * @param cableModel 
+     *
+     * @param cableModel
      */
-    public void addCable(CableModel cableModel){
+    public void addCable(CableModel cableModel) {
         cablesMap.put(cableModel.getId(), cableModel);
     }
-    
+
     /**
      * Removes calbe from cables map
-     * @param cableModel 
+     *
+     * @param cableModel
      */
-    public void removeCable(CableModel cableModel){
+    public void removeCable(CableModel cableModel) {
         cablesMap.remove(cableModel.getId());
     }
-    
+
     /**
      * Gets cables count
-     * @return 
+     *
+     * @return
      */
     public int getCablesCount() {
         return cablesMap.size();
     }
-    
+
     /**
      * Gets component by ID
+     *
      * @param id
-     * @return 
+     * @return
      */
-    public HwComponentModel getHwComponentModelById(int id){
+    public HwComponentModel getHwComponentModelById(int id) {
         return componentsMap.get(id);
     }
-    
+
     /**
      * Gets cable by ID
+     *
      * @param id
-     * @return 
+     * @return
      */
-    public CableModel getCableModelById(int id){
+    public CableModel getCableModelById(int id) {
         return cablesMap.get(id);
     }
 
     /**
      * Gets all cables in map
-     * @return 
+     *
+     * @return
      */
     public Map<Integer, CableModel> getCablesMap() {
         return cablesMap;
@@ -194,7 +209,8 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Sets calbes map
-     * @param cablesMap 
+     *
+     * @param cablesMap
      */
     public void setCablesMap(Map<Integer, CableModel> cablesMap) {
         this.cablesMap = cablesMap;
@@ -202,7 +218,8 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Gets components map
-     * @return 
+     *
+     * @return
      */
     public Map<Integer, HwComponentModel> getComponentsMap() {
         return componentsMap;
@@ -210,7 +227,8 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Sets components map
-     * @param componentsMap 
+     *
+     * @param componentsMap
      */
     public void setComponentsMap(Map<Integer, HwComponentModel> componentsMap) {
         this.componentsMap = componentsMap;
@@ -218,7 +236,8 @@ public class NetworkModel implements Identifiable, Serializable{
 
     /**
      * Sets unique ID
-     * @param id 
+     *
+     * @param id
      */
     public void setId(Integer id) {
         this.id = id;
@@ -227,6 +246,6 @@ public class NetworkModel implements Identifiable, Serializable{
     public void setNetworkCounterModel(NetworkCounterModel networkCounterModel) {
         this.networkCounterModel = networkCounterModel;
     }
-    
-    
+
+
 }

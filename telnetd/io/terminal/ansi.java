@@ -42,12 +42,12 @@ package telnetd.io.terminal;
  */
 public class ansi extends BasicTerminal {
 
-  public boolean supportsSGR() {
-    return true;
-  }//supportsSGR
+    public boolean supportsSGR() {
+        return true;
+    }//supportsSGR
 
-  public boolean supportsScrolling() {
-    return true;
-  }//supportsSoftScroll
+    public boolean supportsScrolling() {
+        return true;
+    }//supportsSoftScroll
 
 }//class ansi

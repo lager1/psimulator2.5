@@ -4,6 +4,7 @@
 package utils;
 
 import java.util.*;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -13,7 +14,7 @@ import logging.LoggingCategory;
  *
  * @author Tomas Pitrinec
  */
-public class Alarm implements SmartRunnable, Loggable{
+public class Alarm implements SmartRunnable, Loggable {
 
     /**
      * Prioritni fronta klientu a jejich casu. Neexistuje synchronizovana prioritni fronta, proto se do ni bude davat
@@ -23,7 +24,7 @@ public class Alarm implements SmartRunnable, Loggable{
     protected final WorkerThread worker;
 
     public Alarm() {
-        clients =  new SynchronizedQueue();
+        clients = new SynchronizedQueue();
         this.worker = new WorkerThread(this);
     }
 
@@ -71,13 +72,13 @@ public class Alarm implements SmartRunnable, Loggable{
     /**
      * Zaregistruje vzbuzeni.
      *
-     * @param client klient, kterej se ma vzbudit
+     * @param client  klient, kterej se ma vzbudit
      * @param relTime za jak dlouho se ma vzbudit (v milisekundach)
      */
     public void registerWake(Wakeable client, long relTime) {
         long absTimeToWake = System.currentTimeMillis() + relTime;
         clients.add(new WakeableItem(absTimeToWake, client));
-        Logger.log(this, Logger.DEBUG, LoggingCategory.ALARM, "Zaregistroval jsem objekt, mam ho vzbudit za "+relTime+" ms.", client);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.ALARM, "Zaregistroval jsem objekt, mam ho vzbudit za " + relTime + " ms.", client);
 
         worker.wake();
     }
@@ -97,7 +98,7 @@ public class Alarm implements SmartRunnable, Loggable{
         }
 
         private synchronized void add(WakeableItem item) {
-                fronta.add(item);
+            fronta.add(item);
         }
 
         private synchronized WakeableItem peek() {
@@ -108,7 +109,7 @@ public class Alarm implements SmartRunnable, Loggable{
             return fronta.isEmpty();
         }
 
-        private synchronized WakeableItem poll(){
+        private synchronized WakeableItem poll() {
             return fronta.poll();
         }
     }
@@ -131,10 +132,6 @@ public class Alarm implements SmartRunnable, Loggable{
             return ((Long) absTime).compareTo(o.absTime);
         }
     }
-
-
-
-
 
 
 }

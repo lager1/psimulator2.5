@@ -4,8 +4,6 @@
 package config.configTransformer;
 
 
-import applications.Networking;
-import commands.linux.LinuxCommand;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
@@ -13,21 +11,17 @@ import dataStructures.ipAddresses.IpNetmask;
 import device.Device;
 import filesystem.ArchiveFileSystem;
 import filesystem.FileSystem;
-import config.configFiles.InterfacesFile;
-import filesystem.dataStructures.jobs.OutputFileJob;
+
 import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.*;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
 import networkModule.L2.EthernetInterface;
-import networkModule.L3.LinuxIPLayer;
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.CiscoWrapperRT;
-import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import networkModule.L3.nat.NatTable;
 import networkModule.NetworkModule;
@@ -37,10 +31,8 @@ import psimulator2.Psimulator;
 import shared.Components.*;
 import shared.Components.simulatorConfig.DeviceSettings.NetworkModuleType;
 import shared.Components.simulatorConfig.*;
-import utils.Util;
 
 /**
- *
  * @author Tomas Pitrinec
  * @author Stanislav Rehak
  */
@@ -72,13 +64,12 @@ public class Loader implements Loggable {
 
     public Loader(NetworkModel networkModel, String configFileName) {
         this.networkModel = networkModel;
-        this.configFilename=configFileName;
+        this.configFilename = configFileName;
         projectName = configFilename.substring(0, configFilename.length());
     }
 
     /**
      * Metoda slouzi k nahravani konfigurace z Martinova modelu.
-     *
      */
     public void loadFromModel() {
 
@@ -110,7 +101,7 @@ public class Loader implements Loggable {
             Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "XML configuration file is corrupted. Exiting. " + ex.toString(), null);
         }
 
-        Logger.log(this, Logger.IMPORTANT, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Configuration succesfully loaded from: "+Psimulator.getPsimulator().lastConfigFile, null);
+        Logger.log(this, Logger.IMPORTANT, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Configuration succesfully loaded from: " + Psimulator.getPsimulator().lastConfigFile, null);
     }
 
     /**
@@ -146,19 +137,19 @@ public class Loader implements Loggable {
         pc.setNetworkModule(nm);
 
         if (pc.type == Device.DeviceType.linux_computer) {
-            IpNetworkModule ipNetMod = (IpNetworkModule)nm;
+            IpNetworkModule ipNetMod = (IpNetworkModule) nm;
             ipNetMod.applicationLayer.startServices();
         }
 
         return pc;
     }
 
-    private FileSystem setupFilesystem(HwComponentModel model){
+    private FileSystem setupFilesystem(HwComponentModel model) {
         String pathSeparator = System.getProperty("file.separator");
 
-        File filesystemDir = new File(projectName+"-DATA");
+        File filesystemDir = new File(projectName + "-DATA");
 
-        if(!filesystemDir.isDirectory() &&     !filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
+        if (!filesystemDir.isDirectory() && !filesystemDir.mkdirs())  // if does not exist and was not sucessfully created
             Logger.log(Logger.ERROR, LoggingCategory.FILE_SYSTEM, "Cannot find nor create filesystem directory. Fatal error");
 
         String pathFileSystem = filesystemDir.getAbsolutePath() + pathSeparator + model.getIDAsString() + model.getName().replaceAll("\\W", "") + "." + ArchiveFileSystem.getFileSystemExtension();
@@ -189,7 +180,7 @@ public class Loader implements Loggable {
      * Vytvareni sitovyho modulu. Predpoklada jiz kompletni fysickej modul.
      *
      * @param model konfigurace pocitace
-     * @param pc odkaz na uz hotovej pocitac
+     * @param pc    odkaz na uz hotovej pocitac
      * @return
      */
     private NetworkModule createNetworkModule(HwComponentModel model, Device pc) {
@@ -248,7 +239,7 @@ public class Loader implements Loggable {
             }
 
             NetworkInterface netInterface = new NetworkInterface(ifaceModel.getId(), ifaceModel.getName(), ip,
-                                                                 ethInterface, ifaceModel.isIsUp(), isDhcp);
+                    ethInterface, ifaceModel.isIsUp(), isDhcp);
             nm.ipLayer.addNetworkInterface(netInterface);
         }
 
@@ -352,7 +343,7 @@ public class Loader implements Loggable {
     private NetworkModule createSwitchNetworkModule(HwComponentModel model, Device pc) {
         SwitchNetworkModule nm = new SwitchNetworkModule(pc);
         EthernetInterface ethIface = nm.ethernetLayer.addInterface("switch_default", MacAddress.getRandomMac());
-            // -> switchi se priradi jedno rozhrani a da se mu nahodna mac
+        // -> switchi se priradi jedno rozhrani a da se mu nahodna mac
         nm.ethernetLayer.addAllSwitchportsToGivenInterface(ethIface);
         ethIface.switchingEnabled = true;
         return nm;
@@ -385,11 +376,11 @@ public class Loader implements Loggable {
                 cable.setSecondSwitchport(swportSecond);
                 cable.setSecondDeviceId(cableModel.getComponent2().getId());
 
-            } else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
+            } else if (pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC) { // oba 2 pocitace realny
                 // nepripustny stav, hodi se vyjimka
-                throw new LoaderException("There are two real devices connected to each other which is forbidden: "+pcModel1.getName()+" a "+pcModel2.getName());
+                throw new LoaderException("There are two real devices connected to each other which is forbidden: " + pcModel1.getName() + " a " + pcModel2.getName());
 
-            } else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {    // pocitac 1 je realnej
+            } else if (pcModel1.getHwType() == HwTypeEnum.REAL_PC) {    // pocitac 1 je realnej
                 // pocitaci 2 se nastavi realnej switchport:
                 Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
                 SimulatorSwitchport swportSecond = (SimulatorSwitchport) findSwitchportFor(pcModel2, cableModel.getInterface2());
@@ -431,14 +422,14 @@ public class Loader implements Loggable {
                 cable.setSecondDeviceId(cableModel.getComponent2().getId());
 
                 if (!swportFirst.isConnected()) {
-                    throw new LoaderException("1. swport is not connected to the 2. swport! "+swportFirst.getDescription());
+                    throw new LoaderException("1. swport is not connected to the 2. swport! " + swportFirst.getDescription());
                 }
 
-            } else if(pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC){ // oba 2 pocitace realny
+            } else if (pcModel1.getHwType() == HwTypeEnum.REAL_PC && cableModel.getComponent2().getHwType() == HwTypeEnum.REAL_PC) { // oba 2 pocitace realny
                 // nepripustny stav, hodi se vyjimka
-                throw new LoaderException("There are two real devices connected to each other which is forbidden: "+pcModel1.getName()+" a "+pcModel2.getName());
+                throw new LoaderException("There are two real devices connected to each other which is forbidden: " + pcModel1.getName() + " a " + pcModel2.getName());
 
-            } else if (pcModel1.getHwType()==HwTypeEnum.REAL_PC) {    // pocitac 1 je realnej
+            } else if (pcModel1.getHwType() == HwTypeEnum.REAL_PC) {    // pocitac 1 je realnej
                 // pocitaci 2 se nastavi realnej switchport:
                 Logger.log(this, Logger.DEBUG, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "Jdu vytvorit realnej switchport.", null);
                 SimulatorSwitchportV2 swportSecond = (SimulatorSwitchportV2) findSwitchportFor(pcModel2, cableModel.getInterface2());
@@ -478,16 +469,16 @@ public class Loader implements Loggable {
         return getClass().getName();
     }
 
-    private void registerID(int id){
-        if(idecka.contains(id)){
-            Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two objects in configuration file with the same ID: id = "+id, null);
+    private void registerID(int id) {
+        if (idecka.contains(id)) {
+            Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two objects in configuration file with the same ID: id = " + id, null);
         }
         idecka.add(id);
     }
 
-    private void registerName(String name, HwComponentModel model){
-        if(names.contains(name)){
-            Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two interfaces with the same name: "+name+ " on the same Device: ("+model.getName()+")", null);
+    private void registerName(String name, HwComponentModel model) {
+        if (names.contains(name)) {
+            Logger.log(this, Logger.ERROR, LoggingCategory.NETWORK_MODEL_LOAD_SAVE, "There are two interfaces with the same name: " + name + " on the same Device: (" + model.getName() + ")", null);
         }
         names.add(name);
     }
@@ -496,7 +487,7 @@ public class Loader implements Loggable {
      * Updates cisco routing table.
      */
     private void updateRoutingTableForCisco() {
-        for(CiscoIPLayer layer : ciscoSettings.keySet()) {
+        for (CiscoIPLayer layer : ciscoSettings.keySet()) {
             CiscoWrapperRT wrapper = layer.wrapper;
 
             wrapper.update(); // nasype IP z rozhrani

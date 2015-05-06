@@ -8,7 +8,7 @@ import dataStructures.packets.L4Packet;
 import dataStructures.packets.L3Packet;
 import dataStructures.ipAddresses.IpAddress;
 import shared.SimulatorEvents.SerializedComponents.PacketType;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Represents IPv4 packet.
@@ -36,7 +36,7 @@ public class IpPacket extends L3Packet {
 
     @Override
     public String toString() {
-        return "IpPacket: src: " + src + " dst: " + dst + " " + "ttl: " + ttl + " " + Util.zarovnej(getType().toString(), 4) + (data == null ? "" : " | " + data.toString());
+        return "IpPacket: src: " + src + " dst: " + dst + " " + "ttl: " + ttl + " " + Utilities.alignFromRight(getType().toString(), 4) + (data == null ? "" : " | " + data.toString());
     }
 
     @Override

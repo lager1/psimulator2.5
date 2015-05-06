@@ -73,7 +73,7 @@ public class Rm extends FileSystemCommand {
                 Logger.log(Logger.WARNING, LoggingCategory.LINUX_COMMANDS, "Cannot delete file. File is not found, but file existence was confirmed.");
             }
 
-            if(!deleted){
+            if (!deleted) {
                 parser.getShell().printLine("rm: " + filePath + "deletion failed. Unknown reason");
             }
 
@@ -82,7 +82,7 @@ public class Rm extends FileSystemCommand {
 
     @Override
     protected void controlComand() {
-        if(files.isEmpty()){
+        if (files.isEmpty()) {
             missingOperand();
         }
     }

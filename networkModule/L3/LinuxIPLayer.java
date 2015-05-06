@@ -7,10 +7,9 @@ import config.configFiles.IpForwardFile;
 import dataStructures.DropItem;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.ArpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L2.ArpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L4Packet;
-import filesystem.FileSystem;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.IpNetworkModule;
@@ -97,7 +96,7 @@ public class LinuxIPLayer extends IPLayer {
      * MAC address finding.
      *
      * @param packet
-     * @param iface incomming EthernetInterface, can be null
+     * @param iface  incomming EthernetInterface, can be null
      */
     @Override
     protected void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {

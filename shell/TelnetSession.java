@@ -1,9 +1,11 @@
 package shell;
 
 import device.Device;
+
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.List;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.apps.CommandShell.CommandShell;
@@ -15,7 +17,6 @@ import telnetd.net.ConnectionEvent;
 import telnetd.shell.Shell;
 
 /**
- *
  * @author Martin Lukáš
  */
 public class TelnetSession implements Shell {
@@ -77,7 +78,6 @@ public class TelnetSession implements Shell {
         if (retValue != 0) {
             Logger.log(Logger.WARNING, LoggingCategory.TELNET, "Command shell escaped with non-zero return value: " + retValue);
         }
-
 
 
     }

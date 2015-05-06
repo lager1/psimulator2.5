@@ -3,22 +3,24 @@
  */
 package networkModule.L2;
 
-import dataStructures.packets.EthernetPacket;
+import dataStructures.packets.L2.EthernetPacket;
 import dataStructures.packets.L3Packet;
 import dataStructures.MacAddress;
+
 import java.util.*;
+
 import logging.*;
 import networkModule.Layer;
 import networkModule.NetworkModule;
 import networkModule.IpNetworkModule;
 import physicalModule.AbstractPhysicalModule;
-import physicalModule.PhysicMod;
 import utils.SmartRunnable;
-import utils.Util;
+import utils.Utilities;
 import utils.WorkerThread;
 
 /**
  * Tady bude veskera implementace ethernetu a to jak pro switch, tak i router.
+ *
  * @author neiss
  */
 public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
@@ -31,23 +33,23 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
     public final AbstractPhysicalModule physicMod;    // zkratka na fysickej modul
 
 
-
 // Konstruktory a nastavovani pri startu: -------------------------------------------------------------------------------------------------
 
     public EthernetLayer(NetworkModule netMod) {
         super(netMod);
         exploreHardware();
-        this.physicMod=netMod.getPhysicMod();
+        this.physicMod = netMod.getPhysicMod();
         this.worker = new WorkerThread(this);
     }
 
     /**
      * Prida novy interface.
+     *
      * @param name
      * @param mac
      * @return to pridany interface - loader s tim potrebuje jeste neco delat
      */
-    public EthernetInterface addInterface(String name, MacAddress mac){
+    public EthernetInterface addInterface(String name, MacAddress mac) {
         EthernetInterface iface = new EthernetInterface(name, mac, this);
         this.ifaces.add(iface);
         return iface;
@@ -71,12 +73,9 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
     public void addAllSwitchportsToGivenInterface(EthernetInterface iface) {
         for (SwitchportSettings swport : switchports.values()) {
             iface.addSwitchportSettings(swport);
-            etherDebug("Pridavam na interface "+iface.name+" switchport c. "+ swport.switchportNumber, null);
+            etherDebug("Pridavam na interface " + iface.name + " switchport c. " + swport.switchportNumber, null);
         }
     }
-
-
-
 
 
 // Verejny metody pro sitovou komunikaci: ----------------------------------------------------------------------------------------------------
@@ -96,7 +95,7 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
     @Override
     public void doMyWork() {
-        while ( ! (sendBuffer.isEmpty() && receiveBuffer.isEmpty())) {
+        while (!(sendBuffer.isEmpty() && receiveBuffer.isEmpty())) {
             if (!sendBuffer.isEmpty()) {
                 SendItem it = sendBuffer.remove(0);
                 handleSendPacket(it.packet, it.iface, it.target);
@@ -110,10 +109,10 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign)+" EthLayer";
+        return Utilities.alignFromRight(netMod.getDevice().getName(), Utilities.deviceNameAlign) + " EthLayer";
     }
 
-    public SwitchportSettings getSwitchport(int i){
+    public SwitchportSettings getSwitchport(int i) {
         return switchports.get(i);
     }
 
@@ -139,16 +138,15 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
         EthernetPacket p = new EthernetPacket(iface.getMac(), target, packet.getType(), packet);
 
         if (target.equals(MacAddress.broadcast())) {
-            linkInfo("Odesilam novej broadcast paket od vyssi vrstvy na rozhrani "+iface.name+" na vsechny switchporty. ", p);
+            linkInfo("Odesilam novej broadcast paket od vyssi vrstvy na rozhrani " + iface.name + " na vsechny switchporty. ", p);
             iface.transmitPacketOnAllSwitchports(p, null);
         } else {
-            linkInfo("Jdu odeslat novej paket na rozhrani "+iface.name+". ", p);
+            linkInfo("Jdu odeslat novej paket na rozhrani " + iface.name + ". ", p);
             transmitPacket(iface, p, null);
         }
     }
 
     /**
-     *
      * Obsluhuje pakety, ktery dostal sitovej modul od fysickyho.
      *
      * @param packet
@@ -160,12 +158,12 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
         SwitchportSettings swport = switchports.get(switchportNumber);
         if (swport == null) {
             Logger.log(this, Logger.WARNING, LoggingCategory.ETHERNET_LAYER,
-                    "Prisel paket na switchport c. "+switchportNumber+", o jehoz existenci nemam tuseni, prusvih! ",packet);
+                    "Prisel paket na switchport c. " + switchportNumber + ", o jehoz existenci nemam tuseni, prusvih! ", packet);
         }
         //kontrola, bylo-li nalezeno rozhrani:
         EthernetInterface iface = swport.assignedInterface;
         if (iface == null) {
-            Logger.log(this, Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu c. "+ switchportNumber+", prusvih!", packet);
+            Logger.log(this, Logger.WARNING, LoggingCategory.ETHERNET_LAYER, "Nenalezeno interface ke switchportu c. " + switchportNumber + ", prusvih!", packet);
             return;
         }
 
@@ -176,22 +174,22 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
 
         //samotny vyrizovani paketu:
         if (packet.dst.equals(iface.getMac())) {    //pokud je paket pro me
-            linkInfo("Prijal jsem paket pro me na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". ", packet);
+            linkInfo("Prijal jsem paket pro me na switchportu " + switchportNumber + " na rozhrani " + iface.name + ". ", packet);
             handlePacketForMe(packet, iface, swport);
         } else if (packet.dst.equals(MacAddress.broadcast())) { //paket je broadcastovej
             handlePacketForMe(packet, iface, swport);
             if (iface.switchingEnabled) {
-                linkInfo("Prijal jsem broadcast paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". Jdu ho dal preposlat. ", packet);
-                iface.transmitPacketOnAllSwitchports(packet,swport);    // interface to odesle na vsechny porty
+                linkInfo("Prijal jsem broadcast paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ". Jdu ho dal preposlat. ", packet);
+                iface.transmitPacketOnAllSwitchports(packet, swport);    // interface to odesle na vsechny porty
             } else {
-                linkInfo("Prijal jsem broadcast paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+". Nepreposilam ho, protoze nemam povoleny switchovani. ", packet);
+                linkInfo("Prijal jsem broadcast paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ". Nepreposilam ho, protoze nemam povoleny switchovani. ", packet);
             }
         } else { //paket neni pro me, musim ho odeslat dal
             if (iface.switchingEnabled) { //odesila se, kdyz je to dovoleny
-                linkInfo("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+", kterej neni pro me. Jdu ho preposlat. ", packet);
+                linkInfo("Prijal jsem paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ", kterej neni pro me. Jdu ho preposlat. ", packet);
                 transmitPacket(iface, packet, swport);
             } else {
-                linkInfo("Prijal jsem paket na switchportu "+ switchportNumber+" na rozhrani "+iface.name+", kterej neni pro me. Nemam ale povoleny switchovani, tak ho zahazuju. ", packet);
+                linkInfo("Prijal jsem paket na switchportu " + switchportNumber + " na rozhrani " + iface.name + ", kterej neni pro me. Nemam ale povoleny switchovani, tak ho zahazuju. ", packet);
             }
         }
 
@@ -236,21 +234,19 @@ public class EthernetLayer extends Layer implements SmartRunnable, Loggable {
     }
 
 
-
 // ostatni privatni metody: -----------------------------------------------------------------------------------------------------------
 
-    private void linkDebug(String message,Object obj){
+    private void linkDebug(String message, Object obj) {
         Logger.log(this, Logger.DEBUG, LoggingCategory.LINK, message, obj);
     }
 
-    private void linkInfo(String message,Object obj){
+    private void linkInfo(String message, Object obj) {
         Logger.log(this, Logger.INFO, LoggingCategory.LINK, message, obj);
     }
 
-    private void etherDebug(String message,Object obj){
+    private void etherDebug(String message, Object obj) {
         Logger.log(this, Logger.DEBUG, LoggingCategory.LINK, message, obj);
     }
-
 
 
 // tridy pro polozky v bufferech: ------------------------------------------------------------------------------------------------------------

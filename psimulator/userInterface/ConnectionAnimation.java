@@ -11,7 +11,6 @@ import psimulator.userInterface.Dialogs.AbstractPropertiesDialog;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.WaitLayerUI;
 
 /**
- *
  * @author Václav Mach <machvac5 at fit.cvut.cz>
  */
 public final class ConnectionAnimation extends AbstractPropertiesDialog {

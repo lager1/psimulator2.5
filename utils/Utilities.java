@@ -3,9 +3,10 @@
  */
 package utils;
 
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L4Packet;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,10 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author Tomas Pitrinec
  */
-public class Util {
+public class Utilities {
 
     public static final int deviceNameAlign = 8;
 
@@ -56,7 +56,7 @@ public class Util {
     }
 
     /**
-     * Klasicky printStackTrace hazi do stringu. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
+     * Prints Stack Trace to String. Prejato z http://www.rgagnon.com/javadetails/java-0029.html.
      *
      * @param e
      * @return
@@ -74,43 +74,49 @@ public class Util {
     }
 
     /**
-     * Rozlozi cislo na mocniny dvojky. Pouzivam pri vypisovani navratovyho kodu.
+     * Splits number to powers of 2
      *
      * @param c
      * @return
      */
-    public static String rozlozNaMocniny2(int c) {
-        String vratit = "";
+    public static String splitToPowersOf2(int c) {
+        String ret = "";
         for (int i = 0; i < 31; i++) {
             if ((c & (1 << i)) != 0) {
-                if (vratit.equals("")) {
-                    vratit += (1 << i);
+                if (ret.equals("")) {
+                    ret += (1 << i);
                 } else {
-                    vratit += " + " + (1 << i);
+                    ret += " + " + (1 << i);
                 }
             }
         }
-        if (vratit.equals("")) {
-            vratit = "0";
+        if (ret.equals("")) {
+            ret = "0";
         }
-        return vratit;
+        return ret;
     }
 
-    public static String rozlozNaLogaritmy2(int c) {
-        String vratit = "";
+    /**
+     * Splits number to logarithms of 2
+     *
+     * @param c
+     * @return
+     */
+    public static String splitToLogarithmsOf2(int c) {
+        String ret = "";
         for (int i = 0; i < 31; i++) {
             if ((c & (1 << i)) != 0) {
-                if (vratit.equals("")) {
-                    vratit += (log2(1 << i));
+                if (ret.equals("")) {
+                    ret += (log2(1 << i));
                 } else {
-                    vratit += ", " + (log2(1 << i));
+                    ret += ", " + (log2(1 << i));
                 }
             }
         }
-        if (vratit.equals("")) {
-            vratit = "Zadny chybovy kod nebyl zadan.";
+        if (ret.equals("")) {
+            ret = "Zadny chybovy kod nebyl zadan.";
         }
-        return vratit;
+        return ret;
     }
 
     private static int log2(int num) {
@@ -127,11 +133,11 @@ public class Util {
      * @param d
      * @return
      */
-    public static double zaokrouhli(double d) {
+    public static double round(double d) {
         return ((double) Math.round(d * 1000)) / 1000;
     }
 
-    public static boolean jeInteger(String ret) {
+    public static boolean isInteger(String ret) {
         try {
             int a = Integer.parseInt(ret);
         } catch (Exception e) {
@@ -154,9 +160,9 @@ public class Util {
     }
 
     /**
-     * Uspi aktualni vlakno na pocet ns.
+     * Puts current thread to sleep state for specified nanoseconds
      *
-     * @param ms
+     * @param ns
      */
     public static void sleepNano(int ns) {
         try {
@@ -172,25 +178,26 @@ public class Util {
      * nestane.
      *
      * @param ret
-     * @param dylka
+     * @param length
      * @return
      */
-    public static String zarovnej(String ret, int dylka) {
-        int dorovnat = dylka - ret.length();
-        for (int i = 0; i < dorovnat; i++) {
+    public static String alignFromRight(String ret, int length) {
+        int alignCount = length - ret.length();
+        for (int i = 0; i < alignCount; i++) {
             ret = ret + " ";
         }
         return ret;
     }
 
     /**
-     * Zjistuje, zda dany retezec zacina cislem. Nesmi byt static, jinak to hazi java.lang.IncompatibleClassChangeError:
+     * Checks if string begins with number.
      * Expecting non-static method
      *
      * @param s
      * @return
+     * @throws java.lang.IncompatibleClassChangeError:
      */
-    public static boolean zacinaCislem(String s) {
+    public static boolean beginsWithNumber(String s) {
         if (s.length() == 0) {
             return false;
         }
@@ -207,43 +214,44 @@ public class Util {
     }
 
     /**
-     * Zarovnava zleva mezerami do maximalni dylky.
-     * Kdyz je ret delsi nez dylka, tak vrati nezmenenej retezec.
+     * Aligns from left with spaces up to specified length
+     *
      * @param ret
-     * @param dylka
+     * @param length
      * @return
      */
-    public static String zarovnejZLeva(String ret, int dylka) {
+    public static String alignFromLeft(String ret, int length) {
         //if (ret.length() >= dylka) return ret;
-        int dorovnat = dylka - ret.length();
+        int alignCount = length - ret.length();
         String s = "";
-        for(int i=0;i<dorovnat;i++){
+        for (int i = 0; i < alignCount; i++) {
             s += " ";
         }
-        return s+ret;
+        return s + ret;
     }
 
     /**
-     * Prevadi byte na inst, jako kdyby byly bez znaminka.
+     * Converts byte to unsigned integer;
+     *
      * @param b
      * @return
      */
     public static int byteToInt(byte b) {
-        int a = b & 0xff;    // bitova operace, jinak se totiz pretypovava byte jako se znaminkem, takhel se ty pocatecni jednicky vyandujou
+        int a = b & 0xff;
         return a;
     }
 
     /**
-     * Tato metoda rozseka vstupni string na jednotlivy words (jako jejich oddelovac se bere mezera) a ulozi je do
-     * seznamu words, ktery dedi od Abstraktni.
+     * Splits line into words (space is used as delimiter)
+     *
      * @autor Stanislav Řehák
      */
     public static List<String> splitLine(String line) {
-        line = line.trim(); // rusim bile znaky na zacatku a na konci
-        String[] bileZnaky = {" ", "\t"};
-        for (int i = 0; i < bileZnaky.length; i++) { // odstraneni bylych znaku
-            while (line.contains(bileZnaky[i] + bileZnaky[i])) {
-                line = line.replace(bileZnaky[i] + bileZnaky[i], bileZnaky[i]);
+        line = line.trim();
+        String[] whiteChars = {" ", "\t"};
+        for (int i = 0; i < whiteChars.length; i++) {
+            while (line.contains(whiteChars[i] + whiteChars[i])) {
+                line = line.replace(whiteChars[i] + whiteChars[i], whiteChars[i]);
             }
         }
         String[] pole = line.split(" ");

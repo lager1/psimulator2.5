@@ -16,7 +16,6 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Support.Validator;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.RegexFormatter;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
@@ -208,11 +207,11 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
             return true;
         }
 
-        if(!connectionIpAddress.equals(dataLayer.getConnectionIpAddress())){
+        if (!connectionIpAddress.equals(dataLayer.getConnectionIpAddress())) {
             return true;
         }
 
-        if(!connectionPort.equals(dataLayer.getConnectionPort())){
+        if (!connectionPort.equals(dataLayer.getConnectionPort())) {
             return true;
         }
 
@@ -282,7 +281,6 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         ButtonGroup buttonGroup = new ButtonGroup();
 
         ActionListener lodListener = new LevelOfDetailsListener();
-
 
 
         jRadioButtonManualLOD = new JRadioButton(dataLayer.getString("MANUAL_LEVEL_OF_DETAILS"));
@@ -561,7 +559,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         return addressesPanel;
     }
 
-    private JPanel createCardEditor(){
+    private JPanel createCardEditor() {
         JPanel card = new JPanel();
 
         card.add(createNetworkBoundsPanel());
@@ -573,7 +571,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
         return card;
     }
 
-    private JPanel createNetworkBoundsPanel(){
+    private JPanel createNetworkBoundsPanel() {
         JPanel displayPanel = new JPanel();
         displayPanel.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("DETAILS")));
 
@@ -652,6 +650,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
     }
 
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for ToolbarIconSize
      */
@@ -668,6 +667,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
     }
 
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for ToolbarIconSize
      */
@@ -684,6 +684,7 @@ public final class SettingsDialog extends AbstractPropertiesOkCancelDialog {
     }
 
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for ToolbarIconSize
      */

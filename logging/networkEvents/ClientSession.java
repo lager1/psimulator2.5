@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shared.NetworkObject;
 import telnetd.pridaneTridy.TelnetProperties;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class ClientSession {
@@ -26,7 +26,6 @@ public class ClientSession {
     private ObjectOutputStream outputStream;
     /**
      * reference used for self removing from the list
-     *
      */
     private List listReference;
 
@@ -80,7 +79,7 @@ public class ClientSession {
     }
 
     public void closeSession() {
-    //    this.listReference.remove(this);   // auto-remove when is not active, this line may causing concuret modification exception
+        //    this.listReference.remove(this);   // auto-remove when is not active, this line may causing concuret modification exception
         this.done = true;
         if (this.socket == null || this.socket.isClosed()) // nothing to close
         {
@@ -97,9 +96,8 @@ public class ClientSession {
     /**
      * Set {
      *
-     * @see #listReference}.
-     *
      * @param list
+     * @see #listReference}.
      */
     public void setListReference(List list) {
         this.listReference = list;

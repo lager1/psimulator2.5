@@ -25,6 +25,7 @@ package telnetd.io.toolkit;
 
 
 import java.io.IOException;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -337,7 +338,8 @@ public class Editline {
                 case 1200: {
                     return TerminalIO.ESCAPE;
                 }
-                case TerminalIO.UNRECOGNIZED: break;
+                case TerminalIO.UNRECOGNIZED:
+                    break;
 
                 default:
                     try {

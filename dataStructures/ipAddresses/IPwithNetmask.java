@@ -6,11 +6,12 @@ package dataStructures.ipAddresses;
 /**
  * Represents IP with netmask.
  * Pouziva se u nastaveni rozhrani, v routovaci tabulce apod.
+ *
  * @author Tomas Pitrinec
  */
 public class IPwithNetmask {
 
-// vnitrni representace ip a maskou
+    // vnitrni representace ip a maskou
     private IpAddress ip;
     private IpNetmask mask;
 
@@ -18,6 +19,7 @@ public class IPwithNetmask {
 
     /**
      * Creates a new instance from string of IP address, the mask is computed automatically.
+     *
      * @param adr
      */
     public IPwithNetmask(String adr) {
@@ -27,6 +29,7 @@ public class IPwithNetmask {
 
     /**
      * Creates new instance from two strings.
+     *
      * @param adr
      * @param maska
      */
@@ -37,6 +40,7 @@ public class IPwithNetmask {
 
     /**
      * Creates new instance from IP as string and mask as number of bits (tedy pocet jednickovejch bitu).
+     *
      * @param adr
      * @param maska number of bits
      */
@@ -47,6 +51,7 @@ public class IPwithNetmask {
 
     /**
      * Creates new instance from existing IP and mask as number of bits.
+     *
      * @param adr
      * @param maska number of bits
      */
@@ -57,6 +62,7 @@ public class IPwithNetmask {
 
     /**
      * Creates new instance from existing IP and netmask.
+     *
      * @param adr
      * @param mask
      */
@@ -71,13 +77,13 @@ public class IPwithNetmask {
      * maska za lomitkem se vymoduluje 32. POZOR: tzn., ze i maska /32 se
      * vymoduluje na /0! (takhle funguje LinuxIfconfig i LinuxRoute)<br /> Je-li
      * modulo maska nastaveno na false, musi byt maska spravna, tzn. v intervalu
-     * <0,32>. <br /> Na chybny vstupy to hazi SpatnaMaskaException nebo
+     * <0, 32>. <br /> Na chybny vstupy to hazi SpatnaMaskaException nebo
      * SpatnaAdresaException, pricemz, kdyz je spatny oboje, ma
      * SpatnaAdresaException prednost. <br />
      * Nebyla-li maska zadana ve stringu, nastavi se defMaska.
      *
      * @param adrm
-     * @param defMaska - pocet bitu, na -1 se maska dopocitava
+     * @param defMaska    - pocet bitu, na -1 se maska dopocitava
      * @param moduloMaska
      */
     public IPwithNetmask(String adrm, int defMaska, boolean moduloMaska) {
@@ -131,10 +137,10 @@ public class IPwithNetmask {
             return false;
         }
         final IPwithNetmask other = (IPwithNetmask) obj;
-        if (this.ip != null && other.ip != null && ! this.ip.equals(other.ip) ) {
+        if (this.ip != null && other.ip != null && !this.ip.equals(other.ip)) {
             return false;
         }
-        if (this.mask != null && other.mask != null && ! this.mask.equals(other.mask) ) {
+        if (this.mask != null && other.mask != null && !this.mask.equals(other.mask)) {
             return false;
         }
         return true;
@@ -143,6 +149,7 @@ public class IPwithNetmask {
     /**
      * Returns IP address with slash and netmask as number of bits.
      * Vypise jako IP lomitko pocet bitu.
+     *
      * @return
      */
     @Override
@@ -151,31 +158,30 @@ public class IPwithNetmask {
     }
 
 
-
-
-
 // verejny metody poskytujici dalsi informace o siti a podobne: ----------------------------------------------------------------------
 
     public IpAddress getBroadcast() {
-        return IpAddress.createIpFromBits( cisloSite() | ~mask.getBits() );
+        return IpAddress.createIpFromBits(cisloSite() | ~mask.getBits());
     }
 
-    public IPwithNetmask getNetworkNumber(){
+    public IPwithNetmask getNetworkNumber() {
         IpAddress adr = IpAddress.createIpFromBits(cisloSite());
-        return new IPwithNetmask(adr,mask);
+        return new IPwithNetmask(adr, mask);
     }
 
     /**
      * Vraci true, kdyz je adresa s maskou cislem site.
+     *
      * @return
      */
-    public boolean isNetworkNumber(){
-        if(this.equals(getNetworkNumber())) return true;
+    public boolean isNetworkNumber() {
+        if (this.equals(getNetworkNumber())) return true;
         else return false;
     }
 
     /**
      * Vraci true, kdyz je adresa s maskou broadcastem site.
+     *
      * @return
      */
     public boolean isBroadcast() {
@@ -186,10 +192,11 @@ public class IPwithNetmask {
     /**
      * Vraci true, jestlize adresa v parametru (comparedIP je v moji siti. Porovnava se to podle toho, jestli maj stejny cisla site.
      * Returns true, if comparedIP is in my network.
+     *
      * @param comparedIP
      * @return
      */
-    public boolean isInMyNetwork (IpAddress comparedIP){
+    public boolean isInMyNetwork(IpAddress comparedIP) {
         int druhyCisloSite = comparedIP.getBits() & mask.bits; //jakoby cislo site ty porovnavany
         if (druhyCisloSite == cisloSite()) return true; //tady se ty dve cisla site porovnavaj
         else return false;
@@ -199,7 +206,7 @@ public class IPwithNetmask {
 
     /**
      * Setts the automatically computed mask. The mask is computed from IP address according to rules in comentar.
-     *
+     * <p/>
      * Nastavi dopocitanou masku, podle tridy IP. Vyuziva se v konstruktoru, kdyz neni maska zadana.
      */
     private void dopocitejMasku() {
@@ -222,6 +229,7 @@ public class IPwithNetmask {
 
     /**
      * Da vnitrni representaci cisla site.
+     *
      * @return
      */
     private int cisloSite() { //vraci 32bit integer

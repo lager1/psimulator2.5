@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
@@ -71,7 +72,7 @@ public class EventsListener implements Runnable {
             Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Object for broadcasting recieved. Broadcasting ... ");
 
             synchronized (this.clientSessions) {
-                for (Iterator<ClientSession> it = clientSessions.iterator(); it.hasNext();) {
+                for (Iterator<ClientSession> it = clientSessions.iterator(); it.hasNext(); ) {
                     ClientSession clientSession = it.next();
                     if (clientSession.isActive()) {
                         clientSession.send(ntwObject);

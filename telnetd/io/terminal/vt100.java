@@ -41,12 +41,12 @@ package telnetd.io.terminal;
  */
 public class vt100 extends BasicTerminal {
 
-  public boolean supportsSGR() {
-    return false;
-  }//supportsSGR
+    public boolean supportsSGR() {
+        return false;
+    }//supportsSGR
 
-  public boolean supportsScrolling() {
-    return true;
-  }//supportsSoftScroll
+    public boolean supportsScrolling() {
+        return true;
+    }//supportsSoftScroll
 
 }//class vt100

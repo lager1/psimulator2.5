@@ -70,7 +70,7 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
         app.start();
     }
 
-// privatni metody - parsovani:
+    // privatni metody - parsovani:
     protected IpAddress parseCommand() {
         String word = dalsiSlovo();
         IpAddress adr;
@@ -144,28 +144,28 @@ public class Traceroute extends LinuxCommand implements LongTermCommand, Applica
 //
 //        if (p.typ == 0) { //icmp reply - jsem v cili
 //            stavKonani=1;
-//            printLine(zarovnejZLeva(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
-//                    +")  "+zaokrouhli(p.cas)+" ms  "+zaokrouhli(p.cas*k1)+" ms  "+zaokrouhli(p.cas*k2)+" ms ");
+//            printLine(alignFromLeft(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
+//                    +")  "+round(p.cas)+" ms  "+round(p.cas*k1)+" ms  "+round(p.cas*k2)+" ms ");
 //        } else if (p.typ == 3) {
 //            stavKonani=3;
 //            if (p.kod == 0) {
-//                printLine(zarovnejZLeva(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
-//                    +")  "+zaokrouhli(p.cas)+" ms !N  "+zaokrouhli(p.cas*k1)+" ms !N  "
-//                    +zaokrouhli(p.cas*k2)+" ms !N");
+//                printLine(alignFromLeft(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
+//                    +")  "+round(p.cas)+" ms !N  "+round(p.cas*k1)+" ms !N  "
+//                    +round(p.cas*k2)+" ms !N");
 //            } else if (p.kod == 1) {
-//                printLine(zarovnejZLeva(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
-//                    +")  "+zaokrouhli(p.cas)+" ms !H  "+zaokrouhli(p.cas*k1)+" ms !H  "
-//                    +zaokrouhli(p.cas*k2)+" ms !H");
+//                printLine(alignFromLeft(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
+//                    +")  "+round(p.cas)+" ms !H  "+round(p.cas*k1)+" ms !H  "
+//                    +round(p.cas*k2)+" ms !H");
 //            }
 //        } else if (p.typ == 11) { //timeout - musim pokracovat
-//            printLine(zarovnejZLeva(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
-//                    +")  "+zaokrouhli(p.cas)+" ms  "+zaokrouhli(p.cas*k1)+" ms  "+zaokrouhli(p.cas*k2)+" ms ");
+//            printLine(alignFromLeft(prijate+"", 2)+"  "+p.zdroj.vypisAdresu()+" ("+p.zdroj.vypisAdresu()
+//                    +")  "+round(p.cas)+" ms  "+round(p.cas*k1)+" ms  "+round(p.cas*k2)+" ms ");
 //        }
 //    }
 //
 //    protected void dopisZbylyHvezdicky(int a) {
 //        for (int i = a; i < maxTtl; i++) {
-//            printLine(zarovnejZLeva((i + 1) + "", 2) + "  * * *");
+//            printLine(alignFromLeft((i + 1) + "", 2) + "  * * *");
 //        }
 //    }
 }

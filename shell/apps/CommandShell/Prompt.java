@@ -1,7 +1,6 @@
 package shell.apps.CommandShell;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class Prompt {
@@ -50,7 +49,6 @@ public class Prompt {
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
-
 
 
     @Override

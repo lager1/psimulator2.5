@@ -7,9 +7,10 @@ import dataStructures.EventDescriptive;
 
 /**
  * Trida pro data jakyhokoliv paketu.
+ *
  * @author neiss
  */
-public interface PacketData extends  EventDescriptive{
+public interface PacketData extends EventDescriptive {
 
     public int getSize();
 

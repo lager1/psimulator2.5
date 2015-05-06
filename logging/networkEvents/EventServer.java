@@ -3,6 +3,7 @@ package logging.networkEvents;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -42,7 +43,6 @@ public class EventServer implements Runnable {
         }
 
         Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "EventServer server socket successfully created.");
-
 
 
         while (!quit) {

@@ -3,12 +3,12 @@
  */
 package applications;
 
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.DhcpPacket;
-import dataStructures.packets.UdpPacket;
+import dataStructures.packets.L7.DhcpPacket;
+import dataStructures.packets.L4.UdpPacket;
 import device.Device;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -69,13 +69,13 @@ public class DHCP_server extends Application {
 
         // deklarace odpovedi:
         boolean odeslat = true;
-        DhcpPacket.DhcpType replyType=null;
+        DhcpPacket.DhcpType replyType = null;
         IPwithNetmask adrm = null;
 
         //resim jednotlivy pripady:
         if (recDhcp.type == DhcpPacket.DhcpType.DISCOVER) { // prisel discover, poslu offer
             replyType = DhcpPacket.DhcpType.OFFER;
-            adrm  = config.getNextAddress();
+            adrm = config.getNextAddress();
 
         } else if (recDhcp.type == DhcpPacket.DhcpType.REQUEST) { // prisel request, poslu ack
             replyType = DhcpPacket.DhcpType.ACK;
@@ -86,7 +86,7 @@ public class DHCP_server extends Application {
         }
 
         // kdyz je vsechno v poradku, odeslu odpoved:
-        if(odeslat){
+        if (odeslat) {
             // nactu, co mu poslu:
             IpAddress serverAddress = iface.getIpAddress().getIp();
             // sestavim pakety:
@@ -141,7 +141,7 @@ public class DHCP_server extends Application {
         IpAddress nextAddress;
 
         public DhcpServerConfiguration(IPwithNetmask subnetAndNetmask, IpAddress rangeStart,
-                IpAddress rangeEnd, IpAddress routers, IpAddress broadcast) {
+                                       IpAddress rangeEnd, IpAddress routers, IpAddress broadcast) {
             this.subnetAndNetmask = subnetAndNetmask;
             this.rangeStart = rangeStart;
             this.rangeEnd = rangeEnd;

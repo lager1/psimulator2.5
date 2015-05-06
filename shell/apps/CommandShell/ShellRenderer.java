@@ -8,10 +8,12 @@ import exceptions.TelnetConnectionException;
 import filesystem.dataStructures.Directory;
 import filesystem.dataStructures.Node;
 import filesystem.dataStructures.NodesWrapper;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.logging.Level;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -19,7 +21,6 @@ import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 
 /**
- *
  * @author Martin Lukáš
  */
 public class ShellRenderer extends BasicInputField {
@@ -58,7 +59,6 @@ public class ShellRenderer extends BasicInputField {
         this.clearBuffer();
         this.returnValue = true;
         this.quit = false; // příznak pro ukončení čtecí smyčky jednoho příkazu
-
 
 
         while (!quit) {
@@ -244,7 +244,6 @@ public class ShellRenderer extends BasicInputField {
         }
 
 
-
     }
 
     /**
@@ -385,8 +384,6 @@ public class ShellRenderer extends BasicInputField {
                 }
 
                 commandShell.print("\t");
-
-
 
 
             }

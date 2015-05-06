@@ -6,9 +6,11 @@ package psimulator2;
 
 import config.configTransformer.Saver;
 import device.Device;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -25,22 +27,19 @@ import utils.Alarm;
  * Instance of Psimulator.
  * Pouzit navrhovy vzor Singleton.
  *
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  * @author Tomas Pitrinec
  */
-public class Psimulator implements Loggable{
+public class Psimulator implements Loggable {
 
 
-
-
-    public final List<Device> devices=new ArrayList<>();
+    public final List<Device> devices = new ArrayList<>();
     public NetworkModel configModel;
     public String lastConfigFile;
     public Alarm budik;
     public SystemListener systemListener;
     public EventServer eventServer;
-        private String realInterface;
+    private String realInterface;
 
     private Psimulator() {
         budik = new Alarm();
@@ -48,14 +47,15 @@ public class Psimulator implements Loggable{
 
     /**
      * Metoda na ulozeni
+     *
      * @param configFileName
      * @return
      */
     public int saveSimulatorToConfigFile(String configFileName) {
 
-        int vratit=0;
+        int vratit = 0;
 
-        if(!configFileName.isEmpty()){
+        if (!configFileName.isEmpty()) {
             lastConfigFile = configFileName;
         }
 
@@ -82,9 +82,9 @@ public class Psimulator implements Loggable{
         return "Class Psimulator";
     }
 
-    public Device getDeviceByName(String name){
-        for (Device d: devices){
-            if(d.getName().equals(name)){
+    public Device getDeviceByName(String name) {
+        for (Device d : devices) {
+            if (d.getName().equals(name)) {
                 return d;
             }
         }
@@ -92,12 +92,9 @@ public class Psimulator implements Loggable{
     }
 
 
-
-
-
 // staticky veci:
 
-    public static String getNameOfProgram(){
+    public static String getNameOfProgram() {
         return "psimulator2";
     }
 
@@ -105,7 +102,7 @@ public class Psimulator implements Loggable{
 
     public static Psimulator getPsimulator() {
         if (instance == null) {
-            synchronized(Psimulator.class) {
+            synchronized (Psimulator.class) {
                 if (instance == null) {
                     instance = new Psimulator();
                 }

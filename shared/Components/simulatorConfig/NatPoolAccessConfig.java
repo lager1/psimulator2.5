@@ -5,7 +5,6 @@
 package shared.Components.simulatorConfig;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class NatPoolAccessConfig {

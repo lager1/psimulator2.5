@@ -30,6 +30,7 @@ import telnetd.shell.ShellManager;
 
 
 import java.util.Vector;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -68,7 +69,7 @@ public class Connection
      * instantiates the whole i/o subsystem, negotiating telnet protocol level options etc.<br>
      *
      * @param tcg ThreadGroup that this instance is running in.
-     * @param cd ConnectionData instance containing all vital information of this connection.
+     * @param cd  ConnectionData instance containing all vital information of this connection.
      * @see telnetd.net.ConnectionData
      */
     public Connection(ThreadGroup tcg, ConnectionData cd) {

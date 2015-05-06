@@ -7,20 +7,23 @@ package networkModule.L3;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import device.Device;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.RoutingTable.Record;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Trida reprezentujici wrapper nad routovaci tabulkou pro system cisco.
  * Tez bude sefovat zmenu v RT dle vlastnich iface.
  * Cisco samo o sobe ma tez 2 tabulky: <br />
- *      1. zadane uzivatelem (tato trida) <br />
- *      2. vypocitane routy z tabulky c. 1 (trida RoutovaciTabulka)
+ * 1. zadane uzivatelem (tato trida) <br />
+ * 2. vypocitane routy z tabulky c. 1 (trida RoutovaciTabulka)
+ *
  * @author Stanislav Řehák <rehaksta@fit.cvut.cz>
  */
 public class CiscoWrapperRT implements Loggable {
@@ -72,6 +75,7 @@ public class CiscoWrapperRT implements Loggable {
 
         /**
          * Pouze pro ucely vypisu RT!!! Jinak nepouzivat!
+         *
          * @param target
          * @param gateway
          * @param iface
@@ -116,6 +120,7 @@ public class CiscoWrapperRT implements Loggable {
         /**
          * CiscoZaznamy se rovnaji pokud adresat ma stejnou adresu i masku &&
          * ( se takto rovnaji i brany ) || ( iface se jmenuji stejne nehlede na velikost pismen )
+         *
          * @param obj
          * @return
          */
@@ -153,7 +158,7 @@ public class CiscoWrapperRT implements Loggable {
      * Tato metoda bude aktualizovat RoutovaciTabulku dle tohoto wrapperu.
      */
     public void update() {
-        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: "+records.size(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "update RT, pocet static zaznamu: " + records.size(), null);
 
         // smazu RT
         routingTable.flushAllRecords();
@@ -165,7 +170,7 @@ public class CiscoWrapperRT implements Loggable {
         // pridam routy na nahozena iface
         for (NetworkInterface iface : ipLayer.getNetworkIfaces()) {
             if (iface.isUp && iface.getIpAddress() != null && iface.ethernetInterface.isConnected()) {
-                Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: "+iface.getIpAddress(), null);
+                Logger.log(this, Logger.INFO, LoggingCategory.WRAPPER_CISCO, "Adding route from online interface to routing table: " + iface.getIpAddress(), null);
                 routingTable.addRecord(iface.getIpAddress().getNetworkNumber(), iface, true);
             }
         }
@@ -181,10 +186,10 @@ public class CiscoWrapperRT implements Loggable {
                 NetworkInterface odeslat = findInterfaceForGateway(record.gateway);
                 if (odeslat != null) {
                     if (odeslat.isUp) {
-                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name, null);
+                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro " + record.target.toString() + " rozhrani " + odeslat.name, null);
                         routingTable.addRecordWithoutControl(record.target, record.gateway, odeslat);
                     } else {
-                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro "+record.target.toString() + " rozhrani "+odeslat.name+", ale je zhozene!!!", null);
+                        Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "nasel jsem pro " + record.target.toString() + " rozhrani " + odeslat.name + ", ale je zhozene!!!", null);
                     }
                 } else {
                     Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "Nenasel jsem pro tento zaznam zadne rozhrani, po kterem by to mohlo odejit..", record);
@@ -197,6 +202,7 @@ public class CiscoWrapperRT implements Loggable {
     /**
      * Vrati iface, na ktere se ma odesilat, kdyz je zaznam na branu.
      * Tato metoda pocita s tim, ze v RT uz jsou zaznamy pro nahozena iface.
+     *
      * @param gateway
      * @return kdyz nelze nalezt zadne iface, tak vrati null
      */
@@ -214,7 +220,7 @@ public class CiscoWrapperRT implements Loggable {
                 Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: nalezeno rozhrani.. ok", gateway);
                 return record.iface;
             } else {
-                Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro "+gateway, null);
+                Logger.log(this, Logger.DEBUG, LoggingCategory.WRAPPER_CISCO, "najdiRozhraniProBranu: NEnalezeno rozhrani pro " + gateway, null);
             }
 
             // kdyz to je na branu jako v retezu
@@ -231,6 +237,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Pridava do wrapperu novou routu na branu.
+     *
      * @param address
      * @param gateway
      */
@@ -241,6 +248,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Pridava do wrapperu novou routu na iface.
+     *
      * @param address
      * @param iface
      */
@@ -252,6 +260,7 @@ public class CiscoWrapperRT implements Loggable {
     /**
      * Prida do wrapperu novou routu na iface. Pote updatuje RT je-li potreba.
      * V teto metode se kontroluje, zda adresat je cislem site.
+     *
      * @param zaznam, ktery chci vlozit
      */
     private void addRecord(CiscoRecord record) {
@@ -274,6 +283,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Malinko prasacka metoda pro pridani zaznamu do RT pouze pro vypis!
+     *
      * @param record
      */
     private void addRecordForOutputOnly(Record record) {
@@ -287,7 +297,7 @@ public class CiscoWrapperRT implements Loggable {
     /**
      * Smaze zaznam z wrapperu + aktualizuje RT. Rozhrani maze podle jmena!
      * Muze byt zadana bud adresa nebo adresa+brana nebo adresa+iface.
-     *
+     * <p/>
      * no ip route IP MASKA DALSI? <br />
      * IP a MASKA je povinne, DALSI := { ROZHRANI | BRANA } <br />
      *
@@ -352,9 +362,10 @@ public class CiscoWrapperRT implements Loggable {
     /**
      * Vrati pozici, na kterou se bude pridavat zaznam do wrapperu.
      * Je to razeny dle integeru cile.
-     * @param pridavany, zaznam, ktery chceme pridat
+     *
+     * @param pridavany,       zaznam, ktery chceme pridat
      * @param nejminBituVMasce rika, jestli chceme radit nejdrive zaznamy maskou o mensim poctu 1,
-     * pouziva se pri normalnim vkladani do wrapperu, false pro vypis RT
+     *                         pouziva se pri normalnim vkladani do wrapperu, false pro vypis RT
      * @return
      */
     private int getPositionIndex(CiscoRecord record, boolean nejminBituVMasce) {
@@ -370,6 +381,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Vrati true, pokud je prvni adresa mensi nez druha, pokud se rovnaji, tak rozhoduje maska.
+     *
      * @param first
      * @param second
      * @return
@@ -396,6 +408,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Vrati CiscoRecord na indexu.
+     *
      * @param index
      * @return
      */
@@ -405,6 +418,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Vrati pocet zaznamu ve wrapperu.
+     *
      * @return
      */
     public int getSize() {
@@ -413,6 +427,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Pro vypis pres 'sh run'
+     *
      * @return
      */
     public String getRunningConfig() {
@@ -426,6 +441,7 @@ public class CiscoWrapperRT implements Loggable {
     /**
      * Vrati vypis routovaci tabulky.
      * Kasle se na tridni vypisy pro adresaty ze A rozsahu, protoze se v laborce takovy rozsah nepouziva.
+     *
      * @return
      */
     public String getShIpRoute() {
@@ -483,6 +499,7 @@ public class CiscoWrapperRT implements Loggable {
 
     /**
      * Vrati vypis cisco zaznamu ve spravnem formatu pro RT
+     *
      * @param record
      * @return
      */
@@ -511,6 +528,6 @@ public class CiscoWrapperRT implements Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(device.getName(), Util.deviceNameAlign) + "wrapper";
+        return Utilities.alignFromRight(device.getName(), Utilities.deviceNameAlign) + "wrapper";
     }
 }

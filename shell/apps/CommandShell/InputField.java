@@ -1,8 +1,10 @@
 package shell.apps.CommandShell;
 
 import commands.AbstractCommandParser;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -10,7 +12,6 @@ import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class InputField extends BasicInputField {
@@ -49,8 +50,8 @@ public class InputField extends BasicInputField {
             }
 
             if (inputValue == 0) {
-                    continue;
-                }
+                continue;
+            }
 
             Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "Přečetl jsem jeden znak: " + inputValue);
 

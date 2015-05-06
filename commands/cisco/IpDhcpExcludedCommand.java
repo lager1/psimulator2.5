@@ -7,13 +7,14 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class IpDhcpExcludedCommand extends CiscoCommand {
@@ -47,12 +48,9 @@ public class IpDhcpExcludedCommand extends CiscoCommand {
             }
 
             // TODO: tady pridat aplikaci neco
-            debug("excluded-address: "+listOfExcluded);
+            debug("excluded-address: " + listOfExcluded);
         }
     }
-
-
-
 
 
 }

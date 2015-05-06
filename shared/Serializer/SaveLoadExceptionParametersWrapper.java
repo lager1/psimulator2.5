@@ -1,11 +1,10 @@
 package shared.Serializer;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class SaveLoadExceptionParametersWrapper {
-    
+
     private SaveLoadExceptionType saveLoadExceptionType;
     private String fileName;
     private boolean saving;
@@ -25,6 +24,6 @@ public class SaveLoadExceptionParametersWrapper {
     public boolean isSaving() {
         return saving;
     }
-    
-    
+
+
 }

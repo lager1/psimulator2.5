@@ -1,7 +1,6 @@
 package psimulator.userInterface.GlassPane;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class Message {

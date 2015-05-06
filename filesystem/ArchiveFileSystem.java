@@ -18,20 +18,23 @@ import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.AlreadyExistsException;
 import filesystem.exceptions.FileNotFoundException;
 import filesystem.exceptions.FileSystemException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class ArchiveFileSystem implements FileSystem {
@@ -238,8 +241,7 @@ public class ArchiveFileSystem implements FileSystem {
 
             if (append) {
                 output = Files.newOutputStream(pat, APPEND, CREATE);
-            }
-            else {
+            } else {
                 output = Files.newOutputStream(pat);
             }
 
@@ -361,7 +363,7 @@ public class ArchiveFileSystem implements FileSystem {
 
         TFile targetFile = getRelativeTFile(target);
 
-        if(targetFile==null)
+        if (targetFile == null)
             return false;
 
         if (targetFile.exists() && sourceFile.isDirectory()) {
@@ -370,10 +372,10 @@ public class ArchiveFileSystem implements FileSystem {
 
         if (targetFile.exists() && sourceFile.isFile()) {
 
-            if(!targetFile.isDirectory())
+            if (!targetFile.isDirectory())
                 throw new AlreadyExistsException();
 
-            targetFile = getRelativeTFile(target+ "/" + sourceFile.getName());
+            targetFile = getRelativeTFile(target + "/" + sourceFile.getName());
             System.out.println(targetFile.getAbsolutePath());
         }
 
@@ -402,7 +404,7 @@ public class ArchiveFileSystem implements FileSystem {
 
         TFile targetFile = getRelativeTFile(target);
 
-        if(targetFile==null)
+        if (targetFile == null)
             return false;
 
         if (targetFile.exists() && sourceFile.isDirectory()) {
@@ -411,10 +413,10 @@ public class ArchiveFileSystem implements FileSystem {
 
         if (targetFile.exists() && sourceFile.isFile()) {
 
-            if(!targetFile.isDirectory())
+            if (!targetFile.isDirectory())
                 throw new AlreadyExistsException();
 
-            targetFile = getRelativeTFile(target+ "/" + sourceFile.getName());
+            targetFile = getRelativeTFile(target + "/" + sourceFile.getName());
             System.out.println(targetFile.getAbsolutePath());
         }
 

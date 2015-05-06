@@ -8,7 +8,7 @@ import dataStructures.packets.L2Packet;
 /**
  * Represents abstract physical switchport.
  * Sends and receives packet through cable.
- *
+ * <p/>
  * It is not running in its own thread, thread of PhysicMod handles it.
  *
  * @author neiss, haldyr
@@ -54,6 +54,7 @@ public abstract class Switchport {
 
     /**
      * Returns true, if on the other end of cable is connected other network device.
+     *
      * @return
      */
     public abstract boolean isConnected();

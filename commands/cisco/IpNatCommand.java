@@ -7,7 +7,9 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Map;
+
 import networkModule.L3.nat.NatTable;
 import shell.apps.CommandShell.CommandShell;
 
@@ -16,10 +18,10 @@ import shell.apps.CommandShell.CommandShell;
  * ip nat pool ovrld 172.16.10.1 172.16.10.1 prefix 24 <br />
  * ip nat inside source list 7 pool ovrld overload
  * ip nat inside source static 10.10.10.2 171.16.68.5
- *
+ * <p/>
  * ip nat pool ovrld 172.16.0.1 172.16.0.1 netmask 255.255.255.252  - not implemented
- * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  *
+ * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class IpNatCommand extends CiscoCommand {
 
@@ -166,6 +168,7 @@ public class IpNatCommand extends CiscoCommand {
 
     /**
      * Vrati true, pokud parsovani dobre dopadlo.
+     *
      * @return
      */
     private boolean zpracujPool() {
@@ -203,7 +206,7 @@ public class IpNatCommand extends CiscoCommand {
 
         dalsi = nextWord();
 
-        if(dalsi.startsWith("n")) {
+        if (dalsi.startsWith("n")) {
             if (!isCommand("netmask", dalsi, 1)) {
                 return false;
             }
@@ -243,6 +246,7 @@ public class IpNatCommand extends CiscoCommand {
 
     /**
      * Vrati true, pokud parsovani dobre dopadlo.
+     *
      * @return
      */
     private boolean zpracujInside() {

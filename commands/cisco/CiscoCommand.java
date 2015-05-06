@@ -7,12 +7,13 @@ package commands.cisco;
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public abstract class CiscoCommand extends AbstractCommand {
@@ -52,12 +53,13 @@ public abstract class CiscoCommand extends AbstractCommand {
         }
     }
 
-     /**
+    /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
      * Metoda se take stara o vypisy typu: IncompleteCommand, AmbigiousCommand, InvalidInputDetected.
+     *
      * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
-     * @param cmd prikaz, ktery zadal uzivatel
-     * @param min kolik musi mit mozny prikaz znaku
+     * @param cmd     prikaz, ktery zadal uzivatel
+     * @param min     kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
     protected boolean isCommand(String command, String cmd, int min) {
@@ -82,9 +84,10 @@ public abstract class CiscoCommand extends AbstractCommand {
     /**
      * Tato metoda simuluje zkracovani prikazu tak, jak cini cisco.
      * Metoda se take stara o vypis: AmbigiousCommand.
+     *
      * @param command prikaz, na ktery se zjistuje, zda lze na nej doplnit.
-     * @param cmd prikaz, ktery zadal uzivatel
-     * @param min kolik musi mit mozny prikaz znaku
+     * @param cmd     prikaz, ktery zadal uzivatel
+     * @param min     kolik musi mit mozny prikaz znaku
      * @return Vrati true, pokud retezec cmd je jedinym moznym prikazem, na ktery ho lze doplnit.
      */
     protected boolean isCommandWithoutOutput(String command, String cmd, int min) {
@@ -107,6 +110,7 @@ public abstract class CiscoCommand extends AbstractCommand {
     /**
      * Zjisti, zda je rezetec prazdny.
      * Kdyz ano, tak to jeste vypise hlasku incompleteCommand.
+     *
      * @param s
      * @return
      */

@@ -3,7 +3,7 @@
  */
 package physicalModule;
 
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L2Packet;
 import logging.Loggable;
 import networkModule.IpNetworkModule;
@@ -59,7 +59,7 @@ public abstract class AbstractSimulatorSwitchport extends Switchport implements 
     /**
      * In configuration it isn't saved, that switchport is real, it's discovered while cables are plugged in. So I need
      * this function to convert this SimulatorSwitchport to RealSwitchport.
-     *
+     * <p/>
      * V konfiguraci neni ulozeno, je-li switchport realny, to se zjisti az podle toho, jestli kabel od neho natazenej
      * vede k realnymu pocitaci. Proto potrebuju tuto metodu, abych moh puvodne vytvoreny simulator switchport
      * konvertovat na realnej.

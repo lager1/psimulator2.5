@@ -52,6 +52,7 @@ public class xterm extends BasicTerminal {
     /**
      * metoda, která převádí kody kontrolních znaků z xtermu na univerzální
      * použité napříč jinými podporovanými terminály
+     *
      * @param c
      * @return
      */

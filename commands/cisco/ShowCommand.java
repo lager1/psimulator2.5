@@ -6,8 +6,10 @@ package commands.cisco;
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
 import commands.completer.Node;
+
 import java.util.Iterator;
 import java.util.Map;
+
 import networkModule.L3.ArpCache.ArpRecord;
 import networkModule.L3.ArpCache.Target;
 import networkModule.L3.CiscoIPLayer;
@@ -19,7 +21,7 @@ import networkModule.L3.nat.NatTable.StaticRule;
 import networkModule.L3.nat.Pool;
 import networkModule.L3.nat.PoolAccess;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Trida pro zpracovani a obsluhu prikazu 'show'.
@@ -70,7 +72,7 @@ public class ShowCommand extends CiscoCommand {
         Node ifaces = new Node("interfaces");
         show.addChild(ifaces);
         for (NetworkInterface ifa : ipLayer.getSortedNetworkIfaces()) {
-            if (ifa.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1,2}")) {
+            if (ifa.name.matches("[a-zA-Z]+Ethernet[0-9]/[0-9]{1, 2}")) {
                 int indexOfT = ifa.name.lastIndexOf("t");
                 String shortenedIfaceName = ifa.name.substring(0, indexOfT + 1);
                 ifaces.addChild(new Node(shortenedIfaceName));
@@ -92,7 +94,10 @@ public class ShowCommand extends CiscoCommand {
         QUESTION_MARK,
         INTERFACES,
         IP_INTERFACE,
-        IP_INTERFACE_BRIEF,};
+        IP_INTERFACE_BRIEF,
+    }
+
+    ;
 
     private void start() {
         switch (showState) {
@@ -239,7 +244,7 @@ public class ShowCommand extends CiscoCommand {
         iface = null;
         iface = ipLayer.getNetworkIntefaceIgnoreCase(rozh);
         if (iface == null) {
-            if (rozh.matches("[fF].*[0-9]/[0-9]{1,2}")) {
+            if (rozh.matches("[fF].*[0-9]/[0-9]{1, 2}")) {
                 int end = rozh.indexOf("0");
                 String novy = "FastEthernet";
                 String cislo = rozh.substring(end, rozh.length());
@@ -294,11 +299,11 @@ public class ShowCommand extends CiscoCommand {
 
                 ArpRecord record = arp.get(target);
 
-                s += Util.zarovnej("Internet", 10);
-                s += Util.zarovnej(target.address.toString(), 17);
-                s += Util.zarovnej("" + (System.currentTimeMillis() - record.timeStamp) / 1_000, 11);
-                s += Util.zarovnej(record.mac.getCiscoRepresentation(), 16);
-                s += Util.zarovnej("Dynam", 7);
+                s += Utilities.alignFromRight("Internet", 10);
+                s += Utilities.alignFromRight(target.address.toString(), 17);
+                s += Utilities.alignFromRight("" + (System.currentTimeMillis() - record.timeStamp) / 1_000, 11);
+                s += Utilities.alignFromRight(record.mac.getCiscoRepresentation(), 16);
+                s += Utilities.alignFromRight("Dynam", 7);
                 s += target.iface.name;
 
                 if (it.hasNext()) {
@@ -360,19 +365,19 @@ public class ShowCommand extends CiscoCommand {
      */
     private void ipInterfaceBrief() {
         String s = "";
-        s += Util.zarovnej("Interface", 28);
-        s += Util.zarovnej("Ip-Address", 17);
-        s += Util.zarovnej("OK?", 4);
-        s += Util.zarovnej("Method", 7);
-        s += Util.zarovnej("Status", 23);
+        s += Utilities.alignFromRight("Interface", 28);
+        s += Utilities.alignFromRight("Ip-Address", 17);
+        s += Utilities.alignFromRight("OK?", 4);
+        s += Utilities.alignFromRight("Method", 7);
+        s += Utilities.alignFromRight("Status", 23);
         s += "Protocol\n";
 
         for (NetworkInterface nIface : ipLayer.getSortedNetworkIfaces()) {
-            s += Util.zarovnej(nIface.name, 28);
-            s += Util.zarovnej((nIface.getIpAddress() != null ? nIface.getIpAddress().getIp().toString() : "unassigned"), 17);
-            s += Util.zarovnej("YES", 4);
-            s += Util.zarovnej("manual", 7);
-            s += Util.zarovnej((nIface.isUp ? "up" : "administratively down"), 23);
+            s += Utilities.alignFromRight(nIface.name, 28);
+            s += Utilities.alignFromRight((nIface.getIpAddress() != null ? nIface.getIpAddress().getIp().toString() : "unassigned"), 17);
+            s += Utilities.alignFromRight("YES", 4);
+            s += Utilities.alignFromRight("manual", 7);
+            s += Utilities.alignFromRight((nIface.isUp ? "up" : "administratively down"), 23);
             s += "*not implemented*"; // TODO: implement in future - sending keepalive packet if set in configuration
             s += "\n";
         }
@@ -395,22 +400,22 @@ public class ShowCommand extends CiscoCommand {
             return;
         }
 
-        s += Util.zarovnej("Pro Inside global", 24) + Util.zarovnej("Inside local", 20);
-        s += Util.zarovnej("Outside local", 20) + Util.zarovnej("Outside global", 20);
+        s += Utilities.alignFromRight("Pro Inside global", 24) + Utilities.alignFromRight("Inside local", 20);
+        s += Utilities.alignFromRight("Outside local", 20) + Utilities.alignFromRight("Outside global", 20);
         s += "\n";
 
         for (Record zaznam : table.getDynamicRules()) {
-            s += Util.zarovnej("icmp " + zaznam.out.getAddressWithPort(), 24)
-                    + Util.zarovnej(zaznam.in.getAddressWithPort(), 20)
-                    + Util.zarovnej(zaznam.target.toString(), 20)
-                    + Util.zarovnej(zaznam.target.toString(), 20) + "\n";
+            s += Utilities.alignFromRight("icmp " + zaznam.out.getAddressWithPort(), 24)
+                    + Utilities.alignFromRight(zaznam.in.getAddressWithPort(), 20)
+                    + Utilities.alignFromRight(zaznam.target.toString(), 20)
+                    + Utilities.alignFromRight(zaznam.target.toString(), 20) + "\n";
         }
 
         for (NatTable.StaticRule rule : table.getStaticRules()) {
-            s += Util.zarovnej("--- " + rule.out, 24)
-                    + Util.zarovnej(rule.in.toString(), 20)
-                    + Util.zarovnej("---", 20)
-                    + Util.zarovnej("---", 20) + "\n";
+            s += Utilities.alignFromRight("--- " + rule.out, 24)
+                    + Utilities.alignFromRight(rule.in.toString(), 20)
+                    + Utilities.alignFromRight("---", 20)
+                    + Utilities.alignFromRight("---", 20) + "\n";
         }
 
         printWithDelay(s, 50);

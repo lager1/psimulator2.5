@@ -15,6 +15,7 @@ import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
 import javax.swing.*;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
@@ -22,7 +23,6 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.UndoRedo;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.Zoom;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class MenuBar extends JMenuBar implements Observer {
@@ -71,9 +71,9 @@ public class MenuBar extends JMenuBar implements Observer {
         this.dataLayer = dataLayer;
 
         // add this MenuBar as observer to langage manager
-        dataLayer.addLanguageObserver((Observer)this);
-        dataLayer.addPreferencesObserver((Observer)this);
-
+        dataLayer.addLanguageObserver((Observer) this);
+        dataLayer.addPreferencesObserver((Observer) this);
+        
         /* menu File */
         jMenuFile = new JMenu();
 
@@ -125,9 +125,9 @@ public class MenuBar extends JMenuBar implements Observer {
         //jMenuEdit.addSeparator();
         //jMenuEdit.add(jMenuItemSelectAll);
         //jMenuEdit.add(jMenuItemDelete);
-
+        
         /* END menu Edit */
-
+        
         /* menu View */
         jMenuView = new JMenu();
 
@@ -145,15 +145,15 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuView.add(jMenuItemZoomOut);
         jMenuView.add(jMenuItemZoomReset);
         /* END menu View */
-
+        
         /* menu Options */
         jMenuOptions = new JMenu();
         jMenuItemPreferences = new JMenuItem();
         jMenuItemPreferences.setIcon(new ImageIcon(getClass().getResource("/resources/toolbarIcons/16/configure.png")));
         jMenuOptions.add(jMenuItemPreferences);
         /* END menu Options */
-
-
+        
+        
         /* menu HELP */
         jMenuHelp = new JMenu();
         jMenuItemHelp = new JMenuItem();
@@ -163,7 +163,7 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuHelp.addSeparator();
         jMenuHelp.add(jMenuItemAbout);
         /* END menu HELP */
-
+        
         /* add menus to menu bar */
         this.add(jMenuFile);
         this.add(jMenuEdit);
@@ -177,7 +177,7 @@ public class MenuBar extends JMenuBar implements Observer {
         updateHelpActionListener();
     }
 
-    private void setMnemonics(){
+    private void setMnemonics() {
         jMenuFile.setMnemonic('F');
 
         jMenuItemNew.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
@@ -202,7 +202,7 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuItemPreferences.setAccelerator(KeyStroke.getKeyStroke('P', ActionEvent.CTRL_MASK));
 
         jMenuHelp.setMnemonic('H');
-        jMenuItemHelp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
+        jMenuItemHelp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
     }
 
     private void setTextsToComponents() {
@@ -212,12 +212,12 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuItemClose.setText(dataLayer.getString("CLOSE"));
         jMenuItemOpen.setText(dataLayer.getString("OPEN"));
         jMenuRecentlyOpened.setText(dataLayer.getString("OPEN_RECENT_FILE"));
-        jMenuItemEmpty.setText("<< "+dataLayer.getString("EMPTY")+" >>");
+        jMenuItemEmpty.setText("<< " + dataLayer.getString("EMPTY") + " >>");
         jMenuItemSave.setText(dataLayer.getString("SAVE"));
         jMenuItemSaveAs.setText(dataLayer.getString("SAVE_AS"));
         jMenuItemExit.setText(dataLayer.getString("EXIT"));
         /* END menu File */
-
+        
         /* menu Edit */
         jMenuEdit.setText(dataLayer.getString("EDIT"));
 
@@ -228,7 +228,7 @@ public class MenuBar extends JMenuBar implements Observer {
 
         //jMenuItemDelete.setText(dataLayer.getString("DELETE"));
         /* END menu Edit */
-
+        
         /* menu View */
         jMenuView.setText(dataLayer.getString("VIEW"));
 
@@ -236,14 +236,14 @@ public class MenuBar extends JMenuBar implements Observer {
         jMenuItemZoomOut.setText(dataLayer.getString("ZOOM_OUT"));
         jMenuItemZoomReset.setText(dataLayer.getString("ZOOM_RESET"));
         /* END menu View */
-
+        
         /* menu Options */
         jMenuOptions.setText(dataLayer.getString("OPTIONS"));
 
         jMenuItemPreferences.setText(dataLayer.getString("PREFERENCES"));
         /* END menu Options */
-
-
+      
+        
         /* menu HELP */
         jMenuHelp.setText(dataLayer.getString("HELP"));
         jMenuItemHelp.setText(dataLayer.getString("HELP"));
@@ -251,16 +251,16 @@ public class MenuBar extends JMenuBar implements Observer {
         /* END menu HELP */
     }
 
-    private void updateHelpActionListener(){
-        if(helpActionListener != null){
+    private void updateHelpActionListener() {
+        if (helpActionListener != null) {
             jMenuItemHelp.removeActionListener(helpActionListener);
         }
 
         try {
             Locale locale;
-            if(dataLayer.getString("BUNDLE_LANGUAGE_NAME").equals("Čeština")){
+            if (dataLayer.getString("BUNDLE_LANGUAGE_NAME").equals("Čeština")) {
                 locale = new Locale("cz", "CZ");
-            }else{
+            } else {
                 locale = new Locale("en", "US");
             }
             URL url2 = HelpSet.findHelpSet(null, "resources/help/helpset.hs", locale);
@@ -288,18 +288,18 @@ public class MenuBar extends JMenuBar implements Observer {
         }
     }
 
-    private void createRecentFilesJMenu(){
+    private void createRecentFilesJMenu() {
         List<File> filesList = dataLayer.getRecentOpenedFiles();
 
         jMenuRecentlyOpened.removeAll();
 
         // if no recent files, add only empty item to list
-        if(filesList.isEmpty()){
+        if (filesList.isEmpty()) {
             jMenuRecentlyOpened.add(jMenuItemEmpty);
             return;
         }
 
-        for(File file : filesList){
+        for (File file : filesList) {
             JMenuItem jMenuItem = new JMenuItem(file.getName());
             jMenuItem.setIcon(new ImageIcon(getClass().getResource("/resources/toolbarIcons/16/xml.png")));
             jMenuItem.setActionCommand(file.getAbsolutePath());
@@ -309,27 +309,27 @@ public class MenuBar extends JMenuBar implements Observer {
         }
     }
 
-    public void setUndoEnabled(boolean enabled){
+    public void setUndoEnabled(boolean enabled) {
         jMenuItemUndo.setEnabled(enabled);
     }
 
-    public void setRedoEnabled(boolean enabled){
+    public void setRedoEnabled(boolean enabled) {
         jMenuItemRedo.setEnabled(enabled);
     }
 
-    public void setZoomInEnabled(boolean enabled){
+    public void setZoomInEnabled(boolean enabled) {
         jMenuItemZoomIn.setEnabled(enabled);
     }
 
-    public void setZoomOutEnabled(boolean enabled){
+    public void setZoomOutEnabled(boolean enabled) {
         jMenuItemZoomOut.setEnabled(enabled);
     }
 
-    public void setZoomResetEnabled(boolean enabled){
+    public void setZoomResetEnabled(boolean enabled) {
         jMenuItemZoomReset.setEnabled(enabled);
     }
 
-    public void setProjectRelatedButtonsEnabled(boolean enabled){
+    public void setProjectRelatedButtonsEnabled(boolean enabled) {
         jMenuItemClose.setEnabled(enabled);
         jMenuItemSave.setEnabled(enabled);
         jMenuItemSaveAs.setEnabled(enabled);
@@ -337,66 +337,74 @@ public class MenuBar extends JMenuBar implements Observer {
 
     /**
      * Adds action listener to jMenuItemNew
+     *
      * @param listener Action listener
      */
-    public void addNewProjectActionListener(ActionListener listener){
+    public void addNewProjectActionListener(ActionListener listener) {
         jMenuItemNew.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jButtonClose
+     *
      * @param listener Action listener
      */
-    public void addCloseActionListener(ActionListener listener){
+    public void addCloseActionListener(ActionListener listener) {
         jMenuItemClose.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jMenuItemOpen
+     *
      * @param listener Action listener
      */
-    public void addOpenActionListener(ActionListener listener){
+    public void addOpenActionListener(ActionListener listener) {
         jMenuItemOpen.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jMenuItemSave
+     *
      * @param listener Action listener
      */
-    public void addSaveActionListener(ActionListener listener){
+    public void addSaveActionListener(ActionListener listener) {
         jMenuItemSave.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jMenuItemSaveAs
+     *
      * @param listener Action listener
      */
-    public void addSaveAsActionListener(ActionListener listener){
+    public void addSaveAsActionListener(ActionListener listener) {
         jMenuItemSaveAs.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jMenuItem Exit
+     *
      * @param listener Action listener
      */
-    public void addExitActionListener(ActionListener listener){
+    public void addExitActionListener(ActionListener listener) {
         jMenuItemExit.addActionListener(listener);
     }
 
     /**
      * Adds action listener to jMenuItemUndo and jMenuItemRedo
+     *
      * @param listener Action listener
      */
-    public void addUndoRedoActionListener(ActionListener listener){
+    public void addUndoRedoActionListener(ActionListener listener) {
         jMenuItemUndo.addActionListener(listener);
         jMenuItemRedo.addActionListener(listener);
     }
 
     /**
      * Adds action listener to Zoom menu items
+     *
      * @param listener Action listener
      */
-    public void addZoomActionListener(ActionListener listener){
+    public void addZoomActionListener(ActionListener listener) {
         jMenuItemZoomIn.addActionListener(listener);
         jMenuItemZoomOut.addActionListener(listener);
         jMenuItemZoomReset.addActionListener(listener);
@@ -404,29 +412,30 @@ public class MenuBar extends JMenuBar implements Observer {
 
     /**
      * Adds action listener to Preferences jMenuItem
+     *
      * @param listener Action listener
      */
-    public void addPreferencesActionListener(ActionListener listener){
+    public void addPreferencesActionListener(ActionListener listener) {
         jMenuItemPreferences.addActionListener(listener);
     }
 
-    public void addSelectAllListener(ActionListener listener){
+    public void addSelectAllListener(ActionListener listener) {
         jMenuItemSelectAll.addActionListener(listener);
     }
 
-    public void addDeleteListener(ActionListener listener){
+    public void addDeleteListener(ActionListener listener) {
         jMenuItemDelete.addActionListener(listener);
     }
 
     //
-    public void addOpenRecentFileListener(ActionListener listener){
+    public void addOpenRecentFileListener(ActionListener listener) {
         openRecentFileListener = listener;
 
         // create menu with recently opened files - have to create it now, after the action listener is avaiable
         createRecentFilesJMenu();
     }
 
-    public void addAboutListener(ActionListener listener){
+    public void addAboutListener(ActionListener listener) {
         jMenuItemAbout.addActionListener(listener);
     }
 

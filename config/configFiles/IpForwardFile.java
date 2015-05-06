@@ -4,17 +4,18 @@ import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Michal Horacek
  */
 public class IpForwardFile extends AbstractLinuxFile {
@@ -23,7 +24,7 @@ public class IpForwardFile extends AbstractLinuxFile {
         super(fs);
         this.filePath = "/proc/sys/net/ipv4/ip_forward";
     }
-    
+
     @Override
     public void createFile() {
         fileSystem.runOutputFileJob(this.filePath, new OutputFileJob() {
@@ -34,15 +35,15 @@ public class IpForwardFile extends AbstractLinuxFile {
                 writer.flush();
                 return 0;
             }
-        });        
+        });
     }
-    
+
     public boolean ip_forward() {
-        
+
         if (!fileSystem.exists(filePath)) {
             createFile();
         }
-        
+
         // vycteni 1. radku:
         final List<String> firstLine = new ArrayList<>(); // neprisel jsem na to, jak jinak to z ty vnitrni fce vytahnout
         try {

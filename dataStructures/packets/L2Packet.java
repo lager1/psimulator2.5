@@ -6,7 +6,6 @@ package dataStructures.packets;
 import dataStructures.EventDescriptive;
 
 /**
- *
  * @author neiss
  */
 public abstract class L2Packet implements EventDescriptive {
@@ -22,7 +21,7 @@ public abstract class L2Packet implements EventDescriptive {
         this.data = data;
     }
 
-    public enum L2PacketType{
+    public enum L2PacketType {
         ethernetII;
     }
 
@@ -35,7 +34,7 @@ public abstract class L2Packet implements EventDescriptive {
     public abstract L2PacketType getType();
 
     @Override
-    public String toString(){
+    public String toString() {
         return "L2Packet: generic packet on Layer 2.";
     }
 

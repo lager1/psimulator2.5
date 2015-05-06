@@ -6,6 +6,7 @@ package commands.linux.filesystem;
 import commands.AbstractCommandParser;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -46,7 +47,7 @@ public class Cat extends FileSystemCommand {
                 fileName = resolvePath(currentDir, fileName);
 
 
-            int ret = parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
+                int ret = parser.device.getFilesystem().runInputFileJob(fileName, new InputFileJob() {
 
                     @Override
                     public int workOnFile(InputStream input) throws Exception {
@@ -60,8 +61,8 @@ public class Cat extends FileSystemCommand {
                     }
                 });
 
-            if(ret < 0)
-                throw new FileNotFoundException();
+                if (ret < 0)
+                    throw new FileNotFoundException();
 
             } catch (FileNotFoundException ex) {
                 parser.getShell().printLine("cat: " + fileName + ": file not found");

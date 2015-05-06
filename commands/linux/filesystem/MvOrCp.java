@@ -6,7 +6,6 @@ package commands.linux.filesystem;
 import commands.AbstractCommandParser;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public abstract class MvOrCp extends FileSystemCommand {
@@ -35,7 +34,7 @@ public abstract class MvOrCp extends FileSystemCommand {
         }
 
         for (String filePath : files) {
-            if(target == filePath)
+            if (target == filePath)
                 continue;
             processFile(filePath, target);
         }

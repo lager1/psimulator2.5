@@ -4,14 +4,16 @@
 
 package networkModule.L3;
 
-import dataStructures.packets.ArpPacket;
+import dataStructures.packets.L2.ArpPacket;
 import dataStructures.DropItem;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L4Packet;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Objects;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetInterface;
@@ -76,7 +78,7 @@ public class CiscoIPLayer extends IPLayer {
      * tak se clovek ani nedopingne na sve iface s IP.
      *
      * @param packet
-     * @param src the value of src
+     * @param src    the value of src
      * @param dst
      */
     @Override
@@ -104,7 +106,7 @@ public class CiscoIPLayer extends IPLayer {
      * Handles packet: is it for me?, routing, decrementing TTL, postrouting, MAC address finding.
      *
      * @param packet
-     * @param iface incomming EthernetInterface, can be null
+     * @param iface  incomming EthernetInterface, can be null
      */
     @Override
     protected void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface) {
@@ -143,7 +145,7 @@ public class CiscoIPLayer extends IPLayer {
         // zaroutuj
         Record record = routingTable.findRoute(packet.dst);
         if (record == null) {
-            Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for "+packet.dst+". Will send Destination Host Unreachable.", packet);
+            Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: IP packet received, but packet is unroutable - no record for " + packet.dst + ". Will send Destination Host Unreachable.", packet);
             Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
             getIcmpHandler().sendHostUnreachable(packet.src, packet); // cisco na skolnich routerech odesi DHU a nebo DNU jako linux
             return;
@@ -153,7 +155,7 @@ public class CiscoIPLayer extends IPLayer {
         //        a tedy IP adresa se musi vyplnit dle iface, ze ktereho to poleze ven
         IpPacket p = new IpPacket(packet.src, packet.dst, packet.ttl - 1, packet.data);
 
-        Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: "+(ifaceIn == null ? "null" : ifaceIn.name), packet);
+        Logger.log(this, Logger.INFO, LoggingCategory.NET, "IP packet received from interface: " + (ifaceIn == null ? "null" : ifaceIn.name), packet);
         processPacket(p, record, ifaceIn);
     }
 
@@ -165,6 +167,7 @@ public class CiscoIPLayer extends IPLayer {
 
     /**
      * Returs true iff routing table has a valid record for given IP.
+     *
      * @param ip
      * @return
      */
@@ -178,6 +181,7 @@ public class CiscoIPLayer extends IPLayer {
 
     /**
      * Just for Loader's: private Map<CiscoIPLayer, RoutingTableConfig> ciscoSettings = new HashMap<>().
+     *
      * @param obj
      * @return
      */

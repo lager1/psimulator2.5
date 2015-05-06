@@ -4,16 +4,15 @@
 package physicalModule;
 
 import dataStructures.DropItem;
-import dataStructures.packets.IpPacket;
 import dataStructures.packets.L2Packet;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
-import networkModule.IpNetworkModule;
-import networkModule.L4.IcmpHandler;
 
 /**
  * Represent's switchport on layer 2.
@@ -129,6 +128,6 @@ public class SimulatorSwitchport extends AbstractSimulatorSwitchport implements 
 
     @Override
     public String getDescription() {
-        return "SimulatorSwitchport number: "+number + ", configID: "+configID;
+        return "SimulatorSwitchport number: " + number + ", configID: " + configID;
     }
 }

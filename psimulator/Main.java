@@ -12,7 +12,6 @@ import psimulator.logicLayer.ControllerFacade;
 import psimulator.userInterface.MainWindow;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class Main {

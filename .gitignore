@@ -1,0 +1,5 @@
+doc/*
+imports/*
+.idea/*
+out/*
+*.iml

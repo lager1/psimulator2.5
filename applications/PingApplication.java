@@ -7,18 +7,20 @@ package applications;
 import commands.ApplicationNotifiable;
 import dataStructures.DropItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IpPacket;
 import device.Device;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L4.TransportLayer;
 import psimulator2.Psimulator;
-import utils.Util;
+import utils.Utilities;
 import utils.Wakeable;
 
 /**
@@ -27,7 +29,7 @@ import utils.Wakeable;
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  * @author Tomas Pitrinec
  */
-public abstract class PingApplication extends TwoThreadApplication implements Wakeable{
+public abstract class PingApplication extends TwoThreadApplication implements Wakeable {
 
     protected IpAddress target;
     protected int count = -1;    // -1 znamena, ze se bude pingovat donekonecna
@@ -50,7 +52,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
      */
     protected Map<Integer, Double> timestamps = new HashMap<>();
 
-//    protected boolean [] sent;
+    //    protected boolean [] sent;
 //    protected boolean [] recieved;
     int lastSent = 0; // seq number of last sent packet
     int lastReceived = 0;    // seq number of last received packet
@@ -78,7 +80,6 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
     //pak je tady jeste receivePacket, ktera je podedena od Application
 
 
-
 // metody na vyrizovani sitovejch pozadavku: --------------------------------------------------------------------------
 
     /**
@@ -87,7 +88,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
     @Override
     public void doMyWork() {
 
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda doMyWork vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda doMyWork vlaknem " + Utilities.threadName(), null);
 
         IcmpPacket packet;
 
@@ -95,7 +96,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
             IpPacket p = buffer.remove(0).packet;
 
             // zkouseni, jestli je ten paket spravnej:
-            if (! (p.data instanceof IcmpPacket)) {
+            if (!(p.data instanceof IcmpPacket)) {
                 Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication recieved non ICMP packet", p);
                 Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(p, device.configID));
                 continue;
@@ -108,12 +109,12 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
             // TODO: resit nejak lip duplikace paketu, zatim se to loguje:
             if (sendTime == null) {
                 Logger.log(this, Logger.WARNING, LoggingCategory.PING_APPLICATION, "Dropping packet: PingApplication doesn't expect such a PING reply "
-                        + "(IcmpPacket with this seq="+packet.seq+" was never send OR it was served in a past)", p);
+                        + "(IcmpPacket with this seq=" + packet.seq + " was never send OR it was served in a past)", p);
                 Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(p, device.configID));
                 continue;
             }
 
-            double delay = ((double)System.nanoTime())/1_000_000 - sendTime;
+            double delay = ((double) System.nanoTime()) / 1_000_000 - sendTime;
 
             // vsechno v poradku, paket se zpracuje:
             if (delay <= timeout) { // ok, paket dorazil vcas
@@ -133,19 +134,18 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
             }
 
             // reseni posledniho paketu:
-            if(lastReceived == count){
+            if (lastReceived == count) {
                 Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Prisel mi posledni paket. Koncim.", packet);
                 exit();
             }
         }
 
-        if(zavolanoBudikem){
+        if (zavolanoBudikem) {
             exit();
         }
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Opustena metoda doMyWork vlaknem " + Utilities.threadName(), null);
 
     }
-
 
 
 // metody na delani vlastni prace: ------------------------------------------------------------------------------------
@@ -155,26 +155,26 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
      */
     @Override
     public void run() {
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Spustena metoda run vlaknem " + Utilities.threadName(), null);
         TransportLayer transportLayer = applicationLayer.getNetMod().transportLayer;
         int i = 0;
 
         while ((i < count || count == -1) && isRunning()) {    // bezi se jen dokud je running
             int seq = i + 1;
             Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " posilam ping seq=" + seq, null);
-            timestamps.put(seq, (double)System.nanoTime()/1_000_000);
+            timestamps.put(seq, (double) System.nanoTime() / 1_000_000);
             lastSent = seq;
             transportLayer.icmpHandler.sendRequest(target, ttl, seq, port, payload);
             stats.odeslane++;
 
             if (seq != count) {    // po poslednim odeslanym paketu uz se neceka
-                Util.sleep(waitTime);    // cekani
+                Utilities.sleep(waitTime);    // cekani
             } else {    // ale nastavi se budik:
                 Psimulator.getPsimulator().budik.registerWake(this, timeout);
             }
             i++;
         }
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Konci metoda run. Opustena vlaknem "+Util.threadName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Konci metoda run. Opustena vlaknem " + Utilities.threadName(), null);
     }
 
 // abstraktni metody, ktery je potreba doimplementovat v konkretnich pingach: ----------------------------------------
@@ -197,23 +197,19 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
     protected abstract void startMessage();
 
 
-
-
-
-
 // metody spousteny pri startovani a ukoncovani aplikace: -------------------------------------------------------------
 
 
     @Override
     protected synchronized void atExit() {
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Zavolana metoda atExit vlaknem "+Thread.currentThread().getName(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Zavolana metoda atExit vlaknem " + Thread.currentThread().getName(), null);
         stats.countStats();
         printStats();
         Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, "Ukoncena metoda atExit. ", null);
     }
 
     @Override
-    protected void atKill(){
+    protected void atKill() {
         command.applicationFinished();
     }
 
@@ -232,7 +228,7 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
             kill();
         }
 
-        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName()+" atStart()", null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.PING_APPLICATION, getName() + " atStart()", null);
         startMessage();
 
     }
@@ -257,11 +253,9 @@ public abstract class PingApplication extends TwoThreadApplication implements Wa
     }
 
     @Override
-    public String toString(){
-        return "ping_app "+PID;
+    public String toString() {
+        return "ping_app " + PID;
     }
-
-
 
 
 // statistiky: -------------------------------------------------------------------------------------------------------

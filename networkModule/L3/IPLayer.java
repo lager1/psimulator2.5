@@ -7,11 +7,13 @@ import dataStructures.DropItem;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.ArpPacket;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L2.ArpPacket;
+import dataStructures.packets.L3.IpPacket;
 import dataStructures.packets.L3Packet;
 import dataStructures.packets.L4Packet;
+
 import java.util.*;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -23,7 +25,7 @@ import networkModule.L3.nat.NatTable;
 import networkModule.L4.IcmpHandler;
 import psimulator2.Psimulator;
 import utils.SmartRunnable;
-import utils.Util;
+import utils.Utilities;
 import utils.Wakeable;
 import utils.WorkerThread;
 
@@ -82,9 +84,11 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Default TTL values.
      */
     public int ttl; // different for particular IPLayers
+
     /**
      * Constructor of IP layer.
      * Empty routing table is also created.
+     *
      * @param netMod
      */
     public IPLayer(IpNetworkModule netMod) {
@@ -104,6 +108,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Getter for Cisco commands.
+     *
      * @return
      */
     public NatTable getNatTable() {
@@ -133,7 +138,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Called from doMyWork() and from plaform-specific IPLayeres.
      *
      * @param packet
-     * @param iface incomming ethernet interface
+     * @param iface  incomming ethernet interface
      */
     protected void handleReceivePacket(L3Packet packet, EthernetInterface iface) {
         switch (packet.getType()) {
@@ -151,7 +156,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
                 Logger.log(this, Logger.INFO, LoggingCategory.IP_LAYER, "UNKNOWN L3 type, dropping packet: ", packet);
 
             default:
-                Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type packet: " + packet.getType()+", dropping packet: ", packet);
+                Logger.log(this, Logger.WARNING, LoggingCategory.IP_LAYER, "Unsupported L3 type packet: " + packet.getType() + ", dropping packet: ", packet);
                 Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
 
         }
@@ -161,7 +166,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Handles imcomming ARP packets.
      *
      * @param packet
-     * @param iface incomming EthernetInterface
+     * @param iface  incomming EthernetInterface
      */
     protected abstract void handleReceiveArpPacket(ArpPacket packet, EthernetInterface iface);
 
@@ -169,7 +174,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Process storeBuffer which is for packets without known MAC nextHop.
      */
     private void handleStoreBuffer() {
-        Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "handleStoreBuffer(), size: "+storeBuffer.size(), null);
+        Logger.log(this, Logger.DEBUG, LoggingCategory.IP_LAYER, "handleStoreBuffer(), size: " + storeBuffer.size(), null);
 
         long now = System.currentTimeMillis();
 
@@ -195,7 +200,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
                 serve.add(m);
             }
 
-            Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "This record has not timedout nor ARP answer has come. age: " + (now - m.timeStamp) + ", will delete: " + arpTTL+ " nextHop="+m.nextHop, m.packet);
+            Logger.log(this, Logger.DEBUG, LoggingCategory.ARP, "This record has not timedout nor ARP answer has come. age: " + (now - m.timeStamp) + ", will delete: " + arpTTL + " nextHop=" + m.nextHop, m.packet);
         }
 
         storeBuffer.removeAll(old);
@@ -220,15 +225,15 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Handles packet: is it for me?, routing, decrementing TTL, postrouting, MAC address finding.
      *
      * @param packet
-     * @param iface incomming EthernetInterface, can be null
+     * @param iface  incomming EthernetInterface, can be null
      */
     protected abstract void handleReceiveIpPacket(IpPacket packet, EthernetInterface iface);
 
     /**
      * Vezme packet, pusti se na nej postRouting, zjisti MAC cile a preda ethernetovy vrstve.
      *
-     * @param packet co chci odeslaat
-     * @param record zaznam z RT
+     * @param packet  co chci odeslaat
+     * @param record  zaznam z RT
      * @param ifaceIn prichozi iface, null pokud odesilam novy paket
      */
     protected void processPacket(IpPacket packet, Record record, NetworkInterface ifaceIn) {
@@ -239,7 +244,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
         }
 
         if (packet.dst.isLocalSubnet127()) { // http://tools.ietf.org/html/rfc1700 Internal host loopback address.  Should never appear outside a host.
-            Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: attempt to send packet out with destination "+packet.dst+" which is local!", packet);
+            Logger.log(this, Logger.INFO, LoggingCategory.NET, "Dropping packet: attempt to send packet out with destination " + packet.dst + " which is local!", packet);
             Logger.log(this, Logger.INFO, LoggingCategory.PACKET_DROP, "Logging dropped packet.", new DropItem(packet, getNetMod().getDevice().configID));
         }
 
@@ -282,8 +287,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Method for sending packet from layer 4 with system default TTL.
      *
      * @param packet data to be sent
-     * @param src source address - can be null
-     * @param dst destination address
+     * @param src    source address - can be null
+     * @param dst    destination address
      */
     public void sendPacket(L4Packet packet, IpAddress src, IpAddress dst) {
         sendBuffer.add(new SendItem(packet, src, dst, this.ttl));
@@ -294,9 +299,9 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * Method for sending packet from layer 4.
      *
      * @param packet data to be sent
-     * @param src source address - can be null
-     * @param dst destination address
-     * @param ttl Time To Live value
+     * @param src    source address - can be null
+     * @param dst    destination address
+     * @param ttl    Time To Live value
      */
     public void sendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl) {
         sendBuffer.add(new SendItem(packet, null, dst, ttl));
@@ -308,8 +313,8 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
      * In this method everything is in the same thread (no buffers!). <br />
      *
      * @param packet data to be sent
-     * @param src source address - if null given it gain address from sending interface
-     * @param dst destination address
+     * @param src    source address - if null given it gain address from sending interface
+     * @param dst    destination address
      */
     protected abstract void handleSendPacket(L4Packet packet, IpAddress src, IpAddress dst, int ttl);
 
@@ -340,7 +345,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Sets IpAddress with NetMask to given interface. There is no other way to set IP address to interface.
-     *
+     * <p/>
      * Reason for this method is that we might to add some actions after setting address in future. (e.g. ARP announcments)
      *
      * @param iface
@@ -360,6 +365,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
     /**
      * Adds Network interface to a list.
      * This method is used only in loading configuration file.
+     *
      * @param iface
      */
     public void addNetworkInterface(NetworkInterface iface) {
@@ -383,12 +389,13 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(netMod.getDevice().getName(), Util.deviceNameAlign) + " IPLayer";
+        return Utilities.alignFromRight(netMod.getDevice().getName(), Utilities.deviceNameAlign) + " IPLayer";
     }
 
     /**
      * Returns NetworkInterface which belongs to the EthernetInterface inc. <br />
      * Returns null iff inc is null.
+     *
      * @param inc
      * @return
      */
@@ -406,7 +413,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
     /**
      * Fill the routing table during simulator loading from addresses on interfaces.
      * It should be called only if in the configuration file does'n exist any routing table configuration.
-     *
+     * <p/>
      * Naplni routovaci tabulku dle adres na rozhranich, tak jak to dela linux.
      * Volat jenom pri konfiguraci, nebyla-li routovaci tabulka ulozena.
      */
@@ -425,6 +432,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Getter for Saver.
+     *
      * @return
      */
     public Collection<NetworkInterface> getNetworkIfaces() {
@@ -433,6 +441,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Return interface with name or null iff there is no such interface.
+     *
      * @param name
      * @return
      */
@@ -442,6 +451,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Return interface with name (ignores case) or null iff there is no such interface.
+     *
      * @param name
      * @return
      */
@@ -456,6 +466,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Returns true iff there is some interface which name starts with namePart.
+     *
      * @param namePart
      * @return
      */
@@ -470,6 +481,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Returns interfaces as collection sorted by interface name.
+     *
      * @return
      */
     public Collection<NetworkInterface> getSortedNetworkIfaces() {
@@ -480,6 +492,7 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
     /**
      * Returns EthernetInterface for given IP address attached to this iface.
+     *
      * @param dst
      * @return
      */
@@ -545,8 +558,9 @@ public abstract class IPLayer implements SmartRunnable, Loggable, Wakeable {
 
         /**
          * Store item.
-         * @param packet packet to send
-         * @param out outgoing interface (gained from routing table)
+         *
+         * @param packet  packet to send
+         * @param out     outgoing interface (gained from routing table)
          * @param nextHop IP of nextHop
          */
         public StoreItem(IpPacket packet, EthernetInterface out, IpAddress nextHop) {

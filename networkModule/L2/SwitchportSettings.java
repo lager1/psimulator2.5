@@ -16,11 +16,11 @@ public class SwitchportSettings {
 
     public SwitchportSettings(int switchportNumber) {
         this.switchportNumber = switchportNumber;
-        isUp=true;
+        isUp = true;
     }
 
     @Override
     public String toString() {
-        return "SwitchportSettings: iface="+assignedInterface.name+", isUp="+isUp+", nr="+switchportNumber;
+        return "SwitchportSettings: iface=" + assignedInterface.name + ", isUp=" + isUp + ", nr=" + switchportNumber;
     }
 }

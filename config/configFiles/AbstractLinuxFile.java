@@ -3,11 +3,11 @@ package config.configFiles;
 import device.Device;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.OutputFileJob;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
 /**
- *
  * @author Michal Horacek
  */
 public abstract class AbstractLinuxFile {
@@ -36,7 +36,6 @@ public abstract class AbstractLinuxFile {
     }
 
     /**
-     *
      * @return String representing the file path
      */
     public String getFilePath() {

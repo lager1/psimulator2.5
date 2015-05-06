@@ -6,6 +6,7 @@ package commands.completer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -24,6 +25,7 @@ public class Node implements Loggable {
 
     /**
      * Only root has null!
+     *
      * @param value
      */
     public Node(String value) {
@@ -36,14 +38,14 @@ public class Node implements Loggable {
 
     @Override
     public String toString() {
-        String s = "[node: "+value;
+        String s = "[node: " + value;
 
 
         if (!childs.isEmpty()) {
             s += " | children:";
         }
         for (Node node : childs) {
-            s += " "+ node;
+            s += " " + node;
         }
 
         s += "]";
@@ -52,6 +54,7 @@ public class Node implements Loggable {
 
     /**
      * If this node has child with this name return child, nullotherwise.
+     *
      * @param child
      * @return
      */
@@ -76,7 +79,7 @@ public class Node implements Loggable {
 
         for (Node node : childs) {
             if (node.value.toLowerCase().startsWith(child.toLowerCase())) {
-                log("slovo z prikazu pridavam do doplnitelnych: "+node.value);
+                log("slovo z prikazu pridavam do doplnitelnych: " + node.value);
                 possibilities.add(node);
             }
         }

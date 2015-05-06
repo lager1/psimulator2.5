@@ -9,7 +9,6 @@ package commands.linux;
 import commands.AbstractCommandParser;
 
 /**
- *
  * @author Michal Horacek
  */
 public class Dig extends LinuxCommand {

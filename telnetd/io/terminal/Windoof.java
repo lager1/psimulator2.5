@@ -42,12 +42,12 @@ package telnetd.io.terminal;
  */
 public class Windoof extends BasicTerminal {
 
-  public boolean supportsSGR() {
-    return false;
-  }//supportsSGR
+    public boolean supportsSGR() {
+        return false;
+    }//supportsSGR
 
-  public boolean supportsScrolling() {
-    return true;
-  }//supportsScrolling
+    public boolean supportsScrolling() {
+        return true;
+    }//supportsScrolling
 
 }//class Windoof

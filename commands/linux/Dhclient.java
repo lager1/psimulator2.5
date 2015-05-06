@@ -2,14 +2,15 @@ package commands.linux;
 
 import applications.dhcp.DhcpClientThread;
 import commands.AbstractCommandParser;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import networkModule.IpNetworkModule;
 import networkModule.L3.NetworkInterface;
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Michal Horacek
  */
 public class Dhclient extends LinuxCommand {

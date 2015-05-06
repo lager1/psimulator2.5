@@ -5,7 +5,6 @@
 package commands;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class NatDynamicRecords extends AbstractCommand {

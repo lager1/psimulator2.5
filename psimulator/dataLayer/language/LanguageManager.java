@@ -14,7 +14,6 @@ import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.interfaces.SaveableInterface;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class LanguageManager extends Observable implements SaveableInterface {
@@ -72,6 +71,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Sets current language to language at languagePosition
+     *
      * @param languagePosition
      */
     public void setCurrentLanguage(int languagePosition) {
@@ -93,6 +93,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Gets all avaiable language names sorted in array
+     *
      * @return Set of Strings with names
      */
     public Object[] getAvaiableLanguageNames() {
@@ -101,6 +102,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Returns position of current language in languages array
+     *
      * @return Position
      */
     public int getCurrentLanguagePosition() {
@@ -139,6 +141,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Initializes current language according to language if exists.If no, the DEFAULT_LANGUAGE is set/
+     *
      * @param language Language to initialize to
      */
     private void initializeLanguage(String language) {
@@ -156,7 +159,8 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Changes program current language to language in parameter (if exists).
-     * @param language Language to switch the program
+     *
+     * @param language         Language to switch the program
      * @param languagePosition Position of language in avaiableLanguagesSorted
      */
     private void setCurrentLanguage(String language, int languagePosition) {
@@ -175,6 +179,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Finds language in avaiableLanguagesSorted array and returns its position
+     *
      * @param language
      * @return position if found, otherwise -1
      */

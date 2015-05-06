@@ -8,16 +8,16 @@ package networkModule.L4;
 import dataStructures.DropItem;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IcmpPacket;
-import dataStructures.packets.IcmpPacket.Code;
-import dataStructures.packets.IcmpPacket.Type;
-import dataStructures.packets.IpPacket;
+import dataStructures.packets.L3.IcmpPacket;
+import dataStructures.packets.L3.IcmpPacket.Code;
+import dataStructures.packets.L3.IcmpPacket.Type;
+import dataStructures.packets.L3.IpPacket;
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L7.ApplicationLayer;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Handles creating and sending ICMP packets.
@@ -49,7 +49,7 @@ public class IcmpHandler implements Loggable {
             case UNDELIVERED:
             case SOURCE_QUENCH:
                 // predat aplikacim
-                Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Forwarding ARP reply to application on port: "+p.id, packetItem);
+                Logger.log(this, Logger.INFO, LoggingCategory.TRANSPORT, "Forwarding ARP reply to application on port: " + p.id, packetItem);
                 transportLayer.forwardPacketToApplication(packetItem, p.id);
                 break;
             default:
@@ -64,7 +64,8 @@ public class IcmpHandler implements Loggable {
 
     /**
      * Sends ICMP message TimeToLiveExceeded to a given IpAddress.
-     * @param dst message target
+     *
+     * @param dst    message target
      * @param packet for some additional information only.
      */
     public void sendTimeToLiveExceeded(IpAddress dst, IpPacket packet) {
@@ -73,7 +74,8 @@ public class IcmpHandler implements Loggable {
 
     /**
      * Sends ICMP message Destination Host Unreachable to a given IpAddress.
-     * @param dst message target
+     *
+     * @param dst    message target
      * @param packet for some additional information only.
      */
     public void sendHostUnreachable(IpAddress dst, IpPacket packet) {
@@ -82,7 +84,8 @@ public class IcmpHandler implements Loggable {
 
     /**
      * Sends ICMP message Destination Network Unreachable to a given IpAddress.
-     * @param dst message target
+     *
+     * @param dst    message target
      * @param packet for some additional information only.
      */
     public void sendNetworkUnreachable(IpAddress dst, IpPacket packet) {
@@ -91,7 +94,8 @@ public class IcmpHandler implements Loggable {
 
     /**
      * Sends ICMP message Destination Network Unreachable to a given IpAddress.
-     * @param dst message target
+     *
+     * @param dst    message target
      * @param packet for some additional information only.
      */
     void sendPortUnreachable(IpAddress dst, IpPacket packet) {
@@ -100,7 +104,8 @@ public class IcmpHandler implements Loggable {
 
     /**
      * Sends ICMP Source Quench message to a given IpAddress.
-     * @param dst message target
+     *
+     * @param dst    message target
      * @param packet for some additional information only.
      */
     public void sendSourceQuench(IpAddress dst, IpPacket packet) {
@@ -109,11 +114,12 @@ public class IcmpHandler implements Loggable {
 
     @Override
     public String getDescription() {
-        return Util.zarovnej(transportLayer.netMod.getDevice().getName(), Util.deviceNameAlign)+" IcmpHandler";
+        return Utilities.alignFromRight(transportLayer.netMod.getDevice().getName(), Utilities.deviceNameAlign) + " IcmpHandler";
     }
 
     /**
      * Returns L4 data of given packet or null.
+     *
      * @param packet
      * @return
      */
@@ -128,7 +134,7 @@ public class IcmpHandler implements Loggable {
      * Sends ICMP packet with given type, code to dst. <br />
      *
      * @param packet
-     * @param dst destination IP
+     * @param dst    destination IP
      * @param type
      * @param code
      */
@@ -140,17 +146,18 @@ public class IcmpHandler implements Loggable {
         } else {
             p = new IcmpPacket(type, code);
         }
-        Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending "+type+" "+code+" to: "+dst, p);
+        Logger.log(this, Logger.INFO, LoggingCategory.NET, "Sending " + type + " " + code + " to: " + dst, p);
 //        getIpLayer().handleSendPacket(p, null, dst, getIpLayer().ttl); // this was bad thing (everything was in the same thread - even sending SQ from physical module!)
         getIpLayer().sendPacket(p, null, dst, getIpLayer().ttl);
     }
 
     /**
      * Sends ICMP echo request to given target.
+     *
      * @param target
-     * @param ttl Time To Live - can be null, in that case default value of IPLayer is used
-     * @param seq sequence number
-     * @param id application identifier (port)
+     * @param ttl     Time To Live - can be null, in that case default value of IPLayer is used
+     * @param seq     sequence number
+     * @param id      application identifier (port)
      * @param payload size of data after ICMP header (celikost vyplnovacich dat za ICMP hlavickou)
      */
     public void sendRequest(IpAddress target, Integer ttl, int seq, Integer id, int payload) {

@@ -9,8 +9,10 @@ import commands.cisco.CiscoCommandParser;
 import commands.completer.Completer;
 import commands.linux.LinuxCommandParser;
 import filesystem.FileSystem;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import networkModule.NetworkModule;
 import physicalModule.AbstractPhysicalModule;
 import physicalModule.PhysicalModuleV2;
@@ -18,7 +20,6 @@ import shell.apps.CommandShell.CommandShell;
 import telnetd.pridaneTridy.TelnetProperties;
 
 /**
- *
  * @author neiss
  */
 public class Device {
@@ -30,14 +31,14 @@ public class Device {
     private NetworkModule networkModule;
     /**
      * Completers for all available modes.
-     *
+     * <p/>
      * Key - mode number - static modes from CommandShell<br />
      * Value - Completer
      */
     public Map<Integer, Completer> commandCompleters; // schvalne neinicializovano! vytvari se az v parserech
     /**
      * List of running network applications. <br />
-     *
+     * <p/>
      * Key - Application PID <br />
      * Value - Application
      */
@@ -51,13 +52,13 @@ public class Device {
     private transient int telnetPort = -1;
 
     private FileSystem filesystem;
+
     /**
      * Konstruktor. Nastavi zadany promenny, vytvori si fysickej modul.
      *
      * @param configID
      * @param name
      * @param type
-     *
      */
     public Device(int configID, String name, DeviceType type) {
         this.configID = configID;
@@ -66,7 +67,7 @@ public class Device {
 //        physicalModule = new PhysicMod(this);
         physicalModule = new PhysicalModuleV2(this);
         // telnetovy pripojeni se pridava jen kdyz to neni switch
-        if(type!=DeviceType.simple_switch){
+        if (type != DeviceType.simple_switch) {
             TelnetProperties.addListener(this);  // telnetPort is configured in this method
         }
         this.applications = new HashMap<>();
@@ -89,7 +90,6 @@ public class Device {
     }
 
 
-
     public String getName() {
         return name;
     }
@@ -109,6 +109,7 @@ public class Device {
 
     /**
      * Returns free PID for new applications.
+     *
      * @return
      */
     public int getFreePID() {
@@ -126,6 +127,7 @@ public class Device {
 
     /**
      * Register application to list of running applications.
+     *
      * @param app
      */
     public void registerApplication(Application app) {
@@ -134,6 +136,7 @@ public class Device {
 
     /**
      * Unregister application from list of running applications.
+     *
      * @param app
      */
     public void unregisterApplication(Application app) {
@@ -160,10 +163,11 @@ public class Device {
 
     /**
      * Creates parser according to a DeviceType.
+     *
      * @param cmd
      * @return
      */
-    public AbstractCommandParser createParser(CommandShell cmd){
+    public AbstractCommandParser createParser(CommandShell cmd) {
 
         switch (type) {
             case cisco_router:
@@ -181,7 +185,7 @@ public class Device {
     }
 
 
-        public enum DeviceType {
+    public enum DeviceType {
 
         cisco_router,
         linux_computer,

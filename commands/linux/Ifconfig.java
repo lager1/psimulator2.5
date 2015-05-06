@@ -6,13 +6,14 @@ package commands.linux;
 
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import networkModule.L3.NetworkInterface;
-import utils.Util;
+import utils.Utilities;
 
 /**
- *
  * @author Tomas Pitrinec
  */
 public class Ifconfig extends LinuxCommand {
@@ -22,18 +23,18 @@ public class Ifconfig extends LinuxCommand {
     /**
      * Do tyhle promenny se uklada jenom IP adresa bez masky za lomitkem.
      */
-    List <IpAddress> seznamIP=new ArrayList<IpAddress>();
-    String spatnaAdresa=null; //prvni ze spatnejch zadanejch adres - ta se totiz vypisuje
+    List<IpAddress> seznamIP = new ArrayList<IpAddress>();
+    String spatnaAdresa = null; //prvni ze spatnejch zadanejch adres - ta se totiz vypisuje
     /**
      * Maska jako String (napr. 255.255.255.0);
      */
     String maska;
     String broadcast;
-    int pocetBituMasky= -1;
-    List <String> add=new ArrayList<String>(); //IP adresy, ktera se ma pridat
-    List <String> del=new ArrayList<String>();  //ipadresy, ktery se maj odebrat
-    List <String> neplatnyAdd=new ArrayList<String>();    //spatny IP adresy, ktera se mely pridat
-    List <String> neplatnyDel=new ArrayList<String>();    //spatny IP adresy, ktery se mely odebrat
+    int pocetBituMasky = -1;
+    List<String> add = new ArrayList<String>(); //IP adresy, ktera se ma pridat
+    List<String> del = new ArrayList<String>();  //ipadresy, ktery se maj odebrat
+    List<String> neplatnyAdd = new ArrayList<String>();    //spatny IP adresy, ktera se mely pridat
+    List<String> neplatnyDel = new ArrayList<String>();    //spatny IP adresy, ktery se mely odebrat
     NetworkInterface rozhrani; //rozhrani, se kterym se bude operovat
     int pouzitIp = -1; //cislo seznamIP, ktera IP se ma pouzit
     int upDown = 0; // 1 pro up, 2 pro down
@@ -47,7 +48,7 @@ public class Ifconfig extends LinuxCommand {
      * 0: vsechno v poradku<br />
      * 1: spatny prepinac (neznama volba)<br />
      * 2: nejaka chyba v gramatice prikazu (napr: ifconfig wlan0 1.2.3.5 netmask)
-     *    potreba provest, co je dobre, a vypsat napovedu --help<br />
+     * potreba provest, co je dobre, a vypsat napovedu --help<br />
      * 4: rozhrani neexistuje<br />
      * 8: zadano vice ipadres, bere se posledni spravna<br />
      * 16: spatna  IP adresa<br />
@@ -60,6 +61,7 @@ public class Ifconfig extends LinuxCommand {
 
     /**
      * Konstruktor.
+     *
      * @param parser
      */
     public Ifconfig(AbstractCommandParser parser) {
@@ -78,7 +80,7 @@ public class Ifconfig extends LinuxCommand {
     protected void parsujPrikaz() {
         String slovo;
         // prepinace:
-        slovo=dalsiSlovo();
+        slovo = dalsiSlovo();
         while (slovo.startsWith("-")) { //kdyz je prvnim znakem slova minus
             if (slovo.equals("-a")) {
                 minus_a = true;
@@ -86,45 +88,45 @@ public class Ifconfig extends LinuxCommand {
                 minus_v = true;
             } else if (slovo.equals("-s")) {
                 minus_s = true;
-            } else if (slovo.equals("-h")||slovo.equals("--help")) {
+            } else if (slovo.equals("-h") || slovo.equals("--help")) {
                 minus_h = true;
             } else {
-                errNeznamyPrepinac(slovo);
+                errorUnknownSwitch(slovo);
                 return; //tady ifconfig uz zbytek neprovadi, i kdyby byl dobrej
             }
-            slovo=dalsiSlovo();
+            slovo = dalsiSlovo();
         }
         //jmenoRozhrani je to prvni za prepinacema:
-        if(! slovo.isEmpty()){
+        if (!slovo.isEmpty()) {
             jmenoRozhrani = slovo;
         }
-        slovo=dalsiSlovo();
+        slovo = dalsiSlovo();
         //parametry:
         //Zjistil jsem, ze neznamej parametr se povazuje za adresu nebo za adresu s maskou.
-        boolean pokracovat=true;
+        boolean pokracovat = true;
         while (!slovo.isEmpty() && pokracovat) { //dokud v tom slove neco je
             if (slovo.equals("netmask")) {//m
                 maska = dalsiSlovo();
-                if(maska.isEmpty()){
-                    maska=null;
+                if (maska.isEmpty()) {
+                    maska = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("broadcast")) {//adresa pro broadcast, ta si vubec dela uplne, co se ji zachce
                 broadcast = dalsiSlovo();
-                if(broadcast.isEmpty()){
-                    broadcast=null;
+                if (broadcast.isEmpty()) {
+                    broadcast = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("add")) {
                 add.add(dalsiSlovo());
-                if(add.isEmpty()){
-                    add=null;
+                if (add.isEmpty()) {
+                    add = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("del")) {
                 del.add(dalsiSlovo());
-                if(del.isEmpty()){
-                    del=null;
+                if (del.isEmpty()) {
+                    del = null;
                     navrKod |= 2;
                 }
             } else if (slovo.equals("up")) {
@@ -133,11 +135,11 @@ public class Ifconfig extends LinuxCommand {
                 upDown = 2;
             } else { //kdyz to neni nic jinyho, tak to ifconfig povazuje za seznamIP adresu
                 //je-li adresa spatna, musi parsovani skoncit.
-                if(slovo.contains("/")){
+                if (slovo.contains("/")) {
                 }
                 try {
                     IPwithNetmask vytvarena = new IPwithNetmask(slovo, -1, true); // maska se kdyztak dopocita podle tridy
-                                // a normalne se moduluje
+                    // a normalne se moduluje
                     if (slovo.contains("/")) { // kdyz masku obsahuje, musi se to ulozit
                         pocetBituMasky = vytvarena.getMask().getNumberOfBits();
                     }
@@ -157,28 +159,28 @@ public class Ifconfig extends LinuxCommand {
      * prepinace, vice parametru netmask ap.), predpokladam, ze uz se prislo. Posila klientovi hlaseni
      * o chybach.
      */
-    private void zkontrolujPrikaz(){
-        if (jmenoRozhrani==null) return; //uzivatel zadal jen ifconfig, mozna nejaky prepinace, ale nic vic
+    private void zkontrolujPrikaz() {
+        if (jmenoRozhrani == null) return; //uzivatel zadal jen ifconfig, mozna nejaky prepinace, ale nic vic
         //-------------------
         //kontrola existence rozhrani
-        rozhrani=ipLayer.getNetworkInteface(jmenoRozhrani);
-        if (rozhrani==null){
+        rozhrani = ipLayer.getNetworkInteface(jmenoRozhrani);
+        if (rozhrani == null) {
             //tady se nic nevypisuje, protoze ostatni se v ifconfigu asi vyhodnocuje driv (kdyz je spatne
             //rozhrani i ipadresa, tak se jako spatna ukaze IP adresa
             navrKod |= 4;
         }
         //------------------------
         //kontrola IP
-        if(seznamIP.size()>1){ //jestli neni moc IP adres
+        if (seznamIP.size() > 1) { //jestli neni moc IP adres
             navrKod |= 8;
         }
-        for (int i=0;i<seznamIP.size();i++){ //kontrola spravnosti IP
+        for (int i = 0; i < seznamIP.size(); i++) { //kontrola spravnosti IP
             //kontroluje se jen zakazanost, spravnost se kontroluje v parseru
-            if(IpAddress.isForbiddenIP(seznamIP.get(i))){
-                            // -> adresa je spravna, ale zakazana
+            if (IpAddress.isForbiddenIP(seznamIP.get(i))) {
+                // -> adresa je spravna, ale zakazana
                 navrKod |= 256; //zakazana IP
             } else { //spravna adresa
-                pouzitIp=i; //pouzije se posledni prijatelna adresa
+                pouzitIp = i; //pouzije se posledni prijatelna adresa
             }
 
         }
@@ -195,12 +197,12 @@ public class Ifconfig extends LinuxCommand {
                 neplatnyAdd.add(add.get(i));
             }
         }
-        for(int i=0;i<neplatnyAdd.size();i++){ //musi se to mazat v jinym cyklu, aby to nevylezlo ven
+        for (int i = 0; i < neplatnyAdd.size(); i++) { //musi se to mazat v jinym cyklu, aby to nevylezlo ven
             add.remove(neplatnyAdd.get(i));
         }
         //---------------------
         //kontrola IP adres del (odebirani existujici IP)
-        for(int i=0;i<del.size();i++){
+        for (int i = 0; i < del.size(); i++) {
             IpAddress ip = IpAddress.correctAddress(del.get(i));
             if (ip == null || IpAddress.isForbiddenIP(ip)) {
                 navrKod |= 128;
@@ -208,7 +210,7 @@ public class Ifconfig extends LinuxCommand {
                 neplatnyDel.add(del.get(i));
             }
         }
-        for(int i=0;i<neplatnyDel.size();i++){ //musi se to mazat v jinym cyklu, aby to nevylezlo ven
+        for (int i = 0; i < neplatnyDel.size(); i++) { //musi se to mazat v jinym cyklu, aby to nevylezlo ven
             del.remove(neplatnyDel.get(i));
         }
         //---------------------
@@ -220,8 +222,8 @@ public class Ifconfig extends LinuxCommand {
      * O prioritách více v sešitě (14.4.) a v souboru IfconfigChyby.txt.
      * Odpovídá  metodě vykonejPrikaz() ve starý versi Ifconfigu.
      */
-    private void vypisChybovyHlaseni(){
-        if(ladiciVypisovani){
+    private void vypisChybovyHlaseni() {
+        if (enableDebug) {
             printLine("----------------------------------");
             printLine(toString());
             printLine("----------------------------------");
@@ -238,42 +240,41 @@ public class Ifconfig extends LinuxCommand {
             return; //nic dalsiho se neprovadi
         }
         if ((navrKod & 16) != 0) { //aspon jedna z adres je neplatna
-            printLine(spatnaAdresa+": unknown host");
+            printLine(spatnaAdresa + ": unknown host");
             printLine("ifconfig: `--help' gives usage information.");
             return;
         }
         if ((navrKod & 4) != 0) { //rozhrani neexistuje
-            if(pouzitIp!=-1) //adresa byla zadana
+            if (pouzitIp != -1) //adresa byla zadana
                 printLine("SIOCSIFADDR: No such device");
             printLine(jmenoRozhrani + ": error fetching interface information: Device not found");
             // vypis o masce ma mensi prioritu, je az pod chybou v gramatice (navratovyKod & 2)
         }
         if ((navrKod & 256) != 0) {//zakazana ip adresa
-            if((navrKod & 4) == 0) //vypisuje se, jen kdyz rozhrani je v poradku
+            if ((navrKod & 4) == 0) //vypisuje se, jen kdyz rozhrani je v poradku
                 printLine("SIOCSIFADDR: Invalid argument");
         }
         if ((navrKod & 64) != 0) { //neplatna adresa add
-            for(int i=0;i<neplatnyAdd.size();i++){ //vsechny se poporade vypisou
-                printLine(neplatnyAdd.get(i)+": unknown host");
+            for (int i = 0; i < neplatnyAdd.size(); i++) { //vsechny se poporade vypisou
+                printLine(neplatnyAdd.get(i) + ": unknown host");
             }
         }
         if ((navrKod & 128) != 0) { //vsechny se poporade vypisou
-            for(int i=0;i<neplatnyDel.size();i++){
-                printLine(neplatnyDel.get(i)+": unknown host");
+            for (int i = 0; i < neplatnyDel.size(); i++) {
+                printLine(neplatnyDel.get(i) + ": unknown host");
             }
         }
         if ((navrKod & 4) != 0) { //rozhrani neexistuje
             //pokracovani zezhora - vypis o masce ma totiz nizsi prioritu
-            if(pocetBituMasky != -1 ||maska!=null) //maska byla zadana
+            if (pocetBituMasky != -1 || maska != null) //maska byla zadana
                 printLine("SIOCSIFNETMASK: No such device");
         }
         if ((navrKod & 2) != 0) { //nejaka chyba v gramatice
-            vypisHelp();
-            if (ladiciVypisovani) {
+            printHelp();
+            if (enableDebug) {
                 printLine("blok pro navratovy kod 2, navratovy kod:" + navrKod);
             }
         }
-
 
 
         if ((navrKod & 8) != 0) { //zadano vice ip adres
@@ -284,7 +285,7 @@ public class Ifconfig extends LinuxCommand {
             // nic se nevypisuje
         }
 
-        if(broadcast!=null || add.size()>0 ||del.size()>0){
+        if (broadcast != null || add.size() > 0 || del.size() > 0) {
             parser.printService("Parametry broadcast, add a del prikazu ifconfig zatim nejsou podporovane.");
         }
 
@@ -297,7 +298,7 @@ public class Ifconfig extends LinuxCommand {
      */
     protected void vykonejPrikaz() {
         if (minus_h) {
-            vypisHelp();
+            printHelp();
             return;
         }
         if ((navrKod & 4) != 0 || ((navrKod) & 1) != 0) { //kdyz navratovy kod obsahuje 4 nebo 1
@@ -339,60 +340,62 @@ public class Ifconfig extends LinuxCommand {
      * routovaci tabulka, i kdyz je vysledek stejnej jako predchozi hodnoty, napr:
      * ifconfig eth0 1.1.1.1/24 netmask 255.255.0.0 se zmeni nejprv na tu ze stringu, pak na
      * tu za lomitkem)
+     *
      * @param r
      */
     private void nastavAdresuAMasku(NetworkInterface r) { //nastavuje ip
-        boolean zmena=false; // jestli se vykonala nejaka zmena, nebo jestli zadany hodnoty byly stejny
-                                // jako puvodni -> kvuli zmenam routovaci tabulky
+        boolean zmena = false; // jestli se vykonala nejaka zmena, nebo jestli zadany hodnoty byly stejny
+        // jako puvodni -> kvuli zmenam routovaci tabulky
 
         //nastavovani adresy:
-        if (pouzitIp != -1){ //adresa byla zadana, musi se nastavit
+        if (pouzitIp != -1) { //adresa byla zadana, musi se nastavit
             nahodRozhrani(r);
             String nastavit = seznamIP.get(pouzitIp).toString();
-            if (r.getIpAddress()!=null && nastavit.equals(r.getIpAddress().toString())){
+            if (r.getIpAddress() != null && nastavit.equals(r.getIpAddress().toString())) {
                 //ip existuje a je stejna, nic se nemeni
             } else { //IP adresa neni stejna, bude se menit
                 ipLayer.changeIpAddressOnInterface(r, vytvorAdresu(nastavit));
-                zmena=true;
+                zmena = true;
             }
         }
 
         //nastavovani masky ze Stringu m
         if (maska != null) { //zadana maska jako 255.255.255.0
             nahodRozhrani(r);
-            if(r.getIpAddress()!=null && r.getIpAddress().getMask().toString().equals(maska)){
+            if (r.getIpAddress() != null && r.getIpAddress().getMask().toString().equals(maska)) {
                 //ip adresa existuje a ma stejnou masku, nic se nemeni
-            }else{//zadana hodnota je jina nez puvodni, musi se menit
+            } else {//zadana hodnota je jina nez puvodni, musi se menit
                 priradMasku(r, maska);
-                zmena=true;
+                zmena = true;
             }
         }
 
         //nastavovani masky za lomitkem
         if (pocetBituMasky != -1) { //zadana adresa s maskou za lomitkem
-            if (r.getIpAddress() != null && ( r.getIpAddress().getMask().getNumberOfBits() == pocetBituMasky ) ){
+            if (r.getIpAddress() != null && (r.getIpAddress().getMask().getNumberOfBits() == pocetBituMasky)) {
                 //ip adresa existuje a ma stejnou masku, nic se nemeni
-            }else{//zadana hodnota je jina nez puvodni, musi se menit
+            } else {//zadana hodnota je jina nez puvodni, musi se menit
                 priradMasku(r, pocetBituMasky);
-                zmena=true;
+                zmena = true;
             }
         }
 
         //kdyz se provedla nejaka zmena, musi se to projevit v routovaci tabulce:
-        if(zmena)vyridRoutovani(r);
+        if (zmena) vyridRoutovani(r);
 
     }
 
     /**
      * Vytvori novou adresu, nenastavuje masku, ale hlida, jestli IpAdresu lze pouzit,
      * nebo jestli na ni neni nejaka specialni akce.
+     *
      * @param ip
      * @return null pro 0.0.0.0
      */
-    private IPwithNetmask vytvorAdresu(String adr){
-        if(adr.equals("0.0.0.0")){ //mazani adresy z rozhrani
+    private IPwithNetmask vytvorAdresu(String adr) {
+        if (adr.equals("0.0.0.0")) { //mazani adresy z rozhrani
             return null;
-        }else{
+        } else {
             return new IPwithNetmask(adr);
         }
     }
@@ -400,6 +403,7 @@ public class Ifconfig extends LinuxCommand {
     /**
      * Zadane IP adrese nastavi masku podle zadaneho poctuBitu (masky). pocetBitu musi bejt spravny cislo.
      * Kdyz je adresa null, posle chybovy hlaseni a skonci.
+     *
      * @param ip
      * @param pocetBitu
      */
@@ -414,32 +418,34 @@ public class Ifconfig extends LinuxCommand {
     /**
      * Pokusi se nastavit masku podle parametru m, ktery musi bejt spravnym stringem.
      * Je-li zadana IP null, vypise chybovy hlaseni a ukonci se.
+     *
      * @param ip adresa, ktera se ma zmenit
-     * @param m string masky; nesmi bejt null
+     * @param m  string masky; nesmi bejt null
      */
-    private void priradMasku(NetworkInterface iface, String m){//pokusi se nastavit masku
-        if(iface.getIpAddress() == null){ //neni nastavena IP adresa, vypise se chybovy hlaseni a skonci se
+    private void priradMasku(NetworkInterface iface, String m) {//pokusi se nastavit masku
+        if (iface.getIpAddress() == null) { //neni nastavena IP adresa, vypise se chybovy hlaseni a skonci se
             printLine("SIOCSIFNETMASK: Cannot assign requested address");
         } else {
-            try{//je potreba zkontrolovat spravnost masky!!! //proto vyjimka
+            try {//je potreba zkontrolovat spravnost masky!!! //proto vyjimka
                 IpNetmask mask = new IpNetmask(m);
                 ipLayer.changeIpAddressOnInterface(iface, new IPwithNetmask(iface.getIpAddress().getIp(), mask));
-            }catch(BadNetmaskException ex){
+            } catch (BadNetmaskException ex) {
                 printLine("SIOCSIFNETMASK: Invalid argument");
             }
 
         }
     }
 
-    private void vyridRoutovani(NetworkInterface r){
+    private void vyridRoutovani(NetworkInterface r) {
         ipLayer.routingTable.flushRecords(r); //mazani rout
-        if(r.getIpAddress()!=null){
+        if (r.getIpAddress() != null) {
             ipLayer.routingTable.addRecord(r.getIpAddress().getNetworkNumber(), r);
         }
     }
 
     /**
      * Nahodi rozhrani. Potreba kvuli vypisum.
+     *
      * @param r
      */
     private void nahodRozhrani(NetworkInterface r) {
@@ -449,7 +455,7 @@ public class Ifconfig extends LinuxCommand {
         }
     }
 
-    private void vypisRozhrani(NetworkInterface r){
+    private void vypisRozhrani(NetworkInterface r) {
         if (rozhrani == null && (!r.isUp && !minus_a)) {
             return; // v hromadnym vypise se nevypisujou schozeny rozhrani
         }
@@ -492,39 +498,39 @@ public class Ifconfig extends LinuxCommand {
     @Override
     public String toString() {
         String vratit = "  Parametry prikazu ifconfig:"
-                + "\n\t"+parser.getWordsAsString()
-                + "\n\tnavratovyKodParseru: "+ Util.rozlozNaMocniny2(navrKod)
-                + "\n\tminus_a: "+minus_a;
+                + "\n\t" + parser.getWordsAsString()
+                + "\n\tnavratovyKodParseru: " + Utilities.splitToPowersOf2(navrKod)
+                + "\n\tminus_a: " + minus_a;
         if (jmenoRozhrani != null) {
-            vratit += "\n\trozhrani: " + jmenoRozhrani;
+            vratit += "\n\tInterface: " + jmenoRozhrani;
         }
         if (seznamIP != null) {
-            vratit += "\n\tip: " + seznamIP;
+            vratit += "\n\tIP: " + seznamIP;
         }
-        vratit+="\n\r\tpouzitIp: "+pouzitIp;
+        vratit += "\n\r\tUse IP: " + pouzitIp;
         if (pocetBituMasky != -1) {
             vratit += "\n\tpocetBituMasky: " + pocetBituMasky;
         }
         if (maska != null) {
-            vratit += "\n\tmaska: " + maska;
+            vratit += "\n\tMask: " + maska;
         }
         if (add != null) {
-            vratit += "\n\tadd: " + add;
+            vratit += "\n\tAdd: " + add;
         }
         if (del != null) {
-            vratit += "\n\tdel: " + del;
+            vratit += "\n\tDelete: " + del;
         }
 
         return vratit;
     }
 
-    private void errNeznamyPrepinac(String ret) {
+    private void errorUnknownSwitch(String ret) {
         printLine("ifconfig: neznámá volba `" + ret + "'.");
         printLine("ifconfig: `--help' vypíše návod k použití.");
         navrKod = 1;
     }
 
-    private void vypisHelp() { // funkce na ladiciVypisovani napovedy --help
+    private void printHelp() { // funkce na enableDebug napovedy --help
 
         printLine("Usage:");
         printLine("  ifconfig [-a] [-v] [-s] <interface> [[<AF>] <address>]");
@@ -562,12 +568,8 @@ public class Ifconfig extends LinuxCommand {
     }
 
 
-
-
-
-
-    private void debug(String s){
-        if(ladiciVypisovani){
+    private void debug(String s) {
+        if (enableDebug) {
             printLine(s);
         }
     }

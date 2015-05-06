@@ -7,7 +7,6 @@ package dataStructures.packets;
 import dataStructures.EventDescriptive;
 
 /**
- *
  * @author neiss
  */
 public abstract class L3Packet implements EventDescriptive {
@@ -19,9 +18,10 @@ public abstract class L3Packet implements EventDescriptive {
         this.data = data;
     }
 
-    public enum L3PacketType{
+    public enum L3PacketType {
         IPv4,
         ARP,
+        STP,
         UNKNOWN,    // nejakej neznamej typ
     }
 
@@ -31,6 +31,7 @@ public abstract class L3Packet implements EventDescriptive {
 
     /**
      * Call in constructor in your classes.
+     *
      * @return
      */
     protected abstract void countSize();
@@ -42,7 +43,7 @@ public abstract class L3Packet implements EventDescriptive {
     public abstract L3PacketType getType();
 
     @Override
-    public String toString(){
+    public String toString() {
         return "L3Packet: generic packet on Layer 3.";
     }
 }

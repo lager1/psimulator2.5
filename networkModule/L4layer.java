@@ -5,7 +5,6 @@
 package networkModule;
 
 /**
- *
  * @author neiss
  */
 public abstract class L4layer extends Layer {
@@ -13,10 +12,6 @@ public abstract class L4layer extends Layer {
     public L4layer(NetworkModule netMod) {
         super(netMod);
     }
-
-
-
-
 
 
 }

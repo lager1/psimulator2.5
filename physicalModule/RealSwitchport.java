@@ -4,8 +4,10 @@
 package physicalModule;
 
 import dataStructures.packets.L2Packet;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -14,7 +16,7 @@ import org.jnetpcap.PcapIf;
 
 /**
  * This is switchport to connect to real interface.
- *
+ * <p/>
  * Switchport slouzici ke spojeni s realnym pocitacem. Posila a prijima pakety do a z realny site, k tomu ma Catcher a
  * Sender. Nebezi ve vlastnim vlakne, ale catcher a sender bezi.
  *
@@ -32,11 +34,12 @@ public class RealSwitchport extends Switchport implements Loggable {
 
     public RealSwitchport(AbstractPhysicalModule physicMod, int number, int configID) {
         super(physicMod, number, configID);
-        log(Logger.DEBUG,"Byl vytvoren realnej switchport c. "+number+" s configID "+configID, null);
+        log(Logger.DEBUG, "Byl vytvoren realnej switchport c. " + number + " s configID " + configID, null);
     }
 
     /**
      * Nastartuje spojeni s realnou siti
+     *
      * @param ifaceName
      * @return 0 - vsechno v poradku </br> 1 nepodarilo se otevrit spojeni </br> 2 uz je propojeno
      */
@@ -73,13 +76,11 @@ public class RealSwitchport extends Switchport implements Loggable {
     }
 
 
-
-
 // metody pro sitovou komunikaci: ----------------------------------------------------------------------------------
 
     @Override
     protected void sendPacket(L2Packet packet) {
-        if(isConnected()){
+        if (isConnected()) {
             log(Logger.DEBUG, "Jdu poslat paket.", packet);
             sender.sendPacket(packet);
         } else {
@@ -98,7 +99,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
     @Override
     public boolean isConnected() {
-        if(pcap==null){
+        if (pcap == null) {
             return false;
         }
         return true;
@@ -106,7 +107,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
     @Override
     public String getDescription() {
-        return getDeviceName()+": RealSwitchport "+number;
+        return getDeviceName() + ": RealSwitchport " + number;
     }
 
     @Override
@@ -116,6 +117,7 @@ public class RealSwitchport extends Switchport implements Loggable {
 
     /**
      * Metodu pouziva rnetconn.
+     *
      * @return
      */
     public String getIfaceName() {
@@ -141,26 +143,26 @@ public class RealSwitchport extends Switchport implements Loggable {
             r = Pcap.findAllDevs(alldevs, errbuf);
         } catch (UnsatisfiedLinkError ex) {    // This exception is thrown, when jNetPcap is not installed on the computer.
             log(Logger.WARNING, "Some library is missing on yor computer. Did you copy the file libjnetpcap.so (from downloaded zip file) to /usr/lib? "
-                    + "Have you installed libpcap library? Error message: ["+ex.getMessage()+"]", null);
+                    + "Have you installed libpcap library? Error message: [" + ex.getMessage() + "]", null);
 
             return null;
         }
         if (r == Pcap.NOT_OK || alldevs.isEmpty()) {
-            log(Logger.WARNING,"Can't read list of devices. Do you run psimulator as root?", null);
+            log(Logger.WARNING, "Can't read list of devices. Do you run psimulator as root?", null);
             return null;
         }
-        log(Logger.DEBUG,"Network devices found.", null);
+        log(Logger.DEBUG, "Network devices found.", null);
 
         // vyberu spravny rozhrani:
         for (PcapIf device : alldevs) {
-            if(device.getName().equals(ifaceName)){
+            if (device.getName().equals(ifaceName)) {
                 iface = device;
             }
         }
-        if(iface != null){
-            log(Logger.DEBUG, "Found and selected iface "+iface.getName(), null);
+        if (iface != null) {
+            log(Logger.DEBUG, "Found and selected iface " + iface.getName(), null);
         } else {
-            log(Logger.WARNING, "Iface "+ifaceName+" not found. Connection with real network is not working!", null);
+            log(Logger.WARNING, "Iface " + ifaceName + " not found. Connection with real network is not working!", null);
             return null;
         }
 
@@ -173,7 +175,7 @@ public class RealSwitchport extends Switchport implements Loggable {
                 Pcap.openLive(iface.getName(), snaplen, flags, timeout, errbuf);
 
         if (vytvorenyPcap == null) {
-            log(Logger.WARNING, "Error while opening device for capture: "+ errbuf.toString(), null);
+            log(Logger.WARNING, "Error while opening device for capture: " + errbuf.toString(), null);
         }
 
         return vytvorenyPcap;
@@ -183,21 +185,18 @@ public class RealSwitchport extends Switchport implements Loggable {
 // ruzny pomocny metody: -------------------------------------------------------------------------------
 
 
-
-    private void log(int logLevel, String msg, Object obj){
+    private void log(int logLevel, String msg, Object obj) {
         Logger.log(this, logLevel, LoggingCategory.REAL_NETWORK, msg, obj);
     }
 
     /**
      * Zkratka pro logovani.
+     *
      * @return
      */
-    public String getDeviceName(){
+    public String getDeviceName() {
         return physicalModule.device.getName();
     }
-
-
-
 
 
 }

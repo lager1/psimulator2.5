@@ -1,11 +1,12 @@
 package config.configFiles;
 
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.dhcp.DhcpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -16,10 +17,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+
 import networkModule.L3.NetworkInterface;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DhcpServerLeaseFile extends AbstractLeaseFile {
@@ -33,7 +34,7 @@ public class DhcpServerLeaseFile extends AbstractLeaseFile {
         leased = new HashSet<>();
         expired = new HashSet<>();
     }
-    
+
     @Override
     public void appendLease(final DhcpPacket packet, final NetworkInterface iface) {
         if (!fileSystem.exists(filePath)) {

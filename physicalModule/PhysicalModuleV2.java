@@ -39,13 +39,13 @@ public class PhysicalModuleV2 extends AbstractPhysicalModule {
     public void sendPacket(L2Packet packet, int switchportNumber) {
         Switchport swport = switchports.get(switchportNumber);
         if (swport == null) {
-            Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL, "Trying to send packet to non-existent switchport number: "+switchportNumber, packet);
+            Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL, "Trying to send packet to non-existent switchport number: " + switchportNumber, packet);
         }
         swport.sendPacket(packet);
     }
 
     @Override
     public String getDescription() {
-        return device.getName() + ": "+getClass().getSimpleName();
+        return device.getName() + ": " + getClass().getSimpleName();
     }
 }

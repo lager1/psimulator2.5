@@ -5,6 +5,7 @@ import device.Device;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Michal Horacek
  */
 public class NamedConfFile extends AbstractLinuxFile {
@@ -61,11 +61,11 @@ public class NamedConfFile extends AbstractLinuxFile {
             String line;
             while (sc.hasNextLine()) {
                 line = sc.nextLine().trim();
-                
+
                 if (line.startsWith(";")) {
                     continue;
                 }
-                
+
                 if (isZoneLine(line)) {
                     state = ConfState.ZONE;
                 } else if (isEndingBraceLine(line)) {

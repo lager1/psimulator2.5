@@ -5,6 +5,7 @@ package utils;
 
 /**
  * Rozhrani ktery musej implementovat tridy, ktery chtej pouzivat budik.
+ *
  * @author Tomas Pitrinec
  */
 public interface Wakeable {

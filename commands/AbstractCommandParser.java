@@ -5,19 +5,21 @@ package commands;
 
 import commands.LongTermCommand.Signal;
 import device.Device;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
 import psimulator2.Psimulator;
 import shell.apps.CommandShell.CommandShell;
 import shell.apps.CommandShell.ShellMode;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Abstraktni parser prikazu spolecnej pro linux i pro cisco.
- *
+ * <p/>
  * Parser si bude muset pamatovat posledni spusteny prikaz, aby kdyz dostane signal SIG_INT, aby dokazal poslat prikaz
  * vypnuti posledni spustene aplikace/prikazu.
  *
@@ -62,6 +64,7 @@ public abstract class AbstractCommandParser implements Loggable {
      * Call in constructor of concrete Completer.
      */
     protected abstract void addCompleters();
+
     /**
      * Add data to completers.
      * Call in constructor of concrete Completer.
@@ -88,7 +91,7 @@ public abstract class AbstractCommandParser implements Loggable {
             this.mode = mode;
             this.ref = 0;
             words.clear();
-            words.addAll(Util.splitLine(line));
+            words.addAll(Utilities.splitLine(line));
 
             if (line.isEmpty()) {
                 return;
@@ -126,8 +129,9 @@ public abstract class AbstractCommandParser implements Loggable {
 
     /**
      * Zaregistruje dele bezici prikaz.
+     *
      * @param runningCommand
-     * @param inputExpected Jestli prikaz ocekava vstup, podle tyhle promenny se nastavuje mod shellu.
+     * @param inputExpected  Jestli prikaz ocekava vstup, podle tyhle promenny se nastavuje mod shellu.
      */
     public void setRunningCommand(LongTermCommand runningCommand, boolean inputExpected) {
         this.runningCommand = runningCommand;
@@ -146,12 +150,12 @@ public abstract class AbstractCommandParser implements Loggable {
     /**
      * Tuto metodu musi implementovat parsery.
      * V tuto chvili uz jsou naplneny promenne words i mode.
-     *
      */
     protected abstract void processLineForParsers();
 
     /**
      * Vrati shellu informaci, zda ma vypisovat prompt.
+     *
      * @return
      */
     public boolean isCommandRunning() {
@@ -163,10 +167,11 @@ public abstract class AbstractCommandParser implements Loggable {
 
     /**
      * Slouzi k servisnim vypisum o napr nepodporovanych prikazech.
+     *
      * @param line
      */
     public void printService(String line) {
-        shell.printLine(Psimulator.getNameOfProgram()+": "+line);
+        shell.printLine(Psimulator.getNameOfProgram() + ": " + line);
     }
 
     /**
@@ -211,25 +216,27 @@ public abstract class AbstractCommandParser implements Loggable {
 
     /**
      * Tomasova debugovaci metoda.
+     *
      * @return
      */
-    public String getWordsAsString(){
-        String vratit="Words: ";
-        for(String s:words){
-            vratit+="^"+s+"^ ";
+    public String getWordsAsString() {
+        String vratit = "Words: ";
+        for (String s : words) {
+            vratit += "^" + s + "^ ";
         }
         return vratit;
     }
 
     /**
      * Obsluhuje prikazy spolecny pro linux i cisco.
+     *
      * @return true, kdyz to byl spolecny prikaz a je tedy vyrizen.
      */
     private boolean processSharedCommands() {
 
         String commandName = nextWordPeek();
 
-        if(commandName.equals("save")||commandName.equals("uloz")){
+        if (commandName.equals("save") || commandName.equals("uloz")) {
             PsimulatorSave cmd = new PsimulatorSave(this);
             cmd.run();
             return true;
@@ -253,7 +260,7 @@ public abstract class AbstractCommandParser implements Loggable {
 
     @Override
     public String getDescription() {
-        return device.getName()+": AbstractCommandParser";
+        return device.getName() + ": AbstractCommandParser";
     }
 
 

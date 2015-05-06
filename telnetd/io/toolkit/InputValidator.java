@@ -42,16 +42,16 @@ package telnetd.io.toolkit;
  */
 public interface InputValidator {
 
-  /**
-   * Method that is called by the Editfield the InputValidator instance
-   * has been registered with on the Users signal that
-   * he finished editing his/her input.
-   * This gives the InputValidator the opportunity to
-   * check if the users input is valid.
-   *
-   * @param str String representing the Editfields value.
-   * @return boolean representing if input was valid or not (and user has to reedit).
-   */
-  public boolean validate(String str);
+    /**
+     * Method that is called by the Editfield the InputValidator instance
+     * has been registered with on the Users signal that
+     * he finished editing his/her input.
+     * This gives the InputValidator the opportunity to
+     * check if the users input is valid.
+     *
+     * @param str String representing the Editfields value.
+     * @return boolean representing if input was valid or not (and user has to reedit).
+     */
+    public boolean validate(String str);
 
 }//interface InputValidator

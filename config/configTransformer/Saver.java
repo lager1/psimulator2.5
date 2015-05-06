@@ -4,8 +4,10 @@
 package config.configTransformer;
 
 import device.Device;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.CiscoWrapperRT;
 import networkModule.L3.CiscoWrapperRT.CiscoRecord;
@@ -23,7 +25,6 @@ import shared.Components.NetworkModel;
 import shared.Components.simulatorConfig.*;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 public class Saver {
@@ -64,7 +65,7 @@ public class Saver {
      */
     private void saveInterfaces(HwComponentModel hwComponentModel, Device device) {
         if (!(device.getNetworkModule().isStandardTcpIpNetMod())) {
-                // -> Zatim se uklada sitovy modul jen tehdy, pokud to je IpNetworkModule, navic se uklada zatim jen IPLayer.
+            // -> Zatim se uklada sitovy modul jen tehdy, pokud to je IpNetworkModule, navic se uklada zatim jen IPLayer.
             hwComponentModel.getDevSettings().setNetModType(DeviceSettings.NetworkModuleType.simple_switch_netMod);
             return;
         }
@@ -77,8 +78,8 @@ public class Saver {
             if (!iface.isDhcp && iface.getIpAddress() != null) {
                 ethIfaceModel.setIpAddress(iface.getIpAddress().toString());
             } else {
-                            ethIfaceModel.setIpAddress("");
-                        }
+                ethIfaceModel.setIpAddress("");
+            }
 
             ethIfaceModel.setIsUp(iface.isUp);
         }

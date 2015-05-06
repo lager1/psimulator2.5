@@ -5,10 +5,9 @@ package shared.telnetConfig;
 import java.io.Serializable;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
-public class ConfigRecord implements Serializable{
+public class ConfigRecord implements Serializable {
 
     /**
      * telnet port
@@ -37,8 +36,6 @@ public class ConfigRecord implements Serializable{
     public void setPort(int port) {
         this.port = port;
     }
-
-
 
 
 }

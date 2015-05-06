@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger
+ * Copyright (c) 2000-2005 Dieter Wimberger 
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -42,74 +42,74 @@ import java.util.Vector;
  */
 class CharBuffer {
 
-  //Members
-  private Vector m_Buffer;
-  private int m_Size;
+    //Members
+    private Vector m_Buffer;
+    private int m_Size;
 
-  public CharBuffer(int size) {
-    m_Buffer = new Vector(size);
-    m_Size = size;
-  }//constructor
+    public CharBuffer(int size) {
+        m_Buffer = new Vector(size);
+        m_Size = size;
+    }//constructor
 
-  public char getCharAt(int pos)
-      throws IndexOutOfBoundsException {
+    public char getCharAt(int pos)
+            throws IndexOutOfBoundsException {
 
-    return ((Character) m_Buffer.elementAt(pos)).charValue();
-  }//getCharAt
+        return ((Character) m_Buffer.elementAt(pos)).charValue();
+    }//getCharAt
 
-  public void setCharAt(int pos, char ch)
-      throws IndexOutOfBoundsException {
+    public void setCharAt(int pos, char ch)
+            throws IndexOutOfBoundsException {
 
-    m_Buffer.setElementAt(new Character(ch), pos);
-  }//setCharAt
+        m_Buffer.setElementAt(new Character(ch), pos);
+    }//setCharAt
 
-  public void insertCharAt(int pos, char ch)
-      throws BufferOverflowException, IndexOutOfBoundsException {
+    public void insertCharAt(int pos, char ch)
+            throws BufferOverflowException, IndexOutOfBoundsException {
 
-    m_Buffer.insertElementAt(new Character(ch), pos);
-  }//insertCharAt
+        m_Buffer.insertElementAt(new Character(ch), pos);
+    }//insertCharAt
 
-  public void append(char aChar)
-      throws BufferOverflowException {
+    public void append(char aChar)
+            throws BufferOverflowException {
 
-    m_Buffer.addElement(new Character(aChar));
-  }//append
+        m_Buffer.addElement(new Character(aChar));
+    }//append
 
-  public void append(String str)
-      throws BufferOverflowException {
-    for (int i = 0; i < str.length(); i++) {
-      append(str.charAt(i));
-    }
-  }//append
+    public void append(String str)
+            throws BufferOverflowException {
+        for (int i = 0; i < str.length(); i++) {
+            append(str.charAt(i));
+        }
+    }//append
 
-  public void removeCharAt(int pos)
-      throws IndexOutOfBoundsException {
+    public void removeCharAt(int pos)
+            throws IndexOutOfBoundsException {
 
-    m_Buffer.removeElementAt(pos);
-  }//removeCharAt
+        m_Buffer.removeElementAt(pos);
+    }//removeCharAt
 
-  public void clear() {
-    m_Buffer.removeAllElements();
-  }//clear
+    public void clear() {
+        m_Buffer.removeAllElements();
+    }//clear
 
-  public int size() {
-    return m_Buffer.size();
-  }//size
+    public int size() {
+        return m_Buffer.size();
+    }//size
 
-  public String toString() {
-    StringBuffer sbuf = new StringBuffer();
-    for (int i = 0; i < m_Buffer.size(); i++) {
-      sbuf.append(((Character) m_Buffer.elementAt(i)).charValue());
-    }
-    return sbuf.toString();
-  }//toString
+    public String toString() {
+        StringBuffer sbuf = new StringBuffer();
+        for (int i = 0; i < m_Buffer.size(); i++) {
+            sbuf.append(((Character) m_Buffer.elementAt(i)).charValue());
+        }
+        return sbuf.toString();
+    }//toString
 
-  public void ensureSpace(int chars)
-      throws BufferOverflowException {
+    public void ensureSpace(int chars)
+            throws BufferOverflowException {
 
-    if (chars > (m_Size - m_Buffer.size())) {
-      throw new BufferOverflowException();
-    }
-  }//ensureSpace
+        if (chars > (m_Size - m_Buffer.size())) {
+            throw new BufferOverflowException();
+        }
+    }//ensureSpace
 
 }//class CharBuffer

@@ -5,11 +5,12 @@ import config.configFiles.DhcpClientLeaseFile.ClientLeaseRecord;
 import dataStructures.MacAddress;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dhcp.DhcpPacket;
-import dataStructures.packets.dhcp.DhcpPacketType;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacketType;
 import device.Device;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import networkModule.IpNetworkModule;
 import networkModule.L2.EthernetLayer;
 import networkModule.L3.IPLayer;
@@ -310,7 +312,7 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
      * pakety.
      *
      * @param type
-     * @param ipToAssign null if type is discover
+     * @param ipToAssign     null if type is discover
      * @param serverIdentier null if type is discover
      */
     private void sendPacket(DhcpPacketType type, IPwithNetmask ipToAssign, IpAddress serverIdentier) {
@@ -364,5 +366,6 @@ public class DhcpClientThread implements Wakeable, SmartRunnable {
         START,
         DISCOVER_SENT,
         REQUEST_SENT,
-        LEASED,}
+        LEASED,
+    }
 }

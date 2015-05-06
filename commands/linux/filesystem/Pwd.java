@@ -8,9 +8,10 @@ import commands.AbstractCommandParser;
 
 /**
  * just print current path
+ *
  * @author Tomas Pitrinec
  */
-public class Pwd  extends FileSystemCommand {
+public class Pwd extends FileSystemCommand {
 
     public Pwd(AbstractCommandParser parser) {
         super(parser, "pwd");

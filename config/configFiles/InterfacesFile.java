@@ -6,21 +6,22 @@ import dataStructures.ipAddresses.IpNetmask;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 
 /**
- *
  * @author Michal Horacek
  */
-public class InterfacesFile extends AbstractLinuxFile  {
+public class InterfacesFile extends AbstractLinuxFile {
 
     private IPLayer ipLayer;
 
@@ -56,7 +57,7 @@ public class InterfacesFile extends AbstractLinuxFile  {
 
     // true, pokud uz pro interface se jmenem ifaceName existuje v konfiguraci zaznam
     private boolean isDuplicateInterface(String ifaceName,
-            ArrayList<InterfaceConfiguration> ifaces) {
+                                         ArrayList<InterfaceConfiguration> ifaces) {
         for (InterfaceConfiguration iface : ifaces) {
             if (iface.ifaceName.equals(ifaceName)) {
                 return true;

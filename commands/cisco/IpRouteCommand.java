@@ -10,15 +10,17 @@ import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.BadNetmaskException;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.Map;
+
 import networkModule.L3.CiscoIPLayer;
 import networkModule.L3.NetworkInterface;
 import shell.apps.CommandShell.CommandShell;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Class for parsing this commands:
- *
+ * <p/>
  * ip route 'target' 'mask of target' 'gateway or interface
  * '
  * ip route 0.0.0.0 0.0.0.0 192.168.2.254
@@ -35,7 +37,7 @@ public class IpRouteCommand extends CiscoCommand {
     private IpAddress gateway;
     private NetworkInterface iface;
 
-    private final CiscoIPLayer ipLayer = (CiscoIPLayer)getNetMod().ipLayer;
+    private final CiscoIPLayer ipLayer = (CiscoIPLayer) getNetMod().ipLayer;
 
     public IpRouteCommand(AbstractCommandParser parser, boolean no) {
         super(parser);
@@ -48,10 +50,10 @@ public class IpRouteCommand extends CiscoCommand {
         String maska = "";
         try {
             adr = nextWord();
-            debug("address: "+adr);
+            debug("address: " + adr);
 
             maska = nextWord();
-            debug("mask: "+maska);
+            debug("mask: " + maska);
 
             if (adr.isEmpty() || maska.isEmpty()) {
                 incompleteCommand();
@@ -59,15 +61,15 @@ public class IpRouteCommand extends CiscoCommand {
             }
             target = new IPwithNetmask(adr, maska);
         } catch (BadNetmaskException e) {
-            debug("bad mask: "+maska);
+            debug("bad mask: " + maska);
             invalidInputDetected();
             return false;
         } catch (BadIpException e) {
-            debug("bad address: "+adr);
+            debug("bad address: " + adr);
             invalidInputDetected();
             return false;
         } catch (Exception e) {
-            debug(Util.stackToString(e));
+            debug(Utilities.stackToString(e));
             invalidInputDetected();
             return false;
         }
@@ -83,9 +85,9 @@ public class IpRouteCommand extends CiscoCommand {
         }
 
         String next = nextWord();
-        debug("next: "+next);
+        debug("next: " + next);
 
-        if (Util.zacinaCislem(next)) { // na branu
+        if (Utilities.beginsWithNumber(next)) { // na branu
             try {
                 gateway = new IpAddress(next);
             } catch (BadIpException e) {

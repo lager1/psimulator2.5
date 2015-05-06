@@ -5,9 +5,11 @@ package physicalModule;
 
 import dataStructures.packets.L2Packet;
 import device.Device;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -16,7 +18,7 @@ import utils.WorkerThread;
 
 /**
  * Seznam sitovych rozhrani reprezentujici fyzicke rozhrani
- *
+ * <p/>
  * Old physical module: module + every cabel have its own threads
  *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
@@ -56,11 +58,12 @@ public class PhysicMod extends AbstractPhysicalModule implements SmartRunnable, 
     }
 
 // Verejny metody na posilani paketu - komunikace s ostatnima vrstvama ------------------------------------------------
+
     /**
      * Adds incoming packet from cabel to the buffer. Sychronized via buffer. Wakes worker.
      *
      * @param packet to receive
-     * @param iface which receives packet
+     * @param iface  which receives packet
      */
     @Override
     public void receivePacket(L2Packet packet, Switchport iface) {
@@ -73,13 +76,13 @@ public class PhysicMod extends AbstractPhysicalModule implements SmartRunnable, 
      * Wakes worker.
      *
      * @param packet to send via physical module
-     * @param iface through it will be send
+     * @param iface  through it will be send
      */
     @Override
     public void sendPacket(L2Packet packet, int switchportNumber) {
         Switchport swport = switchports.get(switchportNumber);
         if (swport == null) {
-            Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL, "Trying to send packet to non-existent switchport number: "+switchportNumber, packet);
+            Logger.log(this, Logger.ERROR, LoggingCategory.PHYSICAL, "Trying to send packet to non-existent switchport number: " + switchportNumber, packet);
         }
         sendBuffer.add(new BufferItem(packet, swport));
         worker.wake();

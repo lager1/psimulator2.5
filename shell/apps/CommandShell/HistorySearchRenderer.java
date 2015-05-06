@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import shell.ShellUtils;
@@ -14,7 +15,6 @@ import telnetd.io.BasicTerminalIO;
 import telnetd.io.TerminalIO;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class HistorySearchRenderer {
@@ -153,7 +153,7 @@ public class HistorySearchRenderer {
 
     private boolean checkLastOne() {
 
-        if( !( lastSearchedIndex >=0 && lastSearchedIndex<currentHistory.getCommands().size() ) )  // if it is not a index of array
+        if (!(lastSearchedIndex >= 0 && lastSearchedIndex < currentHistory.getCommands().size()))  // if it is not a index of array
             return false;
 
         Pattern searchPattern = Pattern.compile(".*" + this.sb.toString() + ".*");
@@ -194,7 +194,6 @@ public class HistorySearchRenderer {
      */
     private void handleInput(int inputValue) throws IOException {
         this.sb.append((char) inputValue);
-
 
 
         boolean updated = this.updateSearch();

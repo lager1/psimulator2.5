@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+
 import psimulator.dataLayer.SimulatorEvents.SimulatorEventWithDetails;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class EventTableModel extends AbstractTableModel {
@@ -15,7 +15,7 @@ public class EventTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1529886210107627921L;
     private List<SimulatorEventWithDetails> eventList;
     /**
-     * Flag set to true when all events deleted. 
+     * Flag set to true when all events deleted.
      */
     private volatile boolean timeReset = true;
     /**
@@ -37,18 +37,20 @@ public class EventTableModel extends AbstractTableModel {
         isInTheList = false;
         currentPositionInList = 0;
     }
-    
+
     /**
      * Gets current position in the list
-     * @return 
+     *
+     * @return
      */
-    public int getCurrentPositionInList(){
+    public int getCurrentPositionInList() {
         return currentPositionInList;
     }
 
     /**
      * Gets if any row selected.
-     * @return 
+     *
+     * @return
      */
     public boolean isInTheList() {
         synchronized (lock) {
@@ -59,7 +61,7 @@ public class EventTableModel extends AbstractTableModel {
     @Override
     public int getRowCount() {
         return eventList.size();
-    
+
     }
 
     @Override
@@ -69,9 +71,10 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Gets value from row i, column i1
+     *
      * @param i
      * @param i1
-     * @return 
+     * @return
      */
     @Override
     public Object getValueAt(int i, int i1) {
@@ -82,8 +85,9 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Gets class of column c.
+     *
      * @param c
-     * @return 
+     * @return
      */
     @Override
     public Class getColumnClass(int c) {
@@ -95,32 +99,34 @@ public class EventTableModel extends AbstractTableModel {
     /**
      * Sets current position in list on position in parameter.
      * If less than zero, than isInTheList is set to false.
-     * @param position 
+     *
+     * @param position
      */
     public void setCurrentPositionInList(int position) {
         synchronized (lock) {
             if (position < 0) {
                 currentPositionInList = 0;
                 isInTheList = false;
-            } else if(position <= eventList.size() - 1){
+            } else if (position <= eventList.size() - 1) {
                 currentPositionInList = position;
                 isInTheList = true;
             }
         }
     }
-    
+
     /**
      * Returns true if next event exists.
-     * @return 
+     *
+     * @return
      */
-    public boolean canMoveToNextEvent(){
-         synchronized (lock) {
-             if(currentPositionInList < eventList.size() - 1){
-                 return true;
-             }else{
-                 return false;
-             }
-         }
+    public boolean canMoveToNextEvent() {
+        synchronized (lock) {
+            if (currentPositionInList < eventList.size() - 1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
@@ -129,7 +135,7 @@ public class EventTableModel extends AbstractTableModel {
     public void moveToNextEvent() {
         synchronized (lock) {
             // next when not in the list (start playing)
-            if(isInTheList == false && currentPositionInList == 0 && eventList.size() > 0){
+            if (isInTheList == false && currentPositionInList == 0 && eventList.size() > 0) {
                 currentPositionInList = 0;
                 isInTheList = true;
                 return;
@@ -141,16 +147,17 @@ public class EventTableModel extends AbstractTableModel {
             }
         }
     }
-    
+
     /**
      * Gets next event or null if no next event.
-     * @return 
+     *
+     * @return
      */
-    public SimulatorEventWithDetails getNextEvent(){
+    public SimulatorEventWithDetails getNextEvent() {
         synchronized (lock) {
-            if(eventList.size() > 0 && currentPositionInList < eventList.size() - 1){
-                return eventList.get(currentPositionInList+1);
-            }else{
+            if (eventList.size() > 0 && currentPositionInList < eventList.size() - 1) {
+                return eventList.get(currentPositionInList + 1);
+            } else {
                 return null;
             }
         }
@@ -191,13 +198,14 @@ public class EventTableModel extends AbstractTableModel {
             }
         }
     }
-    
+
     /**
      * Moves to last event and return the event. Use in realtime mode.
      * If no event in list, return null.
-     * @return 
+     *
+     * @return
      */
-    public SimulatorEventWithDetails moveToLastEventAndReturn(){
+    public SimulatorEventWithDetails moveToLastEventAndReturn() {
         synchronized (lock) {
             if (eventList.size() > 0) {
                 currentPositionInList = eventList.size() - 1;
@@ -210,7 +218,8 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Adds simulator event.
-     * @param simulatorEvent 
+     *
+     * @param simulatorEvent
      */
     public void addSimulatorEvent(SimulatorEventWithDetails simulatorEvent) {
         synchronized (lock) {
@@ -240,14 +249,15 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Returns simulator event from specified position i.
+     *
      * @param i
-     * @return 
+     * @return
      */
     public SimulatorEventWithDetails getSimulatorEvent(int i) {
         synchronized (lock) {
-            if(eventList.size()>i){
+            if (eventList.size() > i) {
                 return eventList.get(i);
-            }else{
+            } else {
                 return null;
             }
         }
@@ -255,7 +265,8 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Returns true if has any event. False if no events.
-     * @return 
+     *
+     * @return
      */
     public boolean hasEvents() {
         synchronized (lock) {
@@ -265,7 +276,8 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Returns true if should reset time.
-     * @return 
+     *
+     * @return
      */
     public boolean isTimeReset() {
         synchronized (lock) {
@@ -275,7 +287,8 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Gets copy of event list. Simualtor events are not copied deeply.
-     * @return 
+     *
+     * @return
      */
     public List<SimulatorEventWithDetails> getEventListCopy() {
         synchronized (lock) {
@@ -286,7 +299,8 @@ public class EventTableModel extends AbstractTableModel {
 
     /**
      * Sets event list.
-     * @param eventList 
+     *
+     * @param eventList
      */
     public void setEventList(List<SimulatorEventWithDetails> eventList) {
         synchronized (lock) {

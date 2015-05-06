@@ -3,19 +3,19 @@
  */
 package networkModule.L2;
 
-import dataStructures.packets.EthernetPacket;
+import dataStructures.packets.L2.EthernetPacket;
 import dataStructures.MacAddress;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
 import logging.Loggable;
-import logging.Logger;
-import logging.LoggingCategory;
 
 /**
  * Representace ethernetovyho interface (sitovy karty) se switchovaci tabulkou. Spolecny pro switch i router. Ma jmeno,
  * mac adresu, muze mit vic switchportu, ma ethernetovou switchovaci tabulku.
- *
+ * <p/>
  * TODO: Zjistit, jak dlouho je platnej zaznam ve switchovaci tabulce, zatim nastaveno na 20 s.
  * Switchovaci tabulka nic nedela, kdyz ma interface jen jeden switchport (kvuli zrychleni).
  *
@@ -84,7 +84,6 @@ public class EthernetInterface implements Loggable {
     }
 
 
-
 // funkce k sitovy komunikaci: ----------------------------------------------------------------------------------
 
 
@@ -120,6 +119,7 @@ public class EthernetInterface implements Loggable {
 
     /**
      * Odesle zadanej packet na vsechny switchporty rozhrani krome switchportu incoming.
+     *
      * @param p
      * @param incoming switchport, na nejz paket prisel, tam uz se znova neposila
      */
@@ -132,8 +132,6 @@ public class EthernetInterface implements Loggable {
     }
 
 
-
-
 // gettry a zjistovaci fce vetsinou mimo sitovou komunikaci ----------------------------------------------------------
 
     /**
@@ -143,7 +141,7 @@ public class EthernetInterface implements Loggable {
      */
     public boolean isConnected() {
         for (SwitchportSettings swportsett : switchports.values()) {
-            if(etherLayer.physicMod.isSwitchportConnected(swportsett.switchportNumber)){
+            if (etherLayer.physicMod.isSwitchportConnected(swportsett.switchportNumber)) {
                 return true;
             }
         }
@@ -151,13 +149,10 @@ public class EthernetInterface implements Loggable {
     }
 
 
-
-
     @Override
     public String getDescription() {
-        return etherLayer.getNetMod().getDevice().getName()+": EtherIface "+name;
+        return etherLayer.getNetMod().getDevice().getName() + ": EtherIface " + name;
     }
-
 
 
     /**
@@ -187,8 +182,8 @@ public class EthernetInterface implements Loggable {
             this.time = time;
         }
 
-        public boolean isOutdated(){
-            if(System.currentTimeMillis() > time+switchTableTimeout*1000){
+        public boolean isOutdated() {
+            if (System.currentTimeMillis() > time + switchTableTimeout * 1000) {
                 return true;
             }
             return false;

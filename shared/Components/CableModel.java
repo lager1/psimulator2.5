@@ -5,11 +5,10 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class CableModel implements AbstractComponentModel{
-    
+public class CableModel implements AbstractComponentModel {
+
     /**
      * First component of cable
      */
@@ -26,14 +25,14 @@ public class CableModel implements AbstractComponentModel{
      * Second interface of cable
      */
     private EthInterfaceModel interface2;
-    
+
     // -------------------------------------------------------
     /**
      * Delay of cable
      */
     private int delay;
-    
-        /**
+
+    /**
      * Type of component
      */
     private HwTypeEnum hwType;
@@ -43,9 +42,9 @@ public class CableModel implements AbstractComponentModel{
     private Integer id;
 
     public CableModel(Integer id, HwTypeEnum hwType, HwComponentModel component1, HwComponentModel component2, EthInterfaceModel interface1, EthInterfaceModel interface2, int delay) {
-        
+
         // assign values
-        this.id=id;
+        this.id = id;
         this.hwType = hwType;
         this.component1 = component1;
         this.component2 = component2;
@@ -55,26 +54,28 @@ public class CableModel implements AbstractComponentModel{
     }
 
     /**
-     * 
+     *
      */
     public CableModel() {
-        
+
     }
 
-    
-    @XmlAttribute @XmlID
-    public String getIDAsString(){
+
+    @XmlAttribute
+    @XmlID
+    public String getIDAsString() {
         return String.valueOf(this.id);
     }
-    
-    public void setIDAsString(String id){
+
+    public void setIDAsString(String id) {
         this.id = Integer.valueOf(id);
     }
 
-    
+
     /**
      * Gets first component
-     * @return 
+     *
+     * @return
      */
     @XmlIDREF
     public HwComponentModel getComponent1() {
@@ -83,7 +84,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Gets second component
-     * @return 
+     *
+     * @return
      */
     @XmlIDREF
     public HwComponentModel getComponent2() {
@@ -92,7 +94,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Gets first interface
-     * @return 
+     *
+     * @return
      */
     @XmlIDREF
     public EthInterfaceModel getInterface1() {
@@ -101,16 +104,18 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Gets second interface
-     * @return 
+     *
+     * @return
      */
     @XmlIDREF
     public EthInterfaceModel getInterface2() {
         return interface2;
     }
- 
+
     /**
      * Gets cable delay
-     * @return 
+     *
+     * @return
      */
     public int getDelay() {
         return delay;
@@ -118,20 +123,21 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets cable delay
-     * @param delay 
+     *
+     * @param delay
      */
     public void setDelay(int delay) {
         this.delay = delay;
     }
-    
+
     /**
      * Turns cable around. Swaps both ends of cable.
      */
-    public void swapComponentsAndEthInterfaces(){
+    public void swapComponentsAndEthInterfaces() {
         HwComponentModel tmpComponent = component1;
         component1 = component2;
         component2 = tmpComponent;
-        
+
         EthInterfaceModel tmpImterface = interface1;
         interface1 = interface2;
         interface2 = tmpImterface;
@@ -139,7 +145,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Gets HwType of component
-     * @return 
+     *
+     * @return
      */
     @Override
     public HwTypeEnum getHwType() {
@@ -148,7 +155,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets HwType of component. Used when restoring from XML.
-     * @param hwType 
+     *
+     * @param hwType
      */
     @Override
     public void setHwType(HwTypeEnum hwType) {
@@ -157,7 +165,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Gets unique identifier
-     * @return 
+     *
+     * @return
      */
     @Override
     public Integer getId() {
@@ -166,7 +175,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets ID of component. Used when restoring from XML.
-     * @param id 
+     *
+     * @param id
      */
     @Override
     public void setId(Integer id) {
@@ -175,7 +185,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets first componnent to cable.
-     * @param component1 
+     *
+     * @param component1
      */
     public void setComponent1(HwComponentModel component1) {
         this.component1 = component1;
@@ -183,7 +194,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets second componnent to cable.
-     * @param component1 
+     *
+     * @param component1
      */
     public void setComponent2(HwComponentModel component2) {
         this.component2 = component2;
@@ -191,7 +203,8 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets first interface that is connected
-     * @param interface1 
+     *
+     * @param interface1
      */
     public void setInterface1(EthInterfaceModel interface1) {
         this.interface1 = interface1;
@@ -199,15 +212,12 @@ public class CableModel implements AbstractComponentModel{
 
     /**
      * Sets second interface that is connected
-     * @param interface1 
+     *
+     * @param interface1
      */
     public void setInterface2(EthInterfaceModel interface2) {
         this.interface2 = interface2;
     }
-    
-    
-    
-    
-    
-    
+
+
 }
