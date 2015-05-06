@@ -17,6 +17,7 @@ import shared.Components.NetworkModel;
 import shared.Serializer.AbstractNetworkSerializer;
 import shared.Serializer.NetworkModelSerializerXML;
 import shared.Serializer.SaveLoadException;
+import shared.Timer.Timer;
 import telnetd.BootException;
 import telnetd.TelnetD;
 import telnetd.pridaneTridy.TelnetProperties;
@@ -143,5 +144,7 @@ public class Main {
 
         // v tomto je problem - ale neprisel jsem na to proc - konkretne v logging category
         Logger.log("PACKET FLOW SERVER: ", Logger.IMPORTANT, LoggingCategory.EVENTS_SERVER, "Server sucessfully started, listening on port: " + eventServerPort);
-    }
+
+        Timer.start();
+	}
 }
