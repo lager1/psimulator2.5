@@ -8,7 +8,6 @@ import applications.dns.DnsResolver;
 import commands.AbstractCommandParser;
 import commands.ApplicationNotifiable;
 import commands.LongTermCommand;
-import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -16,15 +15,15 @@ import networkModule.L3.NetworkInterface;
 
 /**
  * Linuxovy prikaz ping.
- *
- * Znamy odchylky: pri nepovolenym intervalu (0;0,2) by se mela vypsat hlavicka
+ * <p/>
+ * Znamy odchylky: pri nepovolenym intervalu (0;0, 2) by se mela vypsat hlavicka
  * pingu, zatim se nevypisuje.
  *
  * @author Tomas Pitrinec
  */
 public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNotifiable {
 
-//parametry prikazu: -------------------------------------------------------------------------------------------
+    //parametry prikazu: -------------------------------------------------------------------------------------------
     IpAddress cil; //adresa, na kterou ping posilam
     int count = -1; //pocet paketu k poslani, zadava se prepinacem -c
     int size = 56; //velikost paketu k poslani, zadava se -s
@@ -34,7 +33,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     boolean minus_b = false; //dovoluje pingat na broadcastovou adresu
     boolean minus_h = false;
     //dalsi prepinace, ktery bych mel minimalne akceptovat: -a, -v
-    int timeout = 10_000;	// timeout v milisekundach
+    int timeout = 10_000;    // timeout v milisekundach
 
     //parametry parseru:
     private String slovo; //slovo parseru, se kterym se zrovna pracuje
@@ -48,7 +47,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
     private boolean translatingName = false;
 
-// konstruktor a ostatni nutny verejny metody: ------------------------------------------------------------------------
+    // konstruktor a ostatni nutny verejny metody: ------------------------------------------------------------------------
     public Ping(AbstractCommandParser parser) {
         super(parser);
         this.type = LinuxCommandType.PING;
@@ -56,9 +55,9 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
     @Override
     public void run() {
-        parser.setRunningCommand(this, false);	// registrovani u parseru
+        parser.setRunningCommand(this, false);    // registrovani u parseru
         parsujPrikaz();
-        if (ladiciVypisovani) {
+        if (enableDebug) {
             printLine(toString());
         }
         if (translatingName) {
@@ -66,7 +65,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
         }
         boolean applicationStarted = vykonejPrikaz();
         if (!applicationStarted) {
-            parser.deleteRunningCommand();	// odregistrovani, kdyz nebyla aplikace spustena
+            parser.deleteRunningCommand();    // odregistrovani, kdyz nebyla aplikace spustena
         }
         //Logger.log(this, Logger.DEBUG, LoggingCategory.LINUX_COMMANDS, "Konec metody run. ", null);
     }
@@ -110,6 +109,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     }
 
 // privatni metody pro  vykonavani: ------------------------------------------------------------------------------
+
     /**
      * Vykonavani, tedy predevsim spousteni pingovaci aplikace.
      *
@@ -151,11 +151,12 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
     }
 
 // privatni metody pro  parsovani: ------------------------------------------------------------------------------
+
     /**
      * Parsovani. Cte prikaz, zatim cte jenom IP adresu a nic nekontroluje.
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (!slovo.isEmpty()) {
             if (slovo.length() > 1 && slovo.charAt(0) == '-') { //cteni prepinacu
                 zpracujPrepinace();
@@ -169,7 +170,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
                     translatingName = true;
                 }
             }
-            slovo = dalsiSlovo();
+            slovo = getToken();
         }
         //kdyz se vsechno zparsovalo, zkontroluje se, je-li zadana adresa:
         if (cil == null) {
@@ -233,7 +234,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
 
                 } else if (p < 0.2) {
                     navratovyKod |= 4;
-                    printLine("ping: cannot flood; minimal interva is 200ms");	// zakazali jsme to, protoze to simulator nevytezovalo
+                    printLine("ping: cannot flood; minimal interva is 200ms");    // zakazali jsme to, protoze to simulator nevytezovalo
                 } else {
                     interval = p;
                 }
@@ -252,7 +253,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
      * Parsovani. Tahleta metoda parsuje ciselne hodnoty prepinace, podle
      * podminek, podle jakych funguje ping (poznamky v mym sesite).
      *
-     * @param uk ukazatel na pismeno toho prepinace ve slove
+     * @param uk      ukazatel na pismeno toho prepinace ve slove
      * @param puvodni hodnota prepinace
      * @return -1 kdyz se zparsovani nepovede
      */
@@ -262,7 +263,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
         uk++; //aby ukazoval az za to pismeno
         if (uk >= slovo.length()) { //pismeno toho prepinace bylo poslednim znakem slova, mezi pismenem a
             // hodnotou je mezera
-            slovo = dalsiSlovo(); //nacitani dalsiho slova
+            slovo = getToken(); //nacitani dalsiho slova
             uk = 0;
         }
         while (uk < slovo.length() && Character.isDigit(slovo.charAt(uk))) { //ten cyklus bere jen cislice, to za
@@ -284,7 +285,7 @@ public class Ping extends LinuxCommand implements LongTermCommand, ApplicationNo
      * @return
      */
     private double zpracujDoublePrepinac(int uk) {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         try {
             return Double.parseDouble(slovo);
         } catch (NumberFormatException ex) {

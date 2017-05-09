@@ -16,8 +16,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.WaitLa
  */
 public final class ConnectionAnimation extends AbstractPropertiesDialog {
 
-	private static final long serialVersionUID = -7539290373922798227L;
-	final WaitLayerUI waitLayerUI = new WaitLayerUI();
+    private static final long serialVersionUID = -7539290373922798227L;
+    final WaitLayerUI waitLayerUI = new WaitLayerUI();
     private boolean connectingActive = false;
 
     public ConnectionAnimation(Component mainWindow, DataLayerFacade dataLayer) {
@@ -25,20 +25,20 @@ public final class ConnectionAnimation extends AbstractPropertiesDialog {
 
         // set icon
         this.setIconImage(ImageFactorySingleton.getInstance().getImageIcon("/resources/toolbarIcons/32/kwifimanager.png").getImage());
-        
+
         // set title
         this.setTitle(dataLayer.getString("CONNECT_TO_SERVER"));
 
         // initialize
         initialize();
-        waitLayerUI.start();	// start the animation
+        waitLayerUI.start();    // start the animation
     }
 
     /**
      * Call when connected. The dialog is disposed
      */
     public void connected() {
-    	
+
         connectingActive = false;
 
         // stop animation

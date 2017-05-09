@@ -6,10 +6,12 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import shell.apps.CommandShell.CommandShell;
 
 /**
@@ -19,53 +21,54 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class QuestionCommand extends CiscoCommand {
 
-	public QuestionCommand(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public QuestionCommand(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
         List<String> napoveda = new ArrayList<>();
         switch (parser.getShell().getMode()) {
-                case CommandShell.CISCO_USER_MODE:
-                    printLine("Exec commands:");
-                    napoveda.add("  enable           Turn on privileged commands");
-                    napoveda.add("  exit             Exit from the EXEC");
-                    napoveda.add("  ping             Send echo messages");
-                    napoveda.add("  show             Show running system information");
-                    napoveda.add("  traceroute       Trace route to destination");
-                    break;
+            case CommandShell.CISCO_USER_MODE:
+                printLine("Exec commands:");
+                napoveda.add("  enable           Turn on privileged commands");
+                napoveda.add("  exit             Exit from the EXEC");
+                napoveda.add("  ping             Send echo messages");
+                napoveda.add("  show             Show running system information");
+                napoveda.add("  traceroute       Trace route to destination");
+                break;
 
-                case CommandShell.CISCO_PRIVILEGED_MODE:
-                    printLine("Exec commands:");
-                    napoveda.add("  configure        Enter configuration mode");
-                    napoveda.add("  disable          Turn off privileged commands");
-                    napoveda.add("  enable           Turn on privileged commands");
-                    napoveda.add("  ping             Send echo messages");
-                    napoveda.add("  show             Show running system information");
-                    napoveda.add("  traceroute       Trace route to destination");
-                    break;
+            case CommandShell.CISCO_PRIVILEGED_MODE:
+                printLine("Exec commands:");
+                napoveda.add("  configure        Enter configuration mode");
+                napoveda.add("  disable          Turn off privileged commands");
+                napoveda.add("  enable           Turn on privileged commands");
+                napoveda.add("  ping             Send echo messages");
+                napoveda.add("  show             Show running system information");
+                napoveda.add("  traceroute       Trace route to destination");
+                break;
 
-                case CommandShell.CISCO_CONFIG_MODE:
-                    printLine("Configure commands:");
-                    napoveda.add("  interface              Select an interface to configure");
-                    napoveda.add("  ip                     Global IP configuration subcommands");
-                    napoveda.add("  exit                   Exit from configure mode");
-                    napoveda.add("  access-list            Add an access list entry");
-                    break;
+            case CommandShell.CISCO_CONFIG_MODE:
+                printLine("Configure commands:");
+                napoveda.add("  interface              Select an interface to configure");
+                napoveda.add("  ip                     Global IP configuration subcommands");
+                napoveda.add("  exit                   Exit from configure mode");
+                napoveda.add("  access-list            Add an access list entry");
+                break;
 
-                case CommandShell.CISCO_CONFIG_IF_MODE:
-                    printLine("Interface configuration commands:");
-                    napoveda.add("  exit                    Exit from interface configuration mode");
-                    napoveda.add("  ip                      Interface Internet Protocol config commands");
-                    napoveda.add("  no                      Negate a command or set its defaults");
-                    napoveda.add("  shutdown                Shutdown system elements");
-            }
-            sendList(napoveda);
+            case CommandShell.CISCO_CONFIG_IF_MODE:
+                printLine("Interface configuration commands:");
+                napoveda.add("  exit                    Exit from interface configuration mode");
+                napoveda.add("  ip                      Interface Internet Protocol config commands");
+                napoveda.add("  no                      Negate a command or set its defaults");
+                napoveda.add("  shutdown                Shutdown system elements");
+        }
+        sendList(napoveda);
     }
 
     /**
      * pomocna metoda pro vypis povolenych prikazu
+     *
      * @param n seznam, ktery se bude prochazet po prvcich a posilat uzivateli
      */
     private void sendList(List<String> n) {
@@ -75,8 +78,8 @@ public class QuestionCommand extends CiscoCommand {
         }
     }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		// 
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        //
+    }
 }

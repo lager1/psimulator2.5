@@ -5,18 +5,15 @@ import config.configFiles.DnsZoneFile;
 import config.configFiles.NamedConfFile;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dns.DnsPacket;
-import dataStructures.packets.dns.DnsPacket.DnsStatus;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.DnsPacket;
+import dataStructures.packets.L7.DnsPacket.DnsStatus;
 import device.Device;
 import filesystem.FileSystem;
-import logging.Logger;
-import logging.LoggingCategory;
 import networkModule.L7.ApplicationLayer;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DnsServerThread implements Runnable {
@@ -53,13 +50,13 @@ public class DnsServerThread implements Runnable {
             sendAnswer(DnsStatus.FORMAT_ERROR);
             return;
         }
-		
+
         DnsQuery query = getZoneInfo(dnsPacket.question.qName);
         if (query == null) {
             sendAnswer(DnsStatus.NAME_ERROR);
             return;
         }
-        
+
         queryAnswer(query, dnsPacket);
     }
 
@@ -90,15 +87,15 @@ public class DnsServerThread implements Runnable {
     }
 
     private void sendAnswer(DnsStatus status) {
-                    DnsPacket answer = new DnsPacket(DnsPacket.DnsPacketType.ANSWER, 0, null);
-            answer.status = status;
-            sendPacket(answer);
+        DnsPacket answer = new DnsPacket(DnsPacket.DnsPacketType.ANSWER, 0, null);
+        answer.status = status;
+        sendPacket(answer);
     }
-    
+
     private void sendPacket(DnsPacket packet) {
         packet.type = DnsPacket.DnsPacketType.ANSWER;
         UdpPacket udp = new UdpPacket(DnsServer.PORT, incUdpPacket.srcPort, packet);
-      
+
         if (incIpPacket.dst.equals(new IpAddress("127.0.0.1"))) {
             handleLocalQuery(udp);
         } else {

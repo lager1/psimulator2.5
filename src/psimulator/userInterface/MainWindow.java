@@ -43,7 +43,6 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEventsWrapper;
 import shared.Components.HwTypeEnum;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -73,7 +72,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     private ConnectToServerDialog connectToServerDialog;
 
     private ServerConnection server;
-    
+
     public MainWindow(DataLayerFacade dataLayer) {
         this.dataLayer = dataLayer;
         this.simulatorManagerInterface = dataLayer.getSimulatorManager();
@@ -100,7 +99,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
         this.setTitle(dataLayer.getString("WINDOW_TITLE"));
 
-        
+
         // set menu bar
         this.setJMenuBar(jMenuBar);
         this.add(jToolBar, BorderLayout.PAGE_START);
@@ -152,14 +151,14 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     return;
                 }
                 mainWindow.setCursor(defaultCursor);
-                
+
                 refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.WELCOME, false);
 
                 dataLayer.savePreferences();
-                
-                if(server != null)
-                	server.terminate();
-                
+
+                if (server != null)
+                    server.terminate();
+
                 System.exit(0);
             }
         });
@@ -171,7 +170,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         this.setSize(new Dimension(1024, 768));
         this.setVisible(true);
 
-        
+
 //        // Get the size of the screen
 //        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 //
@@ -183,7 +182,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 //
 //        // Move the window
 //        this.setLocation(x, y);
-        
+
         this.setVisible(true);
     }
 
@@ -253,8 +252,8 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     public void saveEventsAction(SimulatorEventsWrapper simulatorEventsWrapper) {
         saveEventsAndInformAboutSuccess(simulatorEventsWrapper);
     }
-    
-    private boolean saveEventsAndInformAboutSuccess(SimulatorEventsWrapper simulatorEventsWrapper){
+
+    private boolean saveEventsAndInformAboutSuccess(SimulatorEventsWrapper simulatorEventsWrapper) {
         boolean success = saveLoadManagerEvents.doSaveAsEventsAction(simulatorEventsWrapper);
 
         if (success) {
@@ -263,7 +262,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             GlassPanelPainterSingleton.getInstance().
                     addAnnouncement(dataLayer.getString("EVENT_LIST_SAVE_ACTION"), dataLayer.getString("SAVED_TO"), file);
         }
-        
+
         this.setCursor(defaultCursor);
         return success;
     }
@@ -290,6 +289,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Undo and Redo button
      */
@@ -315,6 +315,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Zoom buttons
      */
@@ -340,10 +341,11 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Simulator and Editor buttons
      */
-      
+
     class JToolBarBackendListener implements ActionListener {
 
         @Override
@@ -357,9 +359,9 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
                     // change state to editor without changing or removing the graph
                     refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);
-                    //dataLayer.setMainPanelState(jPanelUserInterfaceMain.getUserInterfaceState());	 // set state to data layer
-                    dataLayer.setMainPanelState(UserInterfaceMainPanelState.valueOf(e.getActionCommand()));	 // set state to data layer
-                    server.terminate();	// shut down running backend process
+                    //dataLayer.setMainPanelState(jPanelUserInterfaceMain.getUserInterfaceState());     // set state to data layer
+                    dataLayer.setMainPanelState(UserInterfaceMainPanelState.valueOf(e.getActionCommand()));     // set state to data layer
+                    server.terminate();    // shut down running backend process
                     break;
 
                 case SIMULATOR:
@@ -367,42 +369,42 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     if (jPanelUserInterfaceMain.getUserInterfaceState() == UserInterfaceMainPanelState.SIMULATOR) {
                         return;
                     }
-                    
-                    if(!checkDataLossBeforeSimulation()) {	// must be saved before simulation
-                    	return;
+
+                    if (!checkDataLossBeforeSimulation()) {    // must be saved before simulation
+                        return;
                     }
 
-                    if(hasRealNetwork() && !checkAppPermision()) {
+                    if (hasRealNetwork() && !checkAppPermision()) {
                         lowPermissionNotice();
                     }
 
-                    if(!startServer())	// stop if server start failed
-                    	return;
+                    if (!startServer())    // stop if server start failed
+                        return;
 
-                    dataLayer.setConnectionIpAddress(server.getIpAddress());	// set backend address to data layer
-                    dataLayer.setConnectionPort(server.getPort());				// set backend port to data layer
-                    dataLayer.setMainPanelState(UserInterfaceMainPanelState.valueOf(e.getActionCommand()));	 // set state to data layer
+                    dataLayer.setConnectionIpAddress(server.getIpAddress());    // set backend address to data layer
+                    dataLayer.setConnectionPort(server.getPort());                // set backend port to data layer
+                    dataLayer.setMainPanelState(UserInterfaceMainPanelState.valueOf(e.getActionCommand()));     // set state to data layer
 
-                    dataLayer.getSimulatorManager().doConnect();				// connect
+                    dataLayer.getSimulatorManager().doConnect();                // connect
 
                     // check if we can change to simulator (wrong events in list)
-                    if(!dataLayer.getSimulatorManager().hasAllEventsItsComponentsInModel()){
+                    if (!dataLayer.getSimulatorManager().hasAllEventsItsComponentsInModel()) {
                         // if there is a problem, ask user what to do
                         int result = showWarningEventsInListHaventComponents(dataLayer.getString("WARNING"), dataLayer.getString("EVENTS_CANT_BE_APPLIED_WHAT_TO_DO"));
 
-                        if(result == 0){    // save events and clear list
+                        if (result == 0) {    // save events and clear list
                             //System.out.println("save events and clear list");
                             // save events
                             boolean success = saveEventsAndInformAboutSuccess(dataLayer.getSimulatorManager().getSimulatorEventsCopy());
                             // if save wasnt succesfull
-                            if(!success){
+                            if (!success) {
                                 // go back to editor
                                 refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);
                                 return;
                             }
                             // if save succesfull clear list
                             jPanelUserInterfaceMain.removeAllSimulatorEvents();
-                        } else if (result == 1){    // celar events
+                        } else if (result == 1) {    // celar events
                             //System.out.println("Clear list");
                             // clear list
                             jPanelUserInterfaceMain.removeAllSimulatorEvents();
@@ -412,7 +414,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                             // change state to editor without changing or removing the graph
                             refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.EDITOR, true);
                             return;
-                        }     
+                        }
                     }
 
                     // change state to editor without changing or removing the graph
@@ -422,54 +424,52 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         }
     }
 
-   
+
     /*
      * Manages server connection
-     * 
+     *
      */
     private boolean startServer() {
-    	String FailureReason = "";
-    	boolean failed = true;
+        String FailureReason = "";
+        boolean failed = true;
 
-    	server = new ServerConnection(saveLoadManagerGraph.getFile());	// new process - backend with provided topology file
+        server = new ServerConnection(saveLoadManagerGraph.getFile());    // new process - backend with provided topology file
 
-    	switch(server.getServerFileStatus()) {
-			case FILE_MODIFIED:
-				FailureReason = dataLayer.getString("SERVER_FILE_MODIFIED");
-				break;
+        switch (server.getServerFileStatus()) {
+            case FILE_MODIFIED:
+                FailureReason = dataLayer.getString("SERVER_FILE_MODIFIED");
+                break;
 
-                        case FILE_NOT_FOUND:
-				FailureReason = dataLayer.getString("SERVER_FILE_NOT_FOUND");
-				break;
+            case FILE_NOT_FOUND:
+                FailureReason = dataLayer.getString("SERVER_FILE_NOT_FOUND");
+                break;
 
-			case FILE_NOT_READABLE:
-				FailureReason = dataLayer.getString("SERVER_FILE_NOT_READABLE");
-				break;
+            case FILE_NOT_READABLE:
+                FailureReason = dataLayer.getString("SERVER_FILE_NOT_READABLE");
+                break;
 
-			case FILE_OK:
-				failed = false;
-				break;
-    	}
+            case FILE_OK:
+                failed = false;
+                break;
+        }
 
-        if(failed) {
-			JOptionPane.showMessageDialog(this,
-			FailureReason, 
-			dataLayer.getString("WARNING"),
-			JOptionPane.WARNING_MESSAGE);
-			server = null;
-			return false;
-    	}
-			
-    	else {
-    		server.start();
-    		return true;
-    	}
+        if (failed) {
+            JOptionPane.showMessageDialog(this,
+                    FailureReason,
+                    dataLayer.getString("WARNING"),
+                    JOptionPane.WARNING_MESSAGE);
+            server = null;
+            return false;
+        } else {
+            server.start();
+            return true;
+        }
     }
 
     private int showWarningEventsInListHaventComponents(String title, String message) {
         //Object[] options = {dataLayer.getString("SAVE"), dataLayer.getString("DONT_SAVE"), dataLayer.getString("CANCEL")};
-        Object[] options = {dataLayer.getString("SAVE_EVENTS_AND_CLEAR_LIST"), 
-            dataLayer.getString("DELETE_EVENTS"),dataLayer.getString("GO_BACK_TO_EDITOR")};
+        Object[] options = {dataLayer.getString("SAVE_EVENTS_AND_CLEAR_LIST"),
+                dataLayer.getString("DELETE_EVENTS"), dataLayer.getString("GO_BACK_TO_EDITOR")};
         int n = JOptionPane.showOptionDialog(this,
                 message,
                 title,
@@ -482,35 +482,35 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         return n;
     }
 
-    
+
     private void lowPermissionNotice() {
-            Object[] options = {"OK"};
-            int n = JOptionPane.showOptionDialog(
-            this,
-            dataLayer.getString("LOW_PERMISSION"),
-            dataLayer.getString("WARNING"),
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.INFORMATION_MESSAGE,
-            null, //do not use a custom Icon
-            options, //the titles of buttons
-            options[0]); //default button title
+        Object[] options = {"OK"};
+        int n = JOptionPane.showOptionDialog(
+                this,
+                dataLayer.getString("LOW_PERMISSION"),
+                dataLayer.getString("WARNING"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[0]); //default button title
     }
-    
+
     private boolean hasRealNetwork() {
         Collection c = jPanelUserInterfaceMain.getGraph().getHwComponents();
-        for(Object h : c) {
+        for (Object h : c) {
             HwComponentGraphic tmp = (HwComponentGraphic) h;
-            if(tmp.getHwComponentModel().getHwType() == HwTypeEnum.REAL_PC)
+            if (tmp.getHwComponentModel().getHwType() == HwTypeEnum.REAL_PC)
                 return true;
-            
+
         }
         return false;
     }
-    
+
     private boolean checkAppPermision() {
         String s = System.getProperty("os.name");
 
-        if(s.startsWith("Win")) {
+        if (s.startsWith("Win")) {
             /*
 //            String groups[] = (new com.sun.security.auth.module.NTSystem()).getGroupIDs();
 //            String groups[] = new com.sun.security.auth.NT;
@@ -519,27 +519,24 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 //            //        System.out.println("spusteno pod adminem");
 //                    return true;
 //            }
-            
+
  //           System.out.println("spusteno bez admina");
               */
-            
+
             return true;    // not needed on windows
-        }
-        
-        else {
+        } else {
             String user = System.getProperty("user.name");
-            if(user.equals("root")) {
+            if (user.equals("root")) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
     }
 
-    
+
     /**
-     * Returns true if checked and we can continue. 
+     * Returns true if checked and we can continue.
      * If returns false, simulation mode cannot be entered.
      *
      * @return
@@ -552,7 +549,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
             switch (userReaction) {
                 case DO_SAVE:
-                    // save 
+                    // save
                     boolean success = saveLoadManagerGraph.doSaveGraphAction();
                     if (success) {
                         String file = saveLoadManagerGraph.getFile().getPath();
@@ -570,7 +567,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         return true;
     }
 
-    
+
     /**
      * Returns true if checked and we should continue. False if do not continue.
      *
@@ -587,7 +584,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                     // user dont want to save, we should proceed
                     return true;
                 case DO_SAVE:
-                    // save 
+                    // save
                     boolean success = saveLoadManagerGraph.doSaveGraphAction();
                     if (success) {
                         String file = saveLoadManagerGraph.getFile().getPath();
@@ -606,6 +603,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for NewProject button
      */
@@ -639,6 +637,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for NewProject button
      */
@@ -664,6 +663,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Open button
      */
@@ -677,8 +677,8 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             openAction(null);
         }
     }
-    
-        
+
+
     /**
      * Action Listener for Open recent file button
      */
@@ -692,9 +692,9 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             openAction(e.getActionCommand());
         }
     }
-    
-      
-        ////////////////////////////////////////// JMenuItemAboutListener
+
+
+    ////////////////////////////////////////// JMenuItemAboutListener
     class JMenuItemAboutListener implements ActionListener {
         /**
          * Opens about dialog
@@ -702,33 +702,33 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         @Override
         public void actionPerformed(ActionEvent e) {
             final String ABOUT =
-                "<HTML>" +
-                "<B>"+dataLayer.getString("WINDOW_TITLE")+"</B></BR>" +
-                "<P><BR>"+dataLayer.getString("ABOUT_author")+": <FONT COLOR=\"#0000ff\">Martin Švihlík</FONT></P>" +
-                "<P><BR></P>"+dataLayer.getString("ABOUT_text")+
-                "</HTML>";
+                    "<HTML>" +
+                            "<B>" + dataLayer.getString("WINDOW_TITLE") + "</B></BR>" +
+                            "<P><BR>" + dataLayer.getString("ABOUT_author") + ": <FONT COLOR=\"#0000ff\">Martin Švihlík</FONT></P>" +
+                            "<P><BR></P>" + dataLayer.getString("ABOUT_text") +
+                            "</HTML>";
             JOptionPane.showMessageDialog(mainWindow, ABOUT, dataLayer.getString("ABOUT_aboutProgram"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
-    private void openAction(String filePath){
+
+    private void openAction(String filePath) {
         // if data can be lost after check
         if (!checkDataLoss()) {
             this.setCursor(defaultCursor);
             return;
         }
         mainWindow.setCursor(defaultCursor);
-        
+
         // turn off playing recording and etc
         jPanelUserInterfaceMain.stopSimulatorActivities();
 
-        
+
         // load network model
         NetworkModel networkModel;
-        
-        if(filePath == null){
+
+        if (filePath == null) {
             networkModel = saveLoadManagerGraph.doLoadNetworkModel();
-        }else{
+        } else {
             networkModel = saveLoadManagerGraph.doLoadNetworkModel(filePath);
         }
 
@@ -739,7 +739,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
         // set wait cursor
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    
+
         // create graph from model
         Graph graph = saveLoadManagerGraph.buildGraphFromNetworkModel(networkModel);
 
@@ -755,11 +755,12 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             GlassPanelPainterSingleton.getInstance().
                     addAnnouncement(dataLayer.getString("NETWORK_OPEN_ACTION"), dataLayer.getString("OPENED_FROM"), file);
         }
-        
+
         this.setCursor(defaultCursor);
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Save button
      */
@@ -778,12 +779,13 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                 GlassPanelPainterSingleton.getInstance().
                         addAnnouncement(dataLayer.getString("NETWORK_SAVE_ACTION"), dataLayer.getString("SAVED_TO"), file);
             }
-            
+
             mainWindow.setCursor(defaultCursor);
         }
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for SaveAs button
      */
@@ -802,12 +804,13 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
                 GlassPanelPainterSingleton.getInstance().
                         addAnnouncement(dataLayer.getString("NETWORK_SAVE_AS_ACTION"), dataLayer.getString("SAVED_TO"), file);
             }
-            
+
             mainWindow.setCursor(defaultCursor);
         }
     }
 
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for Exit Button
      */
@@ -830,61 +833,62 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
 
             dataLayer.savePreferences();
 
-            if(server != null)
-            	server.terminate();
+            if (server != null)
+                server.terminate();
 
             System.exit(0);
         }
     }
 
 /////////////////////-----------------------------------////////////////////
-	/**
-	* Action Listener for Exit Button
-	*/
-	class JToolBarServerLog implements ActionListener {
-	
-	/**
-	* Saves config data and exits application.
-	*/
-	@Override
-	public void actionPerformed(ActionEvent e) {
 
-		new ServerLog(server.getLogFile(), dataLayer);
-		
-		/*
-		// if data can be lost after check
-		if (!checkDataLoss()) {
-			mainWindow.setCursor(defaultCursor);
-			return;
-		}
-			mainWindow.setCursor(defaultCursor);
-			
-			refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.WELCOME, false);
-			
-			dataLayer.savePreferences();
-		
-		if(backend != null)
-			backend.terminate();
-			
-			System.exit(0);
-		*/
-		}
-	}
+    /**
+     * Action Listener for Exit Button
+     */
+    class JToolBarServerLog implements ActionListener {
 
-    
-    
+        /**
+         * Saves config data and exits application.
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            new ServerLog(server.getLogFile(), dataLayer);
+
+        /*
+        // if data can be lost after check
+        if (!checkDataLoss()) {
+            mainWindow.setCursor(defaultCursor);
+            return;
+        }
+            mainWindow.setCursor(defaultCursor);
+
+            refreshUserInterfaceMainPanel(null, null, UserInterfaceMainPanelState.WELCOME, false);
+
+            dataLayer.savePreferences();
+
+        if(backend != null)
+            backend.terminate();
+
+            System.exit(0);
+        */
+        }
+    }
+
+
 /////////////////////-----------------------------------////////////////////
+
     /**
      * Updates jPanelUserInterfaceMain according to userInterfaceState. If
      * changing to SIMULATOR or EDITOR state, graph cannot be null.
      *
-     * @param graph Graph to set into jPanelUserInterfaceMain, can be null if
-     * userInterfaceState will be WELCOME
-     * @param userInterfaceState State to change to.
+     * @param graph                   Graph to set into jPanelUserInterfaceMain, can be null if
+     *                                userInterfaceState will be WELCOME
+     * @param userInterfaceState      State to change to.
      * @param changingSimulatorEditor if true, the graph is kept untouched
      */
-	@Override
-	public void refreshUserInterfaceMainPanel(Graph graph, NetworkModel networkModel, UserInterfaceMainPanelState userInterfaceState, boolean changingSimulatorEditor) {
+    @Override
+    public void refreshUserInterfaceMainPanel(Graph graph, NetworkModel networkModel, UserInterfaceMainPanelState userInterfaceState, boolean changingSimulatorEditor) {
 
         // turn off playing recording and etc
         jPanelUserInterfaceMain.stopSimulatorActivities();
@@ -934,11 +938,11 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         // update buttons
         updateProjectRelatedButtons();
     }
-	
+
 ////////------------ PRIVATE------------///////////
 
     private void updateProjectRelatedButtons() {
-    	if (!jPanelUserInterfaceMain.hasGraph()) {
+        if (!jPanelUserInterfaceMain.hasGraph()) {
             jMenuBar.setProjectRelatedButtonsEnabled(false);
             jToolBar.setProjectRelatedButtonsEnabled(false, jPanelUserInterfaceMain.getUserInterfaceState());
 
@@ -960,15 +964,15 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
             jToolBar.setStartSimulationEnabled(false);
             jToolBar.setStopSimulationEnabled(false);
             jToolBar.setServerLogVisible(false);
-            
+
             return;
         }
 
         jMenuBar.setProjectRelatedButtonsEnabled(true);
         jToolBar.setProjectRelatedButtonsEnabled(true, jPanelUserInterfaceMain.getUserInterfaceState());
-        
+
         //jToolBar.jButtonStopSimulation.setVisible(false)
-        
+
         updateZoomButtons();
         updateUndoRedoButtons();
     }
@@ -992,7 +996,7 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         jMenuBar.addOpenActionListener(openListener);
         jToolBar.addOpenActionListener(openListener);
         jPanelUserInterfaceMain.addOpenProjectActionListener(openListener);
-        
+
         ActionListener openRecentFileListener = new JMenuItemOpenRecentFileListener();
         jMenuBar.addOpenRecentFileListener(openRecentFileListener);
 
@@ -1026,15 +1030,15 @@ public class MainWindow extends JFrame implements MainWindowInnerInterface, User
         jToolBar.addPreferencesActionListener(preferencesListener);
 
         // END add listeners to Menu Bar - OPTIONS
-        
+
         // add listeners to Menu Bar - HELP
         ActionListener aboutListener = new JMenuItemAboutListener();
         jMenuBar.addAboutListener(aboutListener);
-        
+
         // END add listeners to Menu Bar - HELP
 
         // tady jeste upravy komentaru
-        
+
         // add listeners to ToolBar - SIMULATION
         ActionListener simulatorListener = new JToolBarBackendListener();
         jToolBar.addSimulatorEditorActionListener(simulatorListener);

@@ -3,20 +3,21 @@ package applications.dhcp;
 import applications.Application;
 import config.configFiles.DhcpClientLeaseFile;
 import dataStructures.PacketItem;
-import dataStructures.packets.dhcp.DhcpPacket;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dhcp.DhcpPacketType;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacketType;
 import device.Device;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import networkModule.IpNetworkModule;
 import networkModule.L3.IPLayer;
 import networkModule.L3.NetworkInterface;
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DhcpClient extends Application {
@@ -29,7 +30,7 @@ public class DhcpClient extends Application {
     public DhcpClient(Device device) {
         super("dhclient", device);
         this.ipLayer = ((IpNetworkModule) device.getNetworkModule()).ipLayer;
-        this.leaseFile = new DhcpClientLeaseFile(device.getFilesystem());        
+        this.leaseFile = new DhcpClientLeaseFile(device.getFilesystem());
         port = DHCP_CLIENT_PORT;
     }
 
@@ -52,12 +53,12 @@ public class DhcpClient extends Application {
         IpPacket recIp;
         DhcpPacket recDhcp;
 
-	// prelozim pakety, a kdyby bylo neco spatne, koncim
+        // prelozim pakety, a kdyby bylo neco spatne, koncim
         // delam to vsechno najednou
         try {
             recIp = pItem.packet;
             recDhcp = (DhcpPacket) ((UdpPacket) recIp.data).getData();
-            recDhcp.getSize();	// abych si overil, ze to neni null
+            recDhcp.getSize();    // abych si overil, ze to neni null
         } catch (Exception ex) {
             return;
         }
@@ -78,7 +79,7 @@ public class DhcpClient extends Application {
     public DhcpClientLeaseFile getLeaseFile() {
         return this.leaseFile;
     }
-    
+
     @Override
     protected void atStart() {
     }

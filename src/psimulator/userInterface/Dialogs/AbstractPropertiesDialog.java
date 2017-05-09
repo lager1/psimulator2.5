@@ -5,28 +5,28 @@ import java.awt.Dialog;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.ValidationLayerUI;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public abstract class AbstractPropertiesDialog extends JDialog{
-    
+public abstract class AbstractPropertiesDialog extends JDialog {
+
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 6277141092814005851L;
-	protected JDialog thisDialog;
+     *
+     */
+    private static final long serialVersionUID = 6277141092814005851L;
+    protected JDialog thisDialog;
     protected JButton jButtonDefault;
-    
+
     // A single LayerUI for all the fields.
     protected LayerUI<JFormattedTextField> layerUI = new ValidationLayerUI();
-    
+
     protected Component parentComponent;
     protected DataLayerFacade dataLayer;
-    
+
     public AbstractPropertiesDialog(Component mainWindow, DataLayerFacade dataLayer) {
         this.dataLayer = dataLayer;
         this.parentComponent = (Component) mainWindow;
@@ -36,23 +36,23 @@ public abstract class AbstractPropertiesDialog extends JDialog{
         //this.setResizable(false);
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
-    
-    protected final void initialize(){
+
+    protected final void initialize() {
         // copy values to local
         copyValuesFromGlobalToLocal();
-        
+
         // add content to panel
         addContent();
-        
+
         // set default jbutton
         setDefaultJButton();
-        
+
         // initialize
         setDialogParameters();
 
     }
-    
-    
+
+
     private void setDialogParameters() {
 
         this.addWindowListener(new WindowAdapter() {
@@ -70,20 +70,20 @@ public abstract class AbstractPropertiesDialog extends JDialog{
         this.thisDialog = (JDialog) this;
 
         this.pack();
-        
+
         // place in middle of parent window
         int y = parentComponent.getY() + (parentComponent.getHeight() / 2) - (this.getHeight() / 2);
         int x = parentComponent.getX() + (parentComponent.getWidth() / 2) - (this.getWidth() / 2);
         this.setLocation(x, y);
     }
-    
+
     /**
      * Override this method to react on windowClosing event
      */
-    protected void windowClosing(){
-        
+    protected void windowClosing() {
+
     }
-        
+
     /**
      * Add key events reactions to root pane
      *
@@ -96,13 +96,13 @@ public abstract class AbstractPropertiesDialog extends JDialog{
         rootPane.registerKeyboardAction(new JButtonCancelListener(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
         return rootPane;
     }
-    
-    
+
+
     protected void closeAction() {
         boolean close = true;
-        
+
         copyValuesFromFieldsToLocal();
-        
+
         if (hasChangesMade()) {
             if (checkUserAndSave() == false) {
                 close = false;
@@ -114,8 +114,8 @@ public abstract class AbstractPropertiesDialog extends JDialog{
             this.dispose();    //closes the window
         }
     }
-    
-    
+
+
     /**
      * Checks user if he wants to save changes and saves it.
      */
@@ -134,8 +134,7 @@ public abstract class AbstractPropertiesDialog extends JDialog{
             return true;
         }
     }
-    
-    
+
 
     protected int showWarningSave(String title, String message) {
         Object[] options = {dataLayer.getString("SAVE"), dataLayer.getString("DONT_SAVE")};
@@ -151,17 +150,17 @@ public abstract class AbstractPropertiesDialog extends JDialog{
         return n;
     }
 
-    protected void addContent(){
+    protected void addContent() {
         // add Content
         this.getContentPane().add(createMainPanel());
     }
-    
+
     protected abstract void setDefaultJButton();
-    
+
     protected abstract JPanel createContentPanel();
-    
+
     protected abstract JPanel createMainPanel();
-    
+
     /**
      * Copies values from model to local variables.
      */
@@ -179,11 +178,13 @@ public abstract class AbstractPropertiesDialog extends JDialog{
 
     /**
      * True if changes made. False if no value or property changed.
-     * @return 
+     *
+     * @return
      */
     protected abstract boolean hasChangesMade();
-    
+
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for JComboBoxInterface
      */
@@ -197,6 +198,6 @@ public abstract class AbstractPropertiesDialog extends JDialog{
             closeAction();
         }
     }
-    
-    
+
+
 }

@@ -1,3 +1,0 @@
-pøíkaz
-
-c:\Users\Martin\Desktop\Diplomka\JavaHelp\jh2.0\javahelp\bin\jhindexer -c config_cz

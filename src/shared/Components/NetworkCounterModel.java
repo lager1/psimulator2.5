@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class NetworkCounterModel implements Serializable{
+public class NetworkCounterModel implements Serializable {
 
     private int nextId;
     private int nextMacAddress;
@@ -26,20 +25,22 @@ public class NetworkCounterModel implements Serializable{
         this.nextId = nextId;
     }
 
-    
+
     /**
      * Gets next unique ID
-     * @return 
+     *
+     * @return
      */
     public int getNextId() {
         return nextId++;
     }
-    
+
     /**
      * Gets current free unique ID
-     * @return 
+     *
+     * @return
      */
-    public int getCurrentId(){
+    public int getCurrentId() {
         return nextId;
     }
 
@@ -49,36 +50,40 @@ public class NetworkCounterModel implements Serializable{
     public void increaseMacAddressCounter() {
         nextMacAddress++;
     }
-    
+
     /**
      * Gets current mac address (free)
-     * @return 
+     *
+     * @return
      */
-    public int getCurrentMacAddress(){
+    public int getCurrentMacAddress() {
         return nextMacAddress;
     }
-    
+
     /**
      * Gets number for hwTypeEnum map
+     *
      * @param key
-     * @return 
+     * @return
      */
-    public Integer getFromNumberMap(HwTypeEnum key){
+    public Integer getFromNumberMap(HwTypeEnum key) {
         return nextNumberMap.get(key);
     }
-    
+
     /**
      * Puts number to hwTypeEnumMap
+     *
      * @param key
-     * @param value 
+     * @param value
      */
-    public void putToNumberMap(HwTypeEnum key, Integer value){
+    public void putToNumberMap(HwTypeEnum key, Integer value) {
         nextNumberMap.put(key, value);
     }
 
     /**
      * Gets next mac address
-     * @return 
+     *
+     * @return
      */
     public int getNextMacAddress() {
         return nextMacAddress;
@@ -86,7 +91,8 @@ public class NetworkCounterModel implements Serializable{
 
     /**
      * Sets next mac address. Used when restoring counter state.
-     * @param nextMacAddress 
+     *
+     * @param nextMacAddress
      */
     public void setNextMacAddress(int nextMacAddress) {
         this.nextMacAddress = nextMacAddress;
@@ -99,7 +105,6 @@ public class NetworkCounterModel implements Serializable{
     public void setNextNumberMap(Map<HwTypeEnum, Integer> nextNumberMap) {
         this.nextNumberMap = nextNumberMap;
     }
-    
-    
-    
+
+
 }

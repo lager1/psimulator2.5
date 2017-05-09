@@ -15,26 +15,27 @@ import device.Device;
  */
 public abstract class TwoThreadApplication extends Application implements Runnable {
 
-	private Thread myThread;
-	/**
-	 * Jestli se ma bezet nebo uz skoncit. Potomci si ho sami musi volat!
-	 */
+    private Thread myThread;
 
-	public TwoThreadApplication(String name, Device device) {
-		super(name, device);
-		myThread = new Thread(this, device.getName()+": TwoThreadedApp_vlakno_na_popredi");
-	}
+    /**
+     * Jestli se ma bezet nebo uz skoncit. Potomci si ho sami musi volat!
+     */
 
-	/**
-	 * Prepisuju metodu zdedenou po aplikaci, aby se v ni spustilo to moje vlakno.
-	 */
-	@Override
-	public synchronized void start() {
-		super.start();
-		myThread.start();
-	}
+    public TwoThreadApplication(String name, Device device) {
+        super(name, device);
+        myThread = new Thread(this, device.getName() + ": TwoThreadedApp_vlakno_na_popredi");
+    }
 
-	public String getMyThreadName(){
-		return myThread.getName();
-	}
+    /**
+     * Prepisuju metodu zdedenou po aplikaci, aby se v ni spustilo to moje vlakno.
+     */
+    @Override
+    public synchronized void start() {
+        super.start();
+        myThread.start();
+    }
+
+    public String getMyThreadName() {
+        return myThread.getName();
+    }
 }

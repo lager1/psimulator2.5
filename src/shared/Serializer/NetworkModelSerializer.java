@@ -1,10 +1,10 @@
 package shared.Serializer;
 
 import shared.Components.NetworkModel;
+
 import java.io.*;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class NetworkModelSerializer implements AbstractNetworkSerializer {
@@ -30,7 +30,7 @@ public class NetworkModelSerializer implements AbstractNetworkSerializer {
 
         OutputStream os = null;
         ObjectOutputStream oos = null;
-        
+
         // save in autoclose stream
         try {
             os = new FileOutputStream(file);
@@ -42,16 +42,16 @@ public class NetworkModelSerializer implements AbstractNetworkSerializer {
             //Logger.getLogger(NetworkModelSerializer.class.getName()).log(Level.SEVERE, null, ex);
             // throw exception
             throw new SaveLoadException(new SaveLoadExceptionParametersWrapper(SaveLoadExceptionType.ERROR_WHILE_WRITING, fileName, true));
-        } finally{
+        } finally {
             try {
-                if(oos != null){
+                if (oos != null) {
                     oos.close();
                 }
             } catch (IOException ex) {
                 // nothing to do
             }
             try {
-                if(os != null){
+                if (os != null) {
                     os.close();
                 }
             } catch (IOException ex) {
@@ -78,8 +78,8 @@ public class NetworkModelSerializer implements AbstractNetworkSerializer {
         }
 
         InputStream is = null;
-        ObjectInputStream ois =null;
-        
+        ObjectInputStream ois = null;
+
         // try read in autoclose streams
         try {
             is = new FileInputStream(file);
@@ -91,16 +91,16 @@ public class NetworkModelSerializer implements AbstractNetworkSerializer {
         } catch (Exception ex) {
             // throw exception
             throw new SaveLoadException(new SaveLoadExceptionParametersWrapper(SaveLoadExceptionType.ERROR_WHILE_READING, fileName, true));
-        } finally{
+        } finally {
             try {
-                if(ois != null){
+                if (ois != null) {
                     ois.close();
                 }
             } catch (IOException ex) {
                 // nothing to do
             }
             try {
-                if(is != null){
+                if (is != null) {
                     is.close();
                 }
             } catch (IOException ex) {

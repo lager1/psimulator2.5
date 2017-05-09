@@ -12,10 +12,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  */
 public class UndoableChagePositionOfAllComponents extends AbstractUndoableEdit {
 
-	private static final long serialVersionUID = -5816618023201111485L;
-	protected GraphOuterInterface graph;
+    private static final long serialVersionUID = -5816618023201111485L;
+    protected GraphOuterInterface graph;
     protected HashMap<HwComponentGraphic, Dimension> map;
-    
+
     public UndoableChagePositionOfAllComponents(GraphOuterInterface graph, HashMap<HwComponentGraphic, Dimension> map) {
         super();
         this.graph = graph;
@@ -26,7 +26,7 @@ public class UndoableChagePositionOfAllComponents extends AbstractUndoableEdit {
     public void undo() {
         super.undo();
 
-   
+
         for (HwComponentGraphic component : map.keySet()) {
             graph.doChangePositionOfAbstractHwComponent(component, map.get(component), true);
         }

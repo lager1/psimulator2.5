@@ -3,18 +3,18 @@ package psimulator.userInterface.SimulatorEditor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
+
 import psimulator.userInterface.SimulatorEditor.AnimationPanel.AnimationPanelOuterInterface;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.Graph;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public abstract class UserInterfaceMainPanelOuterInterface extends JPanel {
 
-	private static final long serialVersionUID = -8123178626764768767L;
+    private static final long serialVersionUID = -8123178626764768767L;
 
-	public UserInterfaceMainPanelOuterInterface(BorderLayout borderLayout) {
+    public UserInterfaceMainPanelOuterInterface(BorderLayout borderLayout) {
         super(borderLayout);
     }
 
@@ -69,6 +69,7 @@ public abstract class UserInterfaceMainPanelOuterInterface extends JPanel {
      * @return
      */
     public abstract Graph getGraph();
+
     /**
      * Removes all simulator events
      */
@@ -76,7 +77,8 @@ public abstract class UserInterfaceMainPanelOuterInterface extends JPanel {
 
     /**
      * Changes mode of user interface
-     * @param userInterfaceState 
+     *
+     * @param userInterfaceState
      */
     public abstract void doChangeMode(UserInterfaceMainPanelState userInterfaceState);
 
@@ -87,7 +89,8 @@ public abstract class UserInterfaceMainPanelOuterInterface extends JPanel {
 
     /**
      * Gets state of user interface.
-     * @return 
+     *
+     * @return
      */
     public abstract UserInterfaceMainPanelState getUserInterfaceState();
 

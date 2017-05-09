@@ -23,11 +23,11 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelInnerInter
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInterface implements Observer,
+public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInterface implements Observer, 
         UserInterfaceLayeredPaneInnerInterface{
 
-	private static final long serialVersionUID = 1680118781506333985L;
-	private DrawPanelOuterInterface jPanelDraw; // draw panel
+    private static final long serialVersionUID = 1680118781506333985L;
+    private DrawPanelOuterInterface jPanelDraw; // draw panel
     private AnimationPanelOuterInterface jPanelAnimation; // animation panel
     //
     //private MainWindowInnerInterface mainWindow;
@@ -37,13 +37,13 @@ public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInter
     private Dimension defaultZoomArea = new Dimension(defaultZoomAreaMin);
     private Dimension actualZoomArea = new Dimension(defaultZoomArea);
 
-    public UserInterfaceLayeredPane(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface userInterface,
+    public UserInterfaceLayeredPane(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface userInterface, 
             DataLayerFacade dataLayer) {
 
         //
         //this.mainWindow = mainWindow;
         this.userInterface = userInterface;
-        
+
         //
         this.setOpaque(true);
         this.setBackground(Color.WHITE);
@@ -182,7 +182,7 @@ public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInter
             defaultZoomArea.height = dimDef.height;
         }
 
-        actualZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.width),
+        actualZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.width), 
                 ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.height));
     }
     
@@ -200,13 +200,13 @@ public class UserInterfaceLayeredPane extends UserInterfaceLayeredPaneOuterInter
             defaultZoomArea.setSize(defaultZoomAreaMin.width, defaultZoomAreaMin.height);
 
             // set area according to defaultZoomArea
-            actualZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.width),
+            actualZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.width), 
                     ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomArea.height));
         } else {
             // update area size
             actualZoomArea.setSize(graphWidthActual, graphHeightActual);
             // update default zoom size
-            defaultZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToDefault(actualZoomArea.width),
+            defaultZoomArea.setSize(ZoomManagerSingleton.getInstance().doScaleToDefault(actualZoomArea.width), 
                     ZoomManagerSingleton.getInstance().doScaleToDefault(actualZoomArea.height));
         }
 

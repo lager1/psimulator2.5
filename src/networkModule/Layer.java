@@ -7,7 +7,6 @@ package networkModule;
 import utils.WorkerThread;
 
 /**
- *
  * @author neiss
  */
 public abstract class Layer {

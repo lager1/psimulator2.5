@@ -23,5 +23,5 @@ public class RemovedComponentsWrapper {
 
     public List<HwComponentGraphic> getRemovedComponents() {
         return removedComponents;
-    }   
+    }
 }

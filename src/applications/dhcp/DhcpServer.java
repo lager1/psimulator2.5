@@ -9,17 +9,19 @@ import dataStructures.configurations.DhcpServerConfiguration;
 import dataStructures.configurations.DhcpSubnetConfiguration;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dhcp.DhcpPacket;
-import dataStructures.packets.dhcp.DhcpPacketType;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacketType;
 import device.Device;
 import filesystem.FileSystem;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
+
 import logging.Logger;
 import logging.LoggingCategory;
 import networkModule.L2.EthernetLayer;
@@ -28,7 +30,7 @@ import networkModule.SwitchNetworkModule;
 
 public class DhcpServer extends Application {
 
-    private final static int ttl = 64;	// ttl, se kterym se budoui odesilat pakety
+    private final static int ttl = 64;    // ttl, se kterym se budoui odesilat pakety
     public final static int SERVER_PORT = 67;
     public final static int CLIENT_PORT = 68;
     /**
@@ -47,7 +49,7 @@ public class DhcpServer extends Application {
     private final FileSystem fs;
 
     public DhcpServer(Device device) {
-        super("dhcpd", device);	// jmeno jako u me na linuxu
+        super("dhcpd", device);    // jmeno jako u me na linuxu
         port = SERVER_PORT;
         ethLayer = ((SwitchNetworkModule) device.getNetworkModule()).ethernetLayer;
         leaseFile = new DhcpServerLeaseFile(device.getFilesystem());
@@ -90,7 +92,7 @@ public class DhcpServer extends Application {
         if (!reserved.containsKey(recDhcp.clientMac)) {
             return;
         }
-        
+
         IPwithNetmask adrm = reserved.get(recDhcp.clientMac);
         HashMap<String, String> options = getOptions(adrm);
         reserved.remove(recDhcp.clientMac);
@@ -103,12 +105,12 @@ public class DhcpServer extends Application {
         UdpPacket recUdp;
         DhcpPacket recDhcp;
 
-        // najednou nactu vsechny pakety, kdyby neco bylo null nebo neslo pretypovat, 
+        // najednou nactu vsechny pakety, kdyby neco bylo null nebo neslo pretypovat,
         // hodilo by to vyjimku - v tom pripade koncim
         try {
             recUdp = (UdpPacket) recIp.data;
             recDhcp = (DhcpPacket) recUdp.getData();
-            recDhcp.getSize();	// abych si overil, ze to neni null
+            recDhcp.getSize();    // abych si overil, ze to neni null
         } catch (Exception ex) {
             log(Logger.INFO, "DHCP serveru prisel spatnej paket.", recIp);
             return;
@@ -127,7 +129,7 @@ public class DhcpServer extends Application {
     }
 
     private void sendDhcpPacket(DhcpPacketType replyType, NetworkInterface iface, DhcpPacket recDhcp,
-            IPwithNetmask adrm, HashMap<String, String> options) {
+                                IPwithNetmask adrm, HashMap<String, String> options) {
         // nactu, co mu poslu:
         IpAddress serverAddress = iface.getIpAddress().getIp();
         // sestavim pakety:
@@ -137,7 +139,7 @@ public class DhcpServer extends Application {
         if (replyType == DhcpPacketType.ACK) {
             leaseFile.appendLease(replyDhcp, iface);
         }
-        
+
         UdpPacket replyUdp = new UdpPacket(SERVER_PORT, CLIENT_PORT, replyDhcp);
         IpPacket replyIp = new IpPacket(serverAddress, new IpAddress("255.255.255.255"), ttl, replyUdp);
         // nakonec to poslu pomoci ethernetovy vrstvy:
@@ -220,7 +222,7 @@ public class DhcpServer extends Application {
         } else {
             config = dhcpdConf.getConfiguration();
         }
-        
+
         reserved = new HashMap<>();
         refreshAddresses();
     }

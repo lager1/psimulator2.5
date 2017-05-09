@@ -1,7 +1,6 @@
 package shared.Serializer;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public enum SaveLoadExceptionType {

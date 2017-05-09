@@ -3,18 +3,16 @@ package psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.text.NumberFormat;
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
 import psimulator.userInterface.Dialogs.AbstractPropertiesOkCancelDialog;
@@ -39,6 +37,12 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
      * window componenets
      */
     private JFormattedTextField jTextFieldDeviceName;
+    private JCheckBox jCheckBoxEnableSTPvalue;
+    private JFormattedTextField jMaxAgeValue;
+    private JFormattedTextField jBridgePriorityValue;
+    private JFormattedTextField jForwardDelayValue;
+    private JFormattedTextField jHelloTimeValue;
+
 
     private JButton jButtonAddInterface;
     private JButton jButtonRemoveInterface;
@@ -50,8 +54,15 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     private boolean showInterfaces = true;
     private boolean viewUniqueId = true;
     private boolean allowInterfaceCountChange = true;
+    private boolean showSTPconfiguration = false;
     //
     private String deviceName;
+    private Boolean enableSTP = false;
+    private Integer maxAge = 10;
+    private Integer forwardDelay = 7;
+    private Integer bridgePriority = 32768;
+    private Integer helloTime = 5;
+
     //private String realInterface;
     //
     private InterfacesTableModel tableInterfacesModel;
@@ -83,6 +94,7 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
                 showAddresses = false;
                 showInterfaces = true;
                 allowInterfaceCountChange = true;
+                showSTPconfiguration = true;
                 break;
             case REAL_PC:
                 showAddresses = false;
@@ -144,6 +156,22 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     protected void copyValuesFromGlobalToLocal() {
         // save name
         deviceName = abstractHwComponent.getDeviceName();
+        if (showSTPconfiguration) {
+            if (abstractHwComponent.getHwComponentModel().getStpEnabled() != null)
+                enableSTP = abstractHwComponent.getHwComponentModel().getStpEnabled();
+
+            if (abstractHwComponent.getHwComponentModel().getBridgePriority() != null)
+                bridgePriority = abstractHwComponent.getHwComponentModel().getBridgePriority();
+
+            if (abstractHwComponent.getHwComponentModel().getMaxAge() != null)
+                maxAge = abstractHwComponent.getHwComponentModel().getMaxAge();
+
+            if (abstractHwComponent.getHwComponentModel().getForwardDelay() != null)
+                forwardDelay = abstractHwComponent.getHwComponentModel().getForwardDelay();
+
+            if (abstractHwComponent.getHwComponentModel().getHelloTime() != null)
+                helloTime = abstractHwComponent.getHwComponentModel().getHelloTime();
+        }
     }
 
     /**
@@ -153,6 +181,13 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     protected void copyValuesFromLocalToGlobal() {
         // save name
         abstractHwComponent.setDeviceName(deviceName);
+        if (showSTPconfiguration) {
+            abstractHwComponent.getHwComponentModel().setBridgePriority(bridgePriority);
+            abstractHwComponent.getHwComponentModel().setMaxAge(maxAge);
+            abstractHwComponent.getHwComponentModel().setForwardDelay(forwardDelay);
+            abstractHwComponent.getHwComponentModel().setStpEnabled(enableSTP);
+            abstractHwComponent.getHwComponentModel().setHelloTime(helloTime);
+        }
 
         if(showInterfaces){
             // save interface changes
@@ -201,6 +236,13 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     @Override
     protected void copyValuesFromFieldsToLocal() {
         deviceName = jTextFieldDeviceName.getText().trim();
+        if (showSTPconfiguration) {
+            enableSTP = jCheckBoxEnableSTPvalue.isSelected();
+            forwardDelay = (Integer)jForwardDelayValue.getValue();
+            bridgePriority = (Integer)jBridgePriorityValue.getValue();
+            maxAge = (Integer)jMaxAgeValue.getValue();
+            helloTime = (Integer)jHelloTimeValue.getValue();
+        }
     }
 
     /**
@@ -240,7 +282,15 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
 
         cons.gridx = 0;
         cons.gridy = 0;
-        mainPanel.add(createDevicePanel(), cons);
+        if (showSTPconfiguration) {
+            JTabbedPane tabbedPane = new JTabbedPane();
+            tabbedPane.addTab("General Configuration", createDevicePanel());
+            tabbedPane.addTab("STP Configuration", createStpPanel());
+
+            mainPanel.add(tabbedPane, cons);
+        }
+        else
+            mainPanel.add(createDevicePanel(), cons);
         
         cons.gridx = 0;
         cons.gridy = 1;
@@ -263,6 +313,83 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
          */
 
         return mainPanel;
+    }
+
+    private JPanel createStpPanel() {
+        GridLayout devicePanelLayout = new GridLayout(0, 2);
+        devicePanelLayout.setHgap(10);
+
+        JPanel devicePanel = new JPanel();
+        devicePanel.setLayout(devicePanelLayout);
+        devicePanel.setBorder(BorderFactory.createTitledBorder(dataLayer.getString("STP_CONFIGURATION")));
+
+        JLabel enableSTPname = new JLabel(dataLayer.getString("ENABLE_STP"));
+        enableSTPname.setFont(fontBold);
+        devicePanel.add(enableSTPname);
+
+        jCheckBoxEnableSTPvalue = new JCheckBox();
+        jCheckBoxEnableSTPvalue.setSelected(enableSTP);
+        devicePanel.add(jCheckBoxEnableSTPvalue);
+
+        devicePanel.setLayout(devicePanelLayout);
+
+        JLabel bridgePriorityName = new JLabel(dataLayer.getString("BRIDGE_PRIORITY"));
+        devicePanel.add(bridgePriorityName);
+
+        NumberFormatter format = new NumberFormatter(NumberFormat.getIntegerInstance());
+        format.setMinimum(0);
+        format.setMaximum(65535);
+        format.setValueClass(Integer.class);
+
+
+        jBridgePriorityValue = new JFormattedTextField(format);
+        jBridgePriorityValue.setToolTipText(dataLayer.getString("BRIDGE_PRIORITY_TOOLTIP"));
+        jBridgePriorityValue.setValue(bridgePriority);
+        devicePanel.add(jBridgePriorityValue);
+
+        JLabel maxAgeName = new JLabel(dataLayer.getString("MAX_AGE"));
+        devicePanel.add(maxAgeName);
+
+        format = new NumberFormatter(NumberFormat.getIntegerInstance());
+        format.setMinimum(6);
+        format.setMaximum(40);
+        format.setValueClass(Integer.class);
+
+
+        jMaxAgeValue = new JFormattedTextField(format);
+        jMaxAgeValue.setValue(maxAge);
+        devicePanel.add(jMaxAgeValue);
+
+
+        JLabel forwardDelayName = new JLabel(dataLayer.getString("FORWARD_DELAY"));
+        devicePanel.add(forwardDelayName);
+
+        format = new NumberFormatter(NumberFormat.getIntegerInstance());
+        format.setMinimum(1);
+        format.setMaximum(30);
+        format.setValueClass(Integer.class);
+
+
+        jForwardDelayValue = new JFormattedTextField(format);
+        jForwardDelayValue.setValue(forwardDelay);
+        devicePanel.add(jForwardDelayValue);
+
+        JLabel helloTimeName = new JLabel(dataLayer.getString("HELLO_TIME"));
+        devicePanel.add(helloTimeName);
+
+        format = new NumberFormatter(NumberFormat.getIntegerInstance());
+        format.setMinimum(1);
+        format.setMaximum(10);
+        format.setValueClass(Integer.class);
+
+
+        jHelloTimeValue = new JFormattedTextField(format);
+        jHelloTimeValue.setToolTipText(dataLayer.getString("HELLO_TIME_TOOLTIP"));
+        jHelloTimeValue.setValue(helloTime);
+        devicePanel.add(jHelloTimeValue);
+
+
+        return devicePanel;
     }
 
     private JPanel createDevicePanel() {
@@ -304,6 +431,7 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
 
         JLabel interfaceCountValue = new JLabel("" + abstractHwComponent.getInterfaceCount());
         devicePanel.add(interfaceCountValue);
+
         //
         if (viewUniqueId) {
             JLabel deviceIdName = new JLabel(dataLayer.getString("DEVICE_UNIQUE_ID"));
@@ -334,11 +462,11 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
 
         /*
         if(showAddresses){
-            jScrollPane.setMaximumSize(new Dimension(470,150));
-            jScrollPane.setPreferredSize(new Dimension(470,150));
+            jScrollPane.setMaximumSize(new Dimension(470, 150));
+            jScrollPane.setPreferredSize(new Dimension(470, 150));
         }else{
-            jScrollPane.setMaximumSize(new Dimension(300,150));
-            jScrollPane.setPreferredSize(new Dimension(300,150));
+            jScrollPane.setMaximumSize(new Dimension(300, 150));
+            jScrollPane.setPreferredSize(new Dimension(300, 150));
             
         }*/
             
@@ -490,7 +618,7 @@ public final class HwComponentProperties extends AbstractPropertiesOkCancelDialo
     
     private void showWarningDialog(String title, String message) {
         //custom title, warning icon
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this, 
                 message, title, JOptionPane.WARNING_MESSAGE);
     }
 }

@@ -14,11 +14,11 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.MouseActionListeners.D
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public abstract class AbstractTool {
-    
+
     protected MainTool tool;
     protected String path;
     protected DrawPanelToolChangeOuterInterface toolChangeInterface;
-    
+
     public AbstractTool(MainTool tool, String path, DrawPanelToolChangeOuterInterface toolChangeInterface) {
         this.tool = tool;
         this.path = path;
@@ -26,23 +26,23 @@ public abstract class AbstractTool {
     }
 
     public abstract String getTranslatedName(DataLayerFacade dataLayer);
-    
+
     public abstract String getToolTip(DataLayerFacade dataLayer);
 
     public MainTool getTool() {
         return tool;
     }
-    
+
     public ImageIcon getImageIcon(DataLayerFacade dataLayer) {
         ToolbarIconSizeEnum iconSize = dataLayer.getToolbarIconSize();
         return ImageFactorySingleton.getInstance().getImageIconForToolbar(tool, path, iconSize, false);
     }
-    
+
     public ImageIcon getImageIconForPopup(DataLayerFacade dataLayer) {
         ToolbarIconSizeEnum iconSize = dataLayer.getToolbarIconSize();
         return ImageFactorySingleton.getInstance().getImageIconForToolbar(tool, path, iconSize, true);
     }
- 
+
     /**
      * Sets proper DrawPanelListenerStrategy in toolChangeInterface
      */

@@ -1,14 +1,12 @@
 package shared.Components;
 
 import java.util.*;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import shared.Components.simulatorConfig.DeviceSettings;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -18,6 +16,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * LinkedHashMap of EthInterfaces that component owns. Key is the
      * ethInterface ID.
      */
+    @XmlElement
     private Map<Integer, EthInterfaceModel> interfacesMap;
     // -------------------------------------------------------
     /**
@@ -48,9 +47,34 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
      * real inteface name
      */
     private String realInterface;
-    
-    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, List<EthInterfaceModel> ethInterfaces,
-            int defaultZoomXPos, int defaultZoomYPos) {
+
+    /**
+     * @var Bridge priority
+     */
+    private Integer bridgePriority;
+
+    /**
+     * @var Bridge Message Max age
+     */
+    private Integer maxAge;
+
+    /**
+     * @var Bridge Forward delay
+     */
+    private Integer forwardDelay;
+
+    /**
+     * @var Enabling Spanning tree protocol
+     */
+    private Boolean stpEnabled;
+
+    /**
+     * @var Bridge Hello time
+     */
+    private Integer helloTime;
+
+    public HwComponentModel(Integer id, HwTypeEnum hwType, String deviceName, ArrayList<EthInterfaceModel> ethInterfaces,
+                            int defaultZoomXPos, int defaultZoomYPos) {
 
         // add values to variables
         this.id = id;
@@ -78,7 +102,7 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     }
 
     /**
-     * Gets first avaiable ethInterface, if no avaiable null is renturned
+     * Gets first available ethInterface, if no available null is renturned
      *
      * @return
      */
@@ -107,7 +131,8 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets interface names as array of Objects
-     * @return 
+     *
+     * @return
      */
     public Object[] getInterfacesNames() {
         Object[] list = new Object[interfacesMap.size()];
@@ -122,8 +147,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterface with specified ID
+     *
      * @param id
-     * @return 
+     * @return
      */
     public EthInterfaceModel getEthInterface(Integer id) {
         return interfacesMap.get(id);
@@ -131,8 +157,9 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterface at specified index
+     *
      * @param index
-     * @return 
+     * @return
      */
     public EthInterfaceModel getEthInterfaceAtIndex(int index) {
         List<EthInterfaceModel> list = new ArrayList<EthInterfaceModel>(interfacesMap.values());
@@ -141,7 +168,8 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
 
     /**
      * Gets ethInterfaces count
-     * @return 
+     *
+     * @return
      */
     public int getEthInterfaceCount() {
         return interfacesMap.size();
@@ -214,31 +242,130 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         return interfacesMap.values();
     }
 
-    
+
     @XmlTransient // do not store as a map, we need a reference to this object for JAXB, storing as List
     public Map<Integer, EthInterfaceModel> getInterfacesMap() {
         return interfacesMap;
     }
 
-    public void setInterfacesMap(Map<Integer, EthInterfaceModel> interfacesMap) {
+
+    public void setInterfacesMap(LinkedHashMap<Integer, EthInterfaceModel> interfacesMap) {
         this.interfacesMap = interfacesMap;
     }
 
-    @XmlElement(name = "interface")
-    public List<EthInterfaceModel> getInterfacesAsList() {
+    @XmlTransient
+    public ArrayList<EthInterfaceModel> getInterfacesAsList() {
         return new ArrayList<EthInterfaceModel>(this.interfacesMap.values());
     }
 
-    public void setInterfacesAsList(List<EthInterfaceModel> ethInterfaces) {
-
+    public void setInterfacesAsList(ArrayList<EthInterfaceModel> ethInterfaces) {
         this.interfacesMap = new LinkedHashMap<Integer, EthInterfaceModel>();
 
         for (EthInterfaceModel eth : ethInterfaces) {
             interfacesMap.put(eth.getId(), eth);
         }
-        
+
     }
-    
+
+    /**
+     * Gets bridge priority (STP)
+     *
+     * @return Bridge priority
+     */
+    public Integer getBridgePriority()
+    {
+        return bridgePriority;
+    }
+
+    /**
+     * Sets bridge priority (STP)
+     *
+     * @param bridgePriority
+     */
+    public void setBridgePriority(Integer bridgePriority)
+    {
+        this.bridgePriority = bridgePriority;
+    }
+
+    /**
+     * Get bridge Message max age
+     *
+     * @return Bridge Max age
+     */
+    public Integer getMaxAge()
+    {
+        return maxAge;
+    }
+
+    /**
+     * Sets bridge Maximal message age
+     *
+     * @param maxAge
+     */
+    public void setMaxAge(Integer maxAge)
+    {
+        this.maxAge = maxAge;
+    }
+
+    /**
+     * Gets bridge forward delay
+     * @return Bridge forward delay
+     */
+    public Integer getForwardDelay()
+    {
+        return forwardDelay;
+    }
+
+    /**
+     * Sets Bridge forward delay
+     *
+     * @param forwardDelay
+     */
+    public void setForwardDelay(Integer forwardDelay)
+    {
+        this.forwardDelay = forwardDelay;
+    }
+
+    /**
+     * Gets STP protocol status
+     *
+     * @return true if STP enabled otherwise false
+     */
+    public Boolean getStpEnabled()
+    {
+        return stpEnabled;
+    }
+
+    /**
+     * Sets STP protocol status
+     *
+     * @param stpEnabled
+     */
+    public void setStpEnabled(Boolean stpEnabled)
+    {
+        this.stpEnabled = stpEnabled;
+    }
+
+    /**
+     *  Gets bridge hello time
+     *
+     * @return bridge hello time
+     */
+    public Integer getHelloTime()
+    {
+        return helloTime;
+    }
+
+    /**
+     * Sets Bridge hello time
+     *
+     * @param helloTime
+     */
+    public void setHelloTime(Integer helloTime)
+    {
+        this.helloTime = helloTime;
+    }
+
     @Override
     public HwTypeEnum getHwType() {
         return hwType;
@@ -266,35 +393,38 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
     public void setDevSettings(DeviceSettings devSettings) {
         this.devSettings = devSettings;
     }
-    
-        /**
+
+    /**
      * Removes interface with specified ID
-     * @param id 
+     *
+     * @param eth interface object object
      */
-    public void removeInterface(EthInterfaceModel eth){
+    public void removeInterface(EthInterfaceModel eth) {
         interfacesMap.remove(eth.getId());
-        
+
         // unbind eth interface and component
         eth.setHwComponent(null);
     }
 
     /**
      * Adds interface in parameter to interfaces map
-     * @param eth 
+     *
+     * @param eth
      */
-    public void addInterface(EthInterfaceModel eth){
+    public void addInterface(EthInterfaceModel eth) {
         // bind eth interface and component together
         eth.setHwComponent(this);
-        
+
         interfacesMap.put(eth.getId(), eth);
     }
-    
+
     /**
      * Returns minimum interface count for component
-     * @return 
+     *
+     * @return
      */
-    public int getMinInterfaceCount(){
-        switch(hwType){
+    public int getMinInterfaceCount() {
+        switch (hwType) {
             case CISCO_ROUTER:
             case CISCO_SWITCH:
             case LINUX_ROUTER:
@@ -310,3 +440,4 @@ public final class HwComponentModel implements PositionInterface, NameInterface,
         }
     }
 }
+>>>>>>> 16b526d (adapt new repo structure)

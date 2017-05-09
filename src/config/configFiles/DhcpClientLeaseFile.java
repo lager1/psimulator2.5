@@ -3,11 +3,12 @@ package config.configFiles;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
-import dataStructures.packets.dhcp.DhcpPacket;
+import dataStructures.packets.L7.dhcp.DhcpPacket;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -16,10 +17,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
+
 import networkModule.L3.NetworkInterface;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DhcpClientLeaseFile extends AbstractLeaseFile {
@@ -122,8 +123,8 @@ public class DhcpClientLeaseFile extends AbstractLeaseFile {
                             state = 0;
                         }
 
-                        if (adr != null && mask != null && 
-                            expire != null && ifaceName.equals(iface.name)) {
+                        if (adr != null && mask != null &&
+                                expire != null && ifaceName.equals(iface.name)) {
                             lease.leasedAddress = new IPwithNetmask(adr, mask);
                             lease.expireDate = expire;
                             break;

@@ -1,17 +1,17 @@
 package applications.dns;
 
 import applications.Application;
-import com.sun.rmi.rmid.ExecOptionPermission;
+//import com.sun.rmi.rmid.ExecOptionPermission;
 import config.configFiles.NamedConfFile;
 import dataStructures.PacketItem;
 import device.Device;
 import filesystem.FileSystem;
+
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DnsServer extends Application {
@@ -21,8 +21,8 @@ public class DnsServer extends Application {
     protected NamedConfFile namedConf;
 
     protected Map<String, ZoneInfo> zoneDatabase;
-    
-    private ExecutorService threadPool; 
+
+    private ExecutorService threadPool;
 
     public DnsServer(Device device) {
         super("dns_server", device);
@@ -34,7 +34,7 @@ public class DnsServer extends Application {
     private void handleIncomingPacket(PacketItem packetItem) {
         threadPool.execute(new DnsServerThread(this, applicationLayer, packetItem));
     }
-    
+
     @Override
     protected void atStart() {
         if (!fs.exists(namedConf.getFilePath())) {
@@ -42,7 +42,7 @@ public class DnsServer extends Application {
         }
 
         zoneDatabase = namedConf.getZones();
-        
+
         threadPool = Executors.newCachedThreadPool();
     }
 
@@ -66,7 +66,7 @@ public class DnsServer extends Application {
     public String getDescription() {
         return device.getName() + ": DNS Server";
     }
-    
+
     public static class ZoneInfo {
         public String file;
         public String type;

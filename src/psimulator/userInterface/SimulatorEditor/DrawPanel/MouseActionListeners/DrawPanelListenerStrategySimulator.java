@@ -2,6 +2,7 @@ package psimulator.userInterface.SimulatorEditor.DrawPanel.MouseActionListeners;
 
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 import javax.swing.undo.UndoManager;
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.userInterface.MainWindowInnerInterface;
@@ -14,11 +15,13 @@ import psimulator.userInterface.SimulatorEditor.Tools.AbstractTool;
  *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class DrawPanelListenerStrategySimulator extends DrawPanelListenerStrategyDragMove{
+public class DrawPanelListenerStrategySimulator extends DrawPanelListenerStrategyDragMove {
 
+    private HwComponentGraphic previousClickedComponent = null;
+    private HwComponentGraphic previousMoveComponent = null;
     
     public DrawPanelListenerStrategySimulator(DrawPanelInnerInterface drawPanel, UndoManager undoManager, MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
-        super(drawPanel, undoManager,mainWindow, dataLayer);
+        super(drawPanel, undoManager, mainWindow, dataLayer);
     }
     
     @Override
@@ -38,7 +41,24 @@ public class DrawPanelListenerStrategySimulator extends DrawPanelListenerStrateg
         // should never happen
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
+    @Override
+    public void mousePressedLeft(MouseEvent e)
+    {
+        e = convertMouseEvent(e);
+
+        // get clicked component
+        HwComponentGraphic clickedComponent = getClickedAbstractHwComponent(e.getPoint());
+        if (clickedComponent != null && clickedComponent == previousClickedComponent) {
+            PopupMenuSimulatorComponent.openTelnetWindow(dataLayer, clickedComponent, mainWindow);
+            previousClickedComponent = null;
+            return;
+        }
+
+        previousClickedComponent = clickedComponent;
+        super.mousePressedLeft(e);
+    }
+
     /**
      * When HwComponentGraphic clicked, the popup menu for component in Simulator is opened
      * @param e 
@@ -60,9 +80,6 @@ public class DrawPanelListenerStrategySimulator extends DrawPanelListenerStrateg
             PopupMenuSimulatorComponent popup = new PopupMenuSimulatorComponent(mainWindow, drawPanel, dataLayer, clickedComponent);
             
             popup.show(drawPanel, e.getPoint().x, e.getPoint().y);
-            
-            return;
         }
     }
-    
 }

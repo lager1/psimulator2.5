@@ -5,16 +5,16 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+
 import psimulator.dataLayer.DataLayerFacade;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public abstract class AbstractPropertiesOkCancelDialog extends AbstractPropertiesDialog {
 
-	private static final long serialVersionUID = 6136731895619808945L;
-	/*
+    private static final long serialVersionUID = 6136731895619808945L;
+    /*
      * window componenets
      */
     protected JButton jButtonOk;
@@ -59,12 +59,13 @@ public abstract class AbstractPropertiesOkCancelDialog extends AbstractPropertie
     }
 
     @Override
-    protected void setDefaultJButton(){
+    protected void setDefaultJButton() {
         jButtonDefault = jButtonOk;
     }
 
     //
     /////////////////////-----------------------------------////////////////////
+
     /**
      * Action Listener for JComboBoxInterface
      */
@@ -82,7 +83,7 @@ public abstract class AbstractPropertiesOkCancelDialog extends AbstractPropertie
                 copyValuesFromLocalToGlobal();
             }
             */
-            
+
             copyValuesFromLocalToGlobal();
             thisDialog.setVisible(false);
             thisDialog.dispose();    //closes the window

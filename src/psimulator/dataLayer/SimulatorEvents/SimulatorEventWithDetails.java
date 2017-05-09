@@ -1,6 +1,7 @@
 package psimulator.dataLayer.SimulatorEvents;
 
 import java.awt.Color;
+
 import psimulator.dataLayer.Singletons.ColorMixerSingleton;
 import shared.Components.EthInterfaceModel;
 import shared.Components.HwComponentModel;
@@ -9,7 +10,6 @@ import shared.SimulatorEvents.SerializedComponents.PacketType;
 import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class SimulatorEventWithDetails {
@@ -25,8 +25,8 @@ public class SimulatorEventWithDetails {
     private transient SimulatorEvent simulatorEvent;
 
     public SimulatorEventWithDetails(SimulatorEvent simulatorEvent, String from, String to,
-            HwComponentModel component1, HwComponentModel component2,
-            EthInterfaceModel eth1, EthInterfaceModel eth2) {
+                                     HwComponentModel component1, HwComponentModel component2,
+                                     EthInterfaceModel eth1, EthInterfaceModel eth2) {
         this.from = from;
         this.to = to;
         this.component1 = component1;
@@ -43,21 +43,23 @@ public class SimulatorEventWithDetails {
 
     /**
      * Returns event type
-     * @return 
+     *
+     * @return
      */
-    public EventType getEventType(){
+    public EventType getEventType() {
         return simulatorEvent.getEventType();
     }
 
     /**
-     * i=0..timestamp (long), i=1..from (String), 
+     * i=0..timestamp (long), i=1..from (String),
      * i=2..to (String), i=3..packet type(PacketType),
      * i=4..color (Color)
+     *
      * @param i
-     * @return 
+     * @return
      */
     public Object getValueAt(int i) {
-        if(i< 0 || i >= list.length){
+        if (i < 0 || i >= list.length) {
             return null;
         }
         return list[i];
@@ -65,7 +67,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets packet type
-     * @return 
+     *
+     * @return
      */
     public PacketType getPacketType() {
         return simulatorEvent.getPacketType();
@@ -73,7 +76,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets simulator event
-     * @return 
+     *
+     * @return
      */
     public SimulatorEvent getSimulatorEvent() {
         return simulatorEvent;
@@ -81,7 +85,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets cable id
-     * @return 
+     *
+     * @return
      */
     public int getCableId() {
         return simulatorEvent.getCableId();
@@ -89,7 +94,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets detsination device id
-     * @return 
+     *
+     * @return
      */
     public int getDestId() {
         return simulatorEvent.getDestId();
@@ -97,7 +103,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets source device id
-     * @return 
+     *
+     * @return
      */
     public int getSourcceId() {
         return simulatorEvent.getSourcceId();
@@ -105,7 +112,8 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets timestamp of event
-     * @return 
+     *
+     * @return
      */
     public long getTimeStamp() {
         return simulatorEvent.getTimeStamp();
@@ -113,10 +121,11 @@ public class SimulatorEventWithDetails {
 
     /**
      * Gets detailed description of packet if any.
-     * @return 
+     *
+     * @return
      */
     public String getDetailsText() {
-        if(simulatorEvent.getDetailsText() == null){
+        if (simulatorEvent.getDetailsText() == null) {
             return "";
         }
         return simulatorEvent.getDetailsText();
@@ -137,33 +146,35 @@ public class SimulatorEventWithDetails {
     public EthInterfaceModel getEth2() {
         return eth2;
     }
-    
+
     /**
      * Retruns name of component with interface. If no inetrface, than return only name.
      * If no name and interface, return empty string.
-     * @return 
+     *
+     * @return
      */
-    public String getComponent1NameAndInterface(){
-        if(getComponent1()!=null && getEth1() != null){
-            return getComponent1().getName()+":"+getEth1().getName();
-        }else{
-            if(getComponent1()!=null){
+    public String getComponent1NameAndInterface() {
+        if (getComponent1() != null && getEth1() != null) {
+            return getComponent1().getName() + ":" + getEth1().getName();
+        } else {
+            if (getComponent1() != null) {
                 return getComponent1().getName();
             }
         }
         return "";
     }
-    
+
     /**
      * Retruns name of component with interface. If no inetrface, than return only name.
      * If no name and interface, return empty string.
-     * @return 
+     *
+     * @return
      */
-    public String getComponent2NameAndInterface(){
-        if(getComponent2()!=null && getEth2() != null){
-            return getComponent2().getName()+":"+getEth2().getName();
-        }else{
-            if(getComponent2()!=null){
+    public String getComponent2NameAndInterface() {
+        if (getComponent2() != null && getEth2() != null) {
+            return getComponent2().getName() + ":" + getEth2().getName();
+        } else {
+            if (getComponent2() != null) {
                 return getComponent2().getName();
             }
         }

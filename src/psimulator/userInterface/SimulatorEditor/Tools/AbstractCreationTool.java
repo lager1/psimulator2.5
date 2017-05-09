@@ -24,16 +24,16 @@ public abstract class AbstractCreationTool extends AbstractTool{
     public String getImagePath() {
         return path;
     }
-    
+
     @Override
     public String getTranslatedName(DataLayerFacade dataLayer){
         return dataLayer.getString(hwType.toString());
     }
-    
+
     @Override
     public abstract String getToolTip(DataLayerFacade dataLayer);
-    
+
     public abstract String getParameterLabel();
-    
+
     public abstract int getParameter();
 }

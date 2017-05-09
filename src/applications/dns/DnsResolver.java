@@ -9,22 +9,21 @@ import config.configFiles.HostsFile;
 import config.configFiles.ResolvConfFile;
 import dataStructures.PacketItem;
 import dataStructures.ipAddresses.IpAddress;
-import dataStructures.packets.IpPacket;
-import dataStructures.packets.UdpPacket;
-import dataStructures.packets.dns.DnsPacket;
-import dataStructures.packets.dns.DnsQuestion;
+import dataStructures.packets.L3.IpPacket;
+import dataStructures.packets.L4.UdpPacket;
+import dataStructures.packets.L7.DnsPacket;
+import dataStructures.packets.L7.dns.DnsQuestion;
 import device.Device;
 import filesystem.FileSystem;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import logging.Logger;
-import logging.LoggingCategory;
+
 import psimulator2.Psimulator;
 import utils.Wakeable;
 
 /**
- *
  * @author Michal Horacek
  */
 public class DnsResolver extends Application implements Wakeable {
@@ -39,7 +38,6 @@ public class DnsResolver extends Application implements Wakeable {
     private int ttl = 16;
 
     /**
-     *
      * @param device
      * @param cmd
      * @param toResolve
@@ -76,12 +74,12 @@ public class DnsResolver extends Application implements Wakeable {
             query += ".";
         }
 
-        
+
         if (!isValidDomainName(query)) {
             answerResolved(null);
             return;
         }
-        
+
         nameServers = resolvConf.getNameServers();
 
         // dns server running on local machine
@@ -114,7 +112,7 @@ public class DnsResolver extends Application implements Wakeable {
             return false;
         }
 
-        String DN_PATTERN = "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})\\.$";
+        String DN_PATTERN = "^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2, })\\.$";
         Pattern dnPattern = Pattern.compile(DN_PATTERN);
         Matcher dnMatcher = dnPattern.matcher(toResolve);
 

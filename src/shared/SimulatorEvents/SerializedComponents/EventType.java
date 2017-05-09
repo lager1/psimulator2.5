@@ -1,7 +1,6 @@
 package shared.SimulatorEvents.SerializedComponents;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public enum EventType {

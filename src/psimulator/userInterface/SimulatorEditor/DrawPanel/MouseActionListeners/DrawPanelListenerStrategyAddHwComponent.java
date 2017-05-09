@@ -25,8 +25,8 @@ public final class DrawPanelListenerStrategyAddHwComponent extends DrawPanelList
         super(drawPanel, undoManager, mainWindow, dataLayer);
     }
 
-    
-    
+
+
     @Override
     public void deInitialize() {
         drawPanel.setCursor(defCursor);
@@ -41,10 +41,10 @@ public final class DrawPanelListenerStrategyAddHwComponent extends DrawPanelList
     public void mousePressedLeft(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
-        
+
+
         HwComponentModel hwComponentModel = dataLayer.getNetworkFacade().createHwComponentModel(addDeviceTool.getHwType(), addDeviceTool.getInterfaces(), 0, 0);
-        
+
         // create new component
         HwComponentGraphic component = new HwComponentGraphic( dataLayer, hwComponentModel);
 
@@ -55,10 +55,10 @@ public final class DrawPanelListenerStrategyAddHwComponent extends DrawPanelList
 
         // add component to graph
         drawPanel.getGraphOuterInterface().addHwComponent(component);
-        
+
         // inform drawPanel about size change if component placed out of draw panel
         drawPanel.repaint();
-        
+
         // add to undo manager
         undoManager.undoableEditHappened(new UndoableEditEvent(this,
                 new UndoableAddHwComponent(drawPanel.getGraphOuterInterface(), component)));

@@ -7,7 +7,7 @@ package filesystem.dataStructures.jobs;
 import java.io.OutputStream;
 
 public interface InputOutputFileJob {
-    
+
     public int workOnFile(OutputStream output) throws Exception;
-    
+
 }

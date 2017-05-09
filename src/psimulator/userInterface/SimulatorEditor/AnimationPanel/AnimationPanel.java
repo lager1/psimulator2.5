@@ -32,8 +32,8 @@ import shared.SimulatorEvents.SerializedComponents.EventType;
 public class AnimationPanel extends AnimationPanelOuterInterface implements AnimationPanelInnerInterface {
     //
 
-	private static final long serialVersionUID = -387961393096199688L;
-	//private static final TimingSource f_repaintTimer = new SwingTimerTimingSource();
+    private static final long serialVersionUID = -387961393096199688L;
+    //private static final TimingSource f_repaintTimer = new SwingTimerTimingSource();
     private PostTickListener postTickListener;
     //
     private DataLayerFacade dataLayer;
@@ -42,7 +42,7 @@ public class AnimationPanel extends AnimationPanelOuterInterface implements Anim
     private List<AbstractAnimation> animations;
     //
 
-    public AnimationPanel(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface editorPanel,
+    public AnimationPanel(MainWindowInnerInterface mainWindow, UserInterfaceMainPanelInnerInterface editorPanel, 
             DataLayerFacade dataLayer, DrawPanelOuterInterface drawPanel) {
 
         super();
@@ -211,7 +211,7 @@ public class AnimationPanel extends AnimationPanelOuterInterface implements Anim
             case LOST_IN_DEVICE:
                 // destination is near the component
                 src = graph.getAbstractHwComponent(idSource).getCenterLocationDefaultZoom();
-                dest = new Point(src.x+50,src.y+50);
+                dest = new Point(src.x+50, src.y+50);
                 break;
             case SUCCESSFULLY_TRANSMITTED:
             case LOST_IN_CABLE:

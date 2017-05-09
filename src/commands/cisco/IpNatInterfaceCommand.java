@@ -6,7 +6,9 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import networkModule.L3.IPLayer;
 import shell.apps.CommandShell.CommandShell;
 
@@ -18,24 +20,24 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class IpNatInterfaceCommand extends CiscoCommand {
 
-	private final boolean no;
-	boolean inside = false;
+    private final boolean no;
+    boolean inside = false;
     boolean outside = false;
-	private IPLayer ipLayer;
+    private IPLayer ipLayer;
 
-	public IpNatInterfaceCommand(AbstractCommandParser parser, boolean no) {
-		super(parser);
-		this.no = no;
-		this.ipLayer = getNetMod().ipLayer;
-	}
+    public IpNatInterfaceCommand(AbstractCommandParser parser, boolean no) {
+        super(parser);
+        this.no = no;
+        this.ipLayer = getNetMod().ipLayer;
+    }
 
-	@Override
-	public void run() {
-		boolean pokracovat = process();
+    @Override
+    public void run() {
+        boolean pokracovat = process();
         if (pokracovat) {
             start();
         }
-	}
+    }
 
     private boolean process() { // sezrany: no ip nat
 
@@ -65,38 +67,38 @@ public class IpNatInterfaceCommand extends CiscoCommand {
 
         if (no) {
             if (inside) {
-//				System.out.println("mazu inside");
+//                System.out.println("mazu inside");
                 ipLayer.getNatTable().deleteInside(parser.configuredInterface);
             } else if (outside) {
-				if (ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
-//					System.out.println("mazu outside");
-					ipLayer.getNatTable().deleteOutside();
-				}
+                if (ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
+//                    System.out.println("mazu outside");
+                    ipLayer.getNatTable().deleteOutside();
+                }
             }
             return;
         }
 
         if (inside) {
-//			System.out.println("nastavuju inside");
-			ipLayer.getNatTable().deleteOutside();
-			ipLayer.getNatTable().addInside(parser.configuredInterface);
+//            System.out.println("nastavuju inside");
+            ipLayer.getNatTable().deleteOutside();
+            ipLayer.getNatTable().addInside(parser.configuredInterface);
         } else if (outside) {
-            if (ipLayer.getNatTable().getOutside() != null && ! ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
-				printService("Implementace nepovoluje mit vice nastavenych verejnych rozhrani. "
-                        + "Takze se rusi aktualni verejne: " + ipLayer.getNatTable().getOutside().name+ " a nastavi se "+parser.configuredInterface.name);
+            if (ipLayer.getNatTable().getOutside() != null && !ipLayer.getNatTable().getOutside().name.equals(parser.configuredInterface.name)) {
+                printService("Implementace nepovoluje mit vice nastavenych verejnych rozhrani. "
+                        + "Takze se rusi aktualni verejne: " + ipLayer.getNatTable().getOutside().name + " a nastavi se " + parser.configuredInterface.name);
             }
-//			System.out.println("nastavuju outside");
-			ipLayer.getNatTable().deleteInside(parser.configuredInterface);
-			ipLayer.getNatTable().setOutside(parser.configuredInterface);
+//            System.out.println("nastavuju outside");
+            ipLayer.getNatTable().deleteInside(parser.configuredInterface);
+            ipLayer.getNatTable().setOutside(parser.configuredInterface);
         }
     }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
-		tmp.addCommand("ip nat inside");
-		tmp.addCommand("no nat inside");
-		tmp.addCommand("ip nat outside");
-		tmp.addCommand("no nat outside");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        Completer tmp = completers.get(CommandShell.CISCO_CONFIG_IF_MODE);
+        tmp.addCommand("ip nat inside");
+        tmp.addCommand("no nat inside");
+        tmp.addCommand("ip nat outside");
+        tmp.addCommand("no nat outside");
+    }
 }

@@ -6,7 +6,7 @@ package dataStructures.packets.dns;
  */
 public enum DnsType {
 
-	A,
+    A,
         NS,
-	MX,
-	TXT,}
+    MX,
+    TXT,}

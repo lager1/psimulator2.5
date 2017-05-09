@@ -43,7 +43,7 @@ public interface FilterPlugin {
    * read() and write() methods.
    * @param source the data source
    */
-  public void setFilterSource(FilterPlugin source) 
+  public void setFilterSource(FilterPlugin source)
     throws IllegalArgumentException;
 
   public FilterPlugin getFilterSource();

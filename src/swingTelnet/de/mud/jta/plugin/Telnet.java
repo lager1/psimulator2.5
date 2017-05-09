@@ -112,7 +112,7 @@ public class Telnet extends Plugin implements FilterPlugin {
     bus.registerPluginListener(new SetWindowSizeListener() {
       public void setWindowSize(int columns, int rows) {
         try {
-	  handler.setWindowSize(columns,rows);
+      handler.setWindowSize(columns,rows);
         } catch (java.io.IOException e) {
           de.mud.jta.OutputSingleton.err.println("IO Exception in set window size");
         }
@@ -133,10 +133,10 @@ public class Telnet extends Plugin implements FilterPlugin {
   }
 
   public void configure(PluginConfig cfg) {
-    String crlf = cfg.getProperty("Telnet",id,"crlf");	// on \n
+    String crlf = cfg.getProperty("Telnet",id,"crlf");    // on \n
     if (crlf != null) handler.setCRLF(crlf);
 
-    String cr = cfg.getProperty("Telnet",id,"cr");	// on \r
+    String cr = cfg.getProperty("Telnet",id,"cr");    // on \r
     if (cr != null) handler.setCR(cr);
   }
 
@@ -166,22 +166,22 @@ public class Telnet extends Plugin implements FilterPlugin {
         return n;
     } while (n==0);
 
-    /* try reading stuff until we get at least 1 byte of real data or are 
+    /* try reading stuff until we get at least 1 byte of real data or are
      * at the end of the buffer.
      */
     while (true) {
       n = source.read(b);
       if (n <= 0 )
-	return n;
+    return n;
 
       handler.inputfeed(b,n);
       n = 0;
       while (true) {
-	n = handler.negotiate(b);
-	if (n>0)
-	  return n;
-	if (n==-1) // buffer empty.
-	  break;
+    n = handler.negotiate(b);
+    if (n>0)
+      return n;
+    if (n==-1) // buffer empty.
+      break;
       }
       return 0;
     }

@@ -6,6 +6,7 @@ import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.dataStructures.jobs.OutputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- *
  * @author Michal Horacek
  */
 public class ResolvConfFile extends AbstractLinuxFile {
@@ -26,7 +26,7 @@ public class ResolvConfFile extends AbstractLinuxFile {
 
     /**
      * Updates information about nameservers into the /etc/resolv.conf file
-     * 
+     *
      * @param nameServers List of strings representing ip addresses of nameservers
      */
     public void updateNameservers(final String[] nameServers) {
@@ -53,7 +53,7 @@ public class ResolvConfFile extends AbstractLinuxFile {
 
     /**
      * Gets the list of nameservers found in the /etc/resolv.conf file
-     * 
+     *
      * @return List of IpAddresses representing nameservers
      */
     public List<IpAddress> getNameServers() {

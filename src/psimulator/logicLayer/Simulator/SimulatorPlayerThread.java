@@ -2,6 +2,7 @@ package psimulator.logicLayer.Simulator;
 
 import java.util.Observable;
 import java.util.Observer;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.Simulator.SimulatorManager;
@@ -11,7 +12,6 @@ import psimulator.userInterface.SimulatorEditor.AnimationPanel.AnimationPanelOut
 import psimulator.userInterface.UserInterfaceOuterFacade;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class SimulatorPlayerThread implements Runnable, Observer {
@@ -35,7 +35,7 @@ public class SimulatorPlayerThread implements Runnable, Observer {
 
         // set speed according to model
         currentSpeed = simulatorManagerInterface.getSimulatorPlayerSpeed();
-        
+
         // set delay according to model
         currentDelay = simulatorManagerInterface.getSimulatorDelayLength();
 
@@ -67,19 +67,19 @@ public class SimulatorPlayerThread implements Runnable, Observer {
 
                     // get event
                     //SimulatorEvent event = simulatorManagerInterface.getSimulatorEventAtCurrentPosition();
-                    
+
                     // move to last event in the list and get it
                     SimulatorEventWithDetails event = simulatorManagerInterface.moveToLastEventAndReturn();
-                    if(event == null){
+                    if (event == null) {
                         continue;
                     }
-                    
+
                     //calculate speed coeficient
                     int speedCoeficient = calculateSpeedCoefifient();
 
                     // get time
                     int time = animationPanelOuterInterface.getAnimationDuration(event.getCableId(), speedCoeficient);
-                    
+
                     // start animation
                     animationPanelOuterInterface.createAnimation(event.getPacketType(), time, event.getSourcceId(), event.getDestId(), event.getEventType());
 
@@ -87,7 +87,7 @@ public class SimulatorPlayerThread implements Runnable, Observer {
                     if (DEBUG) {
                         System.out.println("Player alive " + tmpCounter++ + ", Next event=" + event);
                     }
-                    
+
                     // sleep for short time
                     Thread.sleep(200);
 
@@ -95,15 +95,15 @@ public class SimulatorPlayerThread implements Runnable, Observer {
                     //glassPanelPainter.doPaintRedDots(true);
 
                     // if player not in the list, move to first event
-                    if(!simulatorManagerInterface.isInTheList()){
+                    if (!simulatorManagerInterface.isInTheList()) {
                         simulatorManagerInterface.moveToNextEvent();
                     }
-                    
+
                     SimulatorEventWithDetails event = simulatorManagerInterface.getSimulatorEventAtCurrentPosition();
-                    if(event == null){
+                    if (event == null) {
                         continue;
                     }
-                    
+
                     if (DEBUG) {
                         System.out.println("Player alive " + tmpCounter++ + ", Playing=" + isPlaying + ", speed=" + currentSpeed);
                     }
@@ -111,43 +111,43 @@ public class SimulatorPlayerThread implements Runnable, Observer {
                     if (DEBUG) {
                         System.out.println("Event: " + event + ".");
                     }
-                    
-                    
+
+
                     //calculate speed coeficient
                     int speedCoeficient = calculateSpeedCoefifient();
-                    
+
                     // calculate time
                     int time = animationPanelOuterInterface.getAnimationDuration(event.getCableId(), speedCoeficient);
 
                     // start animation
-                    animationPanelOuterInterface.createAnimation(event.getPacketType(), time, event.getSourcceId(), event.getDestId(),  event.getEventType());
+                    animationPanelOuterInterface.createAnimation(event.getPacketType(), time, event.getSourcceId(), event.getDestId(), event.getEventType());
 
                     // if playing by timestamps, adjust sleep time
-                    if(simulatorManagerInterface.isPlayingByTimestamps()){
+                    if (simulatorManagerInterface.isPlayingByTimestamps()) {
                         SimulatorEventWithDetails nextEvent = simulatorManagerInterface.getNextEvent();
-                        if(nextEvent != null){
+                        if (nextEvent != null) {
                             long timestampCurrent = event.getTimeStamp();
                             long timestampNext = nextEvent.getTimeStamp();
-                            
+
                             // calculate sleep time
                             int newTime = calculateSleepTimePlayingByTimestamps(timestampCurrent, timestampNext);
 
                             // if new sleep time is not too long
-                            if(newTime < 5000){
+                            if (newTime < 5000) {
                                 time = newTime;
-                            }else{
+                            } else {
                                 time = 5000;
                             }
                         }
-                        
-                                                    
+
+
                         // if delay is set longer than time difference between two events
-                        if(currentDelay > time){
+                        if (currentDelay > time) {
                             // set delay
                             time = currentDelay + time;
                         }
                     }
-                    
+
                     // sleep thread for the same time as the animation takes
                     Thread.sleep(time);
 
@@ -172,12 +172,12 @@ public class SimulatorPlayerThread implements Runnable, Observer {
         }
 
     }
-    
-    private int calculateSleepTimePlayingByTimestamps(long timestampCurrent, long timestampNext){
+
+    private int calculateSleepTimePlayingByTimestamps(long timestampCurrent, long timestampNext) {
         return (int) (timestampNext - timestampCurrent);
     }
-    
-    private int calculateSpeedCoefifient(){
+
+    private int calculateSpeedCoefifient() {
         return (int) (((double) SimulatorManager.SPEED_MAX) / (double) currentSpeed); // 1-10
     }
 
@@ -205,7 +205,7 @@ public class SimulatorPlayerThread implements Runnable, Observer {
                     // do not interrupt
                     return;
                 }
-            // goes through!
+                // goes through!
             case SIMULATOR_REALTIME_ON:
                 isRealtime = simulatorManagerInterface.isRealtime();
                 isNewPacket = false;

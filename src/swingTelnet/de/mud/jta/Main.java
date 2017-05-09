@@ -87,33 +87,33 @@ public class Main {
   private static Clipboard clipboard;
 
   private static String host, port;
-  
+
   private static ResourceBundle resBundle;
-  
+
   public static int defaultColumns = 100;
   public static int defaultRows = 50;
   public static String hostName = null;
-  
+
   public static void main(String args[]){
      JFrame frame =  Main.run(args);
-     
+
      frame.setVisible(true);
   }
-  
+
   /**
    * [-lang cz/en] [host port]
    * @param args
    * @return
    */
   public static JFrame run(String args[]) {
-      
+
       // DELEGATE STD AND ERR OUTPUT ?
       OutputSingleton.out = new DelegatePrintStream(System.out, false);
       OutputSingleton.err = new DelegatePrintStream(System.err, false);
-      
+
       if(args == null)
           args = new String[0];
-      
+
     final Properties options = new Properties();
     try {
       options.load(Main.class.getResourceAsStream("/de/mud/jta/default.conf"));
@@ -130,7 +130,7 @@ public class Main {
                          + "[-term id] [host [port]]");
       return null;
     }
-    
+
     options.setProperty("Terminal.size", "["+defaultColumns +","+defaultRows+"]");
 
     String cfg = options.getProperty("Main.config");
@@ -157,12 +157,12 @@ public class Main {
         resBundle = ResourceBundle.getBundle("de/resources/Czech", new Locale("cz", "CZ"));
     else
         resBundle = ResourceBundle.getBundle("de/resources/English", new Locale("en", "US"));      // DEFAULT LANGUAGE BUNDLE
-    
+
     // set up the clipboard
     try {
       clipboard = frame.getToolkit().getSystemClipboard();
     } catch (Exception e) {
-      de.mud.jta.OutputSingleton.err.println(resBundle.getString("CLIPBOARD_ACCESS_DENIED")); 
+      de.mud.jta.OutputSingleton.err.println(resBundle.getString("CLIPBOARD_ACCESS_DENIED"));
       de.mud.jta.OutputSingleton.err.println(resBundle.getString("CLIPBOARD_COPY_PASTE_RESTRICTION"));
       clipboard = new Clipboard("de.mud.jta.Main");
     }
@@ -178,24 +178,24 @@ public class Main {
       }
     }
 
-    
+
     final String usedHostName;
-    
+
     if(hostName == null)
         usedHostName="jta:";
     else{
         usedHostName=hostName;
         hostName = null;  // null static hostName
     }
-    
-    
+
+
     setup.registerPluginListener(new OnlineStatusListener() {
-        
+
       String localHostName = usedHostName;
-        
+
       public void online() {
         frame.setTitle(localHostName + host + (port.equals("23")?"":" " + port));
-        
+
       }
 
       public void offline() {
@@ -252,12 +252,12 @@ public class Main {
       tmp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK));
       tmp.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-            
+
             StringBuilder initValue = new StringBuilder();
             if(!host.isEmpty() && !port.isEmpty())
                 initValue.append(host).append(" ").append(port);
-            
-            
+
+
           String destination =
                   JOptionPane.showInputDialog(frame,
                                               new JLabel(resBundle.getString("DIALOG_HOST_PORT")),
@@ -358,7 +358,7 @@ public class Main {
 
    // frame.setVisible(true);
 
-    if(debug > 0) 
+    if(debug > 0)
       de.mud.jta.OutputSingleton.err.println("host: '"+host+"', "+host.length());
     if (host != null && host.length() > 0) {
       setup.broadcast(new SocketRequest(host, Integer.parseInt(port)));

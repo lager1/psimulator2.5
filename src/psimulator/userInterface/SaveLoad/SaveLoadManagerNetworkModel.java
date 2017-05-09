@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Enums.RecentlyOpenedDirectoryType;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Components.HwComponentGraphic;
@@ -14,7 +15,6 @@ import shared.Components.NetworkModel;
 import shared.Serializer.SaveLoadException;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  * @author lager1
  */
@@ -25,7 +25,6 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
     }
 
     /**
-     *
      * @return true if data can be lost, false if cant be lost
      */
     public boolean doCheckIfPossibleDataLoss(Graph graph) {
@@ -73,8 +72,7 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
         return SaveLoadManagerUserReaction.CANCEL;
     }
 
-    
-    
+
     /**
      * asks user what to do
      *
@@ -104,7 +102,6 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
 
     /**
      * Shows save dialog.
-     *
      */
     public boolean doSaveAsGraphAction() {
         try {
@@ -142,7 +139,8 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
 
     /**
      * Opens dialog and loads model. If exception occours, warning dialog is shown.
-     * @return 
+     *
+     * @return
      */
     public NetworkModel doLoadNetworkModel() {
         try {
@@ -155,8 +153,9 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
 
     /**
      * Opens netwrok from file. If exception occours, warning dialog is shown.
+     *
      * @param filePath
-     * @return 
+     * @return
      */
     public NetworkModel doLoadNetworkModel(String filePath) {
         try {
@@ -170,8 +169,9 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
 
     /**
      * Builds graph from networkModel.
+     *
      * @param networkModel
-     * @return 
+     * @return
      */
     public Graph buildGraphFromNetworkModel(NetworkModel networkModel) {
         GraphBuilderFacade graphBuilderFacade = new GraphBuilderFacade();
@@ -182,10 +182,10 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
 
     private NetworkModel open() throws SaveLoadException {
         File recentDir = dataLayer.getRecentDirectory(RecentlyOpenedDirectoryType.NETWORKS_DIR);
-        if(recentDir != null){
+        if (recentDir != null) {
             fileChooser.setCurrentDirectory(recentDir);
         }
-        
+
         int returnVal = fileChooser.showOpenDialog(parentComponent);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -203,8 +203,8 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
     private NetworkModel open(File fileToOpen) throws SaveLoadException {
         // set wait cursor
         parentComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            
-        
+
+
         // load network model
         NetworkModel networkModel = dataLayer.loadNetworkModelFromFile(fileToOpen);
 
@@ -229,15 +229,18 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
      */
     private boolean saveAs() throws SaveLoadException {
         File recentDir = dataLayer.getRecentDirectory(RecentlyOpenedDirectoryType.NETWORKS_DIR);
-        if(recentDir != null){
+        if (recentDir != null) {
             fileChooser.setCurrentDirectory(recentDir);
         }
-        
+
         int returnVal = fileChooser.showSaveDialog(parentComponent);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File selctedFile = new File(fileChooser.getSelectedFile() + ".xml");
-            
+            String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+            if (!fileName.endsWith(".xml"))
+                fileName += ".xml";
+            File selctedFile = new File(fileName);
+
             // save current directory
             recentDir = fileChooser.getCurrentDirectory();
             dataLayer.setRecentDirectory(RecentlyOpenedDirectoryType.NETWORKS_DIR, recentDir);
@@ -250,10 +253,10 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
                 if (i == JOptionPane.OK_OPTION) {
                     // save
                     save(selctedFile);
-                    
+
                     // add to recently opened
                     dataLayer.addRecentOpenedFile(file);
-                    
+
                     return true;
                 }
 
@@ -267,10 +270,10 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
             } else {
                 // save
                 save(selctedFile);
-                
+
                 // add to recently opened
                 dataLayer.addRecentOpenedFile(file);
-                    
+
                 return true;
             }
         }
@@ -280,7 +283,7 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
     private void save(File file) throws SaveLoadException {
         // set wait cursor
         parentComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        
+
         // save graph
         //dataLayer.saveGraphToFile(graph, file);
         dataLayer.saveNetworkModelToFile(file);
@@ -288,7 +291,7 @@ public class SaveLoadManagerNetworkModel extends AbstractSaveLoadManager {
         // set saved timestamp
         setLastSavedFile(file);
         setLastSavedTimestamp();
-        
+
         // set default cursor
         parentComponent.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }

@@ -104,7 +104,7 @@ public class ImageFactorySingleton {
      * and height. It is buffered.
      *
      * @param text
-     * @param fontSize
+     * @param font
      * @param textWidth
      * @param textHeigh
      * @param ascent
@@ -147,7 +147,7 @@ public class ImageFactorySingleton {
 
         Graphics2D g2 = bi.createGraphics();
 
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         int x = 1;
@@ -280,9 +280,9 @@ public class ImageFactorySingleton {
 
         // create graphics and set hints
         Graphics2D graphics2D = bi.createGraphics();
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, 
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
         // draw image
@@ -460,9 +460,9 @@ public class ImageFactorySingleton {
 
         // create graphics and set hints
         Graphics2D graphics2D = bi.createGraphics();
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, 
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
         // draw image
@@ -498,9 +498,9 @@ public class ImageFactorySingleton {
 
         // create graphics and set hints
         Graphics2D graphics2D = bi.createGraphics();
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, 
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
         // draw image
@@ -562,6 +562,9 @@ public class ImageFactorySingleton {
                 break;
             case UDP:
                 suffix = "blue.png";
+                break;
+            case STP:
+                suffix = "orange.png";
                 break;
             case IP:
             case ETHERNET:

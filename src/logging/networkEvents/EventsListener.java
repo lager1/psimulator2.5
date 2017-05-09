@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import logging.Logger;
 import logging.LoggerListener;
 import logging.LoggingCategory;
@@ -18,83 +19,83 @@ import shared.NetworkObject;
  */
 public class EventsListener implements Runnable {
 
-	boolean done = false;
-	private final List<ClientSession> clientSessions = Collections.synchronizedList(new LinkedList<ClientSession>());
-	/**
-	 * NetworkObject queue aka messages, events to be sent
-	 */
-	private LinkedBlockingQueue<NetworkObject> objectsToBroadCast = new LinkedBlockingQueue<>();
-	private PacketTranslator packetTranslator;
+    boolean done = false;
+    private final List<ClientSession> clientSessions = Collections.synchronizedList(new LinkedList<ClientSession>());
+    /**
+     * NetworkObject queue aka messages, events to be sent
+     */
+    private LinkedBlockingQueue<NetworkObject> objectsToBroadCast = new LinkedBlockingQueue<>();
+    private PacketTranslator packetTranslator;
 
-	public EventsListener() {
-		this.packetTranslator = new PacketTranslator(objectsToBroadCast);
-		new Thread(this.packetTranslator).start();   // start packetTranslator
-	}
+    public EventsListener() {
+        this.packetTranslator = new PacketTranslator(objectsToBroadCast);
+        new Thread(this.packetTranslator).start();   // start packetTranslator
+    }
 
-	private void sendNetworkObject(NetworkObject object) {
-		try {
-			this.objectsToBroadCast.offer(object, 1, TimeUnit.SECONDS);
-		} catch (InterruptedException ex) { // this exception should not be thrown because using LinkedBlockedQueue
-			Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");
-		}
-	}
+    private void sendNetworkObject(NetworkObject object) {
+        try {
+            this.objectsToBroadCast.offer(object, 1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) { // this exception should not be thrown because using LinkedBlockedQueue
+            Logger.log(Logger.WARNING, LoggingCategory.EVENTS_SERVER, "Cannot add object into broadcasting queue");
+        }
+    }
 
-	/**
-	 * return actual LoggerListener object,
-	 *
-	 * @return
-	 */
-	public LoggerListener getPacketTranslator() {
-		return this.packetTranslator;
-	}
+    /**
+     * return actual LoggerListener object,
+     *
+     * @return
+     */
+    public LoggerListener getPacketTranslator() {
+        return this.packetTranslator;
+    }
 
-	@Override
-	public void run() {
-		Thread.currentThread().setName("EventsListener");
+    @Override
+    public void run() {
+        Thread.currentThread().setName("EventsListener");
 
-		while (!done) {
+        while (!done) {
 
-			NetworkObject ntwObject = null;
-			try {
-				// get new object from broadcast queue.
-				// Timeouting prefered because there is no other simple option how to shutdown on blocking operation
-				ntwObject = objectsToBroadCast.poll(2000, TimeUnit.MILLISECONDS);
-			} catch (InterruptedException ex) {
-			}  // does not matter
+            NetworkObject ntwObject = null;
+            try {
+                // get new object from broadcast queue.
+                // Timeouting prefered because there is no other simple option how to shutdown on blocking operation
+                ntwObject = objectsToBroadCast.poll(2000, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ex) {
+            }  // does not matter
 
-			if (ntwObject == null) // no object reached
-			{
+            if (ntwObject == null) // no object reached
+            {
 
-				continue;
-			}
+                continue;
+            }
 
-			Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Object for broadcasting recieved. Broadcasting ... ");
+            Logger.log(Logger.DEBUG, LoggingCategory.EVENTS_SERVER, "Object for broadcasting recieved. Broadcasting ... ");
 
-			synchronized (this.clientSessions) {
-				for (Iterator<ClientSession> it = clientSessions.iterator(); it.hasNext();) {
-					ClientSession clientSession = it.next();
-					if (clientSession.isActive()) {
-						clientSession.send(ntwObject);
-					} else {
-						it.remove();
-					}
-				}
-			}
+            synchronized (this.clientSessions) {
+                for (Iterator<ClientSession> it = clientSessions.iterator(); it.hasNext(); ) {
+                    ClientSession clientSession = it.next();
+                    if (clientSession.isActive()) {
+                        clientSession.send(ntwObject);
+                    } else {
+                        it.remove();
+                    }
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
-	public void addClientSession(ClientSession clientSession) {
-		synchronized (this.clientSessions) {  // better have exclusive access
-			this.clientSessions.add(clientSession);
-			clientSession.setListReference(clientSessions);
-		}
+    public void addClientSession(ClientSession clientSession) {
+        synchronized (this.clientSessions) {  // better have exclusive access
+            this.clientSessions.add(clientSession);
+            clientSession.setListReference(clientSessions);
+        }
 
-	}
+    }
 
-	public void quit() {
-		this.done = true;
+    public void quit() {
+        this.done = true;
 
-	}
+    }
 }
