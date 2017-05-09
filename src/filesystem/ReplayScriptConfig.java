@@ -3,62 +3,63 @@ package filesystem;
 import commands.AbstractCommandParser;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.logging.Level;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
 /**
- *
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public class ReplayScriptConfig {
 
-	FileSystem fileSystem;
+    FileSystem fileSystem;
 
-	public ReplayScriptConfig(FileSystem fileSystem) {
-		this.fileSystem = fileSystem;
-	}
+    public ReplayScriptConfig(FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+    }
 
-	public int replay(String fileName, final AbstractCommandParser parser) throws FileNotFoundException{
+    public int replay(String fileName, final AbstractCommandParser parser) throws FileNotFoundException {
 
-		if(fileSystem == null)
-			return -1;
-		
-			fileSystem.runInputFileJob(fileName, new InputFileJob() {
+        if (fileSystem == null)
+            return -1;
 
-				@Override
-				public int workOnFile(InputStream input) throws Exception {
+        fileSystem.runInputFileJob(fileName, new InputFileJob() {
 
-					Scanner in = new Scanner(input);
+            @Override
+            public int workOnFile(InputStream input) throws Exception {
 
-					while (in.hasNextLine()) {
+                Scanner in = new Scanner(input);
 
-						String command = in.nextLine();
+                while (in.hasNextLine()) {
 
-						if (command.startsWith("#")) // ignore commentary
-						{
-							continue;
-						}
+                    String command = in.nextLine();
 
-						int cmntPosition = command.indexOf("#");
+                    if (command.startsWith("#")) // ignore commentary
+                    {
+                        continue;
+                    }
 
-						command = command.substring(0, cmntPosition).trim();
+                    int cmntPosition = command.indexOf("#");
 
-						if (parser != null) {
-							parser.processLine(command, parser.getShell().getMode());  
-						} else {
-							Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\"" + command + "\"");
-						}
+                    command = command.substring(0, cmntPosition).trim();
 
-					}
+                    if (parser != null) {
+                        parser.processLine(command, parser.getShell().getMode());
+                    } else {
+                        Logger.log(Logger.WARNING, LoggingCategory.FILE_SYSTEM, "Parser object is null, cannot process command:\"" + command + "\"");
+                    }
 
-					return 0;
-				}
-			});
-		
+                }
 
-		return 0;
-	}
+                return 0;
+            }
+        });
+
+
+        return 0;
+    }
 }

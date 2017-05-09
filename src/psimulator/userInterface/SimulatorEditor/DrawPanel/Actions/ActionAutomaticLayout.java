@@ -22,8 +22,8 @@ import psimulator.userInterface.MainWindowInnerInterface;
  */
 public class ActionAutomaticLayout extends AbstractDrawPanelAction {
 
-	private static final long serialVersionUID = -7729333276746869709L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = -7729333276746869709L;
+    private DataLayerFacade dataLayer;
 
     public ActionAutomaticLayout(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
         super(undoManager, drawPanel, mainWindow);
@@ -36,26 +36,26 @@ public class ActionAutomaticLayout extends AbstractDrawPanelAction {
         ProgressBarGeneticDialog dialog = new ProgressBarGeneticDialog(mainWindow, dataLayer, (Graph) drawPanel.getGraphOuterInterface());
 
         dialog.startGenetic();
-        
+
         dialog.setVisible(true);
 
 
         if (dialog.isSuccess()) {
             GeneticGraph graph = dialog.getGeneticGraph();
 
-            
+
             HashMap<HwComponentGraphic, Dimension> movedComponentsMap = drawPanel.getGraphOuterInterface().doChangePositions(graph);
-            
+
             undoManager.undoableEditHappened(new UndoableEditEvent(this,
                     new UndoableChagePositionOfAllComponents(drawPanel.getGraphOuterInterface(), movedComponentsMap)));
 
             // update Undo and Redo buttons
             mainWindow.updateUndoRedoButtons();
-            
+
             // repaint draw Panel
             drawPanel.repaint();
-            
-            
+
+
             /*
             JFrame visualizeFrame = new JFrame("Vizualizace prubehu algoritmu");
             VisualizePanel visualizePanel = new VisualizePanel();

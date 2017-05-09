@@ -9,7 +9,9 @@ import commands.completer.Completer;
 import dataStructures.ipAddresses.IPwithNetmask;
 import dataStructures.ipAddresses.IpAddress;
 import dataStructures.ipAddresses.IpNetmask;
+
 import java.util.Map;
+
 import networkModule.L3.nat.NatTable;
 import shell.apps.CommandShell.CommandShell;
 
@@ -20,27 +22,27 @@ import shell.apps.CommandShell.CommandShell;
  */
 public class AccessListCommand extends CiscoCommand {
 
-	private final NatTable natTable;
-	private final boolean no;
-	private int access;
+    private final NatTable natTable;
+    private final boolean no;
+    private int access;
     private IPwithNetmask adr;
 
-	public AccessListCommand(AbstractCommandParser parser, boolean no) {
-		super(parser);
-		this.no = no;
+    public AccessListCommand(AbstractCommandParser parser, boolean no) {
+        super(parser);
+        this.no = no;
 
-		this.natTable = getNetMod().ipLayer.getNatTable();
-	}
+        this.natTable = getNetMod().ipLayer.getNatTable();
+    }
 
-	@Override
-	public void run() {
-		boolean pokracovat = process();
+    @Override
+    public void run() {
+        boolean pokracovat = process();
         if (pokracovat) {
             start();
         }
-	}
+    }
 
-	// access-list 7 permit 1.1.1.0 0.0.0.31
+    // access-list 7 permit 1.1.1.0 0.0.0.31
     private boolean process() {
 
         if (nextWordPeek().isEmpty()) {
@@ -63,7 +65,7 @@ public class AccessListCommand extends CiscoCommand {
             return false;
         }
 
-		IpAddress adrTemp;
+        IpAddress adrTemp;
         IpNetmask wildcard;
         try {
             if (nextWordPeek().isEmpty()) {
@@ -82,11 +84,11 @@ public class AccessListCommand extends CiscoCommand {
         }
 
         try {
-			adr = new IPwithNetmask(adrTemp, wildcard);
-		} catch (Exception e) { // shouldn't happen, just to be sure
-			invalidInputDetected();
-			return false;
-		}
+            adr = new IPwithNetmask(adrTemp, wildcard);
+        } catch (Exception e) { // shouldn't happen, just to be sure
+            invalidInputDetected();
+            return false;
+        }
 
         return true;
     }
@@ -96,14 +98,14 @@ public class AccessListCommand extends CiscoCommand {
         if (no) {
             natTable.lAccess.deleteAccessList(access);
         } else {
-			natTable.lAccess.addAccessList(adr, access);
-		}
+            natTable.lAccess.addAccessList(adr, access);
+        }
     }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
-		tmp.addCommand("access-list");
-		tmp.addCommand("no access-list");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        Completer tmp = completers.get(CommandShell.CISCO_CONFIG_MODE);
+        tmp.addCommand("access-list");
+        tmp.addCommand("no access-list");
+    }
 }

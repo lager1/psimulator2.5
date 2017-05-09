@@ -5,9 +5,11 @@ package applications;
 
 import dataStructures.PacketItem;
 import device.Device;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import logging.Loggable;
 import logging.Logger;
 import logging.LoggingCategory;
@@ -28,7 +30,7 @@ import utils.WorkerThread;
  */
 public abstract class Application implements SmartRunnable, Loggable {
 
-// parametry aplikace:
+    // parametry aplikace:
     public final int PID;
     public final String name;
     protected final Device device;
@@ -79,6 +81,7 @@ public abstract class Application implements SmartRunnable, Loggable {
     }
 
 // abstraktni metody, ktery bude nutno implementovat v potomcich: ----------------------------------------------------
+
     /**
      * Implement this function to run some commands right before application
      * start. <br /> (treba pro nejake kontroly, vypisy atd.)
@@ -98,6 +101,7 @@ public abstract class Application implements SmartRunnable, Loggable {
     protected abstract void atKill();
 
 // verejny metody na startovani a ukoncovani: ----------------------------------------------------------------------
+
     /**
      * Starts aplication by turning on listening on port.
      */
@@ -151,7 +155,7 @@ public abstract class Application implements SmartRunnable, Loggable {
         device.unregisterApplication(this);
     }
 
-//gettry a settry: --------------------------------------------------------------------------------------------------
+    //gettry a settry: --------------------------------------------------------------------------------------------------
     public void setPort(int port) {
         this.port = port;
     }

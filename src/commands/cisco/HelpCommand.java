@@ -6,35 +6,36 @@ package commands.cisco;
 
 import commands.AbstractCommandParser;
 import commands.completer.Completer;
+
 import java.util.Map;
+
 import psimulator2.Main;
 import shell.apps.CommandShell.CommandShell;
 
 /**
- *
  * @author Stanislav Rehak <rehaksta@fit.cvut.cz>
  */
 class HelpCommand extends CiscoCommand {
 
-	public HelpCommand(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public HelpCommand(AbstractCommandParser parser) {
+        super(parser);
+    }
 
-	@Override
-	public void run() {
-		String s ="";
-		s += "There is no such command in real cisco. \n" +
-                    "It is used only for a hint. This implementation has more commands then real cisco:\n" +
-                    " help - writes this hint\n" +
-                    " kill - for leaving console from any state of cisco\n" +
-                    " save - for saving current configuration of all devices to XML file, " +
-					" rnetconn      command to manage connection of simulator to real network"+
-					"               for help in english type: rnetconn help"+
-                    "without paramater it saves to "+Main.configFileName+"\n\n" +
+    @Override
+    public void run() {
+        String s = "";
+        s += "There is no such command in real cisco. \n" +
+                "It is used only for a hint. This implementation has more commands then real cisco:\n" +
+                " help - writes this hint\n" +
+                " kill - for leaving console from any state of cisco\n" +
+                " save - for saving current configuration of all devices to XML file, " +
+                " rnetconn      command to manage connection of simulator to real network" +
+                "               for help in english type: rnetconn help" +
+                "without paramater it saves to " + Main.configFileName + "\n\n" +
 
-                    "These commands are implemented:\n";
-		s +=    "\nuser mode\n" +
-                "  show ip nat translations\n"+
+                "These commands are implemented:\n";
+        s += "\nuser mode\n" +
+                "  show ip nat translations\n" +
                 "  show ip route\n" +
                 "  traceroute\n" +
                 "  ping\n" +
@@ -44,7 +45,7 @@ class HelpCommand extends CiscoCommand {
                 "\nprivilege mode\n" +
                 "  configure terminal\n" +
                 "  disable\n" +
-                "  show ip nat translations\n"+
+                "  show ip nat translations\n" +
                 "  show ip route\n" +
                 "  show running-config\n" +
                 "  traceroute\n" +
@@ -67,14 +68,14 @@ class HelpCommand extends CiscoCommand {
                 "  (no) ip nat inside\n" +
                 "  (no) ip nat outside\n" +
                 "  (no) shutdown\n" +
-				"  interface\n" +
+                "  interface\n" +
                 "  end\n" +
                 "  exit\n\n";
-		printWithDelay(s, 10);
-	}
+        printWithDelay(s, 10);
+    }
 
-	@Override
-	protected void fillCompleters(Map<Integer, Completer> completers) {
-		getDevice().addCommandToAllCompleters("help");
-	}
+    @Override
+    protected void fillCompleters(Map<Integer, Completer> completers) {
+        getDevice().addCommandToAllCompleters("help");
+    }
 }

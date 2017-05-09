@@ -46,9 +46,9 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
      * @param dataLayer
      */
     public void initialize(DrawPanelInnerInterface drawPanel, DataLayerFacade dataLayer) {
-        // 
+        //
         this.networkFacade = dataLayer.getNetworkFacade();
-        
+
         // init references
         setInitReferencesToComponents(dataLayer);
 
@@ -176,8 +176,8 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
             c.paint(g2);
         }
     }
-    
-    
+
+
      /**
      * Call when something in graph changed (move, add, remove)
      */
@@ -192,13 +192,13 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
 
     @Override
     public long getLastEditTimestamp() {
-        
+
         return networkFacade.getLastEditTimestamp();
-        
+
         //return lastEditTimestamp;
     }
 
-    
+
     // ----- OBSERVER ----------------------------------------------------------
     @Override
     public synchronized void addObserver(Observer obsrvr) {
@@ -326,7 +326,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
 
         // remove cable from hash map
         cablesMap.remove(cable.getId().intValue());
-        
+
         // remove cable from network
         networkFacade.removeCable(cable.getCableModel());
 
@@ -375,7 +375,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
     }
 
     @Override
-    public void removeHwComponent(HwComponentGraphic component) {       
+    public void removeHwComponent(HwComponentGraphic component) {
         //components.remove(component);
         Collection<HwComponentGraphic> colection = componentsMap.values();
         colection.remove(component);
@@ -475,7 +475,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
     }
     // END ----- GRAPH SIZES -----------------------------------------------
 
-    // ============= MARKING =========    
+    // ============= MARKING =========
     @Override
     public void doMarkComponentWithCables(Markable component, boolean marked) {
         // if component is isntance of HwComponentGraphic
@@ -622,7 +622,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
 
         return new RemovedComponentsWrapper(markedComponents, cablesToRemove);
     }
-    // END ============= MARKING =========  
+    // END ============= MARKING =========
 
     // ============== CHANGE POSITION AND RESIZE =======================
     @Override
@@ -635,7 +635,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
         Point newPosition = component.getLowerRightCornerLocation();
         // update size of graph
         updateSizeMovePosition(oldPosition, newPosition);
-        //System.out.println("tady1: oldpos="+oldPosition.x+","+oldPosition.y+"; newpos="+newPosition.x+","+newPosition.y);
+        //System.out.println("tady1: oldpos="+oldPosition.x+", "+oldPosition.y+"; newpos="+newPosition.x+", "+newPosition.y);
 
         // set timestamp of edit
         editHappend();
@@ -654,7 +654,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
         Point newPosition = getLowerRightBound(components);
         // update size of graph
         updateSizeMovePosition(oldPosition, newPosition);
-        //System.out.println("tady2: oldpos="+oldPosition.x+","+oldPosition.y+"; newpos="+newPosition.x+","+newPosition.y);
+        //System.out.println("tady2: oldpos="+oldPosition.x+", "+oldPosition.y+"; newpos="+newPosition.x+", "+newPosition.y);
 
         // set timestamp of edit
         editHappend();
@@ -710,7 +710,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
             return;
         }
 
-        // 5. case 
+        // 5. case
         if ((oldPositionLowerRightCorner.x <= newPositionLowerRightCorner.x
                 && newPositionLowerRightCorner.x <= ZoomManagerSingleton.getInstance().doScaleToActual(widthDefault))
                 || (oldPositionLowerRightCorner.y <= newPositionLowerRightCorner.y
@@ -797,7 +797,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
             Dimension differenceInDefaultZoom = new Dimension(originalLocation.x - newLocation.x,
                     originalLocation.y - newLocation.y);
 
-            // if component moved, add to moved 
+            // if component moved, add to moved
             if (differenceInDefaultZoom.getWidth() != 0 || differenceInDefaultZoom.getHeight() != 0) {
                 this.doChangePositionOfAbstractHwComponent(c, differenceInDefaultZoom, false);
 
@@ -851,7 +851,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
     }
     // END ============== CHANGE POSITION AND RESIZE =======================
 
-    // --------- GETTERS AND SETTERS    
+    // --------- GETTERS AND SETTERS
     @Override
     public int getWidth() {
         return ZoomManagerSingleton.getInstance().doScaleToActual(widthDefault);
@@ -871,7 +871,7 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
     public int getY() {
         return 0;
     }
-    
+
     @Override
     public List<BundleOfCablesGraphic> getBundlesOfCables() {
         return bundlesOfCables;
@@ -935,5 +935,5 @@ public class Graph extends JComponent implements GraphOuterInterface, GraphBuild
         return cablesMap.get(id);
     }
 
-   
+
 }

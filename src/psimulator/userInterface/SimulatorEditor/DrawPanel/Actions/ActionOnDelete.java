@@ -14,23 +14,23 @@ import psimulator.userInterface.MainWindowInnerInterface;
  */
 public class ActionOnDelete extends AbstractDrawPanelAction {
 
-	private static final long serialVersionUID = -7870603036535632011L;
+    private static final long serialVersionUID = -7870603036535632011L;
 
-	public ActionOnDelete(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
+    public ActionOnDelete(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
         super(undoManager, drawPanel, mainWindow);
     }
 
     /**
      * Removes all marked AbstractComponents from graph and all cables connecting those AbstractComponents
-     * @param ae 
+     * @param ae
      */
     @Override
     public void actionPerformed(ActionEvent ae) {
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         // remove marked components from graph
         RemovedComponentsWrapper removedComponents = graph.doRemoveMarkedComponents();
-        
+
         // if no component removed
         if(removedComponents == null){
             // do nothing
@@ -44,7 +44,7 @@ public class ActionOnDelete extends AbstractDrawPanelAction {
 
         // update undo redo buttons
         mainWindow.updateUndoRedoButtons();
-       
+
         // reapaint draw panel
         drawPanel.repaint();
     }

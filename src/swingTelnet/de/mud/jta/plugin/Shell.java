@@ -59,12 +59,12 @@ public class Shell extends Plugin implements FilterPlugin {
     bus.registerPluginListener(new ConfigurationListener() {
       public void setConfiguration(PluginConfig cfg) {
         String tmp;
-	if((tmp = cfg.getProperty("Shell", id, "command")) != null) {
-	  shellCommand = tmp;
-	  // de.mud.jta.OutputSingleton.out.println("Shell: Setting config " + tmp); // P3
+    if((tmp = cfg.getProperty("Shell", id, "command")) != null) {
+      shellCommand = tmp;
+      // de.mud.jta.OutputSingleton.out.println("Shell: Setting config " + tmp); // P3
         } else {
-	  // de.mud.jta.OutputSingleton.out.println("Shell: Not setting config"); // P3
-	  shellCommand = "/bin/sh";
+      // de.mud.jta.OutputSingleton.out.println("Shell: Not setting config"); // P3
+      shellCommand = "/bin/sh";
         }
       }
     });
@@ -77,13 +77,13 @@ public class Shell extends Plugin implements FilterPlugin {
         // String ttype = getTerminalType();
         // if(ttype == null) ttype = "dumb";
 
-	// XXX Add try around here to catch missing DLL/.so.
-	pty = new HandlerPTY();
+    // XXX Add try around here to catch missing DLL/.so.
+    pty = new HandlerPTY();
 
         if(pty.start(shellCommand) == 0) {
-	  bus.broadcast(new OnlineStatus(true));
+      bus.broadcast(new OnlineStatus(true));
         } else {
-	  bus.broadcast(new OnlineStatus(false));
+      bus.broadcast(new OnlineStatus(false));
         }
       }
       public void disconnect() {

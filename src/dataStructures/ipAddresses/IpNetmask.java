@@ -7,19 +7,21 @@ package dataStructures.ipAddresses;
 
 /**
  * Represents IPv4 netmask.
+ *
  * @author Tomas Pitrinec
  */
-public class IpNetmask extends IpAddress{
+public class IpNetmask extends IpAddress {
 
     public IpNetmask(String dlouhejFormat) {
         super(dlouhejFormat);
-        if(! jeMaskou(bits)){
+        if (!jeMaskou(bits)) {
             throw new BadNetmaskException();
         }
     }
 
     /**
      * Ocekava to masku jako integer, kolik prvnich bitu maj bejt jednicky
+     *
      * @param maska
      */
     public IpNetmask(int numberOfBits) {
@@ -32,28 +34,28 @@ public class IpNetmask extends IpAddress{
         }
     }
 
-	public static IpNetmask maskFromWildcard(String dlouhejFormat) {
-		IpAddress adr = new IpAddress(dlouhejFormat);
-		IpAddress prevracena = IpAddress.negateAddress(adr);
-		return new IpNetmask(prevracena);
-	}
+    public static IpNetmask maskFromWildcard(String dlouhejFormat) {
+        IpAddress adr = new IpAddress(dlouhejFormat);
+        IpAddress prevracena = IpAddress.negateAddress(adr);
+        return new IpNetmask(prevracena);
+    }
 
     /**
-     *
      * @param vzor
      */
-    private IpNetmask (IpAddress vzor){
-        this.bits=vzor.bits;
-        if(! jeMaskou(bits)){
+    private IpNetmask(IpAddress vzor) {
+        this.bits = vzor.bits;
+        if (!jeMaskou(bits)) {
             throw new BadNetmaskException();
         }
     }
 
     /**
      * Vrati pocet jednickovych bitu masky.
+     *
      * @return
      */
-    public int getNumberOfBits(){
+    public int getNumberOfBits() {
         if (bits == 0) {
             return 0;
         }
@@ -66,16 +68,17 @@ public class IpNetmask extends IpAddress{
         return pocet;
     }
 
-	/**
+    /**
      * Spocita wildcard z masky a vrati ho jako retezec.
+     *
      * @return
      * @author Stanislav Řehák
      */
     public String getWildcardRepresentation() {
-        long broadcast = (long)(new IPwithNetmask("255.255.255.255").getBroadcast().getBits());
+        long broadcast = (long) (new IPwithNetmask("255.255.255.255").getBroadcast().getBits());
         long mask = (long) bits;
         long wc = broadcast - mask;
-        IpAddress wildcard = IpAddress.createIpFromBits((int)wc);
+        IpAddress wildcard = IpAddress.createIpFromBits((int) wc);
         return wildcard.toString();
     }
 
@@ -83,16 +86,17 @@ public class IpNetmask extends IpAddress{
 
     /**
      * Returns netmask, if given string is netmask, othervise returns null.
+     *
      * @param ret
      * @return
      */
-    public static IpNetmask correctNetmask(String ret){
+    public static IpNetmask correctNetmask(String ret) {
         IpAddress ip = correctAddress(ret);
-        if (ip==null)
+        if (ip == null)
             return null;
         else {
             try {
-                IpNetmask  mask = new IpNetmask(ip);
+                IpNetmask mask = new IpNetmask(ip);
                 return mask;
             } catch (BadNetmaskException ex) {
                 return null;
@@ -100,15 +104,16 @@ public class IpNetmask extends IpAddress{
         }
     }
 
-	public static boolean isCorrectNetmask(String ret) {
-		if (correctNetmask(ret) != null) {
-			return true;
-		}
-		return false;
-	}
+    public static boolean isCorrectNetmask(String ret) {
+        if (correctNetmask(ret) != null) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Vraci true, kdyz je zadany integer maskou, tzn., kdyz jsou to nejdriv jednicky a pak nuly.
+     *
      * @param maska
      * @return
      */
@@ -127,7 +132,6 @@ public class IpNetmask extends IpAddress{
         }
         return false;
     }
-
 
 
 }

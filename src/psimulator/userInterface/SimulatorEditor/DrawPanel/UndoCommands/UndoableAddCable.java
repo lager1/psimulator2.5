@@ -10,10 +10,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  */
 public class UndoableAddCable extends AbstractUndoableEdit {
 
-	private static final long serialVersionUID = -5180270336651574650L;
-	protected CableGraphic cable;
+    private static final long serialVersionUID = -5180270336651574650L;
+    protected CableGraphic cable;
     protected GraphOuterInterface graph;
-    
+
     public UndoableAddCable(CableGraphic cable, GraphOuterInterface graph){
         super();
         this.cable = cable;
@@ -29,7 +29,7 @@ public class UndoableAddCable extends AbstractUndoableEdit {
     public void undo() {
       super.undo();
       graph.doUnmarkAllComponents();
-      
+
       graph.removeCable(cable);
     }
 
@@ -37,7 +37,7 @@ public class UndoableAddCable extends AbstractUndoableEdit {
     public void redo() {
       super.redo();
       graph.doUnmarkAllComponents();
-      
+
       graph.addCable(cable);
     }
 }

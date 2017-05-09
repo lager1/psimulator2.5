@@ -11,10 +11,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.Graph;
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public abstract class DrawPanelOuterInterface extends JPanel implements DrawPanelToolChangeOuterInterface{
-   
-	private static final long serialVersionUID = -6797295668198140381L;
 
-	// USED BY EDITOR PANEL
+    private static final long serialVersionUID = -6797295668198140381L;
+
+    // USED BY EDITOR PANEL
     /**
      * Finds if UNDO can be performed
      * @return true if yes, false if no
@@ -43,26 +43,26 @@ public abstract class DrawPanelOuterInterface extends JPanel implements DrawPane
 
     /**
      * removes graph from draw panel a resets state of draw panel
-     * @return 
+     * @return
      */
     public abstract Graph removeGraph();
     /**
-     * Sets graph 
-     * @param graph 
+     * Sets graph
+     * @param graph
      */
     public abstract void setGraph(Graph graph);
-    
+
     /**
      * finds whether has graph
-     * @return 
+     * @return
      */
     public abstract boolean hasGraph();
-    
+
     /**
      * Gets graph from panel
-     * @return 
+     * @return
      */
     public abstract Graph getGraph();
 
-   
+
 }

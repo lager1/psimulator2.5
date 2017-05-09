@@ -24,7 +24,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     private static final long serialVersionUID = 1059511455738081642L;
 
     protected HwComponentModel hwComponentModel;
-    
+
     // position in 1:1 zoom
     protected int defaultZoomWidth;
     protected int defaultZoomHeight;
@@ -38,35 +38,35 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     protected BufferedImage imageMarked;
     protected List<BufferedImage> textImages;
     //
-    
+
     /**
      * Use when creating graph by user actions.
      * @param imageFactory
      * @param dataLayer
-     * @param hwType 
+     * @param hwType
      */
     public HwComponentGraphic(DataLayerFacade dataLayer, HwComponentModel hwComponentModel){//, int interfacesCount) {
         super(dataLayer);
-        
+
         this.hwComponentModel = hwComponentModel;
     }
-    
+
     /**
      * Use when building graph from Network.
      * @param id
-     * @param hwType 
+     * @param hwType
      */
     public HwComponentGraphic(HwComponentModel hwComponentModel){
         super();
-        
+
         this.hwComponentModel = hwComponentModel;
     }
 
     public HwComponentModel getHwComponentModel() {
         return hwComponentModel;
     }
-    
-    
+
+
     @Override
     public HwTypeEnum getHwType() {
         return hwComponentModel.getHwType();
@@ -76,7 +76,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     public Integer getId() {
         return hwComponentModel.getId();
     }
-    
+
     /**
      * Adds new interface to the component
      */
@@ -84,16 +84,16 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         // add interface
         hwComponentModel.addInterface(ethInterface);
     }
-    
+
     /**
      * Removes last interface from component if interface does not have cable and has more
      * interfaces than minimum
      */
     public void removeInterface(EthInterfaceModel ethInterface){
         // remove interface
-        getHwComponentModel().removeInterface(ethInterface);    
+        getHwComponentModel().removeInterface(ethInterface);
     }
-    
+
     /**
      * Changes position by offset in parameter adding it to default zoom
      *
@@ -155,46 +155,46 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         //Rectangle rect = new Rectangle(getX(), getY(), getWidth(), getHeight());
         return r.intersects(rect);
     }
-    
+
     /**
      * Calculates intersecting point of this component and line made from inside and outside point.
      * Inside point is in this component. Outside point is out of the component
-     * 
+     *
      * @param insidePoint Point in actual zoom
      * @param outsidePoint Point in actual zoom
      * @return Point in actual zoom
      */
     public Point getIntersectingPoint(Point insidePoint, Point outsidePoint) {
         Point intersection;
-        
+
         Rectangle rectangle;
         Line2D line = new Line2D.Float();
-        
+
         for(int i = textImages.size()-1;i>=0;i--){
             BufferedImage image = textImages.get(i);
-            
-            int x,y,w,h;
-            
+
+            int x, y, w, h;
+
             x=(int) (ZoomManagerSingleton.getInstance().doScaleToActual(hwComponentModel.getDefaultZoomXPos()) - ((image.getWidth() - ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomWidth))/2.0));
             y= ZoomManagerSingleton.getInstance().doScaleToActual(hwComponentModel.getDefaultZoomYPos()) + ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomHeight) + i*image.getHeight();
             w = image.getWidth();
             h = image.getHeight();
-            
-            rectangle = new Rectangle(x,y,w,h);
-            
+
+            rectangle = new Rectangle(x, y, w, h);
+
             line.setLine(insidePoint, outsidePoint);
- 
+
             if(line.intersects(rectangle)){
                 intersection = GraphicUtils.getIntersectingPoint(rectangle, insidePoint, outsidePoint);
                 return intersection;
             }
         }
-        
+
         // no text rectangle intersects line
-        
+
         rectangle = new Rectangle(getX(), getY(), getWidth(), getHeight());
         intersection = GraphicUtils.getIntersectingPoint(rectangle, insidePoint, outsidePoint);
-        
+
         return intersection;
     }
 
@@ -221,7 +221,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     }
 
     /**
-     * gets first avaiable ethInterface, if no avaiable null is renturned
+     * gets first available ethInterface, if no available null is renturned
      *
      * @return
      */
@@ -273,14 +273,14 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     public Point getCenterLocation() {
         return new Point(getX() + getWidth() / 2, getY() + getHeight() / 2);
     }
-    
+
     /**
      * gets center of this component
      *
      * @return
      */
     public Point getCenterLocationDefault() {
-        return new Point(hwComponentModel.getDefaultZoomXPos() + defaultZoomWidth / 2, 
+        return new Point(hwComponentModel.getDefaultZoomXPos() + defaultZoomWidth / 2,
                 hwComponentModel.getDefaultZoomYPos() + defaultZoomTextHeight / 2);
     }
 
@@ -298,11 +298,11 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
      * Gets Point in actual scale of lower right corner of component
      *
      * @return Actual-scale ponint
-     
+
     public Point getLowerRightCornerLocation1() {
         return new Point(getX() + getWidth(), getY() + getHeight());
     }*/
-    
+
     /**
      * Gets Point in actual scale of lower right corner of component including text labels
      *
@@ -313,9 +313,9 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         if(getDefaultZoomTextWidth()> getDefaultZoomWidth()){
             x += ((getDefaultZoomTextWidth() - getDefaultZoomWidth())/2.0);
         }
-        
+
         int y = getDefaultZoomYPos() + getDefaultZoomHeight() + getDefaultZoomTextHeight();
-        
+
         return new Point(ZoomManagerSingleton.getInstance().doScaleToActual(x), ZoomManagerSingleton.getInstance().doScaleToActual(y));
     }
 
@@ -374,11 +374,11 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     public int getDefaultZoomWidth() {
         return defaultZoomWidth;
     }
-    
+
     public int getTextsWidth(){
         return ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomTextWidth);
     }
-    
+
     public int getTextsHeight(){
         return ZoomManagerSingleton.getInstance().doScaleToActual(defaultZoomTextHeight);
     }
@@ -390,7 +390,9 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
     public int getDefaultZoomTextWidth() {
         return defaultZoomTextWidth;
     }
-    
+
+    public HwComponentModel getDevice() { return hwComponentModel; }
+
     @Override
     public void initialize() {
         doUpdateImages();
@@ -405,11 +407,11 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         // get new images of icons
         imageUnmarked = ImageFactorySingleton.getInstance().getImage(getHwType(), ZoomManagerSingleton.getInstance().getIconWidth(), false);
         imageMarked = ImageFactorySingleton.getInstance().getImage(getHwType(), ZoomManagerSingleton.getInstance().getIconWidth(), true);
-        
+
         // get texts that have to be painted
         List<String> texts = getTexts();
         textImages = getTextsImages(texts, ZoomManagerSingleton.getInstance().getCurrentFontSize());
-        
+
         // set text images width and height
         int textW = 0;
         int textH = 0;
@@ -425,7 +427,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
         defaultZoomTextWidth = ZoomManagerSingleton.getInstance().doScaleToDefault(textW);
         defaultZoomTextHeight = ZoomManagerSingleton.getInstance().doScaleToDefault(textH);
     }
-    
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -437,7 +439,7 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
             // paint image
             g2.drawImage(imageUnmarked, getX(), getY(), null);
         }
-        
+
         // paint texts
         if (textImages != null) {
             paintTextsUnderImage(g2);
@@ -462,12 +464,12 @@ public final class HwComponentGraphic extends AbstractComponentGraphic {
             x = (int) (getX() - ((image.getWidth() - getWidth()) / 2.0));
 
             g2.drawImage(image, x, y, null);
-            
+
             y = y + image.getHeight();
         }
     }
-    
-    
+
+
     /**
      * Gets text that have to be displayed with this component.
      *

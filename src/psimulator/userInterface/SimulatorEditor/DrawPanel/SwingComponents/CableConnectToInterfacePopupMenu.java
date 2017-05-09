@@ -16,17 +16,17 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.MouseActionListeners.C
  */
 public class CableConnectToInterfacePopupMenu extends JPopupMenu {
 
-	private static final long serialVersionUID = -4993204601364944221L;
-	// graphical components
+    private static final long serialVersionUID = -4993204601364944221L;
+    // graphical components
     private ButtonGroup interfaceGroup;
     private ItemHandler handler = new ItemHandler();
     private JComponent drawPanel;
     private JMenuItem items[];
     // END graphical components
-    
+
     private HwComponentGraphic component;
     private ChooseEthInterfaceInterface chooseEthInterfaceInterface;
-   
+
     public CableConnectToInterfacePopupMenu(DrawPanelInnerInterface drawPanel, PopupMenuListener popupMenuListener, ChooseEthInterfaceInterface chooseEthInterfaceInterface) {
         this.drawPanel = (JComponent) drawPanel;
         this.addPopupMenuListener(popupMenuListener);
@@ -44,14 +44,14 @@ public class CableConnectToInterfacePopupMenu extends JPopupMenu {
         interfaceGroup = new ButtonGroup();
         this.removeAll();
         this.component = component;
-        
+
         // create new array with length = number of interfaces
         items = new JMenuItem[component.getInterfaces().size()];
-        
+
         int i = 0;
-        
+
         Icon icon = ImageFactorySingleton.getInstance().getImageIcon(ImageFactorySingleton.ICON_ETH_INTERFACE_16_PATH);
-        
+
         // create menu items
         for(EthInterfaceModel ei : component.getInterfaces()){
             // new menu item
@@ -66,11 +66,11 @@ public class CableConnectToInterfacePopupMenu extends JPopupMenu {
             interfaceGroup.add(items[ i]);
             // add action listener to item
             items[i].addActionListener(handler);
-            
+
             // increase counter
             i++;
         }
-        
+
         // show draw panel
         this.show(drawPanel, x, y);
     }

@@ -91,25 +91,25 @@ public class Wrapper {
       disconnect();
       throw ((IOException)e);
     }
-  }  
- 
+  }
+
   /** Disconnect the socket and close the connection. */
   public void disconnect() throws IOException {
     if(debug>0) de.mud.jta.OutputSingleton.err.println("Wrapper: disconnect()");
     if (socket != null)
-	socket.close();
+    socket.close();
   }
 
   /**
    * Login into remote host. This is a convenience method and only
    * works if the prompts are "login:" and "Password:".
-   * @param user the user name 
+   * @param user the user name
    * @param pwd the password
    */
   public void login(String user, String pwd) throws IOException {
-    waitfor("login:");		// throw output away
+    waitfor("login:");        // throw output away
     send(user);
-    waitfor("Password:");	// throw output away
+    waitfor("Password:");    // throw output away
     send(pwd);
   }
 
@@ -158,15 +158,15 @@ public class Wrapper {
     while(n >= 0) {
       n = read(b1);
       if(n > 0) {
-	current = new String( b1, 0, n );
-	if (debug > 0)
-	  de.mud.jta.OutputSingleton.err.print( current );
-	ret.append( current );
-	for ( int i = 0; i < handlers.length ; i++ ) {
-	  if ( handlers[i].match( ret.toString().getBytes(), ret.length() ) ) {
-	    return ret.toString();
-	  } // if
-	} // for
+    current = new String( b1, 0, n );
+    if (debug > 0)
+      de.mud.jta.OutputSingleton.err.print( current );
+    ret.append( current );
+    for ( int i = 0; i < handlers.length ; i++ ) {
+      if ( handlers[i].match( ret.toString().getBytes(), ret.length() ) ) {
+        return ret.toString();
+      } // if
+    } // for
       } // if
     } // while
     return null; // should never happen

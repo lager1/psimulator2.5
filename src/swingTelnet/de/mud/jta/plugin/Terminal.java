@@ -131,11 +131,11 @@ public class Terminal extends Plugin
         else
           return Color.decode(code);
       } catch (Exception e) {
-	try {
+    try {
           // try one last time
-	  return Color.decode(code);
+      return Color.decode(code);
         } catch(Exception ex) {
-	  // ignore
+      // ignore
         }
         error("ignoring unknown color code: " + code);
       }
@@ -284,9 +284,9 @@ public class Terminal extends Plugin
     // or at least reduce flicker by overloading update()
     tPanel = new JPanel(new BorderLayout()) {
 
-		private static final long serialVersionUID = 1212258713205975464L;
+        private static final long serialVersionUID = 1212258713205975464L;
 
-	// reduce flickering
+    // reduce flickering
       public void update(java.awt.Graphics g) {
         paint(g);
       }
@@ -314,7 +314,7 @@ public class Terminal extends Plugin
       }
     });
 
-    // get a reference to the system clipboard.  
+    // get a reference to the system clipboard.
     try {
       clipboard = tPanel.getToolkit().getSystemClipboard();
       de.mud.jta.OutputSingleton.out.println("Got the clipboard reference ok - copy & paste enabled");
@@ -322,7 +322,7 @@ public class Terminal extends Plugin
       de.mud.jta.OutputSingleton.out.println("Failed to get clipboard - copy and paste will not work");
       /* ex.printStackTrace(); */
     }
-    
+
     //*******************************
     //code to handle copy and paste
     //from embeded terminal

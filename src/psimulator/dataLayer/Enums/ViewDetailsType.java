@@ -1,7 +1,6 @@
 package psimulator.dataLayer.Enums;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public enum ViewDetailsType {
@@ -11,6 +10,6 @@ public enum ViewDetailsType {
     CABLE_DELAYS,
     IP_ADDRESS,
     MAC_ADDRESS,
-    
+
     NETWORK_BOUNDS;
 }

@@ -17,8 +17,8 @@ import shared.SimulatorEvents.SerializedComponents.EventType;
  */
 public class JTableEventList extends JTable {
 
-	private static final long serialVersionUID = -8588584839676450590L;
-	private EventTableModel tableModel;
+    private static final long serialVersionUID = -8588584839676450590L;
+    private EventTableModel tableModel;
 
     public JTableEventList(EventTableModel tableModel) {
         super(tableModel);

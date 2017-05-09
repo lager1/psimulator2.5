@@ -14,7 +14,6 @@ import psimulator.dataLayer.Enums.ObserverUpdateEventType;
 import psimulator.dataLayer.interfaces.SaveableInterface;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class LanguageManager extends Observable implements SaveableInterface {
@@ -29,7 +28,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
     //private Locale currentLocale = czLocale;
     private ResourceBundle currentResouceBundle;
     private HashMap<String, ResourceBundle> bundles;
-    private Object[] avaiableLanguagesSorted;
+    private Object[] availableLanguagesSorted;
     private int selectedLanguagePosition;
 
     public LanguageManager() {
@@ -45,7 +44,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
         // default bundle is Czech
         currentResouceBundle = czechBundle;
 
-        // load all resource bundles avaiable in Languages directory
+        // load all resource bundles available in Languages directory
         bundles = languageLoader.getAllResouceBundles("./Languages", currentResouceBundle);
 
         // add english and czech to hashMap
@@ -63,7 +62,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
         Collections.sort(list, Collator.getInstance());
 
         // create array
-        avaiableLanguagesSorted = list.toArray();
+        availableLanguagesSorted = list.toArray();
 
         // load langauge set in Preferences
         loadPreferences();
@@ -72,35 +71,38 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Sets current language to language at languagePosition
-     * @param languagePosition 
+     *
+     * @param languagePosition
      */
     public void setCurrentLanguage(int languagePosition) {
         // if language position not possible
-        if (!(languagePosition >= 0 && languagePosition < avaiableLanguagesSorted.length)) {
+        if (!(languagePosition >= 0 && languagePosition < availableLanguagesSorted.length)) {
             // should not happen
             return;
         }
 
         // get name according to position
-        String language = (String) avaiableLanguagesSorted[languagePosition];
+        String language = (String) availableLanguagesSorted[languagePosition];
         // set changed language as current
         setCurrentLanguage(language, languagePosition);
-        
+
         // notify all observers
         setChanged();
         notifyObservers(ObserverUpdateEventType.LANGUAGE);
     }
 
     /**
-     * Gets all avaiable language names sorted in array
+     * Gets all available language names sorted in array
+     *
      * @return Set of Strings with names
      */
-    public Object[] getAvaiableLanguageNames() {
-        return avaiableLanguagesSorted;
+    public Object[] getAvailableLanguageNames() {
+        return availableLanguagesSorted;
     }
 
     /**
      * Returns position of current language in languages array
+     *
      * @return Position
      */
     public int getCurrentLanguagePosition() {
@@ -109,7 +111,7 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Returns string from current ResourceBundle
-     * 
+     *
      * @param string
      * @return Expression in current language
      */
@@ -122,8 +124,8 @@ public class LanguageManager extends Observable implements SaveableInterface {
      */
     @Override
     public final void savePreferences() {
-        //System.out.println("Saving to preferences:" + LANGUAGE_PREFS + " - " + (String) avaiableLanguagesSorted[selectedLanguagePosition]);
-        prefs.put(LANGUAGE_PREFS, (String) avaiableLanguagesSorted[selectedLanguagePosition]);
+        //System.out.println("Saving to preferences:" + LANGUAGE_PREFS + " - " + (String) availableLanguagesSorted[selectedLanguagePosition]);
+        prefs.put(LANGUAGE_PREFS, (String) availableLanguagesSorted[selectedLanguagePosition]);
     }
 
     /**
@@ -139,12 +141,13 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Initializes current language according to language if exists.If no, the DEFAULT_LANGUAGE is set/
+     *
      * @param language Language to initialize to
      */
     private void initializeLanguage(String language) {
         // find position of loaded language
         int position = findLanguagePosition(language);
-        // if position not found (language of loaded name is not avaiable)
+        // if position not found (language of loaded name is not available)
         if (position == -1) {
             // set default language
             position = findLanguagePosition(DEFAULT_LANGUAGE);
@@ -156,8 +159,9 @@ public class LanguageManager extends Observable implements SaveableInterface {
 
     /**
      * Changes program current language to language in parameter (if exists).
-     * @param language Language to switch the program
-     * @param languagePosition Position of language in avaiableLanguagesSorted
+     *
+     * @param language         Language to switch the program
+     * @param languagePosition Position of language in availableLanguagesSorted
      */
     private void setCurrentLanguage(String language, int languagePosition) {
         // if there is language of given name
@@ -174,15 +178,16 @@ public class LanguageManager extends Observable implements SaveableInterface {
     }
 
     /**
-     * Finds language in avaiableLanguagesSorted array and returns its position
+     * Finds language in availableLanguagesSorted array and returns its position
+     *
      * @param language
      * @return position if found, otherwise -1
      */
     private int findLanguagePosition(String language) {
         int val = -1;
         // set position of default language in array
-        for (int i = 0; i < avaiableLanguagesSorted.length; i++) {
-            if (avaiableLanguagesSorted[i].equals(language)) {
+        for (int i = 0; i < availableLanguagesSorted.length; i++) {
+            if (availableLanguagesSorted[i].equals(language)) {
                 val = i;
             }
         }

@@ -11,5 +11,5 @@ package logging;
  */
 public interface Loggable {
 
-	public String getDescription();
+    public String getDescription();
 }

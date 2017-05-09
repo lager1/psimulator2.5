@@ -16,6 +16,7 @@ import psimulator.dataLayer.Singletons.ZoomManagerSingleton;
 import psimulator.userInterface.MainWindowInnerInterface;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Components.*;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.DrawPanelInnerInterface;
+import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.DrawPanelAction;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterface;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.PopupMenuAbstractHwComponent;
 import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.PopupMenuCable;
@@ -50,9 +51,9 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
      */
     protected Point startPointOfMarkingTransparentRectangle;
     protected Point startPointOfMarkingTransparentRectangleDefaultZoom;
-    
+
     protected boolean transparentRectangleInProgress;
-            
+
     private ManipulationTool manipulationTool;
 
     public DrawPanelListenerStrategyHand(DrawPanelInnerInterface drawPanel, UndoManager undoManager, MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
@@ -62,24 +63,24 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
     @Override
     public void initialize() {
         super.initialize();
-        
+
         transparentRectangleInProgress = false;
     }
 
     @Override
     public void deInitialize() {
         drawPanel.setCursor(defCursor);
-        
+
         if(drawPanel.getGraphOuterInterface()!=null){
-           drawPanel.getGraphOuterInterface().doUnmarkAllComponents(); 
+           drawPanel.getGraphOuterInterface().doUnmarkAllComponents();
         }
-        
+
         drawPanel.repaint();
     }
 
     /**
      * Abstract Tool can set itself as
-     * @param tool 
+     * @param tool
      */
     @Override
     public void setTool(AbstractTool tool) {
@@ -90,59 +91,21 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
      * Marks component at Point clicked if any
      * IF control pressed, than add component to marked components
      * IF control not pressed, mark only the clicked component
-     * @param e 
+     * @param e
      */
     @Override
     public void mouseClickedLeft(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         // get clicked component
         Markable clickedComponent = getClickedItem(e.getPoint());
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         // if nothing clicked
         if (clickedComponent == null) {
-//            System.out.println("Graph - " + graph.getHwComponents().size() + " components, " + graph.getCablesCount()
-//                    + " cables and " + graph.getBundlesOfCables().size() + " bundles of cables");
-//            
-//            System.out.println("Network - " + graph.getNetworkFacade().getHwComponentsCount()+ " components, " 
-//                    + graph.getNetworkFacade().getCablesCount()+ " cables");
-//            
-//            System.out.println("IDs graph:");
-//            
-//            Iterator <HwComponentGraphic> it = graph.getHwComponents().iterator();
-//            
-//            while(it.hasNext()){
-//                System.out.println(it.next().getId()+"");
-//            }
-//            
-//            System.out.println("IDs network:");
-//            
-//            Iterator <HwComponentModel> it2 = graph.getNetworkFacade().getHwComponents().iterator();
-//            
-//            while(it2.hasNext()){
-//                System.out.println(it2.next().getId()+"");
-//            }
-//            
-//            System.out.println("IDs Graph cables:");
-//            
-//            Iterator<CableGraphic> itc1 = graph.getCables().iterator();
-//            
-//            while(itc1.hasNext()){
-//                System.out.println(itc1.next().getId()+"");
-//            }
-//            
-//            
-//            System.out.println("IDs Network cables:");
-//            
-//            Iterator<CableModel> itc2 = graph.getNetworkFacade().getCables().iterator();
-//            
-//            while(itc2.hasNext()){
-//                System.out.println(itc2.next().getId()+"");
-//            }
-            
+
             if (e.isControlDown()) {
                 // do nothing
             } else {
@@ -173,15 +136,18 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
 
         // if control not down
 
-        // if is clicked component marked 
+        // if is clicked component marked
         if (clickedComponent.isMarked()) {
             // if there are more marked components, mark only clicked one
             if (graph.getMarkedAbstractHWComponentsCount() > 1) {
                 graph.doUnmarkAllComponents();
                 graph.doMarkComponentWithCables(clickedComponent, true);
-            } else { // if only one marked component remove marking 
+            } else { // if only one marked component remove marking
+                // Open properties
+                drawPanel.getAbstractAction(DrawPanelAction.PROPERTIES).actionPerformed(null);
+
                 // remove from marked components and unmark it
-                graph.doMarkComponentWithCables(clickedComponent, false);
+                //graph.doMarkComponentWithCables(clickedComponent, false);
             }
         } else {
             // if clicked component not marked
@@ -200,9 +166,9 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
     public void mousePressedLeft(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         boolean addToDragAllMarkedComponents = false;
         if (draggedComponents == null) {
             draggedComponents = new ArrayList<>();
@@ -256,19 +222,19 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
             // count difference between upper left corner of component and clicked point on component
             differenceXdefaultZoom = ZoomManagerSingleton.getInstance().doScaleToDefault(e.getX()) - draggedComponentsOriginalPoint.x;
             differenceYdefaultZoom = ZoomManagerSingleton.getInstance().doScaleToDefault(e.getY()) - draggedComponentsOriginalPoint.y;
-        
+
         }
 
     }
 
     @Override
     public void mouseDraggedLeft(MouseEvent e) {
-        // convert mouse event 
+        // convert mouse event
         e = convertMouseEvent(e);
-        
-        
+
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         if (draggedComponents == null) {
             return;
         }
@@ -277,9 +243,9 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
         if (draggedComponents.isEmpty() && transparentRectangleInProgress == true) {
             // scale start point to acutal
             //startPointOfMarkingTransparentRectangle = ZoomManagerSingleton.getInstance().doScaleToActual(startPointOfMarkingTransparentRectangleDefaultZoom);
-            
+
             //startPointOfMarkingTransparentRectangleDefaultZoom
-            
+
             // calculate width an height
             int width = startPointOfMarkingTransparentRectangleDefaultZoom.x - ZoomManagerSingleton.getInstance().doScaleToDefault(e.getPoint().x);
             int height = startPointOfMarkingTransparentRectangleDefaultZoom.y - ZoomManagerSingleton.getInstance().doScaleToDefault(e.getPoint().y);
@@ -344,14 +310,14 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
     @Override
     public void mouseReleasedLeft(MouseEvent e) {
         e = convertMouseEvent(e);
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         // dragging all marked components
 
         // if we are dragging some components
         if (draggedComponents != null && !draggedComponents.isEmpty()) {
-            // new default location for undoable edit  (math.max(0,x) because we dont want to move it to negative position)
+            // new default location for undoable edit  (math.max(0, x) because we dont want to move it to negative position)
 
             Point newDefaultZoomLocation = new Point(Math.max(0, ZoomManagerSingleton.getInstance().doScaleToDefault(e.getX()) - differenceXdefaultZoom),
                     Math.max(0, ZoomManagerSingleton.getInstance().doScaleToDefault(e.getY()) - differenceYdefaultZoom));
@@ -381,7 +347,7 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
         // painting transparent rectange for marking more components
         transparentRectangleInProgress = false;
         drawPanel.setTransparetnRectangleInProgress(false, null);
-        
+
         drawPanel.repaint();
     }
 
@@ -389,9 +355,9 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
     public void mouseMoved(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         for (HwComponentGraphic c : graph.getHwComponents()) {
             if (c.intersects(e.getPoint())) {
                 drawPanel.setCursor(hndCursor);
@@ -415,10 +381,10 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
     public void mousePressedRight(MouseEvent e) {
         // convert
         e = convertMouseEvent(e);
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
         transparentRectangleInProgress = false;
-        
+
         // get clicked component
         AbstractComponentGraphic clickedComponent = getClickedItem(e.getPoint());
 
@@ -437,24 +403,24 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
             PopupMenuAbstractHwComponent popup = new PopupMenuAbstractHwComponent(drawPanel, dataLayer, 0);
 
             popup.show(drawPanel, e.getPoint().x, e.getPoint().y);
-            
+
             return;
         }
 
         // if clicled on cable
-        if(clickedComponent != null && clickedComponent instanceof CableGraphic){
+        if (clickedComponent != null && clickedComponent instanceof CableGraphic){
             if(!clickedComponent.isMarked()){
                 graph.doUnmarkAllComponents();
                 graph.doMarkCable((CableGraphic) clickedComponent);
                 drawPanel.repaint();
             }
-            
+
             PopupMenuCable popup = new PopupMenuCable(drawPanel, dataLayer, graph.getMarkedCablesCount());
 
             popup.show(drawPanel, e.getPoint().x, e.getPoint().y);
             return;
         }
-        
+
         // if there is one marked component or no marked component and a component was clicked
         if (clickedComponent != null) {
             // unmark all components
@@ -472,7 +438,7 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
             return;
         }
 
-        // if there are more marked components 
+        // if there are more marked components
         if (graph.getMarkedAbstractHWComponentsCount() >= 1) {
             // unmark all components
             graph.doUnmarkAllComponents();
@@ -488,15 +454,15 @@ public class DrawPanelListenerStrategyHand extends DrawPanelListenerStrategy {
 
     /**
      * Marks only components and its cables that intersects with rectangle in default zoom in parameter
-     * @param rectangleDefaultZoom 
+     * @param rectangleDefaultZoom
      */
     private void doMarkHwComponentsAndItsCablesInRectangle(Rectangle rectangleDefaultZoom) {
         // get actual zoom rectangle
-        Rectangle rectangleInActualZoom = new Rectangle(ZoomManagerSingleton.getInstance().doScaleToActual(rectangleDefaultZoom.getLocation()), 
+        Rectangle rectangleInActualZoom = new Rectangle(ZoomManagerSingleton.getInstance().doScaleToActual(rectangleDefaultZoom.getLocation()),
                     ZoomManagerSingleton.getInstance().doScaleToActual(rectangleDefaultZoom.getSize()));
-        
+
         GraphOuterInterface graph = drawPanel.getGraphOuterInterface();
-        
+
         // set all components unmarked
         graph.doUnmarkAllComponents();
 

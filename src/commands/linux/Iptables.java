@@ -7,11 +7,13 @@ package commands.linux;
 import commands.AbstractCommandParser;
 import dataStructures.ipAddresses.BadIpException;
 import dataStructures.ipAddresses.IpAddress;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import networkModule.L3.nat.NatTable;
 import networkModule.L3.NetworkInterface;
-import utils.Util;
+import utils.Utilities;
 
 /**
  * Prakticky zkopirovanej z bakalarky, pridal jsem jen moznost -F.
@@ -19,8 +21,6 @@ import utils.Util;
  * @author Tomas Pitrinec
  */
 public class Iptables extends LinuxCommand {
-
-
 
 
     /**
@@ -58,10 +58,10 @@ public class Iptables extends LinuxCommand {
     String preklAdr;
     List<String> dvojityPrepinace = new ArrayList<>();//prepinace, ktery byly zadany vic nez jednou
     List<String> nepovolenyPrepinace = new ArrayList<>(); //prepinace, ktery jsou v zadany kombinaci
-           //nepovoleny, a to budto simulatorem nebo samotnym iptables
+    //nepovoleny, a to budto simulatorem nebo samotnym iptables
     List<String> chybejiciPrepinace = new ArrayList<>();//prepinace, ktery pro moje prepinace chybej
     String nedokoncenejPrepinac;
-    boolean minus_h=false;
+    boolean minus_h = false;
     boolean zadanoMinus_o = false;
     boolean zadanoMinus_i = false;
     boolean zadanoMinus_j = false;
@@ -76,7 +76,7 @@ public class Iptables extends LinuxCommand {
      * 2 - insert<br />
      * 3 - delete<br />
      * 4 - list (vypsani)<br />
-	 * 5 - flush<br />
+     * 5 - flush<br />
      */
     int provest = 0;
     int cisloPravidla = -1; //cislo pravidla pro smazani nebo pridani
@@ -88,37 +88,32 @@ public class Iptables extends LinuxCommand {
     IpAddress prekladanaAdr;//ip adresa, na kterou se ma prekladat
     NetworkInterface vystupni;
 
-	private final NatTable natTable;	// zkratka
+    private final NatTable natTable;    // zkratka
 
 
+    public Iptables(AbstractCommandParser parser) {
+        super(parser);
+        natTable = ipLayer.getNatTable();
+    }
 
-	public Iptables(AbstractCommandParser parser) {
-		super(parser);
-		natTable = ipLayer.getNatTable();
-	}
-
-	@Override
-	public void run() {
-		parsujPrikaz();
+    @Override
+    public void run() {
+        parsujPrikaz();
         zkontrolujPrikaz();
         vypisChybovyHlaseni();
         vykonejPrikaz();
-	}
-
-
-
+    }
 
 
     /**
      * Parsuje prikaz, k cemuz vola i metody dole. Kontroluje gramatiku prikazu.
-     *
      */
     private void parsujPrikaz() {
-        slovo = dalsiSlovo();
+        slovo = getToken();
         while (!slovo.equals("")) {
             zpracujBeznyPrepinace();
-            if(minus_h)break; // po -h se uz nic dalsiho neparsuje.
-            slovo = dalsiSlovo();
+            if (minus_h) break; // po -h se uz nic dalsiho neparsuje.
+            slovo = getToken();
         }
     }
 
@@ -130,11 +125,11 @@ public class Iptables extends LinuxCommand {
      * nat).
      */
     private void zpracujBeznyPrepinace() {
-      if (slovo.equals("-h") || slovo.equals("--help")) {
-			minus_h = true;
-		} else if (slovo.equals("-t")) {
-			zpracujMinus_t();
-		} else if (slovo.equals("-o")) {
+        if (slovo.equals("-h") || slovo.equals("--help")) {
+            minus_h = true;
+        } else if (slovo.equals("-t")) {
+            zpracujMinus_t();
+        } else if (slovo.equals("-o")) {
             zpracujMinus_o();
         } else if (slovo.equals("-i")) {
             zpracujMinus_i();
@@ -145,7 +140,7 @@ public class Iptables extends LinuxCommand {
         } else if (akceJump != null && akceJump.equals("DNAT") && (slovo.equals("--to") || slovo.equals("--to-destination"))) {
             // -> dokud neni zadan DNAT, neni --to povoleny
             zpracujToDestination();
-        } else if ((slovo.equals("-A")) || (slovo.equals("-I")) || (slovo.equals("-D"))|| (slovo.equals("-F"))) {
+        } else if ((slovo.equals("-A")) || (slovo.equals("-I")) || (slovo.equals("-D")) || (slovo.equals("-F"))) {
             zpracujRetez();
         } else if (slovo.equals("-L")) {
             if (zadanoMinus_j) {
@@ -167,7 +162,7 @@ public class Iptables extends LinuxCommand {
     }
 
     private void zpracujMinus_t() {
-        tabulka = dalsiSlovo();
+        tabulka = getToken();
         if (!tabulka.equals("nat")) {
             if (tabulka.equals("")) {
                 navrKod |= 4; //zadano jen -t
@@ -185,7 +180,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_o = true;
         }
-        vystupniRozhr = dalsiSlovo();
+        vystupniRozhr = getToken();
         if (vystupniRozhr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-o";
@@ -199,7 +194,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_i = true;
         }
-        vstupniRozhr = dalsiSlovo();
+        vstupniRozhr = getToken();
         if (vstupniRozhr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-i";
@@ -213,7 +208,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_j = true;
         }
-        akceJump = dalsiSlovo();
+        akceJump = getToken();
         if (akceJump.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-j";
@@ -231,7 +226,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoMinus_d = true;
         }
-        cilAdr = dalsiSlovo();
+        cilAdr = getToken();
         if (cilAdr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "-d";
@@ -251,7 +246,7 @@ public class Iptables extends LinuxCommand {
         } else {
             zadanoToDestination = true;
         }
-        preklAdr = dalsiSlovo();
+        preklAdr = getToken();
         if (preklAdr.equals("")) {
             navrKod |= 4;
             nedokoncenejPrepinac = "--to-destination";
@@ -272,28 +267,28 @@ public class Iptables extends LinuxCommand {
             navrKod |= 256;
         } else {
             provest = 1;
-			zadanRetez = true;
-			if (slovo.equals("-A")) {
-				provest = 1;
-			} else if (slovo.equals("-I")) {
-				provest = 2;
-			} else if (slovo.equals("-D")) {
-				provest = 3;
-			} else if (slovo.equals("-F")) {
-				provest = 5;
-			}
-            retez = dalsiSlovo();
+            zadanRetez = true;
+            if (slovo.equals("-A")) {
+                provest = 1;
+            } else if (slovo.equals("-I")) {
+                provest = 2;
+            } else if (slovo.equals("-D")) {
+                provest = 3;
+            } else if (slovo.equals("-F")) {
+                provest = 5;
+            }
+            retez = getToken();
             if (provest == 2) {//insert
-				cisloPr = parser.nextWordPeek();
+                cisloPr = parser.nextWordPeek();
                 try {
                     cisloPravidla = Integer.parseInt(cisloPr);
-                    dalsiSlovo(); //zvetsovani citace, kdyz se to povedlo
+                    getToken(); //zvetsovani citace, kdyz se to povedlo
                 } catch (NumberFormatException ex) {
                     cisloPravidla = 1;
                 }
             }
             if (provest == 3) { //delete
-                cisloPr = dalsiSlovo();
+                cisloPr = getToken();
                 try {
                     cisloPravidla = Integer.parseInt(cisloPr);
                 } catch (NumberFormatException ex) {
@@ -303,9 +298,9 @@ public class Iptables extends LinuxCommand {
             if (cisloPravidla != -1 && cisloPravidla < 1) {
                 navrKod |= 512;
             }
-            if( !retez.equals("PREROUTING") && !retez.equals("POSTROUTING") && !(retez.equals("")&&provest==5) ){
-					// -> kdyz retez neni PREROUTING, ani POSTROUTING, ani prazdnej pri flush
-                navrKod|=32768;
+            if (!retez.equals("PREROUTING") && !retez.equals("POSTROUTING") && !(retez.equals("") && provest == 5)) {
+                // -> kdyz retez neni PREROUTING, ani POSTROUTING, ani prazdnej pri flush
+                navrKod |= 32768;
             }
 
         }
@@ -316,19 +311,19 @@ public class Iptables extends LinuxCommand {
      */
     private void zkontrolujPrikaz() {
 
-        if(minus_h)return; //nic se nekontroluje...
+        if (minus_h) return; //nic se nekontroluje...
 
         //kontrola spravnosti tabulky - pozor, vyplnuje se jeste navrKod:
         if (tabulka == null) {
             navrKod |= 2; //tabulka nezadana
         }
 
-        if(provest==0){
+        if (provest == 0) {
             navrKod |= 128;
         }
 
-        if (provest == 4 || provest ==3) { //-L - vypisovani, -D - mazani
-          // -> poustim to zaroven i pri -D, abych si usetril kopirovani
+        if (provest == 4 || provest == 3) { //-L - vypisovani, -D - mazani
+            // -> poustim to zaroven i pri -D, abych si usetril kopirovani
             if (zadanoMinus_d) {
                 zakazanyPrepinace.add("-d");
                 navrKod |= 2048;
@@ -347,7 +342,7 @@ public class Iptables extends LinuxCommand {
             }
         }
 
-        if(provest==1 ||provest==2){ //append nebo insert
+        if (provest == 1 || provest == 2) { //append nebo insert
             if (zadanoMinus_i) { //-i neni u me povoleny ani v jednom
                 nepovolenyPrepinace.add("-i");
                 navrKod |= 4096;
@@ -357,54 +352,54 @@ public class Iptables extends LinuxCommand {
                     nepovolenyPrepinace.add("-d");
                     navrKod |= 4096;
                 }
-                if(zadanoMinus_o){
-					vystupni = ipLayer.getNetworkInteface(vystupniRozhr);
-                    if(vystupni==null){
+                if (zadanoMinus_o) {
+                    vystupni = ipLayer.getNetworkInteface(vystupniRozhr);
+                    if (vystupni == null) {
                         navrKod |= 8192;
                     }
-                }else{
+                } else {
                     chybejiciPrepinace.add("-o");
                     navrKod |= 16384;
                 }
-                if(zadanoMinus_j){
-                    if( ! akceJump.equals("MASQUERADE")){
+                if (zadanoMinus_j) {
+                    if (!akceJump.equals("MASQUERADE")) {
                         navrKod |= 4096;
-                        nepovolenyPrepinace.add("-j "+akceJump); //dam ho tam, i kdyz neni prepinac
+                        nepovolenyPrepinace.add("-j " + akceJump); //dam ho tam, i kdyz neni prepinac
                     }
-                }else{
+                } else {
                     chybejiciPrepinace.add("-j");
                     navrKod |= 16384;
                 }
             }
-            if (retez.equals("PREROUTING")){
+            if (retez.equals("PREROUTING")) {
                 navrKod |= 131072; //nepodporovanej retez
-                if( ! zadanoMinus_d  ){
+                if (!zadanoMinus_d) {
                     chybejiciPrepinace.add("-d");
                     navrKod |= 16384;
                 }
-                if( ! zadanoMinus_j  ){
+                if (!zadanoMinus_j) {
                     chybejiciPrepinace.add("-j");
                     navrKod |= 16384;
-                }else{
-                    if( ! akceJump.equals("DNAT")){
+                } else {
+                    if (!akceJump.equals("DNAT")) {
                         navrKod |= 4096;
-                        nepovolenyPrepinace.add("-j "+akceJump); //dam ho tam, i kdyz neni prepinac
+                        nepovolenyPrepinace.add("-j " + akceJump); //dam ho tam, i kdyz neni prepinac
                     }
                 }
-                if( ! zadanoToDestination  ){
+                if (!zadanoToDestination) {
                     chybejiciPrepinace.add("--to-destination");
                     navrKod |= 16384;
                 }
-                if( zadanoMinus_o  ){
+                if (zadanoMinus_o) {
                     zakazanyPrepinace.add("-o"); //ten je tady zakazanej
                     navrKod |= 2048;
                 }
             }
         }
 
-        if(provest==3){ //delete
+        if (provest == 3) { //delete
             //prebytecny prepinace se zkoumaly uz s vypisem
-            if(cisloPravidla!=1){
+            if (cisloPravidla != 1) {
                 navrKod |= 65536;
             }
         }
@@ -415,7 +410,7 @@ public class Iptables extends LinuxCommand {
      * Budou pak chtit seradit podle priority.
      */
     private void vypisChybovyHlaseni() {
-        if (ladiciVypisovani) {
+        if (enableDebug) {
             printLine(toString());
             printLine("----------------------------");
         }
@@ -488,15 +483,15 @@ public class Iptables extends LinuxCommand {
 
         if ((navrKod & 4096) != 0) { //pro akci zatim nepodporovany prepinac
             parser.printService(": Takova moznost by mozna normalne byla mozna, simulator ji vsak "
-                    +"zatim nepodporuje. Zkuste odstranit prepinac: "+ vypisSeznam(nepovolenyPrepinace));
+                    + "zatim nepodporuje. Zkuste odstranit prepinac: " + vypisSeznam(nepovolenyPrepinace));
         }
 
         if ((navrKod & 8192) != 0) { //zadany vystupni rozhrani neexistuje kontroluje se jen na POSTROUTING)
-            parser.printService(": Zadane rozhrani "+vystupniRozhr+" neexistuje.");
+            parser.printService(": Zadane rozhrani " + vystupniRozhr + " neexistuje.");
         }
         if ((navrKod & 16384) != 0) { //zadany vystupni rozhrani neexistuje kontroluje se jen na POSTROUTING)
             parser.printService(": Pro danou moznost chybeji tyto prepinace: "
-                    +vypisSeznam(chybejiciPrepinace));
+                    + vypisSeznam(chybejiciPrepinace));
         }
 
         if ((navrKod & 131072) != 0) { //nepodporovanej retez PREROUTING
@@ -508,34 +503,34 @@ public class Iptables extends LinuxCommand {
 
 
     protected void vykonejPrikaz() {
-        if(navrKod!=0){
+        if (navrKod != 0) {
             return; // provadi se, jen kdyz je vsechno dobre
         }
 
-        if(minus_h){
+        if (minus_h) {
             vypisHelp();
             return;
         }
 
         if (provest == 4) {
-			vypis();
-		} else if (provest == 1 || provest == 2) { //-A nebo -I
-			if (!natTable.isSetLinuxMasquarade()) {
-				natTable.setLinuxMasquarade(vystupni);
-			} else {
-				parser.printService("Simulator neumoznuje pridat vic nez jedno pravidlo do tabulky. "
-						+ "Nejprve smazte existujici pravidlo.");
-			}
-		} else if (provest == 3) { //mazani
-			if (natTable.isSetLinuxMasquarade()) {
-				natTable.cancelLinuxMasquerade();
-			} else {
-				printLine("iptables: Index of deletion too big");
-			}
+            vypis();
+        } else if (provest == 1 || provest == 2) { //-A nebo -I
+            if (!natTable.isSetLinuxMasquarade()) {
+                natTable.setLinuxMasquarade(vystupni);
+            } else {
+                parser.printService("Simulator neumoznuje pridat vic nez jedno pravidlo do tabulky. "
+                        + "Nejprve smazte existujici pravidlo.");
+            }
+        } else if (provest == 3) { //mazani
+            if (natTable.isSetLinuxMasquarade()) {
+                natTable.cancelLinuxMasquerade();
+            } else {
+                printLine("iptables: Index of deletion too big");
+            }
 
-		} else if(provest==5){
-			natTable.cancelLinuxMasquerade();
-		}
+        } else if (provest == 5) {
+            natTable.cancelLinuxMasquerade();
+        }
     }
 
 
@@ -545,19 +540,19 @@ public class Iptables extends LinuxCommand {
         printLine("");
         printLine("Chain POSTROUTING (policy ACCEPT)");
         printLine("target     prot opt source               destination");
-        if(natTable.isSetLinuxMasquarade())
+        if (natTable.isSetLinuxMasquarade())
             printLine("MASQUERADE  all  --  0.0.0.0/0            0.0.0.0/0");
         printLine("");
         printLine("Chain OUTPUT (policy ACCEPT)");
         printLine("target     prot opt source               destination");
     }
 
-    private String vypisSeznam(List<String> l){
-        String vr="";
-        for(int i=0;i<l.size();i++){
-            if(l.get(i)!=null){
-                if(i!=0)vr+=", ";
-                vr+=l.get(i);
+    private String vypisSeznam(List<String> l) {
+        String vr = "";
+        for (int i = 0; i < l.size(); i++) {
+            if (l.get(i) != null) {
+                if (i != 0) vr += ", ";
+                vr += l.get(i);
             }
         }
         return vr;
@@ -565,7 +560,7 @@ public class Iptables extends LinuxCommand {
 
     @Override
     public String toString() {
-        String vratit = "  Parametry prikazu iptables:\n\r\tnavratovyKodParseru: " + Util.rozlozNaMocniny2(navrKod);
+        String vratit = "  Parametry prikazu iptables:\n\r\tnavratovyKodParseru: " + Utilities.splitToPowersOf2(navrKod);
         if (tabulka != null) {
             vratit += "\n\r\ttabulka: " + tabulka;
         }
@@ -593,7 +588,6 @@ public class Iptables extends LinuxCommand {
                 vratit += "\n\r\tcilovaAdr: " + cilovaAdr.toString();
             }
         }
-
 
 
         return vratit;
@@ -662,8 +656,6 @@ public class Iptables extends LinuxCommand {
         printLine("  --set-counters PKTS BYTES     set the counter during insert/append");
         printLine("[!] --version   -V              print package version.");
     }
-
-
 
 
 }

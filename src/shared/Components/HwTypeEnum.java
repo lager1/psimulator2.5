@@ -3,7 +3,6 @@ package shared.Components;
 import javax.xml.bind.annotation.XmlEnum;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 @XmlEnum

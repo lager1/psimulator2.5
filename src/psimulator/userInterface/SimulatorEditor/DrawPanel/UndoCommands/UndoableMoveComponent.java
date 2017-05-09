@@ -11,22 +11,22 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class UndoableMoveComponent extends AbstractUndoableEdit {
-    
-	private static final long serialVersionUID = 8023082336396063405L;
 
-	protected GraphOuterInterface graph;
-    
+    private static final long serialVersionUID = 8023082336396063405L;
+
+    protected GraphOuterInterface graph;
+
     protected List<HwComponentGraphic> components;
     protected Dimension offsetInDefaultZoom;
-    
-    
+
+
     public UndoableMoveComponent(GraphOuterInterface graph, List<HwComponentGraphic> components, Dimension offsetInDefaultZoom) {
         super();
         this.components = components;
         this.offsetInDefaultZoom = offsetInDefaultZoom;
         this.graph = graph;
     }
- 
+
     @Override
     public String getPresentationName() {
       return "Component move";
@@ -35,14 +35,14 @@ public class UndoableMoveComponent extends AbstractUndoableEdit {
     @Override
     public void undo() {
       super.undo();
-      
+
       graph.doChangePositionOfAbstractHwComponents(components, offsetInDefaultZoom, false);
-      
+
       /*
       for(HwComponentGraphic component : components){
           component.doChangePosition(offsetInDefaultZoom, false);
       }
-      
+
       // panel could be resized before undo, so we need to update its size
      drawPanel.updateSize(drawPanel.getGraph().getGraphLowerRightBound());
      */
@@ -51,9 +51,9 @@ public class UndoableMoveComponent extends AbstractUndoableEdit {
     @Override
     public void redo() {
       super.redo();
-      
+
       graph.doChangePositionOfAbstractHwComponents(components, offsetInDefaultZoom, true);
-      
+
       /*
       for(HwComponentGraphic component : components){
           component.doChangePosition(offsetInDefaultZoom, true);

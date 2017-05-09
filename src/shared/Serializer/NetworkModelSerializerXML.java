@@ -1,6 +1,7 @@
 package shared.Serializer;
 
 import shared.Components.NetworkModel;
+
 import java.io.File;
 import java.io.IOException;
 import javax.xml.bind.JAXBContext;
@@ -9,7 +10,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class NetworkModelSerializerXML implements AbstractNetworkSerializer {

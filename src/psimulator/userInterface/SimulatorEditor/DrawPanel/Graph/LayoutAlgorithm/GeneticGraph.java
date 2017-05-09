@@ -48,13 +48,13 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
             gridSize = (int) (numberOfDevices / (numberOfDevices / 25.0));
         }*/
         gridSize = numberOfDevices * 2;
-        
+
         //System.out.println("Grid size = "+gridSize);
-        
+
         //this.gridSize = gridSize;
 
         List<HwComponentGraphic> tmpList = new ArrayList<HwComponentGraphic>(graph.getHwComponents());
-        
+
         int nodesCount = graph.getHwComponents().size();
         int edgesCount = graph.getBundlesOfCables().size();
 
@@ -73,7 +73,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 
         nodeWithMaxNeighbours = getNodeWithMostNeighbours();
         //System.out.println("Node with max neighbours = " + nodeWithMaxNeighbours);
-        
+
         // fill nodes randomly
         placeNodesRandomly();
     }
@@ -125,11 +125,11 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 
         //System.out.println("crossings "+crossings);
         /*
-        double award = 2.0* minimumDistanceNodeSum + 
+        double award = 2.0* minimumDistanceNodeSum +
         0.25 * minimumNodeDistance;
-        
-        double penalization = 2.0*edgeLengthDeviation + 
-        2.5*(edgeLengthDeviation / minimumNodeDistance) + 
+
+        double penalization = 2.0*edgeLengthDeviation +
+        2.5*(edgeLengthDeviation / minimumNodeDistance) +
         edgeCrossings * (Math.pow((double)gridSize, 2.0));
          */
         double award = 2.0 * minimumDistanceNodeSum
@@ -137,17 +137,17 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 
         double tmp = 2.5 * (edgeLengthDeviation / minimumNodeDistance);
 
-        
-        
+
+
         if(((int)tmp)<0){
             //System.out.println("tmp = "+ tmp +", int tmp = "+(int)tmp+", edge lenght devi="+edgeLengthDeviation);
         }
-        
+
         double penalization = 2.0 * edgeLengthDeviation
                 + tmp
                 + edgeCrossings * (Math.pow((double) gridSize, 2.0));
-        /*double penalization = 2.0*edgeLengthDeviation + 
-        2.5*(edgeLengthDeviation / minimumNodeDistance) + 
+        /*double penalization = 2.0*edgeLengthDeviation +
+        2.5*(edgeLengthDeviation / minimumNodeDistance) +
         edgeCrossings * (Math.pow((double)gridSize, 2.0));*/
 
         fitness = award - penalization;
@@ -172,8 +172,8 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         Arrays.sort(edgesNodes);
         /*
         for (int i = 0; i < edgesNodes.length; i++) {
-        System.out.print(edgesNodes[i]+",");
-        
+        System.out.print(edgesNodes[i]+", ");
+
         }
         System.out.println("");*/
 
@@ -212,39 +212,39 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 //            if(!checkIfXPossible(offspring1, p1x)){
 //                p1x = getRandomFreeX(offspring1);
 //            }
-//            
+//
 //            if(!checkIfYPossible(offspring1, p1y)){
 //                p1y = getRandomFreeY(offspring1);
 //            }
-            
+
             if(!checkIfPointPossible(offspring1, new Point(p1x, p1y))){
                 Point p1 = getRandomFreePoint(offspring1);
                 p1x = p1.getX();
                 p1y = p1.getY();
             }
-            
+
             offspring1.nodes[i][0] = p1x;
             offspring1.nodes[i][1] = p1y;
 
-            
+
             // second offspring
             int p2x = second.nodes[i][0];
             int p2y = second.nodes[i][1];
-            
+
 //            if(!checkIfXPossible(offspring2, p2x)){
 //                p2x = getRandomFreeX(offspring2);
 //            }
-//            
+//
 //            if(!checkIfYPossible(offspring2, p2y)){
 //                p2y = getRandomFreeY(offspring2);
 //            }
-            
+
             if(!checkIfPointPossible(offspring2, new Point(p2x, p2y))){
                 Point p2 = getRandomFreePoint(offspring1);
                 p2x = p2.getX();
                 p2y = p2.getY();
             }
-            
+
             offspring2.nodes[i][0] = p2x;
             offspring2.nodes[i][1] = p2y;
         }
@@ -261,7 +261,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         }
         return true;
     }
-    
+
 //    private boolean checkIfXPossible(GeneticGraph graph, int p1x) {
 //        for (int j = 0; j < graph.nodes.length; j++) {
 //            if (graph.nodes[j][0] == p1x) {
@@ -270,7 +270,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 //        }
 //        return true;
 //    }
-//    
+//
 //    private boolean checkIfYPossible(GeneticGraph graph, int p1y) {
 //        for (int j = 0; j < graph.nodes.length; j++) {
 //            if (graph.nodes[j][1] == p1y) {
@@ -333,11 +333,11 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 //            p2x = getRandomFreeX(this);
 //        }
 
-//        
+//
 //        if(!checkIfYPossible(this, p2y)){
 //            p2y = getRandomFreeY(this);
 //        }
-        
+
         if(!checkIfPointPossible(this, new Point(p2x, p2y))){
             Point p2 = getRandomFreePoint(this);
             p2x = p2.getX();
@@ -389,11 +389,11 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
             int p2y = nodes[edges[i][1]][1];
 
             double length = Math.sqrt(Math.pow(p1x - p2x, 2.0) + Math.pow(p1y - p2y, 2.0));
-            
+
             if(length <= 0.0){
                 //System.out.println("PRUSER, delka zaporna");
             }
-            
+
             if (length < minEdgeLength) {
                 minEdgeLength = length;
             }
@@ -459,7 +459,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         for (int i = 0; i < edges.length; i++) {
             Line2D line = new Line2D.Double(nodes[edges[i][0]][0], nodes[edges[i][0]][1], nodes[edges[i][1]][0], nodes[edges[i][1]][1]);
             lines.add(line);
-            //System.out.println("Line: x="+line.getP1()+",="+line.getP2());
+            //System.out.println("Line: x="+line.getP1()+", ="+line.getP2());
         }
 
         int crossings = 0;
@@ -483,16 +483,16 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
         }
         return crossings;
     }
-    
+
     private Point getRandomFreePoint(GeneticGraph graph){
         int randomX = 0;
         int randomY = 0;
-        
+
         boolean success = false;
         while (!success) {
             randomX = random.nextInt(graph.gridSize);
             randomY = random.nextInt(graph.gridSize);
-            
+
             boolean isPossible = true;
             // check if it is empty field
             for (int i = 0; i < graph.nodes.length; i++) {
@@ -575,7 +575,7 @@ public class GeneticGraph implements Comparable<GeneticGraph> {
 
         // NODES
         s += "Nodes:\n";
-        // N line 
+        // N line
 
         s += "N |";
         for (int i = 0; i < nodes.length; i++) {

@@ -11,9 +11,9 @@ import telnetd.io.toolkit.Component;
  * @author Martin Lukáš <lukasma1@fit.cvut.cz>
  */
 public interface ComponentReDrawer {
-	
-	public void addComponentDraw(Component component);
-	
-	public void drawComponents();
-	
+
+    public void addComponentDraw(Component component);
+
+    public void drawComponents();
+
 }

@@ -2,6 +2,7 @@ package psimulator.userInterface.SimulatorEditor.DrawPanel;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.EnumMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -31,10 +32,10 @@ import psimulator.userInterface.SimulatorEditor.UserInterfaceMainPanelInnerInter
 public final class DrawPanel extends DrawPanelOuterInterface implements
         DrawPanelInnerInterface, Observer {
 
-	private static final long serialVersionUID = -8324211373122909193L;
+    private static final long serialVersionUID = -8324211373122909193L;
 
-	// mouse listeners
-	private DrawPanelListenerStrategy mouseListenerHand;
+    // mouse listeners
+    private DrawPanelListenerStrategy mouseListenerHand;
     private DrawPanelListenerStrategy mouseListenerDragMove;
     private DrawPanelListenerStrategy mouseListenerAddHwComponent;
     private DrawPanelListenerStrategy mouseListenerCable;
@@ -79,6 +80,28 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
         dataLayer.addLanguageObserver((Observer) this);
         dataLayer.addPreferencesObserver((Observer) this);
 
+
+        mainWindow.getRootPane().addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                return;
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                return;
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                    doSetToolInEditorToolBar(MainTool.HAND);
+            }
+        });
     }
 
     @Override
@@ -117,7 +140,7 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
             Color tmpColor = g2.getColor();
             g2.setColor(Color.BLUE);
             //
-            Rectangle rectangleInActualZoom = new Rectangle(ZoomManagerSingleton.getInstance().doScaleToActual(rectangle.getLocation()), 
+            Rectangle rectangleInActualZoom = new Rectangle(ZoomManagerSingleton.getInstance().doScaleToActual(rectangle.getLocation()),
                     ZoomManagerSingleton.getInstance().doScaleToActual(rectangle.getSize()));
             //g2.draw(rectangle);
             g2.draw(rectangleInActualZoom);
@@ -127,16 +150,16 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
 
             g2.setColor(tmpColor);
         }
-        
+
         if(dataLayer.isViewDetails(ViewDetailsType.NETWORK_BOUNDS)){
             g2.setColor(Color.GRAY);
             g2.drawRect(0, 0, getWidth()-1, getHeight()-1);
         }
-        
+
         g2.dispose();
     }
 
-// ====================  IMPLEMENTATION OF Observer ======================   
+// ====================  IMPLEMENTATION OF Observer ======================
     /**
      * Reaction to notification from zoom manager
      *
@@ -145,7 +168,7 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
      */
     @Override
     public void update(Observable o, Object o1) {
-        
+
         switch ((ObserverUpdateEventType) o1) {
             case VIEW_DETAILS:
                 break;
@@ -159,13 +182,13 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
                 break;
             case NETWORK_BOUNDS:
                 break;
-                    
+
         }
-        
+
         //this.revalidate();
         //this.repaint();
     }
-// END ====================  IMPLEMENTATION OF Observer ======================      
+// END ====================  IMPLEMENTATION OF Observer ======================
 
 // ================  IMPLEMENTATION OF ToolChangeInterface =================
     @Override
@@ -186,6 +209,8 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
         jViewport.removeMouseMotionListener(currentMouseListener);
         jViewport.removeMouseWheelListener(currentMouseListener);
     }
+
+
 
     @Override
     public DrawPanelListenerStrategy getMouseListener(MainTool tool) {
@@ -249,7 +274,7 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
     }
 
     @Override
-    public void doSetTollInEditorToolBar(MainTool mainTool) { 
+    public void doSetToolInEditorToolBar(MainTool mainTool) {
         userInterface.doSetToolInToolBar(mainTool);
     }
 
@@ -289,9 +314,9 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
         if (graph.getAbstractHwComponentsCount() == 0) {
             // get network coutner model
             // initialize generator singleton
-            
+
         }
-        
+
         GeneratorSingleton.getInstance().initialize(dataLayer.getNetworkFacade().getNetworkCounterModel());
 
         graph.initialize(this, dataLayer);
@@ -362,12 +387,12 @@ public final class DrawPanel extends DrawPanelOuterInterface implements
 
         inputMap.put(keyH, DrawPanelAction.SWITCH_TO_HAND_TOOL);
         actionMap.put(DrawPanelAction.SWITCH_TO_HAND_TOOL, getAbstractAction(DrawPanelAction.SWITCH_TO_HAND_TOOL));
-        
+
         // add key binding for M - switch to move tool
         KeyStroke keyM = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0);
         inputMap.put(keyM, DrawPanelAction.SWITCH_TO_MOVE_TOOL);
         actionMap.put(DrawPanelAction.SWITCH_TO_MOVE_TOOL, getAbstractAction(DrawPanelAction.SWITCH_TO_MOVE_TOOL));
-        
+
     }
 
     /**

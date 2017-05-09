@@ -3,11 +3,12 @@ package config.configFiles;
 import device.Device;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.OutputFileJob;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 /**
- *
  * @author Michal Horacek
  */
 public abstract class AbstractLinuxFile {
@@ -36,10 +37,9 @@ public abstract class AbstractLinuxFile {
     }
 
     /**
-     *
      * @return String representing the file path
      */
     public String getFilePath() {
-        return this.filePath;
+        return Paths.get(this.filePath).normalize().toUri().toString().substring(8);
     }
 }

@@ -12,7 +12,6 @@ import psimulator.logicLayer.ControllerFacade;
 import psimulator.userInterface.MainWindow;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class Main {
@@ -23,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         // init timing source for animations
         TimerKeeperSingleton.getInstance().initTimingSource();
-        
+
         try {
 
             SwingUtilities.invokeLater(new Runnable() {
@@ -43,7 +42,7 @@ public class Main {
                     JOptionPane.showMessageDialog(new JFrame(),
                             "Error occured. Program will exit", "Error in application!", JOptionPane.ERROR_MESSAGE);
                 }
-            });           
+            });
         }
     }
 }

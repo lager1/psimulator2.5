@@ -12,8 +12,8 @@ import psimulator.dataLayer.DataLayerFacade;
  */
 public class InterfacesTableCellRenderer extends JLabel implements TableCellRenderer {
 
-	private static final long serialVersionUID = -6271963775381646901L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = -6271963775381646901L;
+    private DataLayerFacade dataLayer;
 
     public InterfacesTableCellRenderer(DataLayerFacade dataLayer) {
         this.dataLayer = dataLayer;

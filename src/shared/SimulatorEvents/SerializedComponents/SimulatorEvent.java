@@ -1,13 +1,13 @@
 package shared.SimulatorEvents.SerializedComponents;
 
 import java.io.Serializable;
+
 import shared.NetworkObject;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class SimulatorEvent implements Serializable, NetworkObject{
+public class SimulatorEvent implements Serializable, NetworkObject {
     // those variables has to be loaded from file / recieved via TCP connection, SAVE THEM
     private long timeStamp;
     private int sourcceId;
@@ -19,9 +19,9 @@ public class SimulatorEvent implements Serializable, NetworkObject{
      * Default is successful until event create changed in PSImulator
      */
     private EventType eventType = EventType.SUCCESSFULLY_TRANSMITTED;
-    
+
     public SimulatorEvent(long timeStamp, int sourcceId, int destId, int cableId,
-            PacketType packetType, String detailsText, EventType eventType) {
+                          PacketType packetType, String detailsText, EventType eventType) {
         this.timeStamp = timeStamp;
         this.packetType = packetType;
         this.sourcceId = sourcceId;
@@ -33,8 +33,7 @@ public class SimulatorEvent implements Serializable, NetworkObject{
 
     public SimulatorEvent() {
     }
- 
-    
+
 
     public PacketType getPacketType() {
         return packetType;
@@ -91,13 +90,11 @@ public class SimulatorEvent implements Serializable, NetworkObject{
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
     }
-    
+
     @Override
     public String toString() {
         return "src:" + this.getSourcceId() + " dst:" + this.getDestId() + " type" + this.getPacketType().toString() + " " + this.getDetailsText();
     }
-    
-    
-    
-    
+
+
 }

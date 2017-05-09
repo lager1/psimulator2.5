@@ -30,12 +30,12 @@ public class InterfacesTableModel extends AbstractTableModel {
         this.showAddresses = showAddresses;
 
         if (showAddresses) {
-            String[] names = {dataLayer.getString("INTERFACE"), dataLayer.getString("CONNECTED"),
-                dataLayer.getString("CONNECTED_TO"), dataLayer.getString("IS_UP"),
+            String[] names = {dataLayer.getString("INTERFACE"), dataLayer.getString("CONNECTED"), 
+                dataLayer.getString("CONNECTED_TO"), dataLayer.getString("IS_UP"), 
                 dataLayer.getString("IP_ADDRESS_MASK"), dataLayer.getString("MAC_ADDRESS")};
             columnNames = names;
         } else {
-            String[] names = {dataLayer.getString("INTERFACE"), dataLayer.getString("CONNECTED"),
+            String[] names = {dataLayer.getString("INTERFACE"), dataLayer.getString("CONNECTED"), 
                 dataLayer.getString("CONNECTED_TO")};
             columnNames = names;
         }

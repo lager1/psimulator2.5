@@ -12,19 +12,19 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.MainTool;
  */
 public class ActionSwitchToToolAction extends AbstractDrawPanelAction{
 
-	private static final long serialVersionUID = -7724838771317442692L;
-	private MainTool mainTool;
-    
-    public ActionSwitchToToolAction(UndoManager undoManager, DrawPanelInnerInterface drawPanel, 
+    private static final long serialVersionUID = -7724838771317442692L;
+    private MainTool mainTool;
+
+    public ActionSwitchToToolAction(UndoManager undoManager, DrawPanelInnerInterface drawPanel,
             MainWindowInnerInterface mainWindow, MainTool mainTool) {
         super(undoManager, drawPanel, mainWindow);
-        
+
         this.mainTool = mainTool;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
-        drawPanel.doSetTollInEditorToolBar(mainTool);
+        drawPanel.doSetToolInEditorToolBar(mainTool);
     }
-    
+
 }

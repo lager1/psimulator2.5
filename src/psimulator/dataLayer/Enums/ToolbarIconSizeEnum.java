@@ -1,7 +1,6 @@
 package psimulator.dataLayer.Enums;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public enum ToolbarIconSizeEnum {
@@ -9,15 +8,15 @@ public enum ToolbarIconSizeEnum {
     SMALL(22),
     MEDIUM(32),
     LARGE(48);
-    
-    private final int size;   
+
+    private final int size;
 
     ToolbarIconSizeEnum(int size) {
         this.size = size;
     }
-    
-    public int size() { 
-        return size; 
+
+    public int size() {
+        return size;
     }
 
 

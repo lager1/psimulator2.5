@@ -14,15 +14,15 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Enums.DrawPanelAction;
  */
 public class PopupMenuAbstractHwComponent extends JPopupMenu {
 
-	private static final long serialVersionUID = 2167992095479704498L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = 2167992095479704498L;
+    private DataLayerFacade dataLayer;
     private DrawPanelInnerInterface drawPanel;
     private JMenuItem jItemAlignToGrid;
     private JMenuItem jItemComponentProperties;
     private JMenuItem jItemSelectAll;
     private JMenuItem jItemDeleteComponent;
     private JMenuItem jItemFitToSize;
-    
+
     private JMenuItem jItemAutomaticLayout;
 
     public PopupMenuAbstractHwComponent(DrawPanelInnerInterface drawPanel, DataLayerFacade dataLayer, int components) {
@@ -33,17 +33,17 @@ public class PopupMenuAbstractHwComponent extends JPopupMenu {
         jItemSelectAll = new JMenuItem(dataLayer.getString("SELECT_ALL"));
         jItemFitToSize = new JMenuItem(dataLayer.getString("FIT_TO_SIZE"));
         jItemAutomaticLayout = new JMenuItem(dataLayer.getString("AUTOMATIC_LAYOUT"));
-        
+
         jItemAlignToGrid = new JMenuItem();
         jItemDeleteComponent = new JMenuItem();
-        
+
         jItemComponentProperties.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.PROPERTIES));
         jItemAlignToGrid.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.ALIGN_COMPONENTS_TO_GRID));
         jItemDeleteComponent.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.DELETE));
         jItemSelectAll.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.SELECT_ALL));
         jItemFitToSize.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.FIT_TO_SIZE));
         jItemAutomaticLayout.addActionListener(drawPanel.getAbstractAction(DrawPanelAction.AUTOMATIC_LAYOUT));
-        
+
         // add images
         jItemComponentProperties.setIcon(ImageFactorySingleton.getInstance().getImageIcon(ImageFactorySingleton.ICON_CONFIGURE_16_PATH));
         jItemAlignToGrid.setIcon(ImageFactorySingleton.getInstance().getImageIcon(ImageFactorySingleton.ICON_GRID_16_PATH));
@@ -89,7 +89,7 @@ public class PopupMenuAbstractHwComponent extends JPopupMenu {
         this.addSeparator();
         this.add(jItemSelectAll);
         this.add(jItemFitToSize);
-        
+
     }
 
     public void show(DrawPanelInnerInterface drawPanel, int x, int y) {

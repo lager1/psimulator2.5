@@ -42,7 +42,7 @@ import java.lang.Byte;
 public abstract class TelnetProtocolHandler {
   /** contains the current revision id */
   public final static String ID = "$Id: TelnetProtocolHandler.java 503 2005-10-24 07:34:13Z marcus $";
-  
+
   /** debug level */
   private final static int debug = 0;
 
@@ -68,7 +68,7 @@ public abstract class TelnetProtocolHandler {
    * Get the current terminal type for TTYPE telnet option.
    * @return the string id of the terminal
    */
-  protected abstract String getTerminalType(); 
+  protected abstract String getTerminalType();
 
   /**
    * Get the current window size of the terminal for the
@@ -111,9 +111,9 @@ public abstract class TelnetProtocolHandler {
    */
   public void reset() {
     neg_state = 0;
-    receivedDX = new byte[256]; 
+    receivedDX = new byte[256];
     sentDX = new byte[256];
-    receivedWX = new byte[256]; 
+    receivedWX = new byte[256];
     sentWX = new byte[256];
   }
 
@@ -138,7 +138,7 @@ public abstract class TelnetProtocolHandler {
 
   /** What IAC SB <xx> we are handling right now */
   private byte current_sb;
-  
+
   /** current SB negotiation buffer */
   private byte[] sbbuf;
 
@@ -212,8 +212,8 @@ public abstract class TelnetProtocolHandler {
     if(debug > 2) de.mud.jta.OutputSingleton.err.println("sending NAWS");
 
     if (receivedDX[TELOPT_NAWS] != DO) {
-    	//de.mud.jta.OutputSingleton.err.println("not allowed to send NAWS? (DONT NAWS)");
-	return;
+        //de.mud.jta.OutputSingleton.err.println("not allowed to send NAWS? (DONT NAWS)");
+    return;
     }
     write(IAC);write(SB);write(TELOPT_NAWS);
     write((byte) (columns >> 8));
@@ -229,15 +229,15 @@ public abstract class TelnetProtocolHandler {
    * @param type type of SB
    * @param sbata byte array as &lt;bytes&gt;
    */
-  private void handle_sb(byte type, byte[] sbdata) 
+  private void handle_sb(byte type, byte[] sbdata)
     throws IOException {
-    if(debug > 1) 
+    if(debug > 1)
       de.mud.jta.OutputSingleton.err.println("TelnetIO.handle_sb("+type+")");
     switch (type) {
     case TELOPT_TTYPE:
       if (sbdata.length>0 && sbdata[0]==TELQUAL_SEND) {
         write(IACSB);write(TELOPT_TTYPE);write(TELQUAL_IS);
-        /* FIXME: need more logic here if we use 
+        /* FIXME: need more logic here if we use
          * more than one terminal type
          */
         String ttype = getTerminalType();
@@ -266,7 +266,7 @@ public abstract class TelnetProtocolHandler {
    */
   public void transpose(byte[] buf) throws IOException {
     int i;
-    
+
     byte[] nbuf,xbuf;
     int nbufptr=0;
     nbuf = new byte[buf.length*2]; // FIXME: buffer overflows possible
@@ -276,46 +276,46 @@ public abstract class TelnetProtocolHandler {
       // Escape IAC twice in stream ... to be telnet protocol compliant
       // this is there in binary and non-binary mode.
       case IAC:
-	nbuf[nbufptr++]=IAC;
-	nbuf[nbufptr++]=IAC;
-	break;
+    nbuf[nbufptr++]=IAC;
+    nbuf[nbufptr++]=IAC;
+    break;
       // We need to heed RFC 854. LF (\n) is 10, CR (\r) is 13
       // we assume that the Terminal sends \n for lf+cr and \r for just cr
-      // linefeed+carriage return is CR LF */ 
-      case 10:	// \n
+      // linefeed+carriage return is CR LF */
+      case 10:    // \n
         if (receivedDX[TELOPT_BINARY + 128 ] != DO) {
-	    while (nbuf.length - nbufptr < crlf.length) {
-		    xbuf = new byte[nbuf.length*2];
-		    System.arraycopy(nbuf,0,xbuf,0,nbufptr);
-		    nbuf = xbuf;
-	    }
-	    for (int j=0;j<crlf.length;j++)
-		nbuf[nbufptr++]=crlf[j];
-	    break;
-	} else {
-	    // copy verbatim in binary mode.
-	    nbuf[nbufptr++]=buf[i];
-	}
-	break;
-      // carriage return is CR NUL */ 
-      case 13:	// \r
+        while (nbuf.length - nbufptr < crlf.length) {
+            xbuf = new byte[nbuf.length*2];
+            System.arraycopy(nbuf,0,xbuf,0,nbufptr);
+            nbuf = xbuf;
+        }
+        for (int j=0;j<crlf.length;j++)
+        nbuf[nbufptr++]=crlf[j];
+        break;
+    } else {
+        // copy verbatim in binary mode.
+        nbuf[nbufptr++]=buf[i];
+    }
+    break;
+      // carriage return is CR NUL */
+      case 13:    // \r
         if (receivedDX[TELOPT_BINARY + 128 ] != DO) {
-	    while (nbuf.length - nbufptr < cr.length) {
-		    xbuf = new byte[nbuf.length*2];
-		    System.arraycopy(nbuf,0,xbuf,0,nbufptr);
-		    nbuf = xbuf;
-	    }
-	    for (int j=0;j<cr.length;j++)
-		nbuf[nbufptr++]=cr[j];
-	} else {
-	    // copy verbatim in binary mode.
-	    nbuf[nbufptr++]=buf[i];
-	}
-	break;
+        while (nbuf.length - nbufptr < cr.length) {
+            xbuf = new byte[nbuf.length*2];
+            System.arraycopy(nbuf,0,xbuf,0,nbufptr);
+            nbuf = xbuf;
+        }
+        for (int j=0;j<cr.length;j++)
+        nbuf[nbufptr++]=cr[j];
+    } else {
+        // copy verbatim in binary mode.
+        nbuf[nbufptr++]=buf[i];
+    }
+    break;
       // all other characters are just copied
       default:
-	nbuf[nbufptr++]=buf[i];
-	break;
+    nbuf[nbufptr++]=buf[i];
+    break;
       }
     }
     xbuf = new byte[nbufptr];
@@ -343,7 +343,7 @@ public abstract class TelnetProtocolHandler {
     int boffset = 0, noffset = 0;
     boolean dobreak = false;
 
-    if (count == 0) 	// buffer is empty.
+    if (count == 0)     // buffer is empty.
       return -1;
 
     while(!dobreak && (boffset < count) && (noffset < nbuf.length)) {
@@ -361,8 +361,8 @@ public abstract class TelnetProtocolHandler {
       case STATE_DATA:
         if (b==IAC) {
           neg_state = STATE_IAC;
-	  dobreak = true; // leave the loop so we can sync.
-        } else 
+      dobreak = true; // leave the loop so we can sync.
+        } else
           nbuf[noffset++]=b;
         break;
       case STATE_IAC:
@@ -390,8 +390,8 @@ public abstract class TelnetProtocolHandler {
           break;
         case EOR:
           if(debug > 1) de.mud.jta.OutputSingleton.err.print("EOR ");
-  	  notifyEndOfRecord();
-	  dobreak = true; // leave the loop so we can sync.
+        notifyEndOfRecord();
+      dobreak = true; // leave the loop so we can sync.
           neg_state = STATE_DATA;
           break;
         case SB:
@@ -567,7 +567,7 @@ public abstract class TelnetProtocolHandler {
       case STATE_IACSBIAC:
         if(debug > 2) de.mud.jta.OutputSingleton.err.println(""+b+" ");
         if (b == IAC) {
-	  sbbuf = new byte[0];
+      sbbuf = new byte[0];
           current_sb = b;
           neg_state = STATE_IACSBDATA;
         } else {
@@ -583,7 +583,7 @@ public abstract class TelnetProtocolHandler {
           break;
         default:
           current_sb = b;
-	  sbbuf = new byte[0];
+      sbbuf = new byte[0];
           neg_state = STATE_IACSBDATA;
           break;
         }
@@ -595,9 +595,9 @@ public abstract class TelnetProtocolHandler {
           neg_state = STATE_IACSBDATAIAC;
           break;
         default:
-	  byte[] xsb = new byte[sbbuf.length+1];
+      byte[] xsb = new byte[sbbuf.length+1];
           System.arraycopy(sbbuf,0,xsb,0,sbbuf.length);
-	  sbbuf = xsb;
+      sbbuf = xsb;
           sbbuf[sbbuf.length-1] = b;
           break;
         }
@@ -607,9 +607,9 @@ public abstract class TelnetProtocolHandler {
         switch (b) {
         case IAC:
           neg_state = STATE_IACSBDATA;
-	  byte[] xsb = new byte[sbbuf.length+1];
+      byte[] xsb = new byte[sbbuf.length+1];
           System.arraycopy(sbbuf,0,xsb,0,sbbuf.length);
-	  sbbuf = xsb;
+      sbbuf = xsb;
           sbbuf[sbbuf.length-1] = IAC;
           break;
         case SE:
@@ -627,7 +627,7 @@ public abstract class TelnetProtocolHandler {
         }
         break;
       default:
-        if (debug > 1) 
+        if (debug > 1)
           de.mud.jta.OutputSingleton.err.println("This should not happen: "+neg_state+" ");
         neg_state = STATE_DATA;
         break;

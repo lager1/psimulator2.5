@@ -11,8 +11,8 @@ import javax.swing.text.DefaultFormatter;
  */
 public class RegexFormatter extends DefaultFormatter {
 
-	private static final long serialVersionUID = 7609912143219985079L;
-	private Pattern pattern;
+    private static final long serialVersionUID = 7609912143219985079L;
+    private Pattern pattern;
     private Matcher matcher;
 
     public RegexFormatter() {

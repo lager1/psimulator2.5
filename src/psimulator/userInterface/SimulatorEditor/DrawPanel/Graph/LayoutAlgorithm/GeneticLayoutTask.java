@@ -27,9 +27,9 @@ public class GeneticLayoutTask extends SwingWorker<Void, Void> {
     public Void doInBackground() {
         genetic = new GeneticAutomaticLayout();
         genetic.initGenetic(graph, 30);
-        
+
         while (!genetic.isCountingFinished()) {
-            
+
             if(isCancelled()){
                 return null;
             }

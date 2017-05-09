@@ -12,8 +12,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  */
 public class UndoableRemoveComponents extends AbstractUndoableEdit {
 
-	private static final long serialVersionUID = 3561201778859344357L;
-	protected List<HwComponentGraphic> components;
+    private static final long serialVersionUID = 3561201778859344357L;
+    protected List<HwComponentGraphic> components;
     protected List<CableGraphic> cables;
     protected GraphOuterInterface graph;
 

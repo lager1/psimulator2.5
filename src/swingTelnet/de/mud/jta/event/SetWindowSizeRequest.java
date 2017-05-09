@@ -40,8 +40,8 @@ public class SetWindowSizeRequest implements PluginMessage {
 
   private int columns, rows;
   public SetWindowSizeRequest(int c, int r) {
-	rows = r;
-	columns = c;
+    rows = r;
+    columns = c;
   }
   /**
    * Set the new size of the window

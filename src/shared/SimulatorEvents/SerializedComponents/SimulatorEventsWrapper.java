@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Used for save/load of SimulatorEvent objects
+ *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 @XmlRootElement
-public class SimulatorEventsWrapper implements Serializable{
-    
+public class SimulatorEventsWrapper implements Serializable {
+
     private List<SimulatorEvent> simulatorEvents;
 
     public SimulatorEventsWrapper(List<SimulatorEvent> simulatorEvents) {
@@ -19,8 +20,7 @@ public class SimulatorEventsWrapper implements Serializable{
 
     public SimulatorEventsWrapper() {
     }
-    
-    
+
 
     public List<SimulatorEvent> getSimulatorEvents() {
         return simulatorEvents;

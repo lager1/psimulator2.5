@@ -5,6 +5,7 @@ import device.Device;
 import filesystem.FileSystem;
 import filesystem.dataStructures.jobs.InputFileJob;
 import filesystem.exceptions.FileNotFoundException;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Michal Horacek
  */
 public class NamedConfFile extends AbstractLinuxFile {
@@ -61,11 +61,11 @@ public class NamedConfFile extends AbstractLinuxFile {
             String line;
             while (sc.hasNextLine()) {
                 line = sc.nextLine().trim();
-                
+
                 if (line.startsWith(";")) {
                     continue;
                 }
-                
+
                 if (isZoneLine(line)) {
                     state = ConfState.ZONE;
                 } else if (isEndingBraceLine(line)) {
@@ -105,7 +105,7 @@ public class NamedConfFile extends AbstractLinuxFile {
         }
 
         private boolean isZoneLine(String line) {
-            String DN_PATTERN = "[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,}\\.?)";
+            String DN_PATTERN = "[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2, }\\.?)";
             String ZONE_LINE_PATTERN = "^zone\\s+\"(" + DN_PATTERN + ")\"\\s+\\{$";
             Pattern p = Pattern.compile(ZONE_LINE_PATTERN);
             Matcher m = p.matcher(line.trim());

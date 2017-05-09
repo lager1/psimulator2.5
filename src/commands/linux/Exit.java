@@ -6,26 +6,26 @@ package commands.linux;
 
 import commands.AbstractCommand;
 import commands.AbstractCommandParser;
-import utils.Util;
+import utils.Utilities;
 
 /**
- *
  * @author Tomas Pitrinec
  */
-public class Exit extends AbstractCommand{
+public class Exit extends AbstractCommand {
 
-	public Exit(AbstractCommandParser parser) {
-		super(parser);
-	}
+    public Exit(AbstractCommandParser parser) {
+        super(parser);
+    }
 
 
-	@Override
+    @Override
     public void run() {
         printLine("logout");
-        if(parser.getWords().size()==2 ){
-            if (! Util.jeInteger(parser.getWords().get(1))) printLine("-bash: exit: "+parser.getWords().get(1)+": numeric argument required");
+        if (parser.getWords().size() == 2) {
+            if (!Utilities.isInteger(parser.getWords().get(1)))
+                printLine("-bash: exit: " + parser.getWords().get(1) + ": numeric argument required");
         }
-        if(parser.getWords().size()>2 ){
+        if (parser.getWords().size() > 2) {
             printLine("-bash: exit: too many arguments");
             return;
         }

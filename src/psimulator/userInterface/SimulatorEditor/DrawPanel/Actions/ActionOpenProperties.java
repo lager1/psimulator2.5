@@ -17,8 +17,8 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.SwingComponents.HwComp
  */
 public class ActionOpenProperties extends AbstractDrawPanelAction {
 
-	private static final long serialVersionUID = -6149041578417730763L;
-	private DataLayerFacade dataLayer;
+    private static final long serialVersionUID = -6149041578417730763L;
+    private DataLayerFacade dataLayer;
 
     public ActionOpenProperties(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow, DataLayerFacade dataLayer) {
         super(undoManager, drawPanel, mainWindow);
@@ -50,7 +50,7 @@ public class ActionOpenProperties extends AbstractDrawPanelAction {
             //drawPanel.doUpdateImages();
             
             return;
-        }else if(graph.getMarkedCablesCount() == 1){
+        } else if(graph.getMarkedCablesCount() == 1){
             // get calbe
             CableGraphic cable = graph.getMarkedCablesCopy().get(0);
             

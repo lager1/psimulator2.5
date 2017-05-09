@@ -7,56 +7,57 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
+
 import psimulator.dataLayer.DataLayerFacade;
 import psimulator.dataLayer.Singletons.ImageFactory.ImageFactorySingleton;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
-public class WelcomePanel extends JPanel implements Observer{
-    
-	private static final long serialVersionUID = -3848352340406922689L;
-	private DataLayerFacade dataLayer;
+public class WelcomePanel extends JPanel implements Observer {
+
+    private static final long serialVersionUID = -3848352340406922689L;
+    private DataLayerFacade dataLayer;
     //
     private JPanel jPanelMainButtons;
     private JButton jButtonNewProject;
     private JButton jButtonOpenProject;
     //
     private Font font;
-    
-    
-    
-    public WelcomePanel(DataLayerFacade dataLayer){
+
+
+    public WelcomePanel(DataLayerFacade dataLayer) {
         super();
-                
+
         this.dataLayer = dataLayer;
-        
+
         font = new Font("Tahoma", 0, 18);
-        
+
         // create graphic layout with components
         initComponents();
-        
+
     }
-    
+
     /**
      * Adds action listener to jMenuItemNew
+     *
      * @param listener Action listener
      */
-    public void addNewProjectActionListener(ActionListener listener){
+    public void addNewProjectActionListener(ActionListener listener) {
         jButtonNewProject.addActionListener(listener);
     }
-    
+
     /**
      * Adds action listener to jMenuItemOpen
+     *
      * @param listener Action listener
      */
-    public void addOpenProjectActionListener(ActionListener listener){
+    public void addOpenProjectActionListener(ActionListener listener) {
         jButtonOpenProject.addActionListener(listener);
     }
-    
-    
-    private void initComponents(){
+
+
+    private void initComponents() {
         this.setLayout(new GridBagLayout());
         //
         jPanelMainButtons = new JPanel();
@@ -69,7 +70,7 @@ public class WelcomePanel extends JPanel implements Observer{
         jButtonNewProject.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         //
         jButtonOpenProject = new JButton();
-        jButtonOpenProject.setFont(font); 
+        jButtonOpenProject.setFont(font);
         jButtonOpenProject.setIcon(ImageFactorySingleton.getInstance().getImageIcon(ImageFactorySingleton.ICON_OPENFILE_GREEN_128_PATH));// NOI18N
         jButtonOpenProject.setHorizontalTextPosition(SwingConstants.CENTER);
         jButtonOpenProject.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -82,20 +83,20 @@ public class WelcomePanel extends JPanel implements Observer{
         //
         setTextsToComponents();
     }
-    
-    private void setTextsToComponents(){
+
+    private void setTextsToComponents() {
         jButtonNewProject.setText(dataLayer.getString("NEW_PROJECT"));
         jButtonNewProject.setToolTipText(dataLayer.getString("NEW_PROJECT"));
         jButtonOpenProject.setText(dataLayer.getString("OPEN"));
         jButtonOpenProject.setToolTipText(dataLayer.getString("OPEN"));
     }
-    
-    
+
+
     @Override
     public void update(Observable o, Object o1) {
         // update texts on components
         setTextsToComponents();
     }
-   
-    
+
+
 }

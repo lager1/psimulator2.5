@@ -18,11 +18,11 @@ public class GraphicUtils {
      * @return 
      */
     public static Point getMiddlePoint(double x1, double y1, double x2, double y2){
-        int x,y;
+        int x, y;
         x = (int)((Math.abs(x2 + x1)) / 2.0);
         y = (int)((Math.abs(y2 + y1)) / 2.0);
         
-        return new Point(x,y);
+        return new Point(x, y);
     }
     
     /**

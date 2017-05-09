@@ -11,16 +11,16 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.DrawPanelInnerInterfac
  */
 public class ActionFitToSize extends AbstractDrawPanelAction{
 
-	private static final long serialVersionUID = -8718640816579931905L;
+    private static final long serialVersionUID = -8718640816579931905L;
 
-	public ActionFitToSize(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
+    public ActionFitToSize(UndoManager undoManager, DrawPanelInnerInterface drawPanel, MainWindowInnerInterface mainWindow) {
         super(undoManager, drawPanel, mainWindow);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         drawPanel.doFitToGraphSize();
         //System.out.println("Fit to size nefunguje");
     }
-    
+
 }

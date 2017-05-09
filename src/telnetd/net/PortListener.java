@@ -1,7 +1,7 @@
 //License
 /***
  * Java TelnetD library (embeddable telnet daemon)
- * Copyright (c) 2000-2005 Dieter Wimberger 
+ * Copyright (c) 2000-2005 Dieter Wimberger
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
  * Neither the name of the author nor the names of its contributors
  * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- *  
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS ``AS
  * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,7 +26,7 @@
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ***/
 
@@ -41,6 +41,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Properties;
+
 import logging.Logger;
 import logging.LoggingCategory;
 
@@ -54,208 +55,207 @@ import logging.LoggingCategory;
  * @see telnetd.net.ConnectionManager
  */
 public class PortListener
-    implements Runnable {
-
- 
-
-  private String m_Name;
-  private int m_Port;							            //port number running on
-  private int m_FloodProtection;					    //flooding protection
-  private ServerSocket m_ServerSocket = null; //server socket
-
-  private Thread m_Thread;
-  private ConnectionManager m_ConnectionManager;	//connection management thread
-  private boolean m_Stopping = false;
-  private boolean m_Available;               		//Flag for availability
+        implements Runnable {
 
 
-  /**
-   * Constructs a PortListener instance.<br>
-   * Its private because its called by a factory method.
-   *
-   * @param port      int that specifies the port number of the server socket.
-   * @param floodprot that specifies the server socket queue size.
-   */
-  private PortListener(String name, int port, int floodprot) {
-    m_Name = name;
-    m_Available = false;
-    m_Port = port;
-    m_FloodProtection = floodprot;
-  }//constructor
+    private String m_Name;
+    private int m_Port;                                        //port number running on
+    private int m_FloodProtection;                        //flooding protection
+    private ServerSocket m_ServerSocket = null; //server socket
 
-  /**
-   * Returns the name of this <tt>PortListener</tt>.
-   *
-   * @return the name as <tt>String</tt>.
-   */
-  public String getName() {
-    return m_Name;
-  }//getName
+    private Thread m_Thread;
+    private ConnectionManager m_ConnectionManager;    //connection management thread
+    private boolean m_Stopping = false;
+    private boolean m_Available;                       //Flag for availability
 
-  /**
-   * Tests if this <tt>PortListener</tt> is available.
-   *
-   * @return true if available, false otherwise.
-   */
-  public boolean isAvailable() {
-    return m_Available;
-  }//isAvailable
 
-  /**
-   * Sets the availability flag of this <tt>PortListener</tt>.
-   *
-   * @param b true if to be available, false otherwise.
-   */
-  public void setAvailable(boolean b) {
-    m_Available = b;
-  }//setAvailable
+    /**
+     * Constructs a PortListener instance.<br>
+     * Its private because its called by a factory method.
+     *
+     * @param port      int that specifies the port number of the server socket.
+     * @param floodprot that specifies the server socket queue size.
+     */
+    private PortListener(String name, int port, int floodprot) {
+        m_Name = name;
+        m_Available = false;
+        m_Port = port;
+        m_FloodProtection = floodprot;
+    }//constructor
 
-  /**
-   * Starts this <tt>PortListener</tt>.
-   */
-  public void start() {
-	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
-    
-    m_Thread = new Thread(this);
-    m_Thread.start();
-    m_Available = true;
-  }//start
+    /**
+     * Returns the name of this <tt>PortListener</tt>.
+     *
+     * @return the name as <tt>String</tt>.
+     */
+    public String getName() {
+        return m_Name;
+    }//getName
 
-  /**
-   * Stops this <tt>PortListener</tt>, and returns
-   * when everything was stopped successfully.
-   */
-  public void stop() {
-	    Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()" +  this.toString());
-    
-    //flag stop
-    m_Stopping = true;
-    m_Available = false;
-    //take down all connections
-    m_ConnectionManager.stop();
+    /**
+     * Tests if this <tt>PortListener</tt> is available.
+     *
+     * @return true if available, false otherwise.
+     */
+    public boolean isAvailable() {
+        return m_Available;
+    }//isAvailable
 
-    //close server socket
-    try {
-      m_ServerSocket.close();
-    } catch (IOException ex) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() IOException occured: " + ex);
-      
-    }
+    /**
+     * Sets the availability flag of this <tt>PortListener</tt>.
+     *
+     * @param b true if to be available, false otherwise.
+     */
+    public void setAvailable(boolean b) {
+        m_Available = b;
+    }//setAvailable
 
-    //wait for thread to die
-    try {
-      m_Thread.join();
-    } catch (InterruptedException iex) {
-			Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() interrupt exception occured: " + iex);
-      
-    }
-	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()::Stopped " + this.toString());
-  }//stop
+    /**
+     * Starts this <tt>PortListener</tt>.
+     */
+    public void start() {
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "start()");
 
-  /**
-   * Listen constantly to a server socket and handles incoming connections
-   * through the associated {a:link ConnectionManager}.
-   *
-   * @see telnetd.net.ConnectionManager
-   */
-  public void run() {
-    try {
+        m_Thread = new Thread(this);
+        m_Thread.start();
+        m_Available = true;
+    }//start
+
+    /**
+     * Stops this <tt>PortListener</tt>, and returns
+     * when everything was stopped successfully.
+     */
+    public void stop() {
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()" + this.toString());
+
+        //flag stop
+        m_Stopping = true;
+        m_Available = false;
+        //take down all connections
+        m_ConnectionManager.stop();
+
+        //close server socket
+        try {
+            m_ServerSocket.close();
+        } catch (IOException ex) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() IOException occured: " + ex);
+
+        }
+
+        //wait for thread to die
+        try {
+            m_Thread.join();
+        } catch (InterruptedException iex) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "stop() interrupt exception occured: " + iex);
+
+        }
+        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "stop()::Stopped " + this.toString());
+    }//stop
+
+    /**
+     * Listen constantly to a server socket and handles incoming connections
+     * through the associated {a:link ConnectionManager}.
+     *
+     * @see telnetd.net.ConnectionManager
+     */
+    public void run() {
+        try {
       /*
           A server socket is opened with a connectivity queue of a size specified
           in int floodProtection.  Concurrent login handling under normal circumstances
           should be handled properly, but denial of service attacks via massive parallel
           program logins should be prevented with this.
       */
-      m_ServerSocket = new ServerSocket(m_Port, m_FloodProtection);
+            m_ServerSocket = new ServerSocket(m_Port, m_FloodProtection);
 
-      //log entry
-      Object[] args = {new Integer(m_Port), new Integer(m_FloodProtection)};
-	  Logger.log(Logger.DEBUG, LoggingCategory.TELNET, MessageFormat.format(logmsg, args));
-      
+            //log entry
+            Object[] args = {new Integer(m_Port), new Integer(m_FloodProtection)};
+            Logger.log(Logger.DEBUG, LoggingCategory.TELNET, MessageFormat.format(logmsg, args));
 
-      do {
-        try {
-          Socket s = m_ServerSocket.accept();
-          if (m_Available) {
-            m_ConnectionManager.makeConnection(s);
-          } else {
-            //just shut down the socket
-            s.close();
-          }
-        } catch (SocketException ex) {
-          if (m_Stopping) {
-            //server socket was closed blocked in accept
-	Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "run(): ServerSocket closed by stop()");		  
-            
-          } else {
-	Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() Socket exception occured: " + ex);		  		  
-            
-          }
+
+            do {
+                try {
+                    Socket s = m_ServerSocket.accept();
+                    if (m_Available) {
+                        m_ConnectionManager.makeConnection(s);
+                    } else {
+                        //just shut down the socket
+                        s.close();
+                    }
+                } catch (SocketException ex) {
+                    if (m_Stopping) {
+                        //server socket was closed blocked in accept
+                        Logger.log(Logger.DEBUG, LoggingCategory.TELNET, "run(): ServerSocket closed by stop()");
+
+                    } else {
+                        Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() Socket exception occured: " + ex);
+
+                    }
+                }
+            } while (!m_Stopping);
+
+        } catch (IOException e) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() IO exception occured: " + e);
+
         }
-      } while (!m_Stopping);
 
-    } catch (IOException e) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "run() IO exception occured: " + e);		  		  
-      
-    }
-    
-  }//run
+    }//run
 
 
-  /**
-   * Returns reference to ConnectionManager instance associated
-   * with the PortListener.
-   *
-   * @return the associated ConnectionManager.
-   */
-  public ConnectionManager getConnectionManager() {
-    return m_ConnectionManager;
-  }//getConnectionManager
+    /**
+     * Returns reference to ConnectionManager instance associated
+     * with the PortListener.
+     *
+     * @return the associated ConnectionManager.
+     */
+    public ConnectionManager getConnectionManager() {
+        return m_ConnectionManager;
+    }//getConnectionManager
 
 
-  /**
-   * Factory method for a PortListener instance, returns
-   * an instance of a PortListener with an associated ConnectionManager.
-   *
-   * @param settings Properties that contain all configuration information.
-   */
-  public static PortListener createPortListener(String name, Properties settings)
-      throws BootException {
+    /**
+     * Factory method for a PortListener instance, returns
+     * an instance of a PortListener with an associated ConnectionManager.
+     *
+     * @param settings Properties that contain all configuration information.
+     */
+    public static PortListener createPortListener(String name, Properties settings)
+            throws BootException {
 
-    PortListener pl = null;
+        PortListener pl = null;
 
-    try {
-      //1. read settings of the port listener itself
-      int port = Integer.parseInt(settings.getProperty(name + ".port"));
-      int floodprot = Integer.parseInt(settings.getProperty(name + ".floodprotection"));
+        try {
+            //1. read settings of the port listener itself
+            int port = Integer.parseInt(settings.getProperty(name + ".port"));
+            int floodprot = Integer.parseInt(settings.getProperty(name + ".floodprotection"));
 
-      if (new Boolean(settings.getProperty(name + ".secure")).booleanValue()) {
-        //do nothing for now, probably set factory in the future
-      }
-      pl = new PortListener(name, port, floodprot);
-    } catch (Exception ex) {
-		Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + ex);		  		  
-      
-      throw new BootException("Failure while creating PortListener instance:\n" +
-          ex.getMessage());
-    }
+            if (new Boolean(settings.getProperty(name + ".secure")).booleanValue()) {
+                //do nothing for now, probably set factory in the future
+            }
+            pl = new PortListener(name, port, floodprot);
+        } catch (Exception ex) {
+            Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + ex);
 
-    //2. factorize a ConnectionManager, passing the settings, if we do not have one yet
-    if (pl.m_ConnectionManager == null) {
-      pl.m_ConnectionManager = ConnectionManager.createConnectionManager(name, settings);
-      try {
-        pl.m_ConnectionManager.start();
-      } catch (Exception exc) {
-		  Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + exc);		  		  
-        
-        throw new BootException("Failure while starting ConnectionManager watchdog thread:\n" +
-            exc.getMessage());
-      }
-    }
-    return pl;
-  }//createPortListener
+            throw new BootException("Failure while creating PortListener instance:\n" +
+                    ex.getMessage());
+        }
 
-  private static final String logmsg =
-      "Listening to Port {0,number,integer} with a connectivity queue size of {1,number,integer}.";
+        //2. factorize a ConnectionManager, passing the settings, if we do not have one yet
+        if (pl.m_ConnectionManager == null) {
+            pl.m_ConnectionManager = ConnectionManager.createConnectionManager(name, settings);
+            try {
+                pl.m_ConnectionManager.start();
+            } catch (Exception exc) {
+                Logger.log(Logger.WARNING, LoggingCategory.TELNET, "createPortListener()" + exc);
+
+                throw new BootException("Failure while starting ConnectionManager watchdog thread:\n" +
+                        exc.getMessage());
+            }
+        }
+        return pl;
+    }//createPortListener
+
+    private static final String logmsg =
+            "Listening to Port {0, number, integer} with a connectivity queue size of {1, number, integer}.";
 
 }//class PortListener

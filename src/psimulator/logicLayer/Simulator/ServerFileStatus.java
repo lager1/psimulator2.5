@@ -1,9 +1,8 @@
 package psimulator.logicLayer.Simulator;
 
 /**
-*
-* @author Václav Mach <machvac5 at fit.cvut.cz>
-*/
+ * @author Václav Mach <machvac5 at fit.cvut.cz>
+ */
 
 
 public enum ServerFileStatus {

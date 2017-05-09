@@ -10,10 +10,10 @@ import psimulator.userInterface.SimulatorEditor.DrawPanel.Graph.GraphOuterInterf
  */
 public class UndoableAddHwComponent extends AbstractUndoableEdit {
 
-	private static final long serialVersionUID = 229684279944486319L;
-	protected GraphOuterInterface graph;
+    private static final long serialVersionUID = 229684279944486319L;
+    protected GraphOuterInterface graph;
     protected HwComponentGraphic component;
-    
+
     public UndoableAddHwComponent(GraphOuterInterface graph, HwComponentGraphic component){
         super();
         this.component = component;
@@ -29,7 +29,7 @@ public class UndoableAddHwComponent extends AbstractUndoableEdit {
     public void undo() {
       super.undo();
       graph.doUnmarkAllComponents();
-      
+
       graph.removeHwComponent(component);
     }
 
@@ -37,7 +37,7 @@ public class UndoableAddHwComponent extends AbstractUndoableEdit {
     public void redo() {
       super.redo();
       graph.doUnmarkAllComponents();
-      
+
       graph.addHwComponent(component);
     }
 }

@@ -2,11 +2,11 @@ package psimulator.dataLayer.Singletons;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import shared.Components.HwTypeEnum;
 import shared.Components.NetworkCounterModel;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class GeneratorSingleton {
@@ -63,14 +63,15 @@ public class GeneratorSingleton {
 
         return names;
     }
-    
+
     /**
      * Creates single interface name according to hwType and sequence number.
-     * @param hwType HwType for wich the name is generated.
+     *
+     * @param hwType   HwType for wich the name is generated.
      * @param sequence Sequence number of interface
      * @return Generated interface name
      */
-    public String getInterfaceName(HwTypeEnum hwType, int sequence){
+    public String getInterfaceName(HwTypeEnum hwType, int sequence) {
         String prefix = "";
         String suffix = "";
 
@@ -91,7 +92,7 @@ public class GeneratorSingleton {
                 // this should never happen
                 System.err.println("error in GeneratorSingleton2");
         }
-        
+
         return (prefix + sequence + suffix);
     }
 
@@ -217,7 +218,8 @@ public class GeneratorSingleton {
 
     /**
      * Creates new random MAC address. Address will not be broadcast MAC address.
-     * @return 
+     *
+     * @return
      */
     public static String getNextMacAddress() {
         byte[] representation = new byte[6];
@@ -245,9 +247,9 @@ public class GeneratorSingleton {
             ret += v;
             ret += "-";
         }
-        
+
         ret = ret.toUpperCase();
-        
+
         return ret.substring(0, ret.length() - 1);// remove last dash 
     }
 }

@@ -1,13 +1,12 @@
 package psimulator.dataLayer.Enums;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public enum ObserverUpdateEventType {
     GRAPH_SIZE_CHANGED,             // when Graph size is changed
     GRAPH_COMPONENT_CHANGED,        //
-    
+
     NETWORK_BOUNDS,                 // when network bounds display boolean changed
     VIEW_DETAILS,                   // when view details changed
     LANGUAGE,                       // when language changed
@@ -16,7 +15,7 @@ public enum ObserverUpdateEventType {
     UNDO_REDO,                      // when undo/redo
     PACKET_IMAGE_TYPE_CHANGE,       // when packet icon changed
     RECENT_OPENED_FILES_CHANGED,    // when file added to recently opened
-    
+
     SIMULATOR_PLAYER_LIST_MOVE,     // when manually changed current event(NEXT, PREV, FIRST, LAST or DOUBLE CLICK on some event)
     SIMULATOR_PLAYER_PLAY,          // when playing starts
     SIMULATOR_PLAYER_STOP,          // when playing stops (maunal, or hitting end of list = automatic)
@@ -36,8 +35,8 @@ public enum ObserverUpdateEventType {
     CONNECTION_DO_DISCONNECT,       // when do disconnect called
     CONNECTION_CONNECTION_FAILED,   // when connection failed called
     CONNECTION_CONNECTING_FAILED,   // when connecting failed
-    CONNECTION_START_ANIMATION,   	// when animation should be started - server is being started in background
-    SERVER_SHUTDOWN,   				// when server was shut down by user by shutdown button
+    CONNECTION_START_ANIMATION,       // when animation should be started - server is being started in background
+    SERVER_SHUTDOWN,                   // when server was shut down by user by shutdown button
 
     //
     PACKET_RECIEVER_WRONG_PACKET;   // when wrong packet recieved

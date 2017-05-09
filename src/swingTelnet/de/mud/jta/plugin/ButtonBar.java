@@ -74,14 +74,14 @@ import java.util.Map;
  * # button. If the command contains whitespace characters, enclode it in
  * # quote (") characters!
  * #
- * button		Connect		"\$connect(\@host@,\@port@)"
+ * button        Connect        "\$connect(\@host@,\@port@)"
  * #
  * # - defining a label:
  * # A labvel is defined by giving the keyword 'label' followed by the text
  * # of the label. If the label contains whitespace characters, enclode it in
  * # quote (") characters!
  * #
- * label 		"Hello User"
+ * label         "Hello User"
  * #
  * # - defining an input field:
  * # An input field is defined just like the button above, but it has one more
@@ -90,20 +90,20 @@ import java.util.Map;
  * # followed by the size of the input field and optionally a third parameter
  * # which is the initial text to be displayed in that field.
  * #
- * input		host	20	"tanis"
+ * input        host    20    "tanis"
  * stretch
- * input		port	4	"23"
+ * input        port    4    "23"
  * #
  * # Now after the button and two input fields we define another button which
  * # will be shown last in the row. Order is significant for the order in
  * # which the buttons and fields appear.
  * #
- * button		Disconnect	"\\$disconnect()" break
+ * button        Disconnect    "\\$disconnect()" break
  * #
  * # To implement an input line that is cleared and sends text use this:
  * # The following line send the text in the input field "send" and appends
  * # a newline.
- * input		send	20	"\\@send@\n"	"ls"
+ * input        send    20    "\\@send@\n"    "ls"
  * #
  * # - Defining a choice
  * # A choice is defined just like the button above, but it has multiple

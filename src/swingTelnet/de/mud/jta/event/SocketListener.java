@@ -43,6 +43,6 @@ public interface SocketListener extends PluginListener {
   public void connect(String host, int port)
     throws UnknownHostException, IOException;
   /** Called if the connection should be stopped. */
-  public void disconnect() 
+  public void disconnect()
     throws IOException;
 }

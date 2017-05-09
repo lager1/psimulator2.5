@@ -23,7 +23,6 @@ import shared.SimulatorEvents.SerializedComponents.SimulatorEvent;
 import shared.telnetConfig.TelnetConfig;
 
 /**
- *
  * @author Martin Švihlík <svihlma1 at fit.cvut.cz>
  */
 public class SimulatorClientEventRecieverThread implements Runnable, Observer {
@@ -47,7 +46,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
     private ObjectOutputStream outputStream;
 
     public SimulatorClientEventRecieverThread(DataLayerFacade dataLayer, UserInterfaceOuterFacade userInterfaceOuterFacade) {
-    	this.dataLayer = dataLayer;
+        this.dataLayer = dataLayer;
         this.simulatorManagerInterface = dataLayer.getSimulatorManager();
         this.isRecording = simulatorManagerInterface.isRecording();
     }
@@ -81,7 +80,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                         simulatorEvent = getEventFromServer();
                     } catch (ClientConnectionFailException ex) {
 
-                    	if(dataLayer.getMainPanelState() == UserInterfaceMainPanelState.EDITOR) {	// server was shut down by user - returned to EDITOR mode
+                        if (dataLayer.getMainPanelState() == UserInterfaceMainPanelState.EDITOR) {    // server was shut down by user - returned to EDITOR mode
                             simulatorManagerInterface.serverShutdown();
 
                             // set recording false immedeately
@@ -90,7 +89,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                             if (simulatorEvent == null) {
                                 if (DEBUG) System.out.println("Nepodarilo se nacist eventu");
                                 continue;
-                            }else{
+                            } else {
                                 if (DEBUG) System.out.println("Nactena eventa" + tmpCounter++);
                             }
 
@@ -112,10 +111,10 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                                     isRecording = false;
                                 }
                             }
-                    		break;
-                    	}
-                    		
-                    	// connection broke down
+                            break;
+                        }
+
+                        // connection broke down
                         simulatorManagerInterface.connectionFailed(ex.getConnectionFailtureReason());
                         //simulatorManagerInterface.serverShutdown();
 
@@ -127,7 +126,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                     if (simulatorEvent == null) {
                         if (DEBUG) System.out.println("Nepodarilo se nacist eventu");
                         continue;
-                    }else{
+                    } else {
                         if (DEBUG) System.out.println("Nactena eventa" + tmpCounter++);
                     }
 
@@ -166,7 +165,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
 
     @Override
     public void update(Observable o, Object o1) {
-    	switch ((ObserverUpdateEventType) o1) {
+        switch ((ObserverUpdateEventType) o1) {
             case CONNECTION_DO_CONNECT:
                 if (DEBUG) {
                     System.out.println("Event reciever: DO_CONNECT");
@@ -191,9 +190,8 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
         }
         thread.interrupt();
     }
-    
-    
-    
+
+
     private void connectToServer() throws UnknownHostException, IOException, NumberFormatException {
         String ipAddress = dataLayer.getConnectionIpAddress();
         String port = dataLayer.getConnectionPort();
@@ -306,7 +304,7 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
             timeOfFirstEvent = System.currentTimeMillis();
         }
 
-        try {        	
+        try {
             NetworkObject networkObject = (NetworkObject) inputStream.readObject();
 
             SimulatorEvent simulatorEvent = (SimulatorEvent) networkObject;
@@ -321,12 +319,12 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
             if (DEBUG) System.out.println("Socket timeout exception during get simulator event");
             return null;
         } catch (IOException ex) {
-            if (DEBUG)System.out.println("IOException during get simulator event");
+            if (DEBUG) System.out.println("IOException during get simulator event");
             //Logger.getLogger(SimulatorClientEventRecieverThread.class.getName()).log(Level.SEVERE, null, ex);
             throw new ClientConnectionFailException(ConnectionFailtureReason.SERVER_DISCONNECTED);
         } catch (ClassNotFoundException ex) {
-        	
-            if (DEBUG)System.out.println("Class cast exception during get simulator event");
+
+            if (DEBUG) System.out.println("Class cast exception during get simulator event");
             throw new ClientConnectionFailException(ConnectionFailtureReason.SERVER_SENT_WRONG_OBJECT);
         }
     }
@@ -365,14 +363,14 @@ public class SimulatorClientEventRecieverThread implements Runnable, Observer {
                 simulatorManagerInterface.connectionFailed(ConnectionFailtureReason.TABLE_WITH_TELNET_NOT_RECIEVED);
             }
         } catch (UnknownHostException | NumberFormatException e) {
-            if (DEBUG)System.out.println("Unknown host or number format ex");
+            if (DEBUG) System.out.println("Unknown host or number format ex");
             disconnectFromServer();
-            
+
             System.out.println("fail 1");
-            
+
             simulatorManagerInterface.connectingFailed();
         } catch (IOException ex) {
-            if (DEBUG)System.out.println("IOEx");
+            if (DEBUG) System.out.println("IOEx");
             disconnectFromServer();
 
             System.out.println("fail 2");
