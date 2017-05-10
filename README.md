@@ -13,4 +13,21 @@ Authors of the version 2.5 are lager1 (owner of this repository) and Michal Hor√
 - dhcp protocol included
 - dns protocol included
 
+## Installation
+
+### Windows
+
+TODO
+
+### Linux
+
+TODO
+
+### Mac
+
+TODO
+
+## Usage
+
+TODO
 
