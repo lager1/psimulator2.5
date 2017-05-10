@@ -13,4 +13,21 @@ Authors of the version 2.5 are V√°clav Mach(vacl.mach@gmail.com) and Michal Hor√
 - dhcp protocol included
 - dns protocol included
 
+## Installation
+
+### Windows
+
+TODO
+
+### Linux
+
+TODO
+
+### Mac
+
+TODO
+
+## Usage
+
+TODO
 
